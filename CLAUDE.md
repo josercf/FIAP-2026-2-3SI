@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+> **Retomando o trabalho?** `docs/ANDAMENTO.md` tem o estado atual: o que está pronto, o que está em andamento e as pendências abertas.
+
 ## O que é este repositório
 
 Acervo didático da disciplina **Microservice and Web Engineering & IT Services** (Sistemas de Informação, FIAP, 1º semestre de 2026-2, Prof. José Romualdo). Não é uma aplicação: é um site estático de apresentações Reveal.js + kits de laboratório, publicado no GitHub Pages.
