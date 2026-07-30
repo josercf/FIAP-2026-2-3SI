@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" font-family="Montserrat, Segoe UI, Arial, sans-serif">
+  <defs>
+    <style>
+      .layer-label { font-size: 14px; font-weight: 600; fill: #1a1a1a; }
+      .header-label { font-size: 16px; font-weight: 800; fill: #1a1a1a; }
+      .proto-label { font-size: 12px; font-weight: 600; fill: #fff; }
+      .proto-box-label { font-size: 13px; font-weight: 700; fill: #fff; }
+      .desc-label { font-size: 12px; font-weight: 500; fill: #333; }
+    </style>
+  </defs>
+
+  <!-- Headers -->
+  <text x="100" y="28" text-anchor="middle" class="header-label">OSI</text>
+  <text x="460" y="28" text-anchor="middle" class="header-label">TCP/IP</text>
+
+  <!-- === OSI Layers (left) === -->
+  <!-- Layer 7 - Aplicação -->
+  <rect x="10" y="42" width="180" height="44" rx="4" fill="#b8d4e8" stroke="#8bb8d4" stroke-width="1"/>
+  <text x="100" y="69" text-anchor="middle" class="layer-label">Aplicação</text>
+
+  <!-- Layer 6 - Apresentação -->
+  <rect x="10" y="90" width="180" height="44" rx="4" fill="#b8d4e8" stroke="#8bb8d4" stroke-width="1"/>
+  <text x="100" y="117" text-anchor="middle" class="layer-label">Apresentação</text>
+
+  <!-- Layer 5 - Sessão -->
+  <rect x="10" y="138" width="180" height="44" rx="4" fill="#b8d4e8" stroke="#8bb8d4" stroke-width="1"/>
+  <text x="100" y="165" text-anchor="middle" class="layer-label">Sessão</text>
+
+  <!-- Layer 4 - Transporte -->
+  <rect x="10" y="194" width="180" height="44" rx="4" fill="#d4deb8" stroke="#b8c89a" stroke-width="1"/>
+  <text x="100" y="221" text-anchor="middle" class="layer-label">Transporte</text>
+
+  <!-- Layer 3 - Rede -->
+  <rect x="10" y="250" width="180" height="44" rx="4" fill="#b8d8d4" stroke="#8ec0ba" stroke-width="1"/>
+  <text x="100" y="277" text-anchor="middle" class="layer-label">Rede</text>
+
+  <!-- Layer 2 - Enlace -->
+  <rect x="10" y="306" width="180" height="44" rx="4" fill="#e8d8b4" stroke="#d4c098" stroke-width="1"/>
+  <text x="100" y="333" text-anchor="middle" class="layer-label">Enlace</text>
+
+  <!-- Layer 1 - Física -->
+  <rect x="10" y="354" width="180" height="44" rx="4" fill="#e8d8b4" stroke="#d4c098" stroke-width="1"/>
+  <text x="100" y="381" text-anchor="middle" class="layer-label">Física</text>
+
+  <!-- === TCP/IP Layers (right) === -->
+  <!-- Aplicações (covers OSI 5-7) -->
+  <rect x="220" y="42" width="490" height="140" rx="4" fill="#dce8f0" stroke="#b8d4e8" stroke-width="1"/>
+  <text x="465" y="66" text-anchor="middle" class="layer-label" font-size="15">Aplicações</text>
+
+  <!-- Protocol boxes inside Aplicações -->
+  <rect x="250" y="78" width="72" height="48" rx="4" fill="#35a8e0"/>
+  <text x="286" y="107" text-anchor="middle" class="proto-box-label">HTTP</text>
+
+  <rect x="332" y="78" width="72" height="48" rx="4" fill="#35a8e0"/>
+  <text x="368" y="107" text-anchor="middle" class="proto-box-label">SMTP</text>
+
+  <rect x="414" y="78" width="72" height="48" rx="4" fill="#35a8e0"/>
+  <text x="450" y="107" text-anchor="middle" class="proto-box-label">FTP</text>
+
+  <rect x="496" y="78" width="72" height="48" rx="4" fill="#35a8e0"/>
+  <text x="532" y="107" text-anchor="middle" class="proto-box-label">DNS</text>
+
+  <rect x="578" y="78" width="72" height="48" rx="4" fill="#35a8e0"/>
+  <text x="614" y="107" text-anchor="middle" class="proto-box-label">SNMP</text>
+
+  <text x="672" y="107" text-anchor="middle" class="layer-label" fill="#666">...</text>
+
+  <!-- Layer 7 highlight -->
+  <rect x="232" y="136" width="200" height="0" fill="none"/>
+  <text x="465" y="165" text-anchor="middle" class="desc-label" fill="#666" font-size="11">Camada 7 – Entende conteúdo (URLs, headers, body)</text>
+
+  <!-- Transporte -->
+  <rect x="220" y="194" width="330" height="44" rx="4" fill="#e4ecc8" stroke="#c8d8a4" stroke-width="1"/>
+  <text x="385" y="221" text-anchor="middle" class="layer-label">TCP</text>
+
+  <rect x="560" y="194" width="150" height="44" rx="4" fill="#e4ecc8" stroke="#c8d8a4" stroke-width="1"/>
+  <text x="635" y="221" text-anchor="middle" class="layer-label">UDP</text>
+
+  <!-- Rede -->
+  <rect x="220" y="250" width="490" height="44" rx="4" fill="#c8e4e0" stroke="#a0ccc6" stroke-width="1"/>
+  <text x="465" y="277" text-anchor="middle" class="layer-label">IP</text>
+
+  <!-- Enlace + Física -->
+  <rect x="220" y="306" width="490" height="92" rx="4" fill="#f0e4c8" stroke="#dcd0a8" stroke-width="1"/>
+  <text x="465" y="348" text-anchor="middle" class="desc-label" font-size="13">Protocolos definidos pelas</text>
+  <text x="465" y="366" text-anchor="middle" class="desc-label" font-size="13">tecnologias de redes subjacentes</text>
+
+  <!-- Layer annotations on the right -->
+  <!-- L7 bracket -->
+  <line x1="715" y1="46" x2="715" y2="178" stroke="#ED145B" stroke-width="2"/>
+  <line x1="712" y1="46" x2="718" y2="46" stroke="#ED145B" stroke-width="2"/>
+  <line x1="712" y1="178" x2="718" y2="178" stroke="#ED145B" stroke-width="2"/>
+
+  <!-- L3/4 bracket -->
+  <line x1="715" y1="198" x2="715" y2="290" stroke="#666" stroke-width="2"/>
+  <line x1="712" y1="198" x2="718" y2="198" stroke="#666" stroke-width="2"/>
+  <line x1="712" y1="290" x2="718" y2="290" stroke="#666" stroke-width="2"/>
+</svg>

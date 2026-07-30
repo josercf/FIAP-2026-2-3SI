@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 02 – HTTP/1.1 a 3, SSE, Wireshark & Git Branching | FIAP</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../assets/css/fiap-theme.css">
+  <link rel="stylesheet" href="../assets/css/fiap-print.css">
+  <script>if(/print-pdf/gi.test(window.location.search)){var link=document.createElement('link');link.rel='stylesheet';link.href='https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/css/print/pdf.css';document.head.appendChild(link);}</script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section class="cover-slide"><img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" class="fiap-logo-full"></section>
+      <section class="title-slide">
+        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="title-card"><div class="accent-bar"></div><h1>Sistemas de Informação</h1><h2>Microservice and Web Engineering & IT Services</h2><h3>Prof. José Romualdo</h3></div>
+        <div class="lesson-bar">AULA 02 – HTTP/1.1 a 3, SSE, Wireshark & Git Branching</div>
+      </section>
+      <section class="content-slide">
+        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area"><div class="accent-bar"></div><h2>Agenda do Encontro</h2></div>
+        <table>
+          <thead><tr><th>Bloco</th><th>Horário</th><th>Conteúdo & Atividades</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Bloco 1</strong></td><td>19h20 – 20h50</td><td>Evolução do HTTP + SSE (Server-Sent Events) + Quiz #1</td></tr>
+            <tr><td><strong>Intervalo</strong></td><td>20h50 – 21h20</td><td>☕ Pausa para Café e Networking (30 min)</td></tr>
+            <tr><td><strong>Bloco 2</strong></td><td>21h20 – 22h50</td><td>Quizzes #2 e #3 + Hands-on Lab (SSE App) + Git Branching</td></tr>
+          </tbody>
+        </table>
+        <div class="slide-footer"><div class="footer-bar">02 – HTTP, SSE & Git</div><div class="footer-page">3</div></div>
+      </section>
+      <section class="content-slide">
+        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area"><div class="accent-bar"></div><h2>Evolução HTTP & SSE (Server-Sent Events)</h2></div>
+        <div class="concept-cards">
+          <div class="concept-card"><h4>HTTP/1.1 a 3</h4><p>HTTP/1.1 (Keep-Alive), HTTP/2 (Multiplexação) e HTTP/3 (QUIC / UDP).</p></div>
+          <div class="concept-card"><h4>SSE (Server-Sent Events)</h4><p>Comunicação unidirecional Servidor -> Cliente sobre HTTP. Excelente para atualizações em tempo real.</p></div>
+        </div>
+        <div class="slide-footer"><div class="footer-bar">02 – HTTP, SSE & Git</div><div class="footer-page">4</div></div>
+      </section>
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area"><div class="accent-bar"></div><h2>Quiz #1 (Fixação do Bloco 1)</h2></div>
+        <div class="quiz-container">
+          <div class="quiz-question">Qual a principal melhoria do HTTP/2 em relação ao HTTP/1.1?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span>Migração exclusiva para UDP.</li>
+            <li data-correct="true"><span class="option-letter">B</span>Multiplexação de várias requisições em uma única conexão TCP.</li>
+            <li data-correct="false"><span class="option-letter">C</span>Criação do método GET.</li>
+            <li data-correct="false"><span class="option-letter">D</span>Fim do uso de certificados TLS.</li>
+          </ul>
+          <div class="quiz-feedback" data-correct-msg="Correto! A multiplexação resolve o Head-of-Line Blocking do HTTP/1.1." data-incorrect-msg="Atenção: A grande inovação do HTTP/2 foi a multiplexação em uma mesma conexão TCP."></div>
+        </div>
+        <div class="slide-footer"><div class="footer-bar">02 – HTTP, SSE & Git</div><div class="footer-page">5</div></div>
+      </section>
+      <section class="content-slide" style="text-align:center;">
+        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div style="margin-top:100px;">
+          <h2 style="font-size:2.5em; color:var(--fiap-pink);">☕ Pausa para Café</h2>
+          <h3 style="font-size:1.5em; color:var(--fiap-gray-light); margin-top:20px;">20h50 – 21h20 (30 minutos)</h3>
+          <p style="margin-top:40px; font-size:1.1em;">Na volta: Quizzes #2 e #3 + Hands-on Lab!</p>
+        </div>
+        <div class="slide-footer"><div class="footer-page">6</div></div>
+      </section>
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area"><div class="accent-bar"></div><h2>Quiz #2 (Retorno do Intervalo)</h2></div>
+        <div class="quiz-container">
+          <div class="quiz-question">Sobre o Server-Sent Events (SSE), assinale a alternativa correta:</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span>É um protocolo bidirecional, substituindo os WebSockets completamente.</li>
+            <li data-correct="true"><span class="option-letter">B</span>É unidirecional (Servidor -> Cliente), ideal para feeds de notícias e notificações.</li>
+            <li data-correct="false"><span class="option-letter">C</span>Funciona apenas na porta 443 sem uso do HTTP.</li>
+            <li data-correct="false"><span class="option-letter">D</span>Não suporta reconexão automática.</li>
+          </ul>
+          <div class="quiz-feedback" data-correct-msg="Perfeito! SSE usa HTTP padrão e entrega eventos unidirecionais do servidor." data-incorrect-msg="Erro! SSE é unidirecional e constrói sobre HTTP."></div>
+        </div>
+        <div class="slide-footer"><div class="footer-bar">02 – HTTP, SSE & Git</div><div class="footer-page">7</div></div>
+      </section>
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area"><div class="accent-bar"></div><h2>Quiz #3</h2></div>
+        <div class="quiz-container">
+          <div class="quiz-question">No Git, o que o comando 'git branch' faz?</div>
+          <ul class="quiz-options">
+            <li data-correct="true"><span class="option-letter">A</span>Lista, cria ou deleta ramificações no repositório.</li>
+            <li data-correct="false"><span class="option-letter">B</span>Envia o código para o servidor remoto.</li>
+            <li data-correct="false"><span class="option-letter">C</span>Desfaz o último commit.</li>
+            <li data-correct="false"><span class="option-letter">D</span>Apaga permanentemente o histórico.</li>
+          </ul>
+          <div class="quiz-feedback" data-correct-msg="Exato! Branches isolam o desenvolvimento de novas features." data-incorrect-msg="Incorreto. Git branch gerencia as linhas de desenvolvimento."></div>
+        </div>
+        <div class="slide-footer"><div class="footer-bar">02 – HTTP, SSE & Git</div><div class="footer-page">8</div></div>
+      </section>
+      <section class="content-slide">
+        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area"><div class="accent-bar"></div><h2>Hands-on Lab: LogiTech Enterprise</h2></div>
+        <div class="concept-cards">
+          <div class="concept-card"><h4>Missão</h4><p>Implementar um servidor Node.js que envia atualizações de entrega da LogiTech via SSE.</p></div>
+          <div class="concept-card"><h4>Passo a Passo</h4><p>1. Criar branch `feature/sse-tracking`<br>2. Escrever `server.js`<br>3. Commit e merge.</p></div>
+        </div>
+        <pre><code class="language-javascript">// server.js
+const http = require('http');
+
+http.createServer((req, res) => {
+  if (req.url === '/events') {
+    res.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive'
+    });
+    setInterval(() => {
+      res.write(`data: ${JSON.stringify({ status: 'Em trânsito', lat: -23.5, lng: -46.6 })}\n\n`);
+    }, 2000);
+  }
+}).listen(3000, () => console.log('SSE Server na porta 3000'));</code></pre>
+        <div class="slide-footer"><div class="footer-bar">02 – HTTP, SSE & Git</div><div class="footer-page">9</div></div>
+      </section>
+      <section class="end-slide">
+        <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" style="max-width:350px;">
+        <div class="copyright">Copyright &copy; 2026<br>Prof.º José Romualdo da Costa Filho<br><br>Todos direitos reservados.</div>
+      </section>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+  <script src="../assets/js/fiap-quiz.js"></script>
+  <script>
+    Reveal.initialize({ hash: true, slideNumber: false, width: 1280, height: 720, margin: 0, minScale: 0.2, maxScale: 2.0, center: false, pdfMaxPagesPerSlide: 1, pdfSeparateFragments: false, transition: 'slide', transitionSpeed: 'default', plugins: [RevealHighlight] });
+  </script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 12 – Persistência Vetorial (pgvector), RAG & MCP | FIAP</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../assets/css/fiap-theme.css">
+  <link rel="stylesheet" href="../assets/css/fiap-print.css">
+  <script>if(/print-pdf/gi.test(window.location.search)){var link=document.createElement('link');link.rel='stylesheet';link.href='https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/css/print/pdf.css';document.head.appendChild(link);}</script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- CAPA -->
+      <section class="cover-slide">
+        <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP" class="fiap-logo-full">
+      </section>
+
+      <!-- TÍTULO -->
+      <section class="title-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="title-card">
+          <div class="accent-bar"></div>
+          <h1>Sistemas de Informação</h1>
+          <h2>Microservice and Web Engineering & IT Services</h2>
+          <h3>Prof. José Romualdo</h3>
+        </div>
+        <div class="lesson-bar">AULA 12 – Persistência Vetorial (pgvector), RAG & Model Context Protocol (MCP)</div>
+      </section>
+
+      <!-- AGENDA -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Agenda do Encontro</h2>
+        </div>
+        <table>
+          <thead>
+            <tr><th>Bloco</th><th>Horário</th><th>Conteúdo & Atividades</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Bloco 1</strong></td><td>19h20 – 20h50</td><td>Vetores/Embeddings, pgvector, Introdução ao RAG + Quiz #1</td></tr>
+            <tr><td><strong>Intervalo</strong></td><td>20h50 – 21h20</td><td>☕ Pausa para Café e Networking</td></tr>
+            <tr><td><strong>Bloco 2</strong></td><td>21h20 – 22h50</td><td>Model Context Protocol (MCP), Arquitetura RAG, Quizzes #2 e #3 + Lab</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- QUIZ 1 -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz #1</h2>
+        </div>
+        <div class="quiz-container">
+          <div class="quiz-question">No contexto de IA Generativa, o que é um Embedding?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> Um tipo especial de prompt que ignora os limites de tokens da LLM.</li>
+            <li data-correct="true"><span class="option-letter">B</span> Uma representação matemática em forma de vetor (array de números) que captura o significado semântico de um dado.</li>
+            <li data-correct="false"><span class="option-letter">C</span> O processo de enviar imagens para a API da OpenAI.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Um banco de dados relacional clássico.</li>
+          </ul>
+          <div class="quiz-feedback" data-correct-msg="Correto! Textos com significados parecidos terão vetores próximos no espaço multidimensional." data-incorrect-msg="Cuidado! Embeddings são vetores numéricos de alta dimensão."></div>
+        </div>
+      </section>
+
+      <!-- INTERVALO -->
+      <section class="content-slide" style="text-align:center;">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div style="margin-top:100px;">
+          <h2 style="font-size:2.5em; color:var(--fiap-pink);">☕ Pausa para Café</h2>
+          <h3 style="font-size:1.5em; color:var(--fiap-gray-light); margin-top:20px;">20h50 – 21h20 (30 minutos)</h3>
+        </div>
+      </section>
+
+      <!-- RAG E MCP -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>RAG & Model Context Protocol (MCP)</h2>
+        </div>
+        <p><strong>RAG (Retrieval-Augmented Generation):</strong> Buscar dados externos para injetar no contexto da LLM, reduzindo alucinações.</p>
+        <p><strong>MCP:</strong> Padroniza a conexão entre Modelos de IA e Fontes de Dados Corporativas (ex: nosso pgvector da LogiTech).</p>
+      </section>
+
+      <!-- QUIZ 2 -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz #2</h2>
+        </div>
+        <div class="quiz-container">
+          <div class="quiz-question">O que o pgvector permite fazer dentro do PostgreSQL?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> Acelerar consultas JOIN em chaves primárias relacionais.</li>
+            <li data-correct="true"><span class="option-letter">B</span> Armazenar e consultar vetores de embeddings utilizando buscas por similaridade (ex: distância de cosseno).</li>
+            <li data-correct="false"><span class="option-letter">C</span> Substituir o uso de SQL por comandos em Python puro.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Gerar embeddings textuais diretamente no banco sem depender de LLMs externas.</li>
+          </ul>
+          <div class="quiz-feedback" data-correct-msg="Perfeito! O pgvector transforma o Postgres em um Vector Database nativo." data-incorrect-msg="Incorreto. O pgvector permite armazenamento de vetores e busca semântica por similaridade."></div>
+        </div>
+      </section>
+
+      <!-- QUIZ 3 -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz #3</h2>
+        </div>
+        <div class="quiz-container">
+          <div class="quiz-question">No pipeline RAG, em que momento ocorre a etapa de "Retrieval" (Recuperação)?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> Depois que a resposta final é exibida ao usuário.</li>
+            <li data-correct="false"><span class="option-letter">B</span> Durante o treinamento dos pesos (weights) do modelo na infraestrutura da OpenAI.</li>
+            <li data-correct="true"><span class="option-letter">C</span> Antes de enviar o prompt final à LLM, buscando os documentos relevantes na base vetorial.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Apenas quando ocorre um erro na rede.</li>
+          </ul>
+          <div class="quiz-feedback" data-correct-msg="Correto! O Retrieval ocorre para buscar o contexto que embasará a geração." data-incorrect-msg="Cuidado! O Retrieval acontece ANTES de chamar a LLM para adicionar contexto ao prompt."></div>
+        </div>
+      </section>
+
+      <!-- LAB -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Hands-on Lab (Grupo)</h2>
+        </div>
+        <p><strong>LogiTech AI Assistant:</strong> Vamos criar um script Python que conecta no pgvector, faz uma busca por similaridade de incidentes de frete e utiliza RAG/MCP para responder.</p>
+        <p>Lab disponível em: <code>aulas-1sem/labs/aula12-lab</code>.</p>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+  <script src="../assets/js/fiap-quiz.js"></script>
+  <script>
+    Reveal.initialize({ hash: true, slideNumber: false, width: 1280, height: 720, plugins: [RevealHighlight] });
+  </script>
+</body>
+</html>

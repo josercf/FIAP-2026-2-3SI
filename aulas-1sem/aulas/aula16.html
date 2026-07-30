@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 16 – Integração End-to-End & Simulado Global Solution | FIAP</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../assets/css/fiap-theme.css">
+  <link rel="stylesheet" href="../assets/css/fiap-print.css">
+  <script>if(/print-pdf/gi.test(window.location.search)){var link=document.createElement('link');link.rel='stylesheet';link.href='https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/css/print/pdf.css';document.head.appendChild(link);}</script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- ==================== SLIDE: CAPA FIAP ==================== -->
+      <section class="cover-slide">
+        <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" class="fiap-logo-full">
+      </section>
+
+      <!-- ==================== SLIDE: TÍTULO DA AULA ==================== -->
+      <section class="title-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="title-card">
+          <div class="accent-bar"></div>
+          <h1>Sistemas de Informação</h1>
+          <h2>Microservice and Web Engineering & IT Services</h2>
+          <h3>Prof. José Romualdo</h3>
+        </div>
+        <div class="lesson-bar">AULA 16 – Integração Enterprise End-to-End & Simulado Global Solution</div>
+      </section>
+
+      <!-- ==================== SLIDE: AGENDA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Agenda do Encontro (17/11/2026)</h2>
+        </div>
+
+        <table>
+          <thead>
+            <tr><th>Bloco</th><th>Horário</th><th>Conteúdo & Atividades</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Bloco 1</strong></td><td>19h20 – 20h50</td><td>Revisão End-to-End (Web, Redes, Docker, AI, Seg) + Contexto Hackathon + Quiz #1</td></tr>
+            <tr><td><strong>Intervalo</strong></td><td>20h50 – 21h20</td><td>☕ Pausa para Café e Networking (30 min)</td></tr>
+            <tr><td><strong>Bloco 2</strong></td><td>21h20 – 22h50</td><td>Quizzes #2 e #3 + Hands-on Lab (Simulado GS - Docker Compose Full) + Fechamento</td></tr>
+          </tbody>
+        </table>
+
+        <div class="slide-footer">
+          <div class="footer-bar">16 – Integração Enterprise & Simulado GS</div>
+          <div class="footer-page">3</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: REVISÃO E2E ==================== -->
+      <section class="section-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="accent-bar"></div>
+        <h2>A Jornada do Semestre:<br>Juntando Todas as Peças</h2>
+        <div class="slide-footer"><div class="footer-page">4</div></div>
+      </section>
+
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A Arquitetura LogiTech</h2>
+        </div>
+
+        <div class="concept-cards">
+          <div class="concept-card">
+            <h4>1. Fundamentos & Rede</h4>
+            <p>Começamos com Sockets TCP/UDP, subimos para HTTP, REST e gRPC.</p>
+          </div>
+          <div class="concept-card">
+            <h4>2. Backend & Cloud Native</h4>
+            <p>Construímos APIs políglotas (Node, Python, Java) e empacotamos tudo com Docker e Docker Compose.</p>
+          </div>
+          <div class="concept-card">
+            <h4>3. AI-First & RAG</h4>
+            <p>Integramos a LangChain para consultar a Base de Conhecimento e automatizar o atendimento logístico via LLMs.</p>
+          </div>
+          <div class="concept-card">
+            <h4>4. Segurança & Governança</h4>
+            <p>Protegemos as rotas com JWT/RBAC, usamos Trivy e aplicamos defesas contra Prompt Injection.</p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">16 – Integração Enterprise & Simulado GS</div>
+          <div class="footer-page">5</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: SIMULADO GS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Dinâmica da Global Solution (Hackathon)</h2>
+        </div>
+
+        <p>A Global Solution testará a capacidade de vocês entregarem uma solução **End-to-End**. O que os avaliadores buscam?</p>
+
+        <ul>
+          <li><strong>Organização (Git):</strong> Uso de branches/worktrees, README claro (PRD/SDD).</li>
+          <li><strong>Reprodutibilidade (Docker):</strong> O projeto deve rodar com um simples <code>docker-compose up</code>.</li>
+          <li><strong>Engenharia AI (RAG):</strong> Integração real e inteligente, não apenas um "chamar a API do ChatGPT".</li>
+          <li><strong>Segurança:</strong> Falta de segurança (tokens hardcoded, sem RBAC) retira pontos.</li>
+        </ul>
+
+        <div class="callout">
+          <p><strong>Hoje:</strong> Faremos um simulado. O laboratório desafiará vocês a subirem o backend (API JWT), e o Serviço AI (RAG Mock) num único arquivo Docker Compose interligado pela mesma network.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">16 – Integração Enterprise & Simulado GS</div>
+          <div class="footer-page">6</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: QUIZ 1 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz #1 (Fixação do Bloco 1)</h2>
+        </div>
+
+        <div class="quiz-container">
+          <div class="quiz-question">Ao utilizar Docker Compose para subir múltiplos serviços (API Node e API Python), como eles devem se comunicar entre si?</div>
+          <ul class="quiz-options">
+            <li data-correct="false">
+              <span class="option-letter">A</span>
+              Pelo IP público da internet de cada container.
+            </li>
+            <li data-correct="false">
+              <span class="option-letter">B</span>
+              Via localhost, já que estão todos na mesma máquina física.
+            </li>
+            <li data-correct="true">
+              <span class="option-letter">C</span>
+              Pelo nome do serviço (Service Name) definido no `docker-compose.yml`, usando a rede interna criada automaticamente.
+            </li>
+            <li data-correct="false">
+              <span class="option-letter">D</span>
+              Não podem se comunicar, serviços Docker são totalmente isolados sem exceções.
+            </li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Exato! O Docker Compose cria uma rede (network) padrão onde os containers resolvem o nome (DNS) pelo nome do serviço."
+               data-incorrect-msg="Incorreto. Em uma rede Docker (como a criada pelo Compose), usa-se o nome do serviço como hostname (ex: http://meu-servico-node:3000). Localhost apontará para o próprio container.">
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">16 – Integração Enterprise & Simulado GS</div>
+          <div class="footer-page">7</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: PAUSA ==================== -->
+      <section class="content-slide" style="text-align:center;">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div style="margin-top:100px;">
+          <h2 style="font-size:2.5em; color:var(--fiap-pink);">☕ Pausa para Café</h2>
+          <h3 style="font-size:1.5em; color:var(--fiap-gray-light); margin-top:20px;">20h50 – 21h20 (30 minutos)</h3>
+          <p style="margin-top:40px; font-size:1.1em;">Na volta: Quizzes #2 e #3 + Hands-on Lab do Simulado GS!</p>
+        </div>
+        <div class="slide-footer"><div class="footer-page">8</div></div>
+      </section>
+
+      <!-- ==================== SLIDE: QUIZ 2 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz #2 (Retorno do Intervalo)</h2>
+        </div>
+
+        <div class="quiz-container">
+          <div class="quiz-question">No contexto de RAG (Retrieval-Augmented Generation), o que garante que o LLM não invente informações (Alucinação)?</div>
+          <ul class="quiz-options">
+            <li data-correct="false">
+              <span class="option-letter">A</span>
+              Treinar o modelo do zero por 6 meses com todos os dados da LogiTech
+            </li>
+            <li data-correct="true">
+              <span class="option-letter">B</span>
+              O fato de buscarmos os documentos no Vector DB e os fornecermos explicitamente no Contexto do Prompt
+            </li>
+            <li data-correct="false">
+              <span class="option-letter">C</span>
+              Utilizar a linguagem Java em vez de Python
+            </li>
+            <li data-correct="false">
+              <span class="option-letter">D</span>
+              O uso do protocolo UDP, que é mais confiável que o TCP
+            </li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto! O RAG recupera (Retrieval) os fatos do banco e anexa (Augmented) ao Prompt, reduzindo a chance de alucinação."
+               data-incorrect-msg="Atenção! O segredo do RAG é o 'Retrieval': nós buscamos a verdade no Vector DB e injetamos como contexto para o LLM.">
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">16 – Integração Enterprise & Simulado GS</div>
+          <div class="footer-page">9</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: QUIZ 3 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz #3</h2>
+        </div>
+
+        <div class="quiz-container">
+          <div class="quiz-question">O que acontece se uma aplicação que exige Autenticação JWT for exposta para a internet sem utilizar HTTPS/TLS (Camada 6/7 do OSI)?</div>
+          <ul class="quiz-options">
+            <li data-correct="false">
+              <span class="option-letter">A</span>
+              Absolutamente nada, o JWT já vem com criptografia avançada que impede roubos.
+            </li>
+            <li data-correct="false">
+              <span class="option-letter">B</span>
+              O servidor irá travar automaticamente usando a porta 443.
+            </li>
+            <li data-correct="true">
+              <span class="option-letter">C</span>
+              O Token JWT trafegará em texto plano, permitindo que um atacante na rede o intercepte (Sniffing) e personifique o usuário.
+            </li>
+            <li data-correct="false">
+              <span class="option-letter">D</span>
+              O JWT só funciona internamente no Docker Compose, logo não é um problema.
+            </li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto! JWT garante integridade (assinatura), mas NÃO garante confidencialidade em trânsito. Sem TLS, o token é facilmente roubado."
+               data-incorrect-msg="Incorreto. JWT é codificado (Base64), não encriptado por padrão. Trafegar tokens sem HTTPS permite a interceptação (Roubo de Sessão).">
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">16 – Integração Enterprise & Simulado GS</div>
+          <div class="footer-page">10</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: HANDS-ON LAB ==================== -->
+      <section class="section-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="accent-bar"></div>
+        <h2>Hands-on Lab:<br>Simulado Global Solution</h2>
+        <div class="slide-footer"><div class="footer-page">11</div></div>
+      </section>
+
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Atividade Prática em Grupo (21h35 – 22h45)</h2>
+        </div>
+
+        <div class="concept-cards">
+          <div class="concept-card">
+            <h4>Missão E2E</h4>
+            <p>Orquestrar 2 microsserviços via Docker Compose: Uma API de Auth (Node) e uma API de Telemetria/IA (Python).</p>
+          </div>
+          <div class="concept-card">
+            <h4>Comunicação</h4>
+            <p>A API Python deverá validar um token fazendo uma chamada HTTP interna (usando hostname do docker) para a API Node.</p>
+          </div>
+          <div class="concept-card">
+            <h4>Entregável</h4>
+            <p>Projeto subido no Github e rodando perfeitamente com um único comando `docker-compose up -d`.</p>
+          </div>
+        </div>
+        
+        <p>Acessem o kit de laboratório em <code>labs/aula16-lab/</code>. Boa sorte!</p>
+
+        <div class="slide-footer">
+          <div class="footer-bar">16 – Integração Enterprise & Simulado GS</div>
+          <div class="footer-page">12</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: ENCERRAMENTO ==================== -->
+      <section class="end-slide">
+        <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" style="max-width:350px;">
+        <div class="copyright">
+          Copyright &copy; 2026<br>
+          Prof.º José Romualdo da Costa Filho<br><br>
+          Parabéns pela conclusão do Módulo IV!<br>
+          Vocês estão prontos para a Global Solution e para o próximo semestre.
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+  <script src="../assets/js/fiap-quiz.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      slideNumber: false,
+      width: 1280,
+      height: 720,
+      margin: 0,
+      minScale: 0.2,
+      maxScale: 2.0,
+      center: false,
+      pdfMaxPagesPerSlide: 1,
+      pdfSeparateFragments: false,
+      transition: 'slide',
+      transitionSpeed: 'default',
+      plugins: [RevealHighlight]
+    });
+  </script>
+</body>
+</html>

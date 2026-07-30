@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 01 – SDLC, Git, Requisitos (PRD/SDD), DDD & Modelo OSI (Sockets TCP/UDP) | FIAP</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../assets/css/fiap-theme.css">
+  <link rel="stylesheet" href="../assets/css/fiap-print.css">
+  <script>if(/print-pdf/gi.test(window.location.search)){var link=document.createElement('link');link.rel='stylesheet';link.href='https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/css/print/pdf.css';document.head.appendChild(link);}</script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- ==================== SLIDE: CAPA FIAP ==================== -->
+      <section class="cover-slide">
+        <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" class="fiap-logo-full">
+      </section>
+
+      <!-- ==================== SLIDE: TÍTULO DA AULA ==================== -->
+      <section class="title-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="title-card">
+          <div class="accent-bar"></div>
+          <h1>Sistemas de Informação</h1>
+          <h2>Microservice and Web Engineering & IT Services</h2>
+          <h3>Prof. José Romualdo</h3>
+        </div>
+        <div class="lesson-bar">AULA 01 – SDLC, Git, Requisitos (PRD/SDD), DDD & Modelo OSI (Sockets TCP/UDP)</div>
+      </section>
+
+      <!-- ==================== SLIDE: AGENDA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Agenda do Encontro</h2>
+        </div>
+
+        <table>
+          <thead>
+            <tr><th>Bloco</th><th>Horário</th><th>Conteúdo & Atividades</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Bloco 1</strong></td><td>19h20 – 20h50</td><td>Apresentação + SDLC & Git + PRD/SDD + DDD + Modelo OSI (L1-L7) & TCP/UDP + Quiz #1</td></tr>
+            <tr><td><strong>Intervalo</strong></td><td>20h50 – 21h20</td><td>☕ Pausa para Café e Networking (30 min)</td></tr>
+            <tr><td><strong>Bloco 2</strong></td><td>21h20 – 22h50</td><td>Quizzes #2 e #3 + Hands-on Lab (PRD/SDD + Sockets em Python) + Commit Git & Dúvidas</td></tr>
+          </tbody>
+        </table>
+
+        <div class="slide-footer">
+          <div class="footer-bar">01 – SDLC, Git, Requisitos, DDD & Sockets TCP/UDP</div>
+          <div class="footer-page">3</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: APRESENTAÇÃO & CONTRATO ==================== -->
+      <section class="section-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="accent-bar"></div>
+        <h2>Visão Geral da Disciplina<br>& Contrato Pedagógico</h2>
+        <div class="slide-footer"><div class="footer-page">4</div></div>
+      </section>
+
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Evolução Anual & Metodologia em Espiral</h2>
+        </div>
+
+        <div class="concept-cards">
+          <div class="concept-card">
+            <h4>1º Semestre (2026-2)</h4>
+            <p>Redes (OSI/TCP/HTTP), Docker, Backend Poliglota (Java/C#/Node/Python), Frontend (React/Angular), RAG, MCP & AI Gateways.</p>
+          </div>
+          <div class="concept-card">
+            <h4>2º Semestre (2027-1)</h4>
+            <p>Microsserviços, API Gateway, CQRS/Saga, Redis, Kafka, Testes Avançados (k6/Playwright), Kubernetes & Terraform.</p>
+          </div>
+          <div class="concept-card">
+            <h4>Metodologia em Espiral</h4>
+            <p>Os assuntos não se exaurem em uma aula. Cada encontro recupera e evolui a base da aula anterior.</p>
+          </div>
+          <div class="concept-card">
+            <h4>Case "Mini Mundo"</h4>
+            <p><strong>LogiTech Enterprise:</strong> Construção contínua da plataforma global de e-commerce e logística inteligente.</p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">01 – SDLC, Git, Requisitos, DDD & Sockets TCP/UDP</div>
+          <div class="footer-page">5</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: REQUISITOS & DDD ==================== -->
+      <section class="section-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="accent-bar"></div>
+        <h2>Engenharia de Requisitos,<br>PRD, SDD & DDD</h2>
+        <div class="slide-footer"><div class="footer-page">6</div></div>
+      </section>
+
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>PRD, SDD & Domain-Driven Design (DDD)</h2>
+        </div>
+
+        <div class="concept-cards">
+          <div class="concept-card">
+            <h4>PRD (Product Requirement)</h4>
+            <p>Define O QUE construir: visão do produto, casos de uso, regras de negócio e critérios de aceite.</p>
+          </div>
+          <div class="concept-card">
+            <h4>SDD (System Design)</h4>
+            <p>Define COMO construir: arquitetura técnica, modelo de dados, protocolos, infraestrutura e SLAs.</p>
+          </div>
+          <div class="concept-card">
+            <h4>Bounded Contexts (DDD)</h4>
+            <p>Fronteiras explícitas de domínio: Pedidos, Faturamento, Telemetria e Atendimento IA.</p>
+          </div>
+          <div class="concept-card">
+            <h4>Linguagem Ubíqua</h4>
+            <p>Vocabulário único compartilhado entre especialistas de negócio e desenvolvedores.</p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">01 – SDLC, Git, Requisitos, DDD & Sockets TCP/UDP</div>
+          <div class="footer-page">7</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: SDLC & GIT ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>SDLC & Versionamento com Git</h2>
+        </div>
+
+        <p>No ciclo de vida de software corporativo (SDLC), o versionamento com Git é o pilar de rastreabilidade e governança:</p>
+
+        <pre><code class="language-bash"># Boas Práticas de Commits (Conventional Commits)
+git commit -m "feat(telemetry): add TCP socket listener for truck sensors"
+git commit -m "docs(prd): initial PRD and SDD specification for LogiTech"
+git commit -m "fix(socket): handle client disconnection gracefully"
+</code></pre>
+
+        <div class="callout">
+          <p><strong>Workflows recomendados:</strong> Trunk-Based Development para entregas rápidas ou GitFlow para lançamentos com esteira de aprovação via Pull Requests.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">01 – SDLC, Git, Requisitos, DDD & Sockets TCP/UDP</div>
+          <div class="footer-page">8</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: MODELO OSI & REDES ==================== -->
+      <section class="section-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="accent-bar"></div>
+        <h2>Modelo OSI Aplicado &<br>Camada de Transporte (TCP vs UDP)</h2>
+        <div class="slide-footer"><div class="footer-page">9</div></div>
+      </section>
+
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O Modelo OSI (Open Systems Interconnection)</h2>
+        </div>
+
+        <table>
+          <thead>
+            <tr><th>Camada</th><th>Nome</th><th>Função Principal</th><th>Exemplos / Protocolos</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>L7</strong></td><td>Aplicação</td><td>Interface direta com serviços do usuário/software</td><td>HTTP, HTTPS, gRPC, DNS</td></tr>
+            <tr><td><strong>L6</strong></td><td>Apresentação</td><td>Formatação, criptografia e compressão de dados</td><td>TLS/SSL, JSON, XML</td></tr>
+            <tr><td><strong>L5</strong></td><td>Sessão</td><td>Estabelecimento e controle de sessão de comunicação</td><td>NetBIOS, RPC</td></tr>
+            <tr><td><strong>L4</strong></td><td>Transporte</td><td>Comunicação end-to-end e controle de fluxo</td><td><strong>TCP, UDP</strong></td></tr>
+            <tr><td><strong>L3</strong></td><td>Rede</td><td>Endereçamento lógico e roteamento de pacotes</td><td>IP (IPv4 / IPv6), ICMP</td></tr>
+            <tr><td><strong>L2/L1</strong></td><td>Enlace / Física</td><td>Endereçamento físico (MAC) e transmissão de bits</td><td>Ethernet, Wi-Fi, Fibra Optica</td></tr>
+          </tbody>
+        </table>
+
+        <div class="slide-footer">
+          <div class="footer-bar">01 – SDLC, Git, Requisitos, DDD & Sockets TCP/UDP</div>
+          <div class="footer-page">10</div>
+        </div>
+      </section>
+
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>TCP vs UDP: Quando Usar Cada Um?</h2>
+        </div>
+
+        <div class="concept-cards">
+          <div class="concept-card">
+            <h4>TCP (Transmission Control Protocol)</h4>
+            <p>Orientado à conexão (3-Way Handshake: SYN, SYN-ACK, ACK). Garante entrega na ordem correta, retransmite pacotes perdidos e controla fluxo.</p>
+            <p><em>Uso no Case:</em> Confirmações de entrega de frete e notas fiscais.</p>
+          </div>
+          <div class="concept-card">
+            <h4>UDP (User Datagram Protocol)</h4>
+            <p>Sem conexão, sem handshake e sem garantia de entrega. Prioriza velocidade mínima e latência baixa (fire and forget).</p>
+            <p><em>Uso no Case:</em> Telemetria frequente de GPS e temperatura de frotas.</p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">01 – SDLC, Git, Requisitos, DDD & Sockets TCP/UDP</div>
+          <div class="footer-page">11</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: QUIZ 1 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz #1 (Fixação do Bloco 1)</h2>
+        </div>
+
+        <div class="quiz-container">
+          <div class="quiz-question">Qual a principal diferença de comportamento entre o protocolo TCP e o UDP na Camada de Transporte (L4)?</div>
+          <ul class="quiz-options">
+            <li data-correct="false">
+              <span class="option-letter">A</span>
+              O UDP realiza 3-Way Handshake antes de enviar dados, enquanto o TCP não precisa de conexão
+            </li>
+            <li data-correct="true">
+              <span class="option-letter">B</span>
+              O TCP garante a entrega e ordenação dos pacotes, enquanto o UDP envia datagramas sem garantia de entrega
+            </li>
+            <li data-correct="false">
+              <span class="option-letter">C</span>
+              O TCP é exclusivo para envio de arquivos de vídeo, enquanto o UDP é usado para navegadores web
+            </li>
+            <li data-correct="false">
+              <span class="option-letter">D</span>
+              Não há diferença prática — ambos utilizam o mesmo cabeçalho IP com confirmações de recebimento
+            </li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Excelente! O TCP garante a entrega confiável e ordenada via conexões estabelecidas, enquanto o UDP prioriza velocidade sem confirmações."
+               data-incorrect-msg="Atenção! O TCP é orientado à conexão (garante entrega), enquanto o UDP é sem conexão (rápido, mas sem garantia de entrega).">
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">01 – SDLC, Git, Requisitos, DDD & Sockets TCP/UDP</div>
+          <div class="footer-page">12</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: PAUSA ==================== -->
+      <section class="content-slide" style="text-align:center;">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div style="margin-top:100px;">
+          <h2 style="font-size:2.5em; color:var(--fiap-pink);">☕ Pausa para Café</h2>
+          <h3 style="font-size:1.5em; color:var(--fiap-gray-light); margin-top:20px;">20h50 – 21h20 (30 minutos)</h3>
+          <p style="margin-top:40px; font-size:1.1em;">Na volta: Quizzes #2 e #3 + Hands-on Lab (PRD/SDD + Sockets TCP/UDP em Python)!</p>
+        </div>
+        <div class="slide-footer"><div class="footer-page">13</div></div>
+      </section>
+
+      <!-- ==================== SLIDE: QUIZ 2 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz #2 (Retorno do Intervalo)</h2>
+        </div>
+
+        <div class="quiz-container">
+          <div class="quiz-question">O que caracteriza o conceito de Bounded Context dentro do Domain-Driven Design (DDD)?</div>
+          <ul class="quiz-options">
+            <li data-correct="false">
+              <span class="option-letter">A</span>
+              É a limitação física de memória RAM onde o servidor de banco de dados executa
+            </li>
+            <li data-correct="true">
+              <span class="option-letter">B</span>
+              É a fronteira explícita dentro da qual um modelo de domínio específico é válido e possui significado claro
+            </li>
+            <li data-correct="false">
+              <span class="option-letter">C</span>
+              É a proibição de utilizar bibliotecas externas no desenvolvimento do código em Python ou Java
+            </li>
+            <li data-correct="false">
+              <span class="option-letter">D</span>
+              É um comando do Git utilizado para congelar alterações em repositórios remotos
+            </li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Exato! Um Bounded Context delimita onde um modelo de domínio e sua linguagem ubíqua são estritamente aplicáveis."
+               data-incorrect-msg="Cuidado! Bounded Context é a fronteira lógica do domínio em DDD que define onde um modelo de negócio se aplica.">
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">01 – SDLC, Git, Requisitos, DDD & Sockets TCP/UDP</div>
+          <div class="footer-page">14</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: QUIZ 3 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz #3</h2>
+        </div>
+
+        <div class="quiz-container">
+          <div class="quiz-question">No ciclo de vida de desenvolvimento (SDLC), por que adotamos o padrão Conventional Commits no Git?</div>
+          <ul class="quiz-options">
+            <li data-correct="false">
+              <span class="option-letter">A</span>
+              Para impedir que usuários sem senha façam download do projeto
+            </li>
+            <li data-correct="false">
+              <span class="option-letter">B</span>
+              Para compactar arquivos grandes automaticamente antes do envio ao repositório
+            </li>
+            <li data-correct="true">
+              <span class="option-letter">C</span>
+              Para padronizar o histórico de commits, facilitando a revisão de código e automação de changelogs
+            </li>
+            <li data-correct="false">
+              <span class="option-letter">D</span>
+              Para obrigar o desenvolvedor a escrever todo o código na linguagem C#
+            </li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto! Commits padronizados (`feat:`, `fix:`, `docs:`) trazem rastreabilidade e governança ao projeto."
+               data-incorrect-msg="Incorreto. Conventional Commits padronizam as mensagens no Git para automação de releases e clareza no histórico.">
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">01 – SDLC, Git, Requisitos, DDD & Sockets TCP/UDP</div>
+          <div class="footer-page">15</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: HANDS-ON LAB ==================== -->
+      <section class="section-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="accent-bar"></div>
+        <h2>Hands-on Lab:<br>Construção Guiada do Mini Mundo</h2>
+        <div class="slide-footer"><div class="footer-page">16</div></div>
+      </section>
+
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Atividade Prática em Dupla (21h35 – 22h35)</h2>
+        </div>
+
+        <div class="concept-cards">
+          <div class="concept-card">
+            <h4>Parte 1: PRD/SDD no Git</h4>
+            <p>Criar a pasta <code>docs/</code> e comitar os arquivos <code>PRD.md</code> e <code>SDD.md</code> com os Bounded Contexts da <em>LogiTech</em>.</p>
+          </div>
+          <div class="concept-card">
+            <h4>Parte 2: Servidor Socket TCP/UDP</h4>
+            <p>Desenvolver em Python (<code>server_telemetry.py</code>) um servidor que atende dados de GPS na porta 8080 (TCP) e 8081 (UDP).</p>
+          </div>
+        </div>
+
+        <pre><code class="language-python"># Exemplo de Socket Server TCP em Python
+import socket
+
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.bind(('0.0.0.0', 8080))
+server.listen(5)
+print("🚛 LogiTech Telemetry TCP Server listening on port 8080...")
+
+while True:
+    client, addr = server.accept()
+    data = client.recv(1024)
+    print(f"Received payload from {addr}: {data.decode('utf-8')}")
+    client.send(b"ACK: Telemetry Recorded\n")
+    client.close()
+</code></pre>
+
+        <div class="slide-footer">
+          <div class="footer-bar">01 – SDLC, Git, Requisitos, DDD & Sockets TCP/UDP</div>
+          <div class="footer-page">17</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: HOMEWORK ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Para a Próxima Aula</h2>
+        </div>
+
+        <div class="concept-cards">
+          <div class="concept-card">
+            <h4>📖 Leitura Recomendada</h4>
+            <p>Pesquisar sobre a evolução dos cabeçalhos HTTP e como a multiplexação do HTTP/2 otimiza chamadas de streaming.</p>
+          </div>
+          <div class="concept-card">
+            <h4>💻 Desafio de Código</h4>
+            <p>Adicionar um log estruturado em JSON com timestamp no servidor de Sockets de hoje.</p>
+          </div>
+        </div>
+
+        <div class="callout">
+          <p><strong>Próxima Aula (11/08):</strong> Subiremos da camada L4 TCP para a camada L7 (HTTP/1.1 a HTTP/3, SSE e Wireshark) consumindo os Sockets criados hoje!</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">01 – SDLC, Git, Requisitos, DDD & Sockets TCP/UDP</div>
+          <div class="footer-page">18</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: DÚVIDAS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Dúvidas ou Curiosidades?</h2>
+        </div>
+
+        <div style="display:flex; align-items:center; justify-content:center; flex:1; font-size:4em; color: var(--fiap-dark); font-weight:800; opacity:0.15; margin-top:40px;">
+          ?
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">01 – SDLC, Git, Requisitos, DDD & Sockets TCP/UDP</div>
+          <div class="footer-page">19</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: ENCERRAMENTO ==================== -->
+      <section class="end-slide">
+        <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" style="max-width:350px;">
+        <div class="copyright">
+          Copyright &copy; 2026<br>
+          Prof.º José Romualdo da Costa Filho<br><br>
+          Todos direitos reservados. Reprodução ou divulgação total ou parcial<br>
+          deste documento é expressamente proibido sem o consentimento formal,<br>
+          por escrito, do Professor (autor).
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+  <script src="../assets/js/fiap-quiz.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      slideNumber: false,
+      width: 1280,
+      height: 720,
+      margin: 0,
+      minScale: 0.2,
+      maxScale: 2.0,
+      center: false,
+      pdfMaxPagesPerSlide: 1,
+      pdfSeparateFragments: false,
+      transition: 'slide',
+      transitionSpeed: 'default',
+      plugins: [RevealHighlight]
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 08 – Orquestração de Agentes (Command Pattern / Function Calling) & Git Worktrees I | FIAP</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../assets/css/fiap-theme.css">
+  <link rel="stylesheet" href="../assets/css/fiap-print.css">
+  <script>if(/print-pdf/gi.test(window.location.search)){var link=document.createElement('link');link.rel='stylesheet';link.href='https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/css/print/pdf.css';document.head.appendChild(link);}</script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section class="cover-slide"><img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" class="fiap-logo-full"></section>
+      <section class="title-slide">
+        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="title-card"><div class="accent-bar"></div><h1>Sistemas de Informação</h1><h2>Microservice and Web Engineering & IT Services</h2><h3>Prof. José Romualdo</h3></div>
+        <div class="lesson-bar">AULA 08 – Orquestração de Agentes & Git Worktrees I</div>
+      </section>
+      <section class="content-slide">
+        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area"><div class="accent-bar"></div><h2>Agenda do Encontro</h2></div>
+        <table>
+          <thead><tr><th>Bloco</th><th>Horário</th><th>Conteúdo & Atividades</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Bloco 1</strong></td><td>19h20 – 20h50</td><td>LLM Function Calling + Command Pattern + Quiz #1</td></tr>
+            <tr><td><strong>Intervalo</strong></td><td>20h50 – 21h20</td><td>☕ Pausa para Café e Networking (30 min)</td></tr>
+            <tr><td><strong>Bloco 2</strong></td><td>21h20 – 22h50</td><td>Quizzes #2 e #3 + Git Worktrees + Lab Agentes</td></tr>
+          </tbody>
+        </table>
+        <div class="slide-footer"><div class="footer-bar">08 – Agentes & Worktrees</div><div class="footer-page">3</div></div>
+      </section>
+      <section class="content-slide">
+        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area"><div class="accent-bar"></div><h2>LLMs como Agentes (Function Calling)</h2></div>
+        <div class="concept-cards">
+          <div class="concept-card"><h4>Function Calling</h4><p>Capacidade de um LLM de decidir quando e com quais parâmetros chamar uma função determinística (ferramenta).</p></div>
+          <div class="concept-card"><h4>Git Worktree</h4><p>Trabalhar em múltiplas branches simultaneamente em diretórios separados, sem precisar de stashes frequentes.</p></div>
+        </div>
+        <div class="slide-footer"><div class="footer-bar">08 – Agentes & Worktrees</div><div class="footer-page">4</div></div>
+      </section>
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area"><div class="accent-bar"></div><h2>Quiz #1 (Fixação do Bloco 1)</h2></div>
+        <div class="quiz-container">
+          <div class="quiz-question">No contexto de Agentes IA, o que é o Function Calling?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span>Uma função que chama a si mesma recursivamente.</li>
+            <li data-correct="true"><span class="option-letter">B</span>A IA retorna um JSON estruturado para o sistema invocar uma API ou função.</li>
+            <li data-correct="false"><span class="option-letter">C</span>Um telefone físico para suporte.</li>
+            <li data-correct="false"><span class="option-letter">D</span>A IA executa o código diretamente no kernel.</li>
+          </ul>
+          <div class="quiz-feedback" data-correct-msg="Certo! O LLM não executa; ele infere a intenção e os argumentos." data-incorrect-msg="O LLM apenas sugere a assinatura e os argumentos; o sistema invoca a função."></div>
+        </div>
+        <div class="slide-footer"><div class="footer-bar">08 – Agentes & Worktrees</div><div class="footer-page">5</div></div>
+      </section>
+      <section class="content-slide" style="text-align:center;">
+        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div style="margin-top:100px;">
+          <h2 style="font-size:2.5em; color:var(--fiap-pink);">☕ Pausa para Café</h2>
+          <h3 style="font-size:1.5em; color:var(--fiap-gray-light); margin-top:20px;">20h50 – 21h20 (30 minutos)</h3>
+          <p style="margin-top:40px; font-size:1.1em;">Na volta: Quizzes #2 e #3 + Hands-on Lab!</p>
+        </div>
+        <div class="slide-footer"><div class="footer-page">6</div></div>
+      </section>
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area"><div class="accent-bar"></div><h2>Quiz #2 (Retorno do Intervalo)</h2></div>
+        <div class="quiz-container">
+          <div class="quiz-question">Qual Design Pattern melhor representa a abstração de uma ferramenta (Tool) para um Agente IA?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span>Singleton</li>
+            <li data-correct="false"><span class="option-letter">B</span>Observer</li>
+            <li data-correct="true"><span class="option-letter">C</span>Command Pattern</li>
+            <li data-correct="false"><span class="option-letter">D</span>Flyweight</li>
+          </ul>
+          <div class="quiz-feedback" data-correct-msg="Exato! O Command encapsula a ação e seus argumentos como um objeto executável." data-incorrect-msg="Command encapsula uma requisição como um objeto (a ferramenta/função)."></div>
+        </div>
+        <div class="slide-footer"><div class="footer-bar">08 – Agentes & Worktrees</div><div class="footer-page">7</div></div>
+      </section>
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area"><div class="accent-bar"></div><h2>Quiz #3</h2></div>
+        <div class="quiz-container">
+          <div class="quiz-question">O comando 'git worktree add' serve para:</div>
+          <ul class="quiz-options">
+            <li data-correct="true"><span class="option-letter">A</span>Fazer checkout de uma branch em uma pasta separada, mantendo o mesmo repositório local.</li>
+            <li data-correct="false"><span class="option-letter">B</span>Adicionar um novo repositório remoto.</li>
+            <li data-correct="false"><span class="option-letter">C</span>Criar um arquivo zip do projeto.</li>
+            <li data-correct="false"><span class="option-letter">D</span>Deletar arquivos temporários.</li>
+          </ul>
+          <div class="quiz-feedback" data-correct-msg="Perfeito! Muito útil para revisar um PR urgente sem perder o contexto atual." data-incorrect-msg="Worktree permite múltiplas branches em diretórios físicos diferentes."></div>
+        </div>
+        <div class="slide-footer"><div class="footer-bar">08 – Agentes & Worktrees</div><div class="footer-page">8</div></div>
+      </section>
+      <section class="content-slide">
+        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area"><div class="accent-bar"></div><h2>Hands-on Lab: LogiTech Enterprise</h2></div>
+        <div class="concept-cards">
+          <div class="concept-card"><h4>Missão</h4><p>Implementar o Command Pattern simulando as ferramentas de um Agente IA de Logística.</p></div>
+          <div class="concept-card"><h4>Passo a Passo</h4><p>1. Criar interface `ToolCommand`<br>2. Implementar `RastrearPedidoCommand`<br>3. Invocar baseado no JSON simulado.</p></div>
+        </div>
+        <pre><code class="language-python"># agent.py
+class Command:
+    def execute(self, **kwargs):
+        pass
+
+class RastrearPedido(Command):
+    def execute(self, **kwargs):
+        pedido_id = kwargs.get("pedido_id")
+        return f"Pedido {pedido_id} está em trânsito."
+
+# Simulando resposta do LLM
+llm_response = {
+    "tool": "rastrear",
+    "args": {"pedido_id": "LOG-1234"}
+}
+
+tools = {"rastrear": RastrearPedido()}
+comando = tools.get(llm_response["tool"])
+if comando:
+    print(comando.execute(**llm_response["args"]))</code></pre>
+        <div class="slide-footer"><div class="footer-bar">08 – Agentes & Worktrees</div><div class="footer-page">9</div></div>
+      </section>
+      <section class="end-slide">
+        <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" style="max-width:350px;">
+        <div class="copyright">Copyright &copy; 2026<br>Prof.º José Romualdo da Costa Filho<br><br>Todos direitos reservados.</div>
+      </section>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+  <script src="../assets/js/fiap-quiz.js"></script>
+  <script>
+    Reveal.initialize({ hash: true, slideNumber: false, width: 1280, height: 720, margin: 0, minScale: 0.2, maxScale: 2.0, center: false, pdfMaxPagesPerSlide: 1, pdfSeparateFragments: false, transition: 'slide', transitionSpeed: 'default', plugins: [RevealHighlight] });
+  </script>
+</body>
+</html>

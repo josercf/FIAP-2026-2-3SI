@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 05 – POO, SOLID & Design Patterns em Java (Spring Boot) & C# (.NET Core) | FIAP</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../assets/css/fiap-theme.css">
+  <link rel="stylesheet" href="../assets/css/fiap-print.css">
+  <script>if(/print-pdf/gi.test(window.location.search)){var link=document.createElement('link');link.rel='stylesheet';link.href='https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/css/print/pdf.css';document.head.appendChild(link);}</script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+      <section class="cover-slide"><img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" class="fiap-logo-full"></section>
+      <section class="title-slide">
+        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="title-card"><div class="accent-bar"></div><h1>Sistemas de Informação</h1><h2>Microservice and Web Engineering & IT Services</h2><h3>Prof. José Romualdo</h3></div>
+        <div class="lesson-bar">AULA 05 – POO, SOLID & Design Patterns em Java (Spring Boot) & C# (.NET Core)</div>
+      </section>
+      <section class="content-slide">
+        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area"><div class="accent-bar"></div><h2>Agenda do Encontro</h2></div>
+        <table>
+          <thead><tr><th>Bloco</th><th>Horário</th><th>Conteúdo & Atividades</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Bloco 1</strong></td><td>19h20 – 20h50</td><td>Princípios SOLID + Quiz #1</td></tr>
+            <tr><td><strong>Intervalo</strong></td><td>20h50 – 21h20</td><td>☕ Pausa para Café e Networking (30 min)</td></tr>
+            <tr><td><strong>Bloco 2</strong></td><td>21h20 – 22h50</td><td>Quizzes #2 e #3 + Design Patterns Factory & Strategy + Lab</td></tr>
+          </tbody>
+        </table>
+        <div class="slide-footer"><div class="footer-bar">05 – SOLID & Patterns</div><div class="footer-page">3</div></div>
+      </section>
+      <section class="content-slide">
+        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area"><div class="accent-bar"></div><h2>Código Limpo e Escalável</h2></div>
+        <div class="concept-cards">
+          <div class="concept-card"><h4>SOLID</h4><p>SRP, OCP, LSP, ISP e DIP. Pilares da POO moderna.</p></div>
+          <div class="concept-card"><h4>Strategy Pattern</h4><p>Encapsula algoritmos (ex: cálculo de frete) tornando-os intercambiáveis.</p></div>
+        </div>
+        <div class="slide-footer"><div class="footer-bar">05 – SOLID & Patterns</div><div class="footer-page">4</div></div>
+      </section>
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area"><div class="accent-bar"></div><h2>Quiz #1 (Fixação do Bloco 1)</h2></div>
+        <div class="quiz-container">
+          <div class="quiz-question">O Princípio do Aberto/Fechado (OCP) diz que uma entidade de software deve estar:</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span>Aberta para modificação, mas fechada para extensão.</li>
+            <li data-correct="true"><span class="option-letter">B</span>Aberta para extensão, mas fechada para modificação.</li>
+            <li data-correct="false"><span class="option-letter">C</span>Fechada para testes, aberta para deploy.</li>
+            <li data-correct="false"><span class="option-letter">D</span>Aberta para uso público, fechada para privado.</li>
+          </ul>
+          <div class="quiz-feedback" data-correct-msg="Perfeito! Você adiciona novos comportamentos (extensão) sem alterar código existente (modificação)." data-incorrect-msg="Reveja o OCP. O foco é estender sem quebrar o que já existe."></div>
+        </div>
+        <div class="slide-footer"><div class="footer-bar">05 – SOLID & Patterns</div><div class="footer-page">5</div></div>
+      </section>
+      <section class="content-slide" style="text-align:center;">
+        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div style="margin-top:100px;">
+          <h2 style="font-size:2.5em; color:var(--fiap-pink);">☕ Pausa para Café</h2>
+          <h3 style="font-size:1.5em; color:var(--fiap-gray-light); margin-top:20px;">20h50 – 21h20 (30 minutos)</h3>
+          <p style="margin-top:40px; font-size:1.1em;">Na volta: Quizzes #2 e #3 + Hands-on Lab!</p>
+        </div>
+        <div class="slide-footer"><div class="footer-page">6</div></div>
+      </section>
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area"><div class="accent-bar"></div><h2>Quiz #2 (Retorno do Intervalo)</h2></div>
+        <div class="quiz-container">
+          <div class="quiz-question">Qual a principal vantagem do padrão Strategy?</div>
+          <ul class="quiz-options">
+            <li data-correct="true"><span class="option-letter">A</span>Eliminar grandes blocos de if/else delegando o comportamento para classes específicas.</li>
+            <li data-correct="false"><span class="option-letter">B</span>Garantir que apenas uma instância da classe exista (Singleton).</li>
+            <li data-correct="false"><span class="option-letter">C</span>Adaptar uma interface velha para uma nova.</li>
+            <li data-correct="false"><span class="option-letter">D</span>Aumentar a performance de processamento do banco de dados.</li>
+          </ul>
+          <div class="quiz-feedback" data-correct-msg="Exato! Strategy favorece a composição e o Open/Closed Principle." data-incorrect-msg="Errado. Strategy é comportamental e substitui condicionais complexas."></div>
+        </div>
+        <div class="slide-footer"><div class="footer-bar">05 – SOLID & Patterns</div><div class="footer-page">7</div></div>
+      </section>
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area"><div class="accent-bar"></div><h2>Quiz #3</h2></div>
+        <div class="quiz-container">
+          <div class="quiz-question">Em Spring Boot ou .NET Core, como aplicamos a Inversão de Dependência (DIP)?</div>
+          <ul class="quiz-options">
+            <li data-correct="true"><span class="option-letter">A</span>Injetando dependências via construtor (Injeção de Dependência).</li>
+            <li data-correct="false"><span class="option-letter">B</span>Herdando de classes base abstratas infinitamente.</li>
+            <li data-correct="false"><span class="option-letter">C</span>Usando 'new' dentro de todos os métodos.</li>
+            <li data-correct="false"><span class="option-letter">D</span>Criando variáveis globais estáticas.</li>
+          </ul>
+          <div class="quiz-feedback" data-correct-msg="Isso aí! O framework gerencia o ciclo de vida (IoC Container)." data-incorrect-msg="O DIP é implementado através da Injeção de Dependência nos frameworks modernos."></div>
+        </div>
+        <div class="slide-footer"><div class="footer-bar">05 – SOLID & Patterns</div><div class="footer-page">8</div></div>
+      </section>
+      <section class="content-slide">
+        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area"><div class="accent-bar"></div><h2>Hands-on Lab: LogiTech Enterprise</h2></div>
+        <div class="concept-cards">
+          <div class="concept-card"><h4>Missão</h4><p>Implementar Strategy para Cálculo de Frete (LogiTech) em Java ou C#.</p></div>
+          <div class="concept-card"><h4>Passo a Passo</h4><p>1. Criar interface `FreightStrategy`<br>2. Implementar `Sedex` e `PAC`<br>3. Usar Injeção de Dependência.</p></div>
+        </div>
+        <pre><code class="language-java">// Java (Spring) Example
+public interface FreightStrategy {
+    double calculate(double distance);
+}
+
+@Service
+public class SedexStrategy implements FreightStrategy {
+    public double calculate(double distance) {
+        return distance * 1.5;
+    }
+}
+
+@Service
+public class FreightService {
+    private final Map<String, FreightStrategy> strategies;
+    // Constructor injection
+    public FreightService(Map<String, FreightStrategy> strategies) {
+        this.strategies = strategies;
+    }
+}</code></pre>
+        <div class="slide-footer"><div class="footer-bar">05 – SOLID & Patterns</div><div class="footer-page">9</div></div>
+      </section>
+      <section class="end-slide">
+        <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" style="max-width:350px;">
+        <div class="copyright">Copyright &copy; 2026<br>Prof.º José Romualdo da Costa Filho<br><br>Todos direitos reservados.</div>
+      </section>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+  <script src="../assets/js/fiap-quiz.js"></script>
+  <script>
+    Reveal.initialize({ hash: true, slideNumber: false, width: 1280, height: 720, margin: 0, minScale: 0.2, maxScale: 2.0, center: false, pdfMaxPagesPerSlide: 1, pdfSeparateFragments: false, transition: 'slide', transitionSpeed: 'default', plugins: [RevealHighlight] });
+  </script>
+</body>
+</html>

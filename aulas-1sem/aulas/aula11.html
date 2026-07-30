@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 11 – Frontend Angular (Observer Pattern & RxJS) | FIAP</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../assets/css/fiap-theme.css">
+  <link rel="stylesheet" href="../assets/css/fiap-print.css">
+  <script>if(/print-pdf/gi.test(window.location.search)){var link=document.createElement('link');link.rel='stylesheet';link.href='https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/css/print/pdf.css';document.head.appendChild(link);}</script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- CAPA -->
+      <section class="cover-slide">
+        <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP" class="fiap-logo-full">
+      </section>
+
+      <!-- TÍTULO -->
+      <section class="title-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="title-card">
+          <div class="accent-bar"></div>
+          <h1>Sistemas de Informação</h1>
+          <h2>Microservice and Web Engineering & IT Services</h2>
+          <h3>Prof. José Romualdo</h3>
+        </div>
+        <div class="lesson-bar">AULA 11 – Frontend Angular (Observer Pattern & RxJS)</div>
+      </section>
+
+      <!-- AGENDA -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Agenda do Encontro</h2>
+        </div>
+        <table>
+          <thead>
+            <tr><th>Bloco</th><th>Horário</th><th>Conteúdo & Atividades</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Bloco 1</strong></td><td>19h20 – 20h50</td><td>Angular, Componentes, Observer Pattern + Quiz #1</td></tr>
+            <tr><td><strong>Intervalo</strong></td><td>20h50 – 21h20</td><td>☕ Pausa para Café e Networking</td></tr>
+            <tr><td><strong>Bloco 2</strong></td><td>21h20 – 22h50</td><td>RxJS (Observables), Services, Quizzes #2 e #3 + Lab (Angular)</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- QUIZ 1 -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz #1</h2>
+        </div>
+        <div class="quiz-container">
+          <div class="quiz-question">O que caracteriza o Design Pattern Observer?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> A criação restrita de instâncias únicas (Singleton).</li>
+            <li data-correct="true"><span class="option-letter">B</span> Um objeto (Subject) notifica múltiplos dependentes (Observers) sobre mudanças de estado.</li>
+            <li data-correct="false"><span class="option-letter">C</span> O uso de middlewares para tratar requisições HTTP.</li>
+            <li data-correct="false"><span class="option-letter">D</span> A componentização de interfaces de usuário.</li>
+          </ul>
+          <div class="quiz-feedback" data-correct-msg="Exato! Esse padrão é a base do RxJS, muito usado no Angular." data-incorrect-msg="Incorreto. O Observer Pattern lida com notificações e mudanças de estado entre um emissor e múltiplos ouvintes."></div>
+        </div>
+      </section>
+
+      <!-- INTERVALO -->
+      <section class="content-slide" style="text-align:center;">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div style="margin-top:100px;">
+          <h2 style="font-size:2.5em; color:var(--fiap-pink);">☕ Pausa para Café</h2>
+          <h3 style="font-size:1.5em; color:var(--fiap-gray-light); margin-top:20px;">20h50 – 21h20 (30 minutos)</h3>
+        </div>
+      </section>
+
+      <!-- RXJS -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Programação Reativa com RxJS</h2>
+        </div>
+        <pre><code class="language-typescript">import { Observable } from 'rxjs';
+
+// Serviço LogiTech de Telemetria
+export class TelemetryService {
+  getSpeedData(): Observable&lt;number&gt; {
+    return new Observable(subscriber => {
+      setInterval(() => subscriber.next(Math.random() * 100), 2000);
+    });
+  }
+}</code></pre>
+      </section>
+
+      <!-- QUIZ 2 -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz #2</h2>
+        </div>
+        <div class="quiz-container">
+          <div class="quiz-question">No Angular e RxJS, o que deve ser feito com uma Subscription ao destruir o componente?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> Nada, o Garbage Collector do JavaScript cuida disso imediatamente.</li>
+            <li data-correct="true"><span class="option-letter">B</span> Chamar `unsubscribe()` no método `ngOnDestroy` para evitar vazamentos de memória (memory leaks).</li>
+            <li data-correct="false"><span class="option-letter">C</span> Reiniciar o servidor de aplicação.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Despachar uma ação no Redux.</li>
+          </ul>
+          <div class="quiz-feedback" data-correct-msg="Correto! Unsubscribe previne que observables fiquem rodando em background após o componente sumir." data-incorrect-msg="Cuidado! Se não fizer o unsubscribe, a aplicação pode sofrer vazamento de memória."></div>
+        </div>
+      </section>
+
+      <!-- QUIZ 3 -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz #3</h2>
+        </div>
+        <div class="quiz-container">
+          <div class="quiz-question">Para que serve o operador `map` no RxJS?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> Para criar mapas geográficos na tela.</li>
+            <li data-correct="false"><span class="option-letter">B</span> Para cancelar assinaturas.</li>
+            <li data-correct="true"><span class="option-letter">C</span> Para transformar os dados emitidos pelo Observable antes que cheguem ao subscriber.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Para enviar dados via requisição POST.</li>
+          </ul>
+          <div class="quiz-feedback" data-correct-msg="Exatamente! O map transforma o payload, útil para adaptar as respostas da API." data-incorrect-msg="Incorreto. O operador map atua na transformação de valores na stream."></div>
+        </div>
+      </section>
+
+      <!-- LAB -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Hands-on Lab (Dupla)</h2>
+        </div>
+        <p><strong>LogiTech Telemetry:</strong> Vamos construir um componente Angular que assina dados de um `TelemetryService` (RxJS) e mostra a velocidade dos caminhões em tempo real.</p>
+        <p>Lab disponível em: <code>aulas-1sem/labs/aula11-lab</code>.</p>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+  <script src="../assets/js/fiap-quiz.js"></script>
+  <script>
+    Reveal.initialize({ hash: true, slideNumber: false, width: 1280, height: 720, plugins: [RevealHighlight] });
+  </script>
+</body>
+</html>

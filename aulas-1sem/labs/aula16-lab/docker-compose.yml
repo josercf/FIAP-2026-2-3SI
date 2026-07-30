@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  auth-api:
+    build: ./auth-service
+    container_name: logitech-auth
+    ports:
+      - "3000:3000"
+    networks:
+      - logitech-net
+
+  ai-api:
+    build: ./ai-service
+    container_name: logitech-ai
+    ports:
+      - "8000:8000"
+    environment:
+      - AUTH_SERVICE_URL=http://auth-api:3000
+    depends_on:
+      - auth-api
+    networks:
+      - logitech-net
+
+networks:
+  logitech-net:
+    driver: bridge

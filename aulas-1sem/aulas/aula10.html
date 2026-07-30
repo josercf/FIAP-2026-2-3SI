@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 10 – Testes de Unidade (TDD / Mocks) & Frontend React (TypeScript) | FIAP</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../assets/css/fiap-theme.css">
+  <link rel="stylesheet" href="../assets/css/fiap-print.css">
+  <script>if(/print-pdf/gi.test(window.location.search)){var link=document.createElement('link');link.rel='stylesheet';link.href='https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/css/print/pdf.css';document.head.appendChild(link);}</script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- ==================== SLIDE: CAPA FIAP ==================== -->
+      <section class="cover-slide">
+        <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" class="fiap-logo-full">
+      </section>
+
+      <!-- ==================== SLIDE: TÍTULO DA AULA ==================== -->
+      <section class="title-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="title-card">
+          <div class="accent-bar"></div>
+          <h1>Sistemas de Informação</h1>
+          <h2>Microservice and Web Engineering & IT Services</h2>
+          <h3>Prof. José Romualdo</h3>
+        </div>
+        <div class="lesson-bar">AULA 10 – Testes de Unidade (TDD / Mocks) & Frontend React (TypeScript)</div>
+      </section>
+
+      <!-- ==================== SLIDE: AGENDA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Agenda do Encontro</h2>
+        </div>
+
+        <table>
+          <thead>
+            <tr><th>Bloco</th><th>Horário</th><th>Conteúdo & Atividades</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Bloco 1</strong></td><td>19h20 – 20h50</td><td>TDD, Mocks/Stubs, Setup Jest/Vitest + Quiz #1</td></tr>
+            <tr><td><strong>Intervalo</strong></td><td>20h50 – 21h20</td><td>☕ Pausa para Café e Networking (30 min)</td></tr>
+            <tr><td><strong>Bloco 2</strong></td><td>21h20 – 22h50</td><td>React com TS, Componentes, Quizzes #2 e #3 + Hands-on Lab (React TDD)</td></tr>
+          </tbody>
+        </table>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Testes de Unidade & Frontend React</div>
+          <div class="footer-page">3</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: CONTEÚDO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Test-Driven Development (TDD)</h2>
+        </div>
+
+        <div class="concept-cards">
+          <div class="concept-card">
+            <h4>Red (Vermelho)</h4>
+            <p>Escreva um teste que falha para uma funcionalidade que ainda não existe.</p>
+          </div>
+          <div class="concept-card">
+            <h4>Green (Verde)</h4>
+            <p>Escreva o mínimo de código necessário para o teste passar.</p>
+          </div>
+          <div class="concept-card">
+            <h4>Refactor (Refatorar)</h4>
+            <p>Melhore o código sem alterar seu comportamento, mantendo os testes passando.</p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Testes de Unidade & Frontend React</div>
+          <div class="footer-page">4</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: QUIZ 1 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz #1 (Fixação do Bloco 1)</h2>
+        </div>
+
+        <div class="quiz-container">
+          <div class="quiz-question">Qual é o principal objetivo do ciclo Red-Green-Refactor no TDD?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> Escrever o código de produção antes para depois testar.</li>
+            <li data-correct="true"><span class="option-letter">B</span> Guiar o design do código através de testes escritos previamente.</li>
+            <li data-correct="false"><span class="option-letter">C</span> Automatizar deploy em produção sem revisão.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Eliminar a necessidade de análise de requisitos.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Excelente! O TDD ajuda a pensar no design da API e dos componentes antes mesmo da implementação."
+               data-incorrect-msg="Atenção! No TDD escrevemos os testes ANTES da implementação (Red).">
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: PAUSA ==================== -->
+      <section class="content-slide" style="text-align:center;">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div style="margin-top:100px;">
+          <h2 style="font-size:2.5em; color:var(--fiap-pink);">☕ Pausa para Café</h2>
+          <h3 style="font-size:1.5em; color:var(--fiap-gray-light); margin-top:20px;">20h50 – 21h20 (30 minutos)</h3>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: REACT ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>React com TypeScript</h2>
+        </div>
+        <p>A tipagem estática previne erros em tempo de desenvolvimento. Vamos aplicá-la ao case <strong>LogiTech Enterprise</strong>.</p>
+        <pre><code class="language-tsx">interface Props {
+  title: string;
+  onAddToCart: (id: string) => void;
+}
+
+export const ProductCard: React.FC<Props> = ({ title, onAddToCart }) => (
+  <div>
+    <h3>{title}</h3>
+    <button onClick={() => onAddToCart("123")}>Adicionar</button>
+  </div>
+);</code></pre>
+      </section>
+
+      <!-- ==================== SLIDE: QUIZ 2 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz #2 (Retorno do Intervalo)</h2>
+        </div>
+
+        <div class="quiz-container">
+          <div class="quiz-question">O que um `Mock` faz em um teste de unidade?</div>
+          <ul class="quiz-options">
+            <li data-correct="true"><span class="option-letter">A</span> Simula o comportamento de uma dependência externa.</li>
+            <li data-correct="false"><span class="option-letter">B</span> Otimiza a performance do banco de dados.</li>
+            <li data-correct="false"><span class="option-letter">C</span> Valida a tipagem estática no TypeScript.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Reinicia o ambiente React automaticamente.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Isso mesmo! Mocks isolam o componente sendo testado substituindo serviços externos."
+               data-incorrect-msg="Incorreto. Mocks são usados para substituir dependências em testes.">
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: QUIZ 3 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz #3</h2>
+        </div>
+
+        <div class="quiz-container">
+          <div class="quiz-question">No React, por que usar TypeScript em vez de JavaScript puro?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> Ele torna o React mais rápido no navegador.</li>
+            <li data-correct="true"><span class="option-letter">B</span> Adiciona tipagem estática, prevenindo erros no desenvolvimento e melhorando o IntelliSense.</li>
+            <li data-correct="false"><span class="option-letter">C</span> Substitui o uso de CSS nos componentes.</li>
+            <li data-correct="false"><span class="option-letter">D</span> É obrigatório para qualquer projeto criado no Vercel.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto! O TypeScript melhora a manutenção e escalabilidade da base de código."
+               data-incorrect-msg="Cuidado! O principal benefício do TypeScript é a segurança de tipos (Type Safety).">
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: HANDS-ON LAB ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Hands-on Lab: TDD & React (Grupo)</h2>
+        </div>
+
+        <div class="concept-cards">
+          <div class="concept-card">
+            <h4>Case: Carrinho LogiTech</h4>
+            <p>Criaremos o carrinho de compras do E-commerce LogiTech seguindo TDD (Vitest/RTL).</p>
+          </div>
+        </div>
+
+        <pre><code class="language-bash"># Lab em aulas-1sem/labs/aula10-lab/
+npm install
+npm test
+npm run dev
+</code></pre>
+
+        <p><strong>Desafio:</strong> Commit das alterações no repositório do Git seguindo Conventional Commits.</p>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+  <script src="../assets/js/fiap-quiz.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      slideNumber: false,
+      width: 1280,
+      height: 720,
+      plugins: [RevealHighlight]
+    });
+  </script>
+</body>
+</html>

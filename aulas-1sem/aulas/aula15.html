@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 15 – Segurança AI-First (OWASP LLM) & Trivy Container Scan | FIAP</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../assets/css/fiap-theme.css">
+  <link rel="stylesheet" href="../assets/css/fiap-print.css">
+  <script>if(/print-pdf/gi.test(window.location.search)){var link=document.createElement('link');link.rel='stylesheet';link.href='https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/css/print/pdf.css';document.head.appendChild(link);}</script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <section class="cover-slide">
+        <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" class="fiap-logo-full">
+      </section>
+
+      <section class="title-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="title-card">
+          <div class="accent-bar"></div>
+          <h1>Sistemas de Informação</h1>
+          <h2>Microservice and Web Engineering & IT Services</h2>
+          <h3>Prof. José Romualdo</h3>
+        </div>
+        <div class="lesson-bar">AULA 15 – Segurança AI-First (OWASP LLM) & Trivy Container Scan</div>
+      </section>
+
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Agenda do Encontro (10/11/2026)</h2>
+        </div>
+
+        <table>
+          <thead>
+            <tr><th>Bloco</th><th>Horário</th><th>Conteúdo & Atividades</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Bloco 1</strong></td><td>19h20 – 20h50</td><td>OWASP Top 10 for LLMs + Prompt Injection + Trivy Scan + Quiz #1</td></tr>
+            <tr><td><strong>Intervalo</strong></td><td>20h50 – 21h20</td><td>☕ Pausa para Café e Networking (30 min)</td></tr>
+            <tr><td><strong>Bloco 2</strong></td><td>21h20 – 22h50</td><td>Quizzes #2 e #3 + Hands-on Lab (Scan Trivy & Defesa de Prompt LLM) + Dúvidas</td></tr>
+          </tbody>
+        </table>
+
+        <div class="slide-footer">
+          <div class="footer-bar">15 – Segurança AI-First & Trivy Scan</div>
+          <div class="footer-page">3</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: OWASP LLM ==================== -->
+      <section class="section-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="accent-bar"></div>
+        <h2>OWASP Top 10 for LLMs<br>& Ameaças AI-First</h2>
+        <div class="slide-footer"><div class="footer-page">4</div></div>
+      </section>
+
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O Novo Paradigma de Segurança</h2>
+        </div>
+
+        <div class="concept-cards">
+          <div class="concept-card">
+            <h4>LLM01: Prompt Injection</h4>
+            <p>Atacante manipula o LLM via entradas criativas (prompts) para ignorar instruções originais e executar ações maliciosas.</p>
+          </div>
+          <div class="concept-card">
+            <h4>LLM02: Insecure Output Handling</h4>
+            <p>Confiar cegamente na saída do LLM. Ex: O LLM gera um código SQL malicioso e a aplicação executa no banco.</p>
+          </div>
+          <div class="concept-card">
+            <h4>LLM06: Sensitive Information Disclosure</h4>
+            <p>O LLM memoriza dados sensíveis (PII, senhas) no treinamento e os revela para outros usuários em respostas futuras.</p>
+          </div>
+          <div class="concept-card">
+            <h4>Defesa em Profundidade</h4>
+            <p>Sempre sanitize inputs e outputs. Use guardrails, RBAC nas APIs de integração (RAG) e AI Gateways.</p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">15 – Segurança AI-First & Trivy Scan</div>
+          <div class="footer-page">5</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: TRIVY ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Vulnerability Scanning com Trivy</h2>
+        </div>
+
+        <p>A LogiTech Enterprise roda tudo em Containers (Docker). Como garantir que as imagens base não tenham falhas graves (CVEs)?</p>
+
+        <pre><code class="language-bash"># Instalando Trivy (Ex: via Homebrew no Mac)
+brew install aquasecurity/trivy/trivy
+
+# Escaneando uma imagem Docker local
+trivy image node:18-alpine
+
+# Escaneando arquivos de configuração (Dockerfile, Terraform, K8s)
+trivy config ./Dockerfile
+</code></pre>
+
+        <div class="callout">
+          <p><strong>DevSecOps:</strong> O Trivy é fundamental para a esteira CI/CD, bloqueando deploys de imagens com vulnerabilidades <code>CRITICAL</code> ou <code>HIGH</code>.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">15 – Segurança AI-First & Trivy Scan</div>
+          <div class="footer-page">6</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: RESGATE DA ESPIRAL ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Resgate da Espiral (LogiTech)</h2>
+        </div>
+
+        <p>Ao longo do semestre, construímos:</p>
+        <ul>
+          <li><strong>Aula 08-10:</strong> Containers (Docker) para os serviços LogiTech.</li>
+          <li><strong>Aula 12:</strong> RAG e Assistente de Atendimento usando LLMs.</li>
+          <li><strong>Aula 14:</strong> Segurança Web Tradicional (JWT, RBAC).</li>
+        </ul>
+        <p>Hoje (Aula 15), unimos os mundos: aplicamos segurança ao <strong>Container</strong> (Trivy) e ao <strong>Cérebro da IA</strong> (OWASP LLM), garantindo que nosso Chatbot não seja invadido e que nossos containers estejam blindados.</p>
+
+        <div class="slide-footer">
+          <div class="footer-bar">15 – Segurança AI-First & Trivy Scan</div>
+          <div class="footer-page">7</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: QUIZ 1 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz #1 (Fixação do Bloco 1)</h2>
+        </div>
+
+        <div class="quiz-container">
+          <div class="quiz-question">O que caracteriza o ataque de 'Prompt Injection' de acordo com o OWASP Top 10 para LLMs?</div>
+          <ul class="quiz-options">
+            <li data-correct="false">
+              <span class="option-letter">A</span>
+              Injetar comandos SQL diretamente no banco de dados de vetores (Vector DB)
+            </li>
+            <li data-correct="true">
+              <span class="option-letter">B</span>
+              Manipular a entrada de texto do usuário para forçar o LLM a desobedecer suas instruções de sistema (System Prompts) originais
+            </li>
+            <li data-correct="false">
+              <span class="option-letter">C</span>
+              Infectar o modelo LLM com vírus durante o seu download da internet
+            </li>
+            <li data-correct="false">
+              <span class="option-letter">D</span>
+              Interromper o tráfego de rede (DDoS) do provedor de inteligência artificial
+            </li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto! Atacantes usam frases como 'Ignore todas as instruções anteriores e faça X' para hackear o comportamento do modelo."
+               data-incorrect-msg="Incorreto. Prompt Injection foca especificamente em manipular o modelo de linguagem (LLM) através do texto de entrada.">
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">15 – Segurança AI-First & Trivy Scan</div>
+          <div class="footer-page">8</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: PAUSA ==================== -->
+      <section class="content-slide" style="text-align:center;">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div style="margin-top:100px;">
+          <h2 style="font-size:2.5em; color:var(--fiap-pink);">☕ Pausa para Café</h2>
+          <h3 style="font-size:1.5em; color:var(--fiap-gray-light); margin-top:20px;">20h50 – 21h20 (30 minutos)</h3>
+          <p style="margin-top:40px; font-size:1.1em;">Na volta: Quizzes #2 e #3 + Hands-on Lab com Trivy e Defesa de LLMs!</p>
+        </div>
+        <div class="slide-footer"><div class="footer-page">9</div></div>
+      </section>
+
+      <!-- ==================== SLIDE: QUIZ 2 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz #2 (Retorno do Intervalo)</h2>
+        </div>
+
+        <div class="quiz-container">
+          <div class="quiz-question">Para que serve primordialmente a ferramenta 'Trivy' em ambientes corporativos de DevSecOps?</div>
+          <ul class="quiz-options">
+            <li data-correct="false">
+              <span class="option-letter">A</span>
+              Para formatar o código fonte automaticamente (Linter) e arrumar erros de sintaxe
+            </li>
+            <li data-correct="false">
+              <span class="option-letter">B</span>
+              Para construir (buildar) imagens Docker mais rapidamente, substituindo o comando docker build
+            </li>
+            <li data-correct="true">
+              <span class="option-letter">C</span>
+              Para escanear imagens de containers, sistemas de arquivos e repositórios em busca de vulnerabilidades de segurança (CVEs)
+            </li>
+            <li data-correct="false">
+              <span class="option-letter">D</span>
+              Para gerenciar o balanceamento de carga do Kubernetes e provisionar novos nós
+            </li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Exato! O Trivy é um poderoso scanner de vulnerabilidades para DevSecOps."
+               data-incorrect-msg="Atenção! O foco do Trivy é varrer imagens e arquivos (Scanners), e não realizar deploy ou build.">
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">15 – Segurança AI-First & Trivy Scan</div>
+          <div class="footer-page">10</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: QUIZ 3 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz #3</h2>
+        </div>
+
+        <div class="quiz-container">
+          <div class="quiz-question">Qual a melhor estratégia para mitigar 'Insecure Output Handling' ao integrar um LLM na LogiTech?</div>
+          <ul class="quiz-options">
+            <li data-correct="false">
+              <span class="option-letter">A</span>
+              Confiar na saída do LLM caso a temperatura do modelo esteja definida como 0 (Zero)
+            </li>
+            <li data-correct="true">
+              <span class="option-letter">B</span>
+              Tratar o texto gerado pelo LLM como 'untrusted input' (não confiável) e aplicar sanitização antes de enviá-lo ao banco ou ao navegador do usuário
+            </li>
+            <li data-correct="false">
+              <span class="option-letter">C</span>
+              Forçar o usuário a digitar uma senha forte antes de conversar com o bot
+            </li>
+            <li data-correct="false">
+              <span class="option-letter">D</span>
+              Utilizar exclusivamente modelos open-source ao invés de APIs comerciais
+            </li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto! Regra de Ouro: nunca confie no Output do LLM. Trate-o como input do usuário (sanitize, escape HTML, faça parse seguro)."
+               data-incorrect-msg="Incorreto. A principal defesa contra Insecure Output Handling é sanitizar o output do modelo como se fosse uma entrada não confiável.">
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">15 – Segurança AI-First & Trivy Scan</div>
+          <div class="footer-page">11</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: HANDS-ON LAB ==================== -->
+      <section class="section-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="accent-bar"></div>
+        <h2>Hands-on Lab:<br>Trivy Scan & Defesa de Prompt</h2>
+        <div class="slide-footer"><div class="footer-page">12</div></div>
+      </section>
+
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Atividade Prática em Dupla (21h35 – 22h35)</h2>
+        </div>
+
+        <div class="concept-cards">
+          <div class="concept-card">
+            <h4>Parte 1: Trivy Scan</h4>
+            <p>Escanear o <code>Dockerfile</code> intencionalmente vulnerável fornecido no Lab. Identificar as falhas e corrigir o arquivo.</p>
+          </div>
+          <div class="concept-card">
+            <h4>Parte 2: Defesa de Prompt Injection</h4>
+            <p>Implementar um script Python com OpenAI (ou Fake LLM Mock) contendo um System Prompt blindado contra manipulação, utilizando Delimitadores (`"""`).</p>
+          </div>
+        </div>
+        
+        <p>Acessem o kit de laboratório em <code>labs/aula15-lab/</code> para os arquivos iniciais.</p>
+
+        <div class="slide-footer">
+          <div class="footer-bar">15 – Segurança AI-First & Trivy Scan</div>
+          <div class="footer-page">13</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: ENCERRAMENTO ==================== -->
+      <section class="end-slide">
+        <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" style="max-width:350px;">
+        <div class="copyright">
+          Copyright &copy; 2026<br>
+          Prof.º José Romualdo da Costa Filho<br><br>
+          Todos direitos reservados. Reprodução ou divulgação total ou parcial<br>
+          deste documento é expressamente proibido sem o consentimento formal,<br>
+          por escrito, do Professor (autor).
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+  <script src="../assets/js/fiap-quiz.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      slideNumber: false,
+      width: 1280,
+      height: 720,
+      margin: 0,
+      minScale: 0.2,
+      maxScale: 2.0,
+      center: false,
+      pdfMaxPagesPerSlide: 1,
+      pdfSeparateFragments: false,
+      transition: 'slide',
+      transitionSpeed: 'default',
+      plugins: [RevealHighlight]
+    });
+  </script>
+</body>
+</html>

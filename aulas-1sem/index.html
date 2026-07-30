@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Microservice and Web Engineering & IT Services | FIAP 3º Ano</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --fiap-pink: #ED145B;
+      --fiap-dark: #111111;
+      --fiap-gray: #1E1E1E;
+      --fiap-card: #252525;
+      --fiap-text: #E0E0E0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: var(--fiap-dark);
+      color: var(--fiap-text);
+      line-height: 1.6;
+      padding: 40px 20px;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    header {
+      text-align: center;
+      margin-bottom: 50px;
+      padding-bottom: 30px;
+      border-bottom: 3px solid var(--fiap-pink);
+    }
+    header h1 { font-size: 2.5em; font-weight: 800; color: #FFFFFF; }
+    header h2 { font-size: 1.4em; color: var(--fiap-pink); margin-top: 5px; }
+    header p { font-size: 1em; color: #888888; margin-top: 10px; }
+    .module-title {
+      font-size: 1.6em;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin: 40px 0 20px 0;
+      border-left: 5px solid var(--fiap-pink);
+      padding-left: 15px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background-color: var(--fiap-card);
+      border-radius: 8px;
+      padding: 25px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+      border: 1px solid #333;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: var(--fiap-pink);
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .badge {
+      background-color: var(--fiap-pink);
+      color: #FFFFFF;
+      font-size: 0.75em;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+    .date { font-size: 0.85em; color: #888888; }
+    .card h3 { font-size: 1.2em; font-weight: 700; color: #FFFFFF; margin-bottom: 10px; }
+    .card p { font-size: 0.9em; color: #BBBBBB; margin-bottom: 20px; }
+    .actions { display: flex; gap: 10px; }
+    .btn {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 0.85em;
+      font-weight: 700;
+      transition: background 0.2s ease;
+    }
+    .btn-slides { background-color: var(--fiap-pink); color: #FFFFFF; }
+    .btn-slides:hover { background-color: #C70C49; }
+    .btn-lab { background-color: #333333; color: #FFFFFF; border: 1px solid #555; }
+    .btn-lab:hover { background-color: #444444; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>FIAP — Sistemas de Informação</h1>
+      <h2>Microservice and Web Engineering & IT Services</h2>
+      <p>Prof.º José Romualdo da Costa Filho | 1º Semestre (2026-2) — Turma de Agosto</p>
+    </header>
+
+    <div class="module-title">Módulo I: Requisitos, SDLC, Redes & Docker (Agosto)</div>
+    <div class="grid">
+      <div class="card">
+        <div>
+          <div class="card-header"><span class="badge">AULA 01</span><span class="date">04/08/2026</span></div>
+          <h3>SDLC, Git, PRD/SDD, DDD & Sockets TCP/UDP</h3>
+          <p>Visão geral do curso, contrato pedagógico, engenharia de requisitos com PRD/SDD, Bounded Contexts (DDD), Modelo OSI e Sockets L4 em Python.</p>
+        </div>
+        <div class="actions">
+          <a href="aulas/aula01.html" class="btn btn-slides">Ver Slides</a>
+          <a href="labs/aula01-lab/README.md" class="btn btn-lab">Ver Lab Kit</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div>
+          <div class="card-header"><span class="badge">AULA 02</span><span class="date">11/08/2026</span></div>
+          <h3>HTTP/1.1 a 3, SSE, Wireshark & Git Branching</h3>
+          <p>Evolução dos protocolos HTTP, Server-Sent Events, captura com Wireshark/cURL e workflow de Git Branching/Pull Requests.</p>
+        </div>
+        <div class="actions">
+          <a href="aulas/aula02.html" class="btn btn-slides">Ver Slides</a>
+          <a href="labs/aula02-lab/server.js" class="btn btn-lab">Ver Lab Kit</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div>
+          <div class="card-header"><span class="badge">AULA 03</span><span class="date">18/08/2026</span></div>
+          <h3>Docker I: Multi-Stage Build & Volumes</h3>
+          <p>Conteinerização da infraestrutura de telemetria com Dockerfiles Multi-Stage otimizados, volumes e gerenciamento de redes.</p>
+        </div>
+        <div class="actions">
+          <a href="aulas/aula03.html" class="btn btn-slides">Ver Slides</a>
+          <a href="labs/aula03-lab/Dockerfile" class="btn btn-lab">Ver Lab Kit</a>
+        </div>
+      </div>
+
+      <div class="card" style="border-color: var(--fiap-pink);">
+        <div>
+          <div class="card-header"><span class="badge" style="background:#555;">CP1</span><span class="date">25/08/2026</span></div>
+          <h3>Checkpoint I (Individual)</h3>
+          <p>Avaliação prática individual em laboratório acumulativa cobrindo Sockets, HTTP, Git e Docker.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="module-title">Módulo II: POO, SOLID, Patterns & Backend Poliglota (Setembro)</div>
+    <div class="grid">
+      <div class="card">
+        <div>
+          <div class="card-header"><span class="badge">AULA 05</span><span class="date">01/09/2026</span></div>
+          <h3>POO, SOLID & Patterns em Java & C#</h3>
+          <p>Princípios SOLID, Factory Method, Repository Pattern e Singleton no desenvolvimento dos microsserviços em Spring Boot e .NET Core.</p>
+        </div>
+        <div class="actions">
+          <a href="aulas/aula05.html" class="btn btn-slides">Ver Slides</a>
+          <a href="labs/aula05-lab/" class="btn btn-lab">Ver Lab Kit</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div>
+          <div class="card-header"><span class="badge">AULA 06</span><span class="date">08/09/2026</span></div>
+          <h3>Design Patterns em Node.js & Python</h3>
+          <p>Padrões Adapter, Decorator e Strategy aplicados a microsserviços em FastAPI (Python) e Express/Fastify (Node.js/TS).</p>
+        </div>
+        <div class="actions">
+          <a href="aulas/aula06.html" class="btn btn-slides">Ver Slides</a>
+          <a href="labs/aula06-lab/" class="btn btn-lab">Ver Lab Kit</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div>
+          <div class="card-header"><span class="badge">AULA 07</span><span class="date">15/09/2026</span></div>
+          <h3>Docker Compose & AI Gateways</h3>
+          <p>Orquestração multi-serviço com Docker Compose e implementação de AI Gateways (Strategy/Facade Patterns) com LiteLLM.</p>
+        </div>
+        <div class="actions">
+          <a href="aulas/aula07.html" class="btn btn-slides">Ver Slides</a>
+          <a href="labs/aula07-lab/docker-compose.yml" class="btn btn-lab">Ver Lab Kit</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div>
+          <div class="card-header"><span class="badge">AULA 08</span><span class="date">22/09/2026</span></div>
+          <h3>Function Calling & Git Worktrees I</h3>
+          <p>Command Pattern na orquestração de Agentes de IA executando Function Calling e o uso de Git Worktrees para execução paralela com IAs.</p>
+        </div>
+        <div class="actions">
+          <a href="aulas/aula08.html" class="btn btn-slides">Ver Slides</a>
+          <a href="labs/aula08-lab/agent.py" class="btn btn-lab">Ver Lab Kit</a>
+        </div>
+      </div>
+
+      <div class="card" style="border-color: var(--fiap-pink);">
+        <div>
+          <div class="card-header"><span class="badge" style="background:#555;">CP2</span><span class="date">29/09/2026</span></div>
+          <h3>Checkpoint II (Individual)</h3>
+          <p>Avaliação prática de Backend Poliglota, POO/SOLID, Design Patterns, Docker Compose e Agentes.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="module-title">Módulo III: Testes de Unidade, Frontend Enterprise, RAG & MCP (Outubro)</div>
+    <div class="grid">
+      <div class="card">
+        <div>
+          <div class="card-header"><span class="badge">AULA 10</span><span class="date">06/10/2026</span></div>
+          <h3>Testes de Unidade & Frontend React</h3>
+          <p>TDD/Mocks na suíte de testes de unidade e desenvolvimento da SPA em React (TypeScript) integrada às APIs do backend.</p>
+        </div>
+        <div class="actions">
+          <a href="aulas/aula10.html" class="btn btn-slides">Ver Slides</a>
+          <a href="labs/aula10-lab/" class="btn btn-lab">Ver Lab Kit</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div>
+          <div class="card-header"><span class="badge">AULA 11</span><span class="date">13/10/2026</span></div>
+          <h3>Frontend Angular (RxJS & Observer)</h3>
+          <p>Dashboard administrativo em Angular com Injeção de Dependência e programação reativa usando RxJS (Observer Pattern).</p>
+        </div>
+        <div class="actions">
+          <a href="aulas/aula11.html" class="btn btn-slides">Ver Slides</a>
+          <a href="labs/aula11-lab/" class="btn btn-lab">Ver Lab Kit</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div>
+          <div class="card-header"><span class="badge">AULA 12</span><span class="date">20/10/2026</span></div>
+          <h3>Persistência Vetorial, RAG & MCP</h3>
+          <p>Busca semântica em contratos com pgvector no PostgreSQL, pipeline RAG e criação de um servidor Model Context Protocol (MCP).</p>
+        </div>
+        <div class="actions">
+          <a href="aulas/aula12.html" class="btn btn-slides">Ver Slides</a>
+          <a href="labs/aula12-lab/" class="btn btn-lab">Ver Lab Kit</a>
+        </div>
+      </div>
+
+      <div class="card" style="border-color: var(--fiap-pink);">
+        <div>
+          <div class="card-header"><span class="badge" style="background:#555;">CP3</span><span class="date">27/10/2026</span></div>
+          <h3>Checkpoint III (Individual)</h3>
+          <p>Avaliação prática de Testes de Unidade, Frontend React/Angular, RAG e Servidores MCP.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="module-title">Módulo IV: Segurança Enterprise, Hardening & Global Solution (Novembro & Dezembro)</div>
+    <div class="grid">
+      <div class="card">
+        <div>
+          <div class="card-header"><span class="badge">AULA 14</span><span class="date">03/11/2026</span></div>
+          <h3>Segurança OAuth2, JWT & Git Worktrees II</h3>
+          <p>Autenticação corporativa com Keycloak, validação de tokens JWT, controle RBAC e Git Worktrees avançado para agentes de IA.</p>
+        </div>
+        <div class="actions">
+          <a href="aulas/aula14.html" class="btn btn-slides">Ver Slides</a>
+          <a href="labs/aula14-lab/" class="btn btn-lab">Ver Lab Kit</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div>
+          <div class="card-header"><span class="badge">AULA 15</span><span class="date">10/11/2026</span></div>
+          <h3>OWASP Top 10 LLM & Trivy Scan</h3>
+          <p>Sanitização contra Prompt Injection no AI Gateway e varreduras de vulnerabilidade em containers Docker com Trivy.</p>
+        </div>
+        <div class="actions">
+          <a href="aulas/aula15.html" class="btn btn-slides">Ver Slides</a>
+          <a href="labs/aula15-lab/" class="btn btn-lab">Ver Lab Kit</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div>
+          <div class="card-header"><span class="badge">AULA 16</span><span class="date">17/11/2026</span></div>
+          <h3>Integração End-to-End & Simulado GS</h3>
+          <p>Hackathon de integração completa da plataforma LogiTech Enterprise (React + Angular + Java + C# + Python + Node + Docker + Keycloak).</p>
+        </div>
+        <div class="actions">
+          <a href="aulas/aula16.html" class="btn btn-slides">Ver Slides</a>
+          <a href="labs/aula16-lab/" class="btn btn-lab">Ver Lab Kit</a>
+        </div>
+      </div>
+
+      <div class="card" style="border-color: var(--fiap-pink);">
+        <div>
+          <div class="card-header"><span class="badge" style="background:#555;">GS1 & GS2</span><span class="date">24/11 & 01/12</span></div>
+          <h3>Global Solution (Bancas Oficiais)</h3>
+          <p>Apresentação dos projetos integrados para a Banca de Professores da FIAP.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aula 14 – Segurança Web Enterprise (OAuth 2.0, OIDC, JWT, RBAC) & Git Worktrees II | FIAP</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
+  <link rel="stylesheet" href="../assets/css/fiap-theme.css">
+  <link rel="stylesheet" href="../assets/css/fiap-print.css">
+  <script>if(/print-pdf/gi.test(window.location.search)){var link=document.createElement('link');link.rel='stylesheet';link.href='https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/css/print/pdf.css';document.head.appendChild(link);}</script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- ==================== SLIDE: CAPA FIAP ==================== -->
+      <section class="cover-slide">
+        <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" class="fiap-logo-full">
+      </section>
+
+      <!-- ==================== SLIDE: TÍTULO DA AULA ==================== -->
+      <section class="title-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="title-card">
+          <div class="accent-bar"></div>
+          <h1>Sistemas de Informação</h1>
+          <h2>Microservice and Web Engineering & IT Services</h2>
+          <h3>Prof. José Romualdo</h3>
+        </div>
+        <div class="lesson-bar">AULA 14 – Segurança Web Enterprise (OAuth 2.0, OIDC, JWT, RBAC) & Git Worktrees II</div>
+      </section>
+
+      <!-- ==================== SLIDE: AGENDA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Agenda do Encontro (03/11/2026)</h2>
+        </div>
+
+        <table>
+          <thead>
+            <tr><th>Bloco</th><th>Horário</th><th>Conteúdo & Atividades</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Bloco 1</strong></td><td>19h20 – 20h50</td><td>Segurança Web Enterprise (OAuth 2.0, OIDC, JWT, RBAC) + Git Worktrees II + Quiz #1</td></tr>
+            <tr><td><strong>Intervalo</strong></td><td>20h50 – 21h20</td><td>☕ Pausa para Café e Networking (30 min)</td></tr>
+            <tr><td><strong>Bloco 2</strong></td><td>21h20 – 22h50</td><td>Quizzes #2 e #3 + Hands-on Lab (Implementação JWT/RBAC no Mini Mundo) + Dúvidas</td></tr>
+          </tbody>
+        </table>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Segurança Web Enterprise & Git Worktrees II</div>
+          <div class="footer-page">3</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: CONCEITOS ==================== -->
+      <section class="section-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="accent-bar"></div>
+        <h2>Autenticação vs Autorização<br>& Padrões Web</h2>
+        <div class="slide-footer"><div class="footer-page">4</div></div>
+      </section>
+
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>OAuth 2.0, OIDC e JWT</h2>
+        </div>
+
+        <div class="concept-cards">
+          <div class="concept-card">
+            <h4>OAuth 2.0</h4>
+            <p>Framework de Autorização. Permite que um aplicativo acesse recursos de um usuário sem expor sua senha.</p>
+          </div>
+          <div class="concept-card">
+            <h4>OpenID Connect (OIDC)</h4>
+            <p>Camada de Identidade sobre OAuth 2.0. Foca na Autenticação (Quem é o usuário?).</p>
+          </div>
+          <div class="concept-card">
+            <h4>JWT (JSON Web Token)</h4>
+            <p>Padrão aberto (RFC 7519) para transmitir dados de forma compacta e segura (Header, Payload, Signature).</p>
+          </div>
+          <div class="concept-card">
+            <h4>RBAC</h4>
+            <p>Role-Based Access Control. Controle de acesso baseado em papéis (Admin, User, Manager).</p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Segurança Web Enterprise & Git Worktrees II</div>
+          <div class="footer-page">5</div>
+        </div>
+      </section>
+
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Resgate da Espiral & LogiTech Enterprise</h2>
+        </div>
+
+        <div class="concept-cards">
+          <div class="concept-card">
+            <h4>Resgate da Espiral</h4>
+            <p>Nas aulas anteriores configuramos APIs, Docker e RAG. Agora, precisamos PROTEGER esses endpoints. Ninguém quer dados de frotas expostos!</p>
+          </div>
+          <div class="concept-card">
+            <h4>Mini Mundo LogiTech</h4>
+            <p>A LogiTech precisa que os Motoristas acessem apenas seus caminhões (Role: DRIVER), enquanto Analistas visualizam toda a frota (Role: ANALYST).</p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Segurança Web Enterprise & Git Worktrees II</div>
+          <div class="footer-page">6</div>
+        </div>
+      </section>
+      
+      <!-- ==================== SLIDE: GIT WORKTREES II ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Git Worktrees II (Revisão Prática)</h2>
+        </div>
+
+        <p>Como isolar a implementação de segurança sem atrapalhar o desenvolvimento da branch principal?</p>
+
+        <pre><code class="language-bash"># Adicionando uma nova worktree para a feature de segurança
+git worktree add ../logitech-security feature/auth-jwt
+
+# Verificando as worktrees ativas
+git worktree list
+
+# Removendo após finalizar (na pasta principal)
+git worktree remove ../logitech-security
+</code></pre>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Segurança Web Enterprise & Git Worktrees II</div>
+          <div class="footer-page">7</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: QUIZ 1 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz #1 (Fixação do Bloco 1)</h2>
+        </div>
+
+        <div class="quiz-container">
+          <div class="quiz-question">Qual a diferença fundamental entre OAuth 2.0 e OpenID Connect (OIDC)?</div>
+          <ul class="quiz-options">
+            <li data-correct="false">
+              <span class="option-letter">A</span>
+              Ambos servem exclusivamente para criptografia de dados em trânsito
+            </li>
+            <li data-correct="true">
+              <span class="option-letter">B</span>
+              OAuth 2.0 é para delegação de Autorização, enquanto OIDC adiciona uma camada de Autenticação de Identidade
+            </li>
+            <li data-correct="false">
+              <span class="option-letter">C</span>
+              OIDC substitui os JWTs, enquanto OAuth 2.0 obrigatoriamente os utiliza
+            </li>
+            <li data-correct="false">
+              <span class="option-letter">D</span>
+              OAuth 2.0 lida com senhas de usuário, enquanto OIDC lida com biometria
+            </li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto! OAuth 2.0 autoriza acesso a recursos, OIDC diz QUEM é o usuário (Autenticação)."
+               data-incorrect-msg="Incorreto. Lembre-se: OAuth 2 = Autorização. OIDC = Autenticação (Identidade) construída em cima do OAuth 2.0.">
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Segurança Web Enterprise & Git Worktrees II</div>
+          <div class="footer-page">8</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: PAUSA ==================== -->
+      <section class="content-slide" style="text-align:center;">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div style="margin-top:100px;">
+          <h2 style="font-size:2.5em; color:var(--fiap-pink);">☕ Pausa para Café</h2>
+          <h3 style="font-size:1.5em; color:var(--fiap-gray-light); margin-top:20px;">20h50 – 21h20 (30 minutos)</h3>
+          <p style="margin-top:40px; font-size:1.1em;">Na volta: Quizzes #2 e #3 + Hands-on Lab de JWT/RBAC!</p>
+        </div>
+        <div class="slide-footer"><div class="footer-page">9</div></div>
+      </section>
+
+      <!-- ==================== SLIDE: QUIZ 2 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz #2 (Retorno do Intervalo)</h2>
+        </div>
+
+        <div class="quiz-container">
+          <div class="quiz-question">O que acontece se o Payload de um JWT for alterado maliciosamente por um atacante após ter sido emitido pelo servidor?</div>
+          <ul class="quiz-options">
+            <li data-correct="false">
+              <span class="option-letter">A</span>
+              O servidor processará os dados alterados normalmente, pois o JWT não é criptografado.
+            </li>
+            <li data-correct="true">
+              <span class="option-letter">B</span>
+              A Assinatura (Signature) se tornará inválida, e o servidor rejeitará o token.
+            </li>
+            <li data-correct="false">
+              <span class="option-letter">C</span>
+              O JWT acionará um alerta automático para o Banco de Dados.
+            </li>
+            <li data-correct="false">
+              <span class="option-letter">D</span>
+              O navegador bloqueará a requisição por causa da política CORS.
+            </li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Exato! A assinatura protege a integridade do JWT. Se o payload mudar, a assinatura não baterá."
+               data-incorrect-msg="Cuidado! Embora o payload seja legível (base64), a Assinatura (Signature) garante que qualquer alteração invalide o token.">
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Segurança Web Enterprise & Git Worktrees II</div>
+          <div class="footer-page">10</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: QUIZ 3 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz #3</h2>
+        </div>
+
+        <div class="quiz-container">
+          <div class="quiz-question">No contexto do Mini Mundo LogiTech, implementamos RBAC. Qual o propósito principal disso?</div>
+          <ul class="quiz-options">
+            <li data-correct="false">
+              <span class="option-letter">A</span>
+              Garantir que a senha do usuário seja forte e complexa.
+            </li>
+            <li data-correct="false">
+              <span class="option-letter">B</span>
+              Proteger o banco de dados contra ataques de SQL Injection.
+            </li>
+            <li data-correct="true">
+              <span class="option-letter">C</span>
+              Garantir que usuários diferentes (ex: Motorista, Analista) tenham acessos restritos baseados em seus papéis.
+            </li>
+            <li data-correct="false">
+              <span class="option-letter">D</span>
+              Garantir que a comunicação HTTP seja feita via TLS/SSL.
+            </li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto! Role-Based Access Control limita o acesso dependendo da role (papel) atribuída ao usuário."
+               data-incorrect-msg="Incorreto. RBAC (Role-Based Access Control) foca exclusivamente em gerenciar autorizações baseadas no papel do usuário no sistema.">
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Segurança Web Enterprise & Git Worktrees II</div>
+          <div class="footer-page">11</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: HANDS-ON LAB ==================== -->
+      <section class="section-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="accent-bar"></div>
+        <h2>Hands-on Lab:<br>Implementação de JWT & RBAC (LogiTech)</h2>
+        <div class="slide-footer"><div class="footer-page">12</div></div>
+      </section>
+
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Atividade Prática em Dupla (21h35 – 22h35)</h2>
+        </div>
+
+        <div class="concept-cards">
+          <div class="concept-card">
+            <h4>Parte 1: Git Worktrees</h4>
+            <p>Abra uma nova worktree <code>feature/auth-jwt</code> para trabalhar isoladamente no código de segurança.</p>
+          </div>
+          <div class="concept-card">
+            <h4>Parte 2: Geração de JWT</h4>
+            <p>Criar rota <code>/login</code> no Node.js que valida credenciais fake e retorna um token JWT assinado.</p>
+          </div>
+          <div class="concept-card">
+            <h4>Parte 3: Middleware RBAC</h4>
+            <p>Criar middleware que bloqueia acesso à rota <code>/admin/dashboard</code> caso o JWT não tenha <code>role: 'ANALYST'</code>.</p>
+          </div>
+        </div>
+        
+        <p>Acessem o kit de laboratório em <code>labs/aula14-lab/</code> para as instruções completas.</p>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Segurança Web Enterprise & Git Worktrees II</div>
+          <div class="footer-page">13</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: ENCERRAMENTO ==================== -->
+      <section class="end-slide">
+        <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" style="max-width:350px;">
+        <div class="copyright">
+          Copyright &copy; 2026<br>
+          Prof.º José Romualdo da Costa Filho<br><br>
+          Todos direitos reservados. Reprodução ou divulgação total ou parcial<br>
+          deste documento é expressamente proibido sem o consentimento formal,<br>
+          por escrito, do Professor (autor).
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+  <script src="../assets/js/fiap-quiz.js"></script>
+  <script>
+    Reveal.initialize({
+      hash: true,
+      slideNumber: false,
+      width: 1280,
+      height: 720,
+      margin: 0,
+      minScale: 0.2,
+      maxScale: 2.0,
+      center: false,
+      pdfMaxPagesPerSlide: 1,
+      pdfSeparateFragments: false,
+      transition: 'slide',
+      transitionSpeed: 'default',
+      plugins: [RevealHighlight]
+    });
+  </script>
+</body>
+</html>
