@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aula 02 – HTTP/1.1 a 3, SSE, Wireshark & Git Branching | FIAP</title>
+  <title>Aula 02 – Protocolos de Aplicação: HTTP/1.1 a 3, SSE, cURL &amp; Git Workflows | FIAP</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
@@ -11,127 +11,1676 @@
   <link rel="stylesheet" href="../assets/css/fiap-print.css">
   <script>if(/print-pdf/gi.test(window.location.search)){var link=document.createElement('link');link.rel='stylesheet';link.href='https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/css/print/pdf.css';document.head.appendChild(link);}</script>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* Marcador de pendência: usado no slide de entrega enquanto o formulário não existe */
+    .pending-box {
+      border: 3px dashed #e0a800;
+      background: #fffbe6;
+      border-radius: 10px;
+      padding: 26px 30px;
+      text-align: center;
+    }
+    .pending-box .pending-tag {
+      display: inline-block;
+      background: #e0a800;
+      color: #1a1a1a;
+      font-size: 0.6em;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      padding: 5px 14px;
+      border-radius: 14px;
+      margin-bottom: 14px;
+    }
+    .pending-box h3 {
+      font-size: 1.1em;
+      color: #8a6d00;
+      margin: 0 0 10px 0;
+      font-weight: 800;
+    }
+    .pending-box p {
+      font-size: 0.72em;
+      color: #7a6000;
+      margin: 0;
+      line-height: 1.6;
+    }
+    /* Tabelas compactas dos slides de protocolo */
+    .reveal table.compact-table { font-size: 0.62em; margin: 8px 0; }
+    .reveal table.compact-table th { padding: 7px 12px; }
+    .reveal table.compact-table td { padding: 7px 12px; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+  </style>
 </head>
 <body>
   <div class="reveal">
     <div class="slides">
-      <section class="cover-slide"><img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" class="fiap-logo-full"></section>
-      <section class="title-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="title-card"><div class="accent-bar"></div><h1>Sistemas de Informação</h1><h2>Microservice and Web Engineering & IT Services</h2><h3>Prof. José Romualdo</h3></div>
-        <div class="lesson-bar">AULA 02 – HTTP/1.1 a 3, SSE, Wireshark & Git Branching</div>
+
+      <!-- ==================== 1: CAPA ==================== -->
+      <section class="cover-slide">
+        <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" class="fiap-logo-full">
       </section>
+
+      <!-- ==================== 2: TÍTULO ==================== -->
+      <section class="title-slide" data-background-image="../assets/img/microservices-bg.jpg" data-background-opacity="0.3">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="title-card">
+          <div class="accent-bar"></div>
+          <h1>Sistemas de Informação</h1>
+          <h2>Microservice and Web Engineering &amp; IT Services</h2>
+          <h3>Prof. José Romualdo</h3>
+        </div>
+        <div class="lesson-bar">AULA 02 – Protocolos de Aplicação: HTTP/1.1 a 3, SSE, cURL &amp; Git Workflows</div>
+      </section>
+
+      <!-- ==================== 3: AGENDA ==================== -->
       <section class="content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Agenda do Encontro</h2></div>
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Agenda do Encontro de Hoje</h2>
+        </div>
+
         <table>
-          <thead><tr><th>Bloco</th><th>Horário</th><th>Conteúdo & Atividades</th></tr></thead>
+          <thead>
+            <tr><th>Bloco</th><th>Horário</th><th>Conteúdo &amp; Atividades</th></tr>
+          </thead>
           <tbody>
-            <tr><td><strong>Bloco 1</strong></td><td>19h20 – 20h50</td><td>Evolução do HTTP + SSE (Server-Sent Events) + Quiz #1</td></tr>
-            <tr><td><strong>Intervalo</strong></td><td>20h50 – 21h20</td><td>☕ Pausa para Café e Networking (30 min)</td></tr>
-            <tr><td><strong>Bloco 2</strong></td><td>21h20 – 22h50</td><td>Quizzes #2 e #3 + Hands-on Lab (SSE App) + Git Branching</td></tr>
+            <tr><td><strong>Bloco 1</strong></td><td>19h20 – 20h50</td><td>Resgate da Aula 01, do Socket L4 ao HTTP L7, verbos, status codes e headers, HTTP/1.1 a 3, TLS, SSE, inspeção com cURL, Git Workflows, Quiz #1</td></tr>
+            <tr><td><strong>Intervalo</strong></td><td>20h50 – 21h20</td><td>Intervalo (30 minutos)</td></tr>
+            <tr><td><strong>Bloco 2</strong></td><td>21h20 – 22h50</td><td>Quizzes #2 e #3, Hands-on Lab (servidor HTTP/SSE em Node.js), Pull Request e Code Review, Entrega</td></tr>
           </tbody>
         </table>
-        <div class="slide-footer"><div class="footer-bar">02 – HTTP, SSE & Git</div><div class="footer-page">3</div></div>
-      </section>
-      <section class="content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Evolução HTTP & SSE (Server-Sent Events)</h2></div>
-        <div class="concept-cards">
-          <div class="concept-card"><h4>HTTP/1.1 a 3</h4><p>HTTP/1.1 (Keep-Alive), HTTP/2 (Multiplexação) e HTTP/3 (QUIC / UDP).</p></div>
-          <div class="concept-card"><h4>SSE (Server-Sent Events)</h4><p>Comunicação unidirecional Servidor -> Cliente sobre HTTP. Excelente para atualizações em tempo real.</p></div>
-        </div>
-        <div class="slide-footer"><div class="footer-bar">02 – HTTP, SSE & Git</div><div class="footer-page">4</div></div>
-      </section>
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Quiz #1 (Fixação do Bloco 1)</h2></div>
-        <div class="quiz-container">
-          <div class="quiz-question">Qual a principal melhoria do HTTP/2 em relação ao HTTP/1.1?</div>
-          <ul class="quiz-options">
-            <li data-correct="false"><span class="option-letter">A</span>Migração exclusiva para UDP.</li>
-            <li data-correct="true"><span class="option-letter">B</span>Multiplexação de várias requisições em uma única conexão TCP.</li>
-            <li data-correct="false"><span class="option-letter">C</span>Criação do método GET.</li>
-            <li data-correct="false"><span class="option-letter">D</span>Fim do uso de certificados TLS.</li>
-          </ul>
-          <div class="quiz-feedback" data-correct-msg="Correto! A multiplexação resolve o Head-of-Line Blocking do HTTP/1.1." data-incorrect-msg="Atenção: A grande inovação do HTTP/2 foi a multiplexação em uma mesma conexão TCP."></div>
-        </div>
-        <div class="slide-footer"><div class="footer-bar">02 – HTTP, SSE & Git</div><div class="footer-page">5</div></div>
-      </section>
-      <section class="content-slide" style="text-align:center;">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div style="margin-top:100px;">
-          <h2 style="font-size:2.5em; color:var(--fiap-pink);">☕ Pausa para Café</h2>
-          <h3 style="font-size:1.5em; color:var(--fiap-gray-light); margin-top:20px;">20h50 – 21h20 (30 minutos)</h3>
-          <p style="margin-top:40px; font-size:1.1em;">Na volta: Quizzes #2 e #3 + Hands-on Lab!</p>
-        </div>
-        <div class="slide-footer"><div class="footer-page">6</div></div>
-      </section>
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Quiz #2 (Retorno do Intervalo)</h2></div>
-        <div class="quiz-container">
-          <div class="quiz-question">Sobre o Server-Sent Events (SSE), assinale a alternativa correta:</div>
-          <ul class="quiz-options">
-            <li data-correct="false"><span class="option-letter">A</span>É um protocolo bidirecional, substituindo os WebSockets completamente.</li>
-            <li data-correct="true"><span class="option-letter">B</span>É unidirecional (Servidor -> Cliente), ideal para feeds de notícias e notificações.</li>
-            <li data-correct="false"><span class="option-letter">C</span>Funciona apenas na porta 443 sem uso do HTTP.</li>
-            <li data-correct="false"><span class="option-letter">D</span>Não suporta reconexão automática.</li>
-          </ul>
-          <div class="quiz-feedback" data-correct-msg="Perfeito! SSE usa HTTP padrão e entrega eventos unidirecionais do servidor." data-incorrect-msg="Erro! SSE é unidirecional e constrói sobre HTTP."></div>
-        </div>
-        <div class="slide-footer"><div class="footer-bar">02 – HTTP, SSE & Git</div><div class="footer-page">7</div></div>
-      </section>
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Quiz #3</h2></div>
-        <div class="quiz-container">
-          <div class="quiz-question">No Git, o que o comando 'git branch' faz?</div>
-          <ul class="quiz-options">
-            <li data-correct="true"><span class="option-letter">A</span>Lista, cria ou deleta ramificações no repositório.</li>
-            <li data-correct="false"><span class="option-letter">B</span>Envia o código para o servidor remoto.</li>
-            <li data-correct="false"><span class="option-letter">C</span>Desfaz o último commit.</li>
-            <li data-correct="false"><span class="option-letter">D</span>Apaga permanentemente o histórico.</li>
-          </ul>
-          <div class="quiz-feedback" data-correct-msg="Exato! Branches isolam o desenvolvimento de novas features." data-incorrect-msg="Incorreto. Git branch gerencia as linhas de desenvolvimento."></div>
-        </div>
-        <div class="slide-footer"><div class="footer-bar">02 – HTTP, SSE & Git</div><div class="footer-page">8</div></div>
-      </section>
-      <section class="content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Hands-on Lab: LogiTech Enterprise</h2></div>
-        <div class="concept-cards">
-          <div class="concept-card"><h4>Missão</h4><p>Implementar um servidor Node.js que envia atualizações de entrega da LogiTech via SSE.</p></div>
-          <div class="concept-card"><h4>Passo a Passo</h4><p>1. Criar branch `feature/sse-tracking`<br>2. Escrever `server.js`<br>3. Commit e merge.</p></div>
-        </div>
-        <pre><code class="language-javascript">// server.js
-const http = require('http');
 
-http.createServer((req, res) => {
-  if (req.url === '/events') {
-    res.writeHead(200, {
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache',
-      'Connection': 'keep-alive'
-    });
-    setInterval(() => {
-      res.write(`data: ${JSON.stringify({ status: 'Em trânsito', lat: -23.5, lng: -46.6 })}\n\n`);
-    }, 2000);
-  }
-}).listen(3000, () => console.log('SSE Server na porta 3000'));</code></pre>
-        <div class="slide-footer"><div class="footer-bar">02 – HTTP, SSE & Git</div><div class="footer-page">9</div></div>
+        <div class="takeaway">
+          <span class="takeaway-label">Entregável de hoje</span>
+          <p>Um Pull Request aprovado pela dupla vizinha, contendo o servidor HTTP/SSE de telemetria da LogiTech e as três medições feitas com cURL.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – Agenda do Encontro</div>
+          <div class="footer-page">3</div>
+        </div>
       </section>
+
+      <!-- ==================== 4: RESGATE DA ESPIRAL ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Resgate da Espiral: o que vocês entregaram na Aula 01</h2>
+        </div>
+
+        <p style="font-size:0.76em;">Na Aula 01 a entrega foi a <strong>especificação</strong>, não o código: <code>docs/PRD.md</code> e <code>docs/SDD.md</code> do serviço de telemetria da LogiTech. Hoje se implementa exatamente o que está lá.</p>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:13px; margin-top:10px;">
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Bounded Contexts</h4>
+            <p style="font-size:0.68em;">Vocês separaram Telemetria de Pedidos, Faturamento e Atendimento. Hoje a API que sobe é a do contexto de <strong>Telemetria</strong>, e só dele.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Linguagem Ubíqua</h4>
+            <p style="font-size:0.68em;">O glossário do SDD vira nome de rota, de campo JSON e de evento SSE. Se lá está <code>Posicao</code>, a rota não pode devolver <code>location</code>.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>TCP ou UDP, justificado por RNF</h4>
+            <p style="font-size:0.68em;">Vocês amarraram cada escolha de transporte a um requisito não funcional com número. Hoje esse mesmo número decide o desenho da API.</p>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:14px;">
+          <p style="font-size:0.74em;"><strong>O aviso que fizemos e se cumpre hoje:</strong> especificação vaga vai doer agora. Requisito sem valor numérico não diz qual endpoint precisa de cache; termo com dois nomes vira campo JSON inconsistente; Bounded Context mal traçado vira uma API que faz coisa demais.</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Regra do dia</span>
+          <p>Antes de escrever a primeira linha de Node.js, abram o SDD de vocês. Cada rota que criarem hoje precisa apontar para um RF, e cada decisão de header precisa apontar para um RNF.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – Resgate da Espiral</div>
+          <div class="footer-page">4</div>
+        </div>
+      </section>
+
+      <!-- ==================== 5: DESAFIO DO MINI MUNDO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O Desafio do Mini Mundo: a torre de controle da LogiTech</h2>
+        </div>
+
+        <p style="font-size:0.76em;">Os 400 caminhões já emitem posição por socket UDP. O problema agora é de <strong>consumo</strong>: a sala de operações precisa ver isso em um painel no navegador, e o navegador não fala socket cru.</p>
+
+        <div class="figure-split" style="grid-template-columns: 1fr 1fr; gap:24px; margin-top:8px;">
+          <div>
+            <div style="background:#fdedec; border-radius:8px; padding:15px 18px; border-left:4px solid #e74c3c;">
+              <div style="font-size:0.64em; font-weight:800; color:#c0392b; letter-spacing:1px; margin-bottom:8px;">O QUE TEMOS DEPOIS DA AULA 01</div>
+              <p style="font-size:0.7em; color:#7b241c; margin:0; line-height:1.6;">
+                Um processo Python escutando datagramas na porta 8081. Para ler os dados é preciso ter acesso ao servidor, abrir um terminal e olhar o log. Nenhum operador de logística vai fazer isso.
+              </p>
+            </div>
+          </div>
+          <div>
+            <div style="background:#eafaf1; border-radius:8px; padding:15px 18px; border-left:4px solid #27ae60;">
+              <div style="font-size:0.64em; font-weight:800; color:#1e8449; letter-spacing:1px; margin-bottom:8px;">O QUE PRECISA EXISTIR HOJE</div>
+              <p style="font-size:0.7em; color:#145a32; margin:0; line-height:1.6;">
+                Um endereço que qualquer navegador abre, que devolve a posição da frota em JSON e que empurra cada nova posição para a tela sem o operador apertar F5.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:12px; margin-top:14px;">
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>Dor 1: ninguém sabe ler</h4>
+            <p style="font-size:0.66em;">Byte cru não tem verbo, não tem status e não tem tipo de conteúdo. Cada cliente inventaria o próprio formato.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>Dor 2: atualização por F5</h4>
+            <p style="font-size:0.66em;">Um painel consultando a cada 5 segundos faz 17.280 requisições por dia, quase todas devolvendo o que já se sabia. Multiplique pelo número de operadores.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>Dor 3: nada é inspecionável</h4>
+            <p style="font-size:0.66em;">Quando a posição atrasa, não há como dizer se o problema é rede, servidor ou painel. Falta um protocolo com semântica.</p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – Desafio do Mini Mundo</div>
+          <div class="footer-page">5</div>
+        </div>
+      </section>
+
+      <!-- ==================== 6: DO SOCKET L4 AO HTTP L7 ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Do Socket L4 ao HTTP L7: o que subiu de camada <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <p style="font-size:0.76em;">O HTTP <strong>não substitui</strong> o TCP: ele roda em cima do mesmo socket que vocês abriram na Aula 01. O que ele acrescenta é o combinado de como conversar dentro daquele fluxo de bytes.</p>
+
+        <div class="slide-figure" style="margin-top:2px;">
+          <svg viewBox="0 0 1120 290" role="img" aria-label="Comparação entre socket TCP cru, sem semântica, e a mesma conexão carregando uma requisição HTTP com método, rota, headers e status">
+            <!-- Esquerda: socket cru -->
+            <rect x="10" y="14" width="490" height="238" rx="10" fill="#f5f5f5" stroke="#bbb" stroke-width="2"/>
+            <text x="255" y="42" text-anchor="middle" font-size="16" font-weight="800" fill="#555">Aula 01: socket TCP cru (L4)</text>
+            <rect x="38" y="58" width="434" height="72" rx="6" fill="#1a1a1a"/>
+            <text x="56" y="84" font-size="13" fill="#8fd18f" font-family="monospace">{"placa":"LGT1A01",</text>
+            <text x="56" y="104" font-size="13" fill="#8fd18f" font-family="monospace">"lat":-23.5505,"lng":-46.6333}</text>
+            <text x="56" y="122" font-size="11" fill="#777" font-family="monospace">...fluxo de bytes, sem moldura</text>
+
+            <text x="56" y="160" font-size="13" fill="#c0392b">Sem verbo: é leitura ou escrita?</text>
+            <text x="56" y="184" font-size="13" fill="#c0392b">Sem status: deu certo ou não?</text>
+            <text x="56" y="208" font-size="13" fill="#c0392b">Sem tipo: JSON, texto ou binário?</text>
+            <text x="56" y="232" font-size="13" fill="#c0392b">Sem cache, sem auth, sem rota.</text>
+
+            <!-- Seta -->
+            <defs>
+              <marker id="setaL7" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+                <path d="M0,0 L10,5 L0,10 Z" fill="#ED145B"/>
+              </marker>
+            </defs>
+            <line x1="512" y1="133" x2="600" y2="133" stroke="#ED145B" stroke-width="3.5" marker-end="url(#setaL7)"/>
+            <text x="556" y="122" text-anchor="middle" font-size="12" font-weight="800" fill="#ED145B">mesma</text>
+            <text x="556" y="160" text-anchor="middle" font-size="12" font-weight="800" fill="#ED145B">conexão TCP</text>
+
+            <!-- Direita: HTTP -->
+            <rect x="618" y="14" width="492" height="238" rx="10" fill="#fff5f8" stroke="#ED145B" stroke-width="2.5"/>
+            <text x="864" y="42" text-anchor="middle" font-size="16" font-weight="800" fill="#ED145B">Aula 02: HTTP sobre TCP (L7)</text>
+            <rect x="646" y="58" width="436" height="96" rx="6" fill="#1a1a1a"/>
+            <text x="664" y="82" font-size="13" fill="#fff" font-family="monospace">GET /api/v1/posicoes HTTP/1.1</text>
+            <text x="664" y="102" font-size="13" fill="#9cdcfe" font-family="monospace">Host: telemetria.logitech.com</text>
+            <text x="664" y="122" font-size="13" fill="#9cdcfe" font-family="monospace">Accept: application/json</text>
+            <text x="664" y="144" font-size="13" fill="#8fd18f" font-family="monospace">200 OK &#183; Content-Type: application/json</text>
+
+            <text x="664" y="182" font-size="13" fill="#1e8449">Verbo diz a intenção.</text>
+            <text x="664" y="206" font-size="13" fill="#1e8449">Status diz o resultado.</text>
+            <text x="664" y="230" font-size="13" fill="#1e8449">Headers dizem formato, cache e identidade.</text>
+          </svg>
+          <figcaption>O TCP entrega bytes na ordem. O HTTP transforma esses bytes em mensagens com intenção, resultado e metadados.</figcaption>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – L4 para L7</div>
+          <div class="footer-page">6</div>
+        </div>
+      </section>
+
+      <!-- ==================== 7: ANATOMIA DA MENSAGEM HTTP ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Anatomia de uma mensagem HTTP <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <p style="font-size:0.74em;">Até o HTTP/1.1 a mensagem é <strong>texto</strong>: linha inicial, headers, linha em branco e corpo. Saber isso de cor é o que permite depurar com <code>curl</code> qualquer integração que falhe.</p>
+
+        <div class="figure-split" style="grid-template-columns: 1fr 1fr; gap:20px; margin-top:4px; align-items:start;">
+          <div>
+            <div style="font-size:0.62em; font-weight:800; color:var(--fiap-pink); letter-spacing:1px; margin-bottom:5px;">REQUISIÇÃO</div>
+            <pre style="margin:0; font-size:0.6em;"><code class="language-http">GET /api/v1/posicoes?placa=ABC1D23 HTTP/1.1
+Host: telemetria.logitech.com
+Accept: application/json
+Authorization: Bearer eyJhbGciOi...
+User-Agent: painel-operacao/1.4
+
+</code></pre>
+            <p style="font-size:0.62em; color:#777; margin:6px 0 0;">Linha inicial: <span class="mono">método</span> + <span class="mono">alvo</span> + <span class="mono">versão</span>. Depois headers, uma linha em branco e o corpo (aqui vazio).</p>
+          </div>
+          <div>
+            <div style="font-size:0.62em; font-weight:800; color:var(--fiap-pink); letter-spacing:1px; margin-bottom:5px;">RESPOSTA</div>
+            <pre style="margin:0; font-size:0.6em;"><code class="language-http">HTTP/1.1 200 OK
+Content-Type: application/json; charset=utf-8
+Content-Length: 49
+Cache-Control: max-age=5
+
+{"placa":"ABC1D23","lat":-23.5505,"lng":-46.6333}</code></pre>
+            <p style="font-size:0.62em; color:#777; margin:6px 0 0;">Linha inicial: <span class="mono">versão</span> + <span class="mono">status</span> + razão. O corpo só é interpretável por causa do <span class="mono">Content-Type</span>.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Takeaway</span>
+          <p>Toda a semântica do HTTP cabe em quatro elementos: método, alvo, status e headers. O corpo é opcional e, sozinho, não significa nada.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – Mensagem HTTP</div>
+          <div class="footer-page">7</div>
+        </div>
+      </section>
+
+      <!-- ==================== 8: VERBOS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Verbos HTTP: intenção, segurança e idempotência <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <p style="font-size:0.74em;"><strong>Seguro</strong> significa que não altera estado. <strong>Idempotente</strong> significa que repetir a chamada dá o mesmo resultado que fazer uma vez. É o que decide se o cliente pode reenviar quando a rede cai.</p>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>Verbo</th><th>Seguro</th><th>Idempotente</th><th>Na API de telemetria da LogiTech</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono"><strong>GET</strong></td><td>Sim</td><td>Sim</td><td><span class="mono">GET /api/v1/posicoes</span> devolve a última posição de cada caminhão</td></tr>
+            <tr><td class="mono"><strong>POST</strong></td><td>Não</td><td>Não</td><td><span class="mono">POST /api/v1/ocorrencias</span> registra uma parada não planejada; repetir cria duas</td></tr>
+            <tr><td class="mono"><strong>PUT</strong></td><td>Não</td><td>Sim</td><td><span class="mono">PUT /api/v1/caminhoes/ABC1D23</span> substitui o cadastro inteiro; repetir dá no mesmo</td></tr>
+            <tr><td class="mono"><strong>PATCH</strong></td><td>Não</td><td>Depende</td><td><span class="mono">PATCH /api/v1/caminhoes/ABC1D23</span> altera só o motorista designado</td></tr>
+            <tr><td class="mono"><strong>DELETE</strong></td><td>Não</td><td>Sim</td><td><span class="mono">DELETE /api/v1/ocorrencias/77</span> apaga; repetir devolve 404, mas o estado final é o mesmo</td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Por que isso importa</span>
+          <p>O rastreador do caminhão perde sinal no meio do envio e não sabe se a chamada chegou. Se o verbo for idempotente, ele reenvia sem medo. Se for POST, reenviar duplica a ocorrência no painel do operador.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – Verbos HTTP</div>
+          <div class="footer-page">8</div>
+        </div>
+      </section>
+
+      <!-- ==================== 9: STATUS CODES ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Status Codes: de quem é a culpa <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <p style="font-size:0.74em;">A primeira classe já separa responsabilidade: <strong>4xx é erro de quem chamou</strong>, <strong>5xx é erro de quem respondeu</strong>. Devolver 200 com <span class="mono">{"erro": ...}</span> no corpo destrói essa informação.</p>
+
+        <div class="slide-figure" style="margin-top:2px;">
+          <svg viewBox="0 0 1120 250" role="img" aria-label="As cinco famílias de status code HTTP com exemplos da API de telemetria da LogiTech">
+            <!-- 1xx -->
+            <rect x="8" y="10" width="212" height="212" rx="9" fill="#f4f4f4" stroke="#aaa" stroke-width="2"/>
+            <rect x="8" y="10" width="212" height="34" rx="9" fill="#8a8a8a"/>
+            <text x="114" y="34" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">1xx Informativo</text>
+            <text x="24" y="72" font-size="13" font-weight="700" fill="#333">100 Continue</text>
+            <text x="24" y="94" font-size="13" font-weight="700" fill="#333">101 Switching Protocols</text>
+            <text x="24" y="126" font-size="12" fill="#666">O 101 é o que o</text>
+            <text x="24" y="146" font-size="12" fill="#666">WebSocket usa para</text>
+            <text x="24" y="166" font-size="12" fill="#666">sair do HTTP.</text>
+            <text x="24" y="198" font-size="12" fill="#999" font-style="italic">Raro no dia a dia.</text>
+
+            <!-- 2xx -->
+            <rect x="230" y="10" width="212" height="212" rx="9" fill="#eafaf1" stroke="#27ae60" stroke-width="2"/>
+            <rect x="230" y="10" width="212" height="34" rx="9" fill="#27ae60"/>
+            <text x="336" y="34" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">2xx Sucesso</text>
+            <text x="246" y="72" font-size="13" font-weight="700" fill="#145a32">200 OK</text>
+            <text x="246" y="94" font-size="13" font-weight="700" fill="#145a32">201 Created</text>
+            <text x="246" y="116" font-size="13" font-weight="700" fill="#145a32">204 No Content</text>
+            <text x="246" y="148" font-size="12" fill="#1e8449">201 ao registrar uma</text>
+            <text x="246" y="168" font-size="12" fill="#1e8449">ocorrência, com Location</text>
+            <text x="246" y="188" font-size="12" fill="#1e8449">apontando o recurso novo.</text>
+
+            <!-- 3xx -->
+            <rect x="452" y="10" width="212" height="212" rx="9" fill="#eef4fb" stroke="#5b8db8" stroke-width="2"/>
+            <rect x="452" y="10" width="212" height="34" rx="9" fill="#5b8db8"/>
+            <text x="558" y="34" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">3xx Redirecionamento</text>
+            <text x="468" y="72" font-size="13" font-weight="700" fill="#2c4d6b">301 Moved Permanently</text>
+            <text x="468" y="94" font-size="13" font-weight="700" fill="#2c4d6b">304 Not Modified</text>
+            <text x="468" y="126" font-size="12" fill="#3d6d94">304 é o que economiza</text>
+            <text x="468" y="146" font-size="12" fill="#3d6d94">banda: o painel pergunta,</text>
+            <text x="468" y="166" font-size="12" fill="#3d6d94">e o servidor responde</text>
+            <text x="468" y="186" font-size="12" fill="#3d6d94">"nada mudou".</text>
+
+            <!-- 4xx -->
+            <rect x="674" y="10" width="212" height="212" rx="9" fill="#fef5e7" stroke="#e0a800" stroke-width="2"/>
+            <rect x="674" y="10" width="212" height="34" rx="9" fill="#e0a800"/>
+            <text x="780" y="34" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">4xx Erro do cliente</text>
+            <text x="690" y="72" font-size="13" font-weight="700" fill="#7d5a00">400 Bad Request</text>
+            <text x="690" y="94" font-size="13" font-weight="700" fill="#7d5a00">401 / 403</text>
+            <text x="690" y="116" font-size="13" font-weight="700" fill="#7d5a00">404 Not Found</text>
+            <text x="690" y="138" font-size="13" font-weight="700" fill="#7d5a00">405 Method Not Allowed</text>
+            <text x="690" y="170" font-size="12" fill="#8a6d00">401 é "não sei quem é";</text>
+            <text x="690" y="190" font-size="12" fill="#8a6d00">403 é "sei, e não pode".</text>
+
+            <!-- 5xx -->
+            <rect x="896" y="10" width="212" height="212" rx="9" fill="#fdedec" stroke="#e74c3c" stroke-width="2"/>
+            <rect x="896" y="10" width="212" height="34" rx="9" fill="#e74c3c"/>
+            <text x="1002" y="34" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">5xx Erro do servidor</text>
+            <text x="912" y="72" font-size="13" font-weight="700" fill="#7b241c">500 Internal Server Error</text>
+            <text x="912" y="94" font-size="13" font-weight="700" fill="#7b241c">502 Bad Gateway</text>
+            <text x="912" y="116" font-size="13" font-weight="700" fill="#7b241c">503 Service Unavailable</text>
+            <text x="912" y="148" font-size="12" fill="#a04000">503 quando o coletor de</text>
+            <text x="912" y="168" font-size="12" fill="#a04000">telemetria está fora:</text>
+            <text x="912" y="188" font-size="12" fill="#a04000">o cliente pode tentar de novo.</text>
+          </svg>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – Status Codes</div>
+          <div class="footer-page">9</div>
+        </div>
+      </section>
+
+      <!-- ==================== 10: HEADERS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Headers: onde mora a engenharia <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <p style="font-size:0.74em;">Header não é enfeite: é o contrato de formato, cache, identidade e conexão. A maior parte dos incidentes de integração que vocês vão ver na carreira é briga de header.</p>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>Header</th><th>Para que serve</th><th>Efeito prático na LogiTech</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono">Content-Type</td><td>Declara o formato do corpo</td><td>Sem <span class="mono">application/json</span>, o painel recebe texto e o parse quebra</td></tr>
+            <tr><td class="mono">Accept</td><td>Diz o que o cliente sabe ler</td><td>O mesmo endpoint pode servir JSON ao painel e CSV ao BI</td></tr>
+            <tr><td class="mono">Authorization</td><td>Carrega a credencial</td><td>Token do operador; sem ele a resposta é 401, não 200 vazio</td></tr>
+            <tr><td class="mono">Cache-Control</td><td>Define quem pode guardar e por quanto tempo</td><td><span class="mono">max-age=5</span> na consulta de posição; <span class="mono">no-cache</span> obrigatório no stream SSE</td></tr>
+            <tr><td class="mono">Connection / Keep-Alive</td><td>Mantém a conexão TCP aberta</td><td>Evita repetir o handshake a cada requisição do painel</td></tr>
+            <tr><td class="mono">ETag / If-None-Match</td><td>Identifica a versão do recurso</td><td>Permite responder 304 quando a posição não mudou desde a última consulta</td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Takeaway</span>
+          <p>Headers custam bytes em toda requisição. No HTTP/1.1 eles vão em texto, sem compressão. Guardem isso: é exatamente o que o HTTP/2 ataca com o HPACK.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – Headers HTTP</div>
+          <div class="footer-page">10</div>
+        </div>
+      </section>
+
+      <!-- ==================== 11: HTTP/1.1 E HOL BLOCKING ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>HTTP/1.1: uma fila só, e o Head-of-Line blocking <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <p style="font-size:0.72em;">No HTTP/1.1 cada conexão TCP atende <strong>uma requisição por vez</strong>. Se a primeira demora, as demais esperam, mesmo que já estivessem prontas no servidor. Isso é o Head-of-Line blocking.</p>
+
+        <div class="slide-figure" style="margin-top:0;">
+          <svg viewBox="0 0 1120 300" role="img" aria-label="Linha do tempo do HTTP 1.1: as três requisições são pedidas ao mesmo tempo, mas atendidas em série, e as duas últimas passam a maior parte do tempo apenas esperando">
+            <defs>
+              <pattern id="espera" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                <rect width="8" height="8" fill="#fdedec"/>
+                <line x1="0" y1="0" x2="0" y2="8" stroke="#e8b5b0" stroke-width="3"/>
+              </pattern>
+            </defs>
+
+            <text x="20" y="24" font-size="13" font-weight="800" fill="#666">As três são pedidas no instante 0</text>
+            <line x1="140" y1="30" x2="140" y2="252" stroke="#ED145B" stroke-width="2" stroke-dasharray="4,4"/>
+
+            <!-- R1 -->
+            <text x="20" y="62" font-size="14" font-weight="800" fill="#1a1a1a">R1</text>
+            <text x="20" y="80" font-size="12" fill="#777">/mapa.png</text>
+            <rect x="140" y="44" width="525" height="42" rx="5" fill="#ED145B"/>
+            <text x="402" y="70" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">transferindo, 350 ms</text>
+
+            <!-- R2 -->
+            <text x="20" y="122" font-size="14" font-weight="800" fill="#1a1a1a">R2</text>
+            <text x="20" y="140" font-size="12" fill="#777">/api/v1/posicoes</text>
+            <rect x="140" y="104" width="525" height="42" rx="5" fill="url(#espera)" stroke="#e8b5b0"/>
+            <text x="402" y="130" text-anchor="middle" font-size="14" font-weight="700" fill="#c0392b">bloqueada, sem nada para fazer</text>
+            <rect x="665" y="104" width="150" height="42" rx="5" fill="#ED145B"/>
+            <text x="740" y="130" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">100 ms</text>
+
+            <!-- R3 -->
+            <text x="20" y="182" font-size="14" font-weight="800" fill="#1a1a1a">R3</text>
+            <text x="20" y="200" font-size="12" fill="#777">/api/v1/alertas</text>
+            <rect x="140" y="164" width="675" height="42" rx="5" fill="url(#espera)" stroke="#e8b5b0"/>
+            <text x="477" y="190" text-anchor="middle" font-size="14" font-weight="700" fill="#c0392b">bloqueada, atrás de R1 e de R2</text>
+            <rect x="815" y="164" width="150" height="42" rx="5" fill="#ED145B"/>
+            <text x="890" y="190" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">100 ms</text>
+
+            <!-- eixo do tempo -->
+            <line x1="140" y1="228" x2="1030" y2="228" stroke="#999" stroke-width="2"/>
+            <g font-size="11" fill="#888" text-anchor="middle">
+              <line x1="140" y1="224" x2="140" y2="234" stroke="#999" stroke-width="2"/><text x="132" y="250">0</text>
+              <line x1="365" y1="224" x2="365" y2="234" stroke="#999" stroke-width="2"/><text x="365" y="250">150 ms</text>
+              <line x1="590" y1="224" x2="590" y2="234" stroke="#999" stroke-width="2"/><text x="590" y="250">300 ms</text>
+              <line x1="815" y1="224" x2="815" y2="234" stroke="#999" stroke-width="2"/><text x="815" y="250">450 ms</text>
+              <line x1="1030" y1="224" x2="1030" y2="234" stroke="#999" stroke-width="2"/><text x="1010" y="250">600 ms</text>
+            </g>
+
+            <line x1="965" y1="40" x2="965" y2="228" stroke="#c0392b" stroke-width="2.5"/>
+            <rect x="836" y="264" width="258" height="28" rx="6" fill="#fdedec" stroke="#e74c3c" stroke-width="1.5"/>
+            <text x="965" y="283" text-anchor="middle" font-size="13" font-weight="800" fill="#c0392b">tudo pronto só aos 550 ms</text>
+
+            <text x="20" y="283" font-size="13" fill="#555">R2 levava 100 ms de trabalho real e foi entregue aos 450 ms. Os 350 ms de diferença são só fila.</text>
+          </svg>
+          <figcaption>Head-of-Line blocking: a conexão atende uma mensagem por vez, então a requisição mais lenta define quando todas as outras começam. O navegador contorna abrindo até seis conexões por domínio, o que multiplica handshakes.</figcaption>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – HTTP/1.1</div>
+          <div class="footer-page">11</div>
+        </div>
+      </section>
+
+      <!-- ==================== 12: HTTP/2 ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>HTTP/2: frames binários e multiplexação <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <p style="font-size:0.72em;">O HTTP/2 troca o texto por <strong>frames binários</strong>, cada um marcado com o número do seu <em>stream</em>. Frames de streams diferentes viajam intercalados na mesma conexão TCP e são remontados na chegada.</p>
+
+        <div class="slide-figure" style="margin-top:0;">
+          <svg viewBox="0 0 1120 300" role="img" aria-label="Linha do tempo do HTTP 2: as mesmas três requisições, agora atendidas em paralelo na mesma conexão, e o detalhe dos frames intercalados">
+            <text x="20" y="24" font-size="13" font-weight="800" fill="#666">Mesmas três requisições, mesma conexão TCP</text>
+            <line x1="140" y1="30" x2="140" y2="252" stroke="#ED145B" stroke-width="2" stroke-dasharray="4,4"/>
+
+            <!-- R1 -->
+            <text x="20" y="62" font-size="14" font-weight="800" fill="#1a1a1a">R1</text>
+            <text x="20" y="80" font-size="12" fill="#777">/mapa.png</text>
+            <rect x="140" y="44" width="525" height="42" rx="5" fill="#ED145B"/>
+            <text x="402" y="70" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">stream 1, 350 ms</text>
+
+            <!-- R2 -->
+            <text x="20" y="122" font-size="14" font-weight="800" fill="#1a1a1a">R2</text>
+            <text x="20" y="140" font-size="12" fill="#777">/api/v1/posicoes</text>
+            <rect x="140" y="104" width="150" height="42" rx="5" fill="#1a1a1a"/>
+            <text x="215" y="130" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">stream 2</text>
+            <text x="304" y="130" font-size="13" font-weight="800" fill="#1e8449">pronta aos 100 ms, entregue aos 100 ms</text>
+
+            <!-- R3 -->
+            <text x="20" y="182" font-size="14" font-weight="800" fill="#1a1a1a">R3</text>
+            <text x="20" y="200" font-size="12" fill="#777">/api/v1/alertas</text>
+            <rect x="140" y="164" width="150" height="42" rx="5" fill="#5b8db8"/>
+            <text x="215" y="190" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">stream 3</text>
+            <text x="304" y="190" font-size="13" font-weight="800" fill="#1e8449">não espera ninguém</text>
+
+            <!-- eixo do tempo -->
+            <line x1="140" y1="228" x2="1030" y2="228" stroke="#999" stroke-width="2"/>
+            <g font-size="11" fill="#888" text-anchor="middle">
+              <line x1="140" y1="224" x2="140" y2="234" stroke="#999" stroke-width="2"/><text x="132" y="250">0</text>
+              <line x1="365" y1="224" x2="365" y2="234" stroke="#999" stroke-width="2"/><text x="365" y="250">150 ms</text>
+              <line x1="590" y1="224" x2="590" y2="234" stroke="#999" stroke-width="2"/><text x="590" y="250">300 ms</text>
+              <line x1="815" y1="224" x2="815" y2="234" stroke="#999" stroke-width="2"/><text x="815" y="250">450 ms</text>
+              <line x1="1030" y1="224" x2="1030" y2="234" stroke="#999" stroke-width="2"/><text x="1010" y="250">600 ms</text>
+            </g>
+
+            <line x1="665" y1="40" x2="665" y2="228" stroke="#27ae60" stroke-width="2.5"/>
+            <rect x="536" y="264" width="258" height="28" rx="6" fill="#eafaf1" stroke="#27ae60" stroke-width="1.5"/>
+            <text x="665" y="283" text-anchor="middle" font-size="13" font-weight="800" fill="#1e8449">tudo pronto aos 350 ms</text>
+
+            <!-- detalhe: frames intercalados no fio -->
+            <text x="836" y="60" font-size="12" font-weight="800" fill="#666">No fio, os frames vão intercalados:</text>
+            <rect x="836" y="70" width="258" height="34" rx="5" fill="#f5f5f5" stroke="#bbb"/>
+            <rect x="842" y="76" width="58" height="22" rx="3" fill="#ED145B"/><text x="871" y="91" text-anchor="middle" font-size="10" fill="#fff">s1</text>
+            <rect x="904" y="76" width="58" height="22" rx="3" fill="#1a1a1a"/><text x="933" y="91" text-anchor="middle" font-size="10" fill="#fff">s2</text>
+            <rect x="966" y="76" width="58" height="22" rx="3" fill="#5b8db8"/><text x="995" y="91" text-anchor="middle" font-size="10" fill="#fff">s3</text>
+            <rect x="1028" y="76" width="60" height="22" rx="3" fill="#ED145B"/><text x="1058" y="91" text-anchor="middle" font-size="10" fill="#fff">s1</text>
+            <text x="836" y="122" font-size="12" fill="#777">cada frame diz a que stream pertence,</text>
+            <text x="836" y="140" font-size="12" fill="#777">então a ordem de chegada não importa</text>
+
+            <text x="20" y="283" font-size="13" fill="#555">O trabalho é o mesmo: some a fila. O HPACK ainda comprime os headers.</text>
+          </svg>
+          <figcaption>Multiplexação: os 550 ms do HTTP/1.1 viram 350 ms, o tempo da requisição mais lenta, porque nenhuma resposta pronta fica esperando a vez. O bloqueio da camada HTTP acaba aqui.</figcaption>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – HTTP/2</div>
+          <div class="footer-page">12</div>
+        </div>
+      </section>
+
+      <!-- ==================== 13: HTTP/3 ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>HTTP/3: o bloqueio que sobrou era do TCP <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <p style="font-size:0.72em;">O HTTP/2 resolveu o bloqueio na camada HTTP, mas o TCP continua entregando <strong>um fluxo único e ordenado</strong>: um pacote perdido trava tudo o que vem depois, inclusive frames de outros streams. O HTTP/3 troca o TCP pelo QUIC, que roda sobre UDP.</p>
+
+        <div class="slide-figure" style="margin-top:0;">
+          <svg viewBox="0 0 1120 250" role="img" aria-label="Comparação entre HTTP 2 sobre TCP, onde um pacote perdido trava todos os streams, e HTTP 3 sobre QUIC, onde apenas o stream afetado para">
+            <!-- HTTP/2 sobre TCP -->
+            <rect x="10" y="10" width="540" height="228" rx="10" fill="#fdedec" stroke="#e74c3c" stroke-width="2"/>
+            <text x="280" y="38" text-anchor="middle" font-size="16" font-weight="800" fill="#c0392b">HTTP/2 sobre TCP</text>
+            <text x="280" y="58" text-anchor="middle" font-size="12" fill="#a04000">um único fluxo ordenado para todos os streams</text>
+
+            <rect x="40" y="76" width="480" height="34" rx="5" fill="#fff" stroke="#e0b6b6"/>
+            <rect x="48" y="82" width="70" height="22" rx="3" fill="#ED145B"/><text x="83" y="98" text-anchor="middle" font-size="10" fill="#fff">s1</text>
+            <rect x="124" y="82" width="70" height="22" rx="3" fill="#5b8db8"/><text x="159" y="98" text-anchor="middle" font-size="10" fill="#fff">s3</text>
+            <rect x="200" y="82" width="70" height="22" rx="3" fill="#999" stroke="#c0392b" stroke-width="2" stroke-dasharray="3,2"/>
+            <text x="235" y="98" text-anchor="middle" font-size="10" fill="#fff">perdido</text>
+            <rect x="276" y="82" width="70" height="22" rx="3" fill="#1a1a1a" opacity="0.35"/><text x="311" y="98" text-anchor="middle" font-size="10" fill="#fff">s2</text>
+            <rect x="352" y="82" width="70" height="22" rx="3" fill="#ED145B" opacity="0.35"/><text x="387" y="98" text-anchor="middle" font-size="10" fill="#fff">s1</text>
+            <rect x="428" y="82" width="70" height="22" rx="3" fill="#5b8db8" opacity="0.35"/><text x="463" y="98" text-anchor="middle" font-size="10" fill="#fff">s3</text>
+
+            <text x="280" y="140" text-anchor="middle" font-size="14" font-weight="800" fill="#c0392b">TODOS OS STREAMS PARAM</text>
+            <text x="280" y="166" text-anchor="middle" font-size="12" fill="#7b241c">O TCP não entrega nada fora de ordem à aplicação.</text>
+            <text x="280" y="186" text-anchor="middle" font-size="12" fill="#7b241c">Os frames cinzentos já chegaram, mas ficam retidos</text>
+            <text x="280" y="206" text-anchor="middle" font-size="12" fill="#7b241c">até a retransmissão do pacote perdido.</text>
+            <text x="280" y="228" text-anchor="middle" font-size="12" font-weight="700" fill="#c0392b">Head-of-Line blocking na camada de transporte.</text>
+
+            <!-- HTTP/3 sobre QUIC -->
+            <rect x="570" y="10" width="540" height="228" rx="10" fill="#eafaf1" stroke="#27ae60" stroke-width="2"/>
+            <text x="840" y="38" text-anchor="middle" font-size="16" font-weight="800" fill="#1e8449">HTTP/3 sobre QUIC (UDP)</text>
+            <text x="840" y="58" text-anchor="middle" font-size="12" fill="#145a32">cada stream tem controle de ordem próprio</text>
+
+            <rect x="600" y="74" width="480" height="24" rx="4" fill="#fff" stroke="#b7dfc6"/>
+            <rect x="606" y="78" width="150" height="16" rx="3" fill="#ED145B"/>
+            <rect x="762" y="78" width="150" height="16" rx="3" fill="#ED145B"/>
+            <rect x="918" y="78" width="156" height="16" rx="3" fill="#ED145B"/>
+            <text x="1090" y="91" text-anchor="end" font-size="10" fill="#1e8449"> </text>
+
+            <rect x="600" y="104" width="480" height="24" rx="4" fill="#fff" stroke="#b7dfc6"/>
+            <rect x="606" y="108" width="150" height="16" rx="3" fill="#999" stroke="#c0392b" stroke-width="1.5" stroke-dasharray="3,2"/>
+            <rect x="762" y="108" width="150" height="16" rx="3" fill="#1a1a1a" opacity="0.35"/>
+            <rect x="918" y="108" width="156" height="16" rx="3" fill="#1a1a1a" opacity="0.35"/>
+
+            <rect x="600" y="134" width="480" height="24" rx="4" fill="#fff" stroke="#b7dfc6"/>
+            <rect x="606" y="138" width="150" height="16" rx="3" fill="#5b8db8"/>
+            <rect x="762" y="138" width="150" height="16" rx="3" fill="#5b8db8"/>
+            <rect x="918" y="138" width="156" height="16" rx="3" fill="#5b8db8"/>
+
+            <text x="588" y="90" text-anchor="end" font-size="11" font-weight="700" fill="#1e8449">s1</text>
+            <text x="588" y="120" text-anchor="end" font-size="11" font-weight="700" fill="#c0392b">s2</text>
+            <text x="588" y="150" text-anchor="end" font-size="11" font-weight="700" fill="#1e8449">s3</text>
+
+            <text x="840" y="184" text-anchor="middle" font-size="14" font-weight="800" fill="#1e8449">SÓ O STREAM 2 ESPERA</text>
+            <text x="840" y="206" text-anchor="middle" font-size="12" fill="#145a32">O QUIC ainda funde o handshake de transporte com o de TLS 1.3,</text>
+            <text x="840" y="226" text-anchor="middle" font-size="12" fill="#145a32">e sobrevive à troca de Wi-Fi para 4G pelo Connection ID.</text>
+          </svg>
+          <figcaption>O UDP da Aula 01 volta aqui: o QUIC usa o datagrama justamente porque precisava de liberdade para reimplementar ordem, confiabilidade e criptografia por stream, em espaço de usuário.</figcaption>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – HTTP/3 e QUIC</div>
+          <div class="footer-page">13</div>
+        </div>
+      </section>
+
+      <!-- ==================== 14: QUADRO COMPARATIVO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quadro comparativo: 1.1, 2 e 3 <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>Aspecto</th><th>HTTP/1.1 (1997)</th><th>HTTP/2 (2015)</th><th>HTTP/3 (2022)</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Transporte</strong></td><td>TCP</td><td>TCP</td><td>QUIC sobre UDP</td></tr>
+            <tr><td><strong>Formato</strong></td><td>Texto</td><td>Frames binários</td><td>Frames binários</td></tr>
+            <tr><td><strong>Concorrência</strong></td><td>Uma mensagem por conexão; navegador abre até 6</td><td>Streams multiplexados em uma conexão</td><td>Streams independentes de verdade</td></tr>
+            <tr><td><strong>Head-of-Line</strong></td><td>Na camada HTTP e na de transporte</td><td>Resolvido no HTTP, permanece no TCP</td><td>Resolvido nas duas</td></tr>
+            <tr><td><strong>Headers</strong></td><td>Texto, sem compressão</td><td>Comprimidos com HPACK</td><td>Comprimidos com QPACK</td></tr>
+            <tr><td><strong>Criptografia</strong></td><td>Opcional (TLS por cima)</td><td>Opcional na norma, obrigatória na prática dos navegadores</td><td>Integrada ao protocolo (TLS 1.3)</td></tr>
+            <tr><td><strong>Custo de abertura</strong></td><td>TCP + TLS: 2 a 3 RTT</td><td>TCP + TLS: 2 a 3 RTT</td><td>1 RTT, e 0-RTT ao reconectar</td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Para a LogiTech</span>
+          <p>O painel da torre de controle abre dezenas de recursos ao mesmo tempo: HTTP/2 já paga a conta. O aplicativo do motorista, em 4G instável trocando de antena, é o caso em que o HTTP/3 faz diferença mensurável.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – Comparativo HTTP</div>
+          <div class="footer-page">14</div>
+        </div>
+      </section>
+
+      <!-- ==================== 15: TLS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O handshake TLS: como nasce o cadeado <a href="#/ref-slide" class="ref-badge" title="Ver referências">[3]</a></h2>
+        </div>
+
+        <p style="font-size:0.72em;">O HTTPS é o mesmo HTTP dentro de um túnel TLS. Antes de qualquer byte de aplicação, cliente e servidor negociam a versão, provam identidade por certificado e derivam a chave de sessão.</p>
+
+        <div class="slide-figure" style="margin-top:0;">
+          <svg viewBox="0 0 1120 264" role="img" aria-label="Diagrama de sequência do handshake TLS 1.3 entre o painel e o servidor de telemetria, do ClientHello até os dados de aplicação cifrados">
+            <defs>
+              <marker id="tlsDir" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+                <path d="M0,0 L10,5 L0,10 Z" fill="#ED145B"/>
+              </marker>
+              <marker id="tlsEsq" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+                <path d="M0,0 L10,5 L0,10 Z" fill="#1a1a1a"/>
+              </marker>
+              <marker id="tlsVerde" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+                <path d="M0,0 L10,5 L0,10 Z" fill="#27ae60"/>
+              </marker>
+            </defs>
+
+            <rect x="50" y="8" width="190" height="40" rx="6" fill="#1a1a1a"/>
+            <text x="145" y="34" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">Painel (cliente)</text>
+            <rect x="880" y="8" width="190" height="40" rx="6" fill="#1a1a1a"/>
+            <text x="975" y="34" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">Servidor LogiTech</text>
+
+            <line x1="145" y1="52" x2="145" y2="252" stroke="#ddd" stroke-width="2.5"/>
+            <line x1="975" y1="52" x2="975" y2="252" stroke="#ddd" stroke-width="2.5"/>
+
+            <rect x="1004" y="62" width="104" height="72" rx="6" fill="#f5f5f5" stroke="#ccc"/>
+            <text x="1056" y="86" text-anchor="middle" font-size="12" font-weight="800" fill="#777">1 RTT</text>
+            <text x="1056" y="106" text-anchor="middle" font-size="11" fill="#999">antes do</text>
+            <text x="1056" y="122" text-anchor="middle" font-size="11" fill="#999">primeiro HTTP</text>
+
+            <!-- 1. ClientHello -->
+            <text x="560" y="72" text-anchor="middle" font-size="13" font-weight="700" fill="#ED145B">ClientHello: versões suportadas, cifras e key share</text>
+            <line x1="150" y1="82" x2="968" y2="82" stroke="#ED145B" stroke-width="3" marker-end="url(#tlsDir)"/>
+
+            <!-- 2. ServerHello -->
+            <text x="560" y="112" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">ServerHello + Certificado + key share do servidor</text>
+            <line x1="970" y1="122" x2="152" y2="122" stroke="#1a1a1a" stroke-width="3" marker-end="url(#tlsEsq)"/>
+
+            <!-- 3. Validacao local -->
+            <rect x="152" y="136" width="290" height="28" rx="6" fill="#eef4fb" stroke="#5b8db8" stroke-width="1.5"/>
+            <text x="297" y="155" text-anchor="middle" font-size="12" font-weight="700" fill="#2c4d6b">valida a cadeia do certificado</text>
+
+            <!-- 4. Finished -->
+            <text x="560" y="186" text-anchor="middle" font-size="13" font-weight="700" fill="#ED145B">Finished, já cifrado com a chave de sessão derivada</text>
+            <line x1="150" y1="196" x2="968" y2="196" stroke="#ED145B" stroke-width="3" marker-end="url(#tlsDir)"/>
+
+            <!-- 5. Dados de aplicacao -->
+            <text x="560" y="226" text-anchor="middle" font-size="13" font-weight="700" fill="#1e8449">GET /api/v1/posicoes, agora dentro do túnel</text>
+            <line x1="150" y1="236" x2="968" y2="236" stroke="#27ae60" stroke-width="3" marker-end="url(#tlsVerde)"/>
+
+            <!-- Pulso percorrendo a sequencia: o diagrama continua legivel em qualquer quadro -->
+            <circle r="7" fill="#ED145B" opacity="0.85">
+              <animate attributeName="cx" dur="8s" repeatCount="indefinite"
+                keyTimes="0;0.2;0.25;0.45;0.55;0.75;0.8;1"
+                values="150;968;970;152;150;968;150;968"/>
+              <animate attributeName="cy" dur="8s" repeatCount="indefinite"
+                keyTimes="0;0.2;0.25;0.45;0.55;0.75;0.8;1"
+                values="82;82;122;122;196;196;236;236"/>
+            </circle>
+
+            <text x="560" y="258" text-anchor="middle" font-size="11" fill="#777">a partir daqui quem observa a rede vê apenas Application Data cifrado</text>
+          </svg>
+          <figcaption>TLS 1.3: ClientHello com a proposta de chave, ServerHello com certificado e chave do servidor, verificação da cadeia, Finished cifrado e então os dados. Um RTT antes do primeiro byte de HTTP.</figcaption>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Por que isso pesa</span>
+          <p>Esse RTT se soma ao do handshake TCP em toda conexão nova. Em uma rede móvel de 100 ms, são 200 ms gastos antes de a primeira posição de caminhão sair do servidor. É exatamente esse custo que o QUIC funde em um só.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – Handshake TLS</div>
+          <div class="footer-page">15</div>
+        </div>
+      </section>
+
+      <!-- ==================== 16: SSE, O FORMATO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Server-Sent Events: uma resposta que não termina <a href="#/ref-slide" class="ref-badge" title="Ver referências">[4]</a></h2>
+        </div>
+
+        <p style="font-size:0.7em;">SSE não é protocolo novo: é uma resposta HTTP <span class="mono">200 OK</span> com <span class="mono">Content-Type: text/event-stream</span> que o servidor mantém aberta e vai alimentando. O corpo é texto, linha a linha.</p>
+
+        <div class="figure-split" style="grid-template-columns: 1.05fr 1fr; gap:20px; margin-top:2px; align-items:start;">
+          <div>
+            <pre style="margin:0; font-size:0.54em;"><code class="language-http">HTTP/1.1 200 OK
+Content-Type: text/event-stream
+Cache-Control: no-cache
+Connection: keep-alive
+
+retry: 3000
+id: 1
+event: posicao
+data: {"placa":"ABC1D23","lat":-23.55}
+
+id: 2
+event: posicao
+data: {"placa":"ABC1D23","lat":-23.56}</code></pre>
+          </div>
+          <div>
+            <div class="concept-cards" style="grid-template-columns:1fr; gap:7px; margin-top:0;">
+              <div class="concept-card" style="padding:9px 13px;">
+                <h4><span class="mono">data:</span> e a linha em branco</h4>
+                <p style="font-size:0.62em;">Cada evento termina em linha vazia. Esquecer o <span class="mono">\n\n</span> é o bug número um: o painel parece travado.</p>
+              </div>
+              <div class="concept-card" style="padding:9px 13px;">
+                <h4><span class="mono">id:</span> e <span class="mono">retry:</span></h4>
+                <p style="font-size:0.62em;">Caiu a conexão, o navegador reconecta depois de <span class="mono">retry</span> ms e manda <span class="mono">Last-Event-ID</span>, continuando de onde parou.</p>
+              </div>
+              <div class="concept-card" style="padding:9px 13px;">
+                <h4>No cliente</h4>
+                <p style="font-size:0.62em;"><span class="mono">new EventSource('/api/v1/eventos')</span> e um listener. Sem biblioteca, sem dependência.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Cuidado de produção</span>
+          <p>Proxies costumam bufferizar respostas. Sem <span class="mono">no-cache</span> e sem desligar o buffer no proxy, os eventos chegam em lote e o painel mostra a frota no passado.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – Server-Sent Events</div>
+          <div class="footer-page">16</div>
+        </div>
+      </section>
+
+      <!-- ==================== 17: SSE vs WEBSOCKET ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>SSE contra WebSocket: por que aqui basta o mais simples <a href="#/ref-slide" class="ref-badge" title="Ver referências">[5]</a></h2>
+        </div>
+
+        <div class="slide-figure" style="margin-top:2px;">
+          <svg viewBox="0 0 1120 300" role="img" aria-label="Comparação entre o fluxo do SSE, com um único GET e eventos empurrados pelo servidor, e o do WebSocket, com upgrade para protocolo próprio e tráfego nos dois sentidos">
+            <!-- SSE -->
+            <rect x="10" y="8" width="540" height="284" rx="10" fill="#eafaf1" stroke="#27ae60" stroke-width="2.5"/>
+            <text x="280" y="34" text-anchor="middle" font-size="16" font-weight="800" fill="#1e8449">SSE: um GET que nunca fecha</text>
+
+            <rect x="42" y="48" width="130" height="32" rx="5" fill="#1a1a1a"/>
+            <text x="107" y="69" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">Painel</text>
+            <rect x="388" y="48" width="130" height="32" rx="5" fill="#1a1a1a"/>
+            <text x="453" y="69" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">Servidor</text>
+            <line x1="107" y1="80" x2="107" y2="286" stroke="#c9e7d4" stroke-width="2"/>
+            <line x1="453" y1="80" x2="453" y2="286" stroke="#c9e7d4" stroke-width="2"/>
+
+            <rect x="130" y="94" width="300" height="24" rx="12" fill="#27ae60"/>
+            <text x="280" y="111" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">GET /api/v1/eventos &#183; Accept: text/event-stream</text>
+            <rect x="130" y="126" width="300" height="24" rx="12" fill="#1a1a1a"/>
+            <text x="280" y="143" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">200 OK &#183; Content-Type: text/event-stream</text>
+
+            <rect x="180" y="162" width="250" height="22" rx="11" fill="#1a1a1a"/>
+            <text x="305" y="178" text-anchor="middle" font-size="11" fill="#fff">event: posicao</text>
+            <rect x="180" y="190" width="250" height="22" rx="11" fill="#1a1a1a"/>
+            <text x="305" y="206" text-anchor="middle" font-size="11" fill="#fff">event: posicao</text>
+            <rect x="180" y="218" width="250" height="22" rx="11" fill="#1a1a1a"/>
+            <text x="305" y="234" text-anchor="middle" font-size="11" fill="#fff">event: alerta</text>
+
+            <text x="280" y="264" text-anchor="middle" font-size="12" fill="#145a32" font-weight="700">Sentido único. Reconexão automática do navegador.</text>
+            <text x="280" y="282" text-anchor="middle" font-size="12" fill="#145a32">Atravessa proxy e CDN como qualquer resposta HTTP.</text>
+
+            <!-- WebSocket -->
+            <rect x="570" y="8" width="540" height="284" rx="10" fill="#eef4fb" stroke="#5b8db8" stroke-width="2.5"/>
+            <text x="840" y="34" text-anchor="middle" font-size="16" font-weight="800" fill="#3d6d94">WebSocket: sai do HTTP e vira outro protocolo</text>
+
+            <rect x="602" y="48" width="130" height="32" rx="5" fill="#1a1a1a"/>
+            <text x="667" y="69" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">Painel</text>
+            <rect x="948" y="48" width="130" height="32" rx="5" fill="#1a1a1a"/>
+            <text x="1013" y="69" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">Servidor</text>
+            <line x1="667" y1="80" x2="667" y2="286" stroke="#cfdff0" stroke-width="2"/>
+            <line x1="1013" y1="80" x2="1013" y2="286" stroke="#cfdff0" stroke-width="2"/>
+
+            <rect x="690" y="94" width="300" height="24" rx="12" fill="#5b8db8"/>
+            <text x="840" y="111" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">GET / &#183; Upgrade: websocket</text>
+            <rect x="690" y="126" width="300" height="24" rx="12" fill="#1a1a1a"/>
+            <text x="840" y="143" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">101 Switching Protocols</text>
+
+            <rect x="740" y="162" width="250" height="22" rx="11" fill="#1a1a1a"/>
+            <text x="865" y="178" text-anchor="middle" font-size="11" fill="#fff">frame: posicao</text>
+            <rect x="690" y="190" width="250" height="22" rx="11" fill="#5b8db8"/>
+            <text x="815" y="206" text-anchor="middle" font-size="11" fill="#fff">frame: comando do operador</text>
+            <rect x="740" y="218" width="250" height="22" rx="11" fill="#1a1a1a"/>
+            <text x="865" y="234" text-anchor="middle" font-size="11" fill="#fff">frame: alerta</text>
+
+            <text x="840" y="264" text-anchor="middle" font-size="12" fill="#2c4d6b" font-weight="700">Dois sentidos, mas reconexão e mensagens são por sua conta.</text>
+            <text x="840" y="282" text-anchor="middle" font-size="12" fill="#2c4d6b">Proxy corporativo precisa saber tratar o Upgrade.</text>
+          </svg>
+          <figcaption>A telemetria da LogiTech só anda em um sentido: do servidor para o painel. O WebSocket se paga quando o operador precisar mandar comando de volta ao caminhão, e não antes.</figcaption>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Como escolher</span>
+          <p>Pergunte quem fala. Só o servidor fala: SSE. Os dois falam, com latência apertada: WebSocket. Escolher WebSocket para tráfego de sentido único é pagar reconexão manual e protocolo próprio por uma capacidade que não vai ser usada.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – SSE e WebSocket</div>
+          <div class="footer-page">17</div>
+        </div>
+      </section>
+
+      <!-- ==================== 18: cURL ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>cURL: enxergar o protocolo sem sair do terminal <a href="#/ref-slide" class="ref-badge" title="Ver referências">[6]</a></h2>
+        </div>
+
+        <p style="font-size:0.72em;">O navegador esconde o protocolo: mostra a página pronta e engole os detalhes. O <span class="mono">curl</span> devolve a mensagem exatamente como ela vai e volta, e é a primeira ferramenta a abrir quando uma integração falha.</p>
+
+        <pre style="font-size:0.56em; margin-top:4px;"><code class="language-bash"># -i mostra os headers da resposta junto com o corpo
+curl -i http://localhost:3000/api/v1/posicoes
+
+# -v mostra a conversa inteira: conexao, requisicao enviada e resposta recebida
+curl -v http://localhost:3000/health
+
+# -N desliga o buffer: obrigatorio para acompanhar um stream SSE ao vivo
+curl -N http://localhost:3000/api/v1/eventos
+
+# -X forca o verbo: prova que a rota devolve 405 quando o metodo e errado
+curl -i -X POST http://localhost:3000/api/v1/posicoes
+
+# -w imprime metricas medidas pelo proprio curl, sem cronometro na mao
+curl -o /dev/null -s -w "conexao: %{time_connect}s total: %{time_total}s\n" \
+  http://localhost:3000/api/v1/posicoes</code></pre>
+
+        <div class="takeaway">
+          <span class="takeaway-label">No laboratório</span>
+          <p>Estes cinco comandos são o roteiro inteiro do Passo 4.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – Inspeção com cURL</div>
+          <div class="footer-page">18</div>
+        </div>
+      </section>
+
+      <!-- ==================== 19: LENDO A SAIDA DO CURL -v ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Lendo a saída do curl -v, linha a linha <a href="#/ref-slide" class="ref-badge" title="Ver referências">[6]</a></h2>
+        </div>
+
+        <p style="font-size:0.72em;">Cada prefixo tem significado: <span class="mono">*</span> é o que o curl fez na rede, <span class="mono">&gt;</span> é o que ele enviou e <span class="mono">&lt;</span> é o que recebeu. É a aula inteira em uma tela.</p>
+
+        <div class="slide-figure" style="margin-top:0;">
+          <svg viewBox="0 0 1120 268" role="img" aria-label="Terminal com a saída anotada do comando curl -v, separando a conexão TCP, a requisição enviada e a resposta recebida">
+            <rect x="8" y="6" width="700" height="256" rx="8" fill="#1a1a1a"/>
+            <circle cx="30" cy="26" r="6" fill="#ff5f56"/><circle cx="50" cy="26" r="6" fill="#ffbd2e"/><circle cx="70" cy="26" r="6" fill="#27c93f"/>
+            <text x="358" y="30" text-anchor="middle" font-size="12" fill="#888" font-family="monospace">curl -v http://localhost:3000/api/v1/posicoes</text>
+            <line x1="8" y1="42" x2="708" y2="42" stroke="#333" stroke-width="1.5"/>
+
+            <text x="26" y="66" font-size="13" font-family="monospace" fill="#7fb3d5">*   Trying 127.0.0.1:3000...</text>
+            <text x="26" y="86" font-size="13" font-family="monospace" fill="#7fb3d5">* Connected to localhost (127.0.0.1) port 3000</text>
+
+            <text x="26" y="116" font-size="13" font-family="monospace" fill="#f7a1c4">&gt; GET /api/v1/posicoes HTTP/1.1</text>
+            <text x="26" y="134" font-size="13" font-family="monospace" fill="#f7a1c4">&gt; Host: localhost:3000</text>
+            <text x="26" y="152" font-size="13" font-family="monospace" fill="#f7a1c4">&gt; User-Agent: curl/8.4.0</text>
+            <text x="26" y="170" font-size="13" font-family="monospace" fill="#f7a1c4">&gt; Accept: */*</text>
+
+            <text x="26" y="200" font-size="13" font-family="monospace" fill="#8fd18f">&lt; HTTP/1.1 200 OK</text>
+            <text x="26" y="218" font-size="13" font-family="monospace" fill="#8fd18f">&lt; Content-Type: application/json; charset=utf-8</text>
+            <text x="26" y="236" font-size="13" font-family="monospace" fill="#8fd18f">&lt; Cache-Control: max-age=5</text>
+            <text x="26" y="254" font-size="13" font-family="monospace" fill="#8fd18f">&lt; Content-Length: 412</text>
+
+            <!-- Anotacoes -->
+            <defs>
+              <marker id="setaCurl" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+                <path d="M0,0 L9,4.5 L0,9 Z" fill="#888"/>
+              </marker>
+            </defs>
+
+            <line x1="716" y1="76" x2="756" y2="76" stroke="#888" stroke-width="2" marker-end="url(#setaCurl)"/>
+            <rect x="762" y="52" width="346" height="48" rx="6" fill="#eef4fb" stroke="#5b8db8" stroke-width="2"/>
+            <text x="776" y="72" font-size="13" font-weight="800" fill="#2c4d6b">L4: a conexão TCP da Aula 01</text>
+            <text x="776" y="90" font-size="12" fill="#3d6d94">o handshake acontece antes de qualquer HTTP</text>
+
+            <line x1="716" y1="140" x2="756" y2="140" stroke="#888" stroke-width="2" marker-end="url(#setaCurl)"/>
+            <rect x="762" y="110" width="346" height="62" rx="6" fill="#fff5f8" stroke="#ED145B" stroke-width="2"/>
+            <text x="776" y="130" font-size="13" font-weight="800" fill="#ED145B">L7: a requisição que saiu</text>
+            <text x="776" y="148" font-size="12" fill="#a01243">verbo, alvo, versão e os headers que o cliente</text>
+            <text x="776" y="164" font-size="12" fill="#a01243">enviou, inclusive os que o curl põe sozinho</text>
+
+            <line x1="716" y1="218" x2="756" y2="218" stroke="#888" stroke-width="2" marker-end="url(#setaCurl)"/>
+            <rect x="762" y="182" width="346" height="76" rx="6" fill="#eafaf1" stroke="#27ae60" stroke-width="2"/>
+            <text x="776" y="202" font-size="13" font-weight="800" fill="#1e8449">L7: a resposta que voltou</text>
+            <text x="776" y="220" font-size="12" fill="#145a32">status, tipo do conteúdo, política de cache e</text>
+            <text x="776" y="236" font-size="12" fill="#145a32">tamanho do corpo. Contar estas linhas responde</text>
+            <text x="776" y="252" font-size="12" fill="#145a32">a pergunta O-01 do laboratório.</text>
+          </svg>
+          <figcaption>Sobre HTTPS, as linhas de <span class="mono">*</span> passam a incluir o handshake TLS e o certificado apresentado; o corpo continua legível aqui porque quem descriptografa é o próprio curl, não a rede.</figcaption>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Primeiro diagnóstico</span>
+          <p>Antes de acusar o código, rode o <span class="mono">curl -v</span>. Ele responde em segundos se a falha é de conexão, de requisição malformada ou de resposta errada, e isso já elimina duas das três hipóteses.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – Lendo o curl -v</div>
+          <div class="footer-page">19</div>
+        </div>
+      </section>
+
+      <!-- ==================== 20: GIT WORKFLOW / PULL REQUEST ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Git Workflow: da branch ao merge, passando pela revisão <a href="#/ref-slide" class="ref-badge" title="Ver referências">[7]</a></h2>
+        </div>
+
+        <p style="font-size:0.72em;">Na Aula 01 vocês comitaram direto na <span class="mono">main</span>, porque estavam sozinhos no repositório e entregavam documento. Hoje entra código, e código quebra: por isso o trabalho vai para uma branch e só chega à <span class="mono">main</span> depois de revisado.</p>
+
+        <div class="slide-figure" style="margin-top:0;">
+          <svg viewBox="0 0 1120 250" role="img" aria-label="Fluxo do Pull Request: branch feature barra http-telemetry criada a partir da main, dois commits, abertura do PR, revisão aprovada e merge de volta na main">
+            <defs>
+              <marker id="setaPR" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+                <path d="M0,0 L9,4.5 L0,9 Z" fill="#888"/>
+              </marker>
+              <marker id="setaMerge" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                <path d="M0,0 L8,4 L0,8 Z" fill="#27ae60"/>
+              </marker>
+            </defs>
+
+            <!-- main -->
+            <line x1="60" y1="186" x2="1060" y2="186" stroke="#ddd" stroke-width="3"/>
+            <text x="60" y="216" font-size="13" font-weight="800" fill="#666">main</text>
+            <circle cx="120" cy="186" r="15" fill="#1a1a1a"/><text x="120" y="191" text-anchor="middle" font-size="10" fill="#fff">c1</text>
+            <text x="120" y="228" text-anchor="middle" font-size="11" fill="#999">PRD e SDD da Aula 01</text>
+            <circle cx="1000" cy="186" r="17" fill="#27ae60"/><text x="1000" y="192" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">M</text>
+            <text x="1000" y="228" text-anchor="middle" font-size="11" fill="#1e8449" font-weight="700">merge aprovado</text>
+
+            <!-- branch -->
+            <path d="M135,180 C190,172 210,96 268,96" fill="none" stroke="#ED145B" stroke-width="3"/>
+            <circle cx="290" cy="96" r="15" fill="#ED145B"/><text x="290" y="101" text-anchor="middle" font-size="10" fill="#fff">c2</text>
+            <line x1="305" y1="96" x2="405" y2="96" stroke="#ED145B" stroke-width="3"/>
+            <circle cx="420" cy="96" r="15" fill="#ED145B"/><text x="420" y="101" text-anchor="middle" font-size="10" fill="#fff">c3</text>
+            <line x1="435" y1="96" x2="530" y2="96" stroke="#ED145B" stroke-width="3"/>
+
+            <rect x="196" y="42" width="290" height="28" rx="14" fill="#ED145B"/>
+            <text x="341" y="61" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">feature/http-telemetry</text>
+
+            <text x="290" y="130" text-anchor="middle" font-size="11" fill="#777">feat(api): rotas HTTP</text>
+            <text x="440" y="152" text-anchor="middle" font-size="11" fill="#777">feat(sse): stream de posições</text>
+
+            <!-- PR -->
+            <rect x="536" y="66" width="180" height="60" rx="8" fill="#fff5f8" stroke="#ED145B" stroke-width="2.5"/>
+            <text x="626" y="90" text-anchor="middle" font-size="14" font-weight="800" fill="#ED145B">Pull Request</text>
+            <text x="626" y="110" text-anchor="middle" font-size="11" fill="#a01243">o que mudou e por quê</text>
+
+            <!-- Review -->
+            <rect x="744" y="30" width="190" height="60" rx="8" fill="#eef4fb" stroke="#5b8db8" stroke-width="2.5"/>
+            <text x="839" y="54" text-anchor="middle" font-size="14" font-weight="800" fill="#3d6d94">Code Review</text>
+            <text x="839" y="74" text-anchor="middle" font-size="11" fill="#2c4d6b">a dupla vizinha comenta</text>
+
+            <rect x="744" y="104" width="190" height="58" rx="8" fill="#f4f4f4" stroke="#999" stroke-width="2" stroke-dasharray="5,4"/>
+            <text x="839" y="127" text-anchor="middle" font-size="13" font-weight="800" fill="#666">CI automatizada</text>
+            <text x="839" y="146" text-anchor="middle" font-size="11" fill="#888">testes e lint (Aula 03 em diante)</text>
+
+            <line x1="718" y1="96" x2="740" y2="70" stroke="#888" stroke-width="2" marker-end="url(#setaPR)"/>
+            <line x1="718" y1="100" x2="740" y2="126" stroke="#888" stroke-width="2" marker-end="url(#setaPR)"/>
+
+            <!-- volta para main -->
+            <path d="M934,74 C980,80 986,138 991,160" fill="none" stroke="#27ae60" stroke-width="3" marker-end="url(#setaMerge)"/>
+
+            <text x="560" y="20" text-anchor="middle" font-size="12" font-weight="700" fill="#999">a main nunca fica quebrada: o código instável vive na branch até passar pela revisão</text>
+          </svg>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Nome de branch</span>
+          <p>O padrão é <span class="mono">tipo/assunto-curto</span>: <span class="mono">feature/http-telemetry</span>, <span class="mono">fix/sse-sem-linha-em-branco</span>. Quem olha a lista de branches precisa entender o que está em andamento sem abrir nenhuma.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – Git Workflow</div>
+          <div class="footer-page">20</div>
+        </div>
+      </section>
+
+      <!-- ==================== 21: CODE REVIEW ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Code Review: o que se olha em um Pull Request <a href="#/ref-slide" class="ref-badge" title="Ver referências">[7]</a></h2>
+        </div>
+
+        <p style="font-size:0.74em;">Revisar não é procurar erro de digitação. É responder uma pergunta: <strong>eu assumiria a manutenção deste código?</strong></p>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(2, 1fr); gap:12px; margin-top:10px;">
+          <div class="concept-card" style="padding:13px 17px;">
+            <h4>1. Faz o que a descrição diz</h4>
+            <p style="font-size:0.68em;">O PR promete o stream de posições e altera o cálculo de frete? São dois PRs, não um.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 17px;">
+            <h4>2. Respeita a Linguagem Ubíqua</h4>
+            <p style="font-size:0.68em;">O SDD diz <span class="mono">Posicao</span> e o JSON devolve <span class="mono">location</span>. Comentário obrigatório: o domínio vazou.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 17px;">
+            <h4>3. Trata o caminho infeliz</h4>
+            <p style="font-size:0.68em;">O que acontece se o coletor estiver fora? Devolve 503 ou trava a conexão sem resposta?</p>
+          </div>
+          <div class="concept-card" style="padding:13px 17px;">
+            <h4>4. É verificável</h4>
+            <p style="font-size:0.68em;">Existe comando que prove que funciona? Se o revisor não consegue rodar, não consegue aprovar.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Como comentar</span>
+          <p>Comentário útil aponta a linha, diz o efeito e propõe o caminho: "na linha 42, sem a linha em branco depois do <span class="mono">data:</span> o navegador não dispara o evento; sugiro terminar a escrita com \n\n". Comentário inútil diz "melhorar isso aqui".</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – Code Review</div>
+          <div class="footer-page">21</div>
+        </div>
+      </section>
+
+      <!-- ==================== 22: QUIZ 1 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container">
+          <div class="quiz-question">Como a multiplexação do HTTP/2 resolve o Head-of-Line blocking do HTTP/1.1?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> Abrindo uma conexão TCP nova para cada arquivo pedido pela página.</li>
+            <li data-correct="true"><span class="option-letter">B</span> Dividindo as mensagens em frames binários identificados por stream, que viajam intercalados na mesma conexão TCP.</li>
+            <li data-correct="false"><span class="option-letter">C</span> Trocando o TCP pelo UDP, que não garante ordem de entrega.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Comprimindo o corpo das respostas antes de enviá-las pela rede.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. Como cada frame diz a que stream pertence, a ordem de chegada deixa de importar e uma resposta lenta não segura as demais."
+               data-incorrect-msg="Incorreto. A troca de transporte é o HTTP/3; a compressão de headers é o HPACK. O que mata o bloqueio no HTTP/2 é o frame binário com identificador de stream.">
+          </div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz1Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz1Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – Verificação de Aprendizado</div>
+          <div class="footer-page">22</div>
+        </div>
+      </section>
+
+      <!-- ==================== 23: INTERVALO ==================== -->
+      <section class="content-slide" style="text-align:center; background:transparent;"
+               data-background-image="../assets/img/coffee-relax.jpg"
+               data-background-size="cover"
+               data-background-opacity="0.45">
+        <div style="margin-top:150px;">
+          <h2 style="font-size:4em; color:var(--fiap-pink); margin-bottom:10px; text-shadow:0 2px 12px rgba(255,255,255,0.9);">Intervalo</h2>
+          <h3 style="font-size:2.2em; color:var(--fiap-dark); text-shadow:0 2px 10px rgba(255,255,255,0.9);">30 minutos</h3>
+
+          <div class="quiz-timer-box" style="margin:40px auto 0 auto; padding:15px 30px; font-size:1.3em;">
+            <button class="quiz-timer-btn" style="width:40px; height:40px; font-size:1.2em;" onclick="startTimer('breakTimer', 1800)" aria-label="Iniciar cronômetro do intervalo">&#9654;</button>
+            <span id="breakTimer">30:00</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 24: QUIZ 2 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container">
+          <div class="quiz-question">Por que o SSE é mais simples que o WebSocket para a telemetria da LogiTech?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> Porque o SSE é bidirecional e dispensa o HTTP como transporte.</li>
+            <li data-correct="true"><span class="option-letter">B</span> Porque é uma resposta HTTP comum que fica aberta, com reconexão automática do navegador, e a telemetria só precisa do sentido servidor para cliente.</li>
+            <li data-correct="false"><span class="option-letter">C</span> Porque o WebSocket não consegue atravessar nenhum proxy corporativo.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Porque o SSE transmite dados binários usando menos bytes que o WebSocket.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. Sentido único, transporte HTTP comum e reconexão nativa do EventSource. O WebSocket só se paga quando o cliente também precisa enviar."
+               data-incorrect-msg="Incorreto. O SSE é unidirecional, roda sobre HTTP e transmite texto. Compare de novo os dois fluxos do slide de SSE contra WebSocket.">
+          </div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz2Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz2Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – Verificação de Aprendizado</div>
+          <div class="footer-page">24</div>
+        </div>
+      </section>
+
+      <!-- ==================== 25: QUIZ 3 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container">
+          <div class="quiz-question">Qual a diferença prática entre comitar direto na main e usar branch com Pull Request?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> Nenhuma: o Pull Request só deixa o histórico mais bonito.</li>
+            <li data-correct="true"><span class="option-letter">B</span> A branch isola o trabalho em andamento e o Pull Request cria o ponto de revisão humana e de automação antes que o código chegue à main.</li>
+            <li data-correct="false"><span class="option-letter">C</span> O Pull Request envia o código para o servidor; o commit na main fica apenas na máquina local.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Trabalhar em branch elimina a possibilidade de conflito de merge.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. A main permanece estável e o merge só acontece depois da revisão e dos testes automatizados."
+               data-incorrect-msg="Incorreto. Enviar para o servidor é o push, e branch não elimina conflito. O ganho do Pull Request é ser o ponto onde entram revisão e automação.">
+          </div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz3Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz3Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – Verificação de Aprendizado</div>
+          <div class="footer-page">25</div>
+        </div>
+      </section>
+
+      <!-- ==================== 26: ATIVIDADE (ABERTURA) ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Atividade Prática em Dupla: a API de telemetria da LogiTech</h2>
+        </div>
+
+        <p style="font-size:0.76em;">O coletor de sockets L4 <strong>já vem pronto no Lab Kit</strong>. Ele é o resultado da Aula 01 e hoje é ponto de partida, não tarefa. O que vocês escrevem é a camada HTTP/SSE por cima dele.</p>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(5, 1fr); margin-top:14px; gap:10px;">
+          <div class="concept-card" style="padding:13px 14px;"><h4>1. Branch</h4><p style="font-size:0.64em;">Fork e <span class="mono">feature/http-telemetry</span></p></div>
+          <div class="concept-card" style="padding:13px 14px;"><h4>2. Coletor</h4><p style="font-size:0.64em;">Subir os sockets prontos</p></div>
+          <div class="concept-card" style="padding:13px 14px;"><h4>3. HTTP/SSE</h4><p style="font-size:0.64em;">Escrever o servidor Node.js</p></div>
+          <div class="concept-card" style="padding:13px 14px;"><h4>4. Inspecionar</h4><p style="font-size:0.64em;">Medir o tráfego com cURL</p></div>
+          <div class="concept-card" style="padding:13px 14px;"><h4>5. Pull Request</h4><p style="font-size:0.64em;">Abrir, revisar e aprovar</p></div>
+        </div>
+
+        <div class="callout" style="margin-top:14px;">
+          <p style="font-size:0.72em;"><strong>Por que o coletor vem pronto:</strong> implementar sockets, subir para HTTP, inspecionar o tráfego e conduzir um Pull Request não cabe em 60 minutos. O objetivo desta aula é a camada de aplicação e o fluxo de revisão, então é neles que o tempo é gasto.</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Tempo</span>
+          <p>60 minutos, em dupla: 5 para a branch, 8 para o coletor, 27 para o servidor HTTP/SSE, 10 para a inspeção com cURL e 10 para o Pull Request cruzado.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – Atividade Prática</div>
+          <div class="footer-page">26</div>
+        </div>
+      </section>
+
+      <!-- ==================== 27: PASSO 1 ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 1 de 5: Fork e a branch feature/http-telemetry</h2>
+        </div>
+
+        <p style="font-size:0.76em;">A partir de hoje nada é comitado direto na <span class="mono">main</span>. Todo trabalho nasce em uma branch com nome que diz o que ela faz.</p>
+
+        <div class="figure-split" style="grid-template-columns: 1fr 1fr; gap:22px; margin-top:8px; align-items:start;">
+          <div>
+            <pre style="margin:0; font-size:0.6em;"><code class="language-bash"># depois do fork, no seu repositorio
+git clone https://github.com/SEU-USUARIO/\
+mwe-2026-2-lab02-duplaXX.git
+cd mwe-2026-2-lab02-duplaXX
+
+# cria a branch e ja muda para ela
+git switch -c feature/http-telemetry
+
+# confirme em qual branch voce esta
+git branch --show-current</code></pre>
+          </div>
+
+          <div style="background:#1a1a1a; border-radius:8px; padding:16px 20px;">
+            <div style="font-size:0.6em; color:#888; letter-spacing:1px; font-weight:800; margin-bottom:9px;">LAB KIT DA AULA 02</div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:0.6em; color:#eee; line-height:1.8;">
+              github.com/josercf/<br>
+              <span style="color:var(--fiap-pink); font-weight:700;">mwe-2026-2-lab02-http-sse</span>
+            </div>
+            <div style="margin-top:13px; font-size:0.58em; color:#aaa; line-height:1.75;">
+              sockets-l4/ &nbsp;coletor pronto, da Aula 01<br>
+              http-l7/server.js &nbsp;esqueleto a completar<br>
+              http-l7/public/ &nbsp;painel que consome o SSE<br>
+              http-l7/verificar.mjs &nbsp;autoavaliação<br>
+              docs/ &nbsp;onde entram as observações
+            </div>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Renomeiem o fork</span>
+          <p>Padrão do nome: <span class="mono">mwe-2026-2-lab02-duplaXX</span>, com dois dígitos. Adicionem o colega e o professor em Settings, Collaborators.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – Passo 1 – Branch</div>
+          <div class="footer-page">27</div>
+        </div>
+      </section>
+
+      <!-- ==================== 28: PASSO 2 ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 2 de 5: Subir o coletor de sockets da Aula 01</h2>
+        </div>
+
+        <p style="font-size:0.74em;">Dois terminais. O coletor escuta os datagramas UDP dos caminhões e grava cada posição em <span class="mono">data/telemetria.jsonl</span>. O simulador faz o papel da frota.</p>
+
+        <div class="figure-split" style="grid-template-columns: 1fr 1fr; gap:20px; margin-top:6px; align-items:start;">
+          <div>
+            <div style="font-size:0.6em; font-weight:800; color:var(--fiap-pink); letter-spacing:1px; margin-bottom:5px;">TERMINAL 1: O COLETOR</div>
+            <pre style="margin:0; font-size:0.58em;"><code class="language-bash">python3 sockets-l4/server_telemetry.py
+
+# [TCP] confirmacoes de entrega na porta 8080
+# [UDP] telemetria de GPS na porta 8081
+# gravando em data/telemetria.jsonl</code></pre>
+          </div>
+          <div>
+            <div style="font-size:0.6em; font-weight:800; color:var(--fiap-pink); letter-spacing:1px; margin-bottom:5px;">TERMINAL 2: A FROTA SIMULADA</div>
+            <pre style="margin:0; font-size:0.58em;"><code class="language-bash">python3 sockets-l4/client_telemetry.py \
+        --caminhoes 5 --intervalo 1
+
+# 5 caminhoes emitindo 1 posicao por segundo</code></pre>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:12px;">
+          <p style="font-size:0.7em;"><strong>Confiram antes de seguir:</strong> o arquivo <span class="mono">data/telemetria.jsonl</span> precisa estar crescendo. Se ele não existe ou não cresce, o Passo 3 não terá o que transmitir. <span class="mono">wc -l data/telemetria.jsonl</span> duas vezes, com alguns segundos de intervalo, responde isso.</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Simplificação assumida</span>
+          <p>A passagem do coletor para a API é por arquivo, de propósito: mantém o laboratório previsível. Da Aula 07 em diante isso vira comunicação entre containers, que é como se faz de verdade.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – Passo 2 – Coletor</div>
+          <div class="footer-page">28</div>
+        </div>
+      </section>
+
+      <!-- ==================== 29: PASSO 3 ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 3 de 5: Escrever o servidor HTTP/SSE (a parte avaliada) <a href="#/ref-slide" class="ref-badge" title="Ver referências">[8]</a></h2>
+        </div>
+
+        <p style="font-size:0.74em;">Abram <span class="mono">http-l7/server.js</span>. O esqueleto sobe e responde; os <span class="mono">TODO</span> são de vocês. Três rotas, quantidades exatas:</p>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>Rota</th><th>O que deve devolver</th><th>Exigência mínima</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono">GET /health</td><td>Status do serviço em JSON</td><td>200 com <span class="mono">Content-Type: application/json</span> e o campo <span class="mono">uptime</span> em segundos</td></tr>
+            <tr><td class="mono">GET /api/v1/posicoes</td><td>Última posição de cada caminhão</td><td>200 com array de <strong>no mínimo 5</strong> objetos e <span class="mono">Cache-Control: max-age=5</span></td></tr>
+            <tr><td class="mono">GET /api/v1/eventos</td><td>Stream SSE de posições novas</td><td><span class="mono">text/event-stream</span>, <span class="mono">no-cache</span>, campos <span class="mono">id</span>, <span class="mono">event</span> e <span class="mono">data</span>, <span class="mono">retry: 3000</span>, <strong>1 evento a cada 2 s</strong></td></tr>
+            <tr><td class="mono">qualquer outra</td><td>Erro correto, não 200</td><td><strong>404</strong> para rota inexistente e <strong>405</strong> quando o verbo não é permitido</td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Autoavaliação antes do PR</span>
+          <p>Rodem <span class="mono">node http-l7/verificar.mjs</span>. Ele checa as quatro linhas da tabela e imprime o que falta. Pull Request com verificação vermelha não passa na revisão.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – Passo 3 – HTTP/SSE</div>
+          <div class="footer-page">29</div>
+        </div>
+      </section>
+
+      <!-- ==================== 30: PASSO 4 ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 4 de 5: Medir o próprio serviço com cURL</h2>
+        </div>
+
+        <p style="font-size:0.72em;">Não é relatório: são <strong>três perguntas com resposta numérica</strong>, registradas em <span class="mono">docs/OBSERVACOES.md</span>. Dez minutos, só com o que o devcontainer já tem.</p>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>#</th><th>Pergunta</th><th>Comando que responde</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono" style="white-space:nowrap;">O-01</td><td>Quantos headers a resposta de <span class="mono">/api/v1/posicoes</span> traz, e quais?</td><td><span class="mono">curl -i</span> e contar as linhas antes do corpo</td></tr>
+            <tr><td class="mono" style="white-space:nowrap;">O-02</td><td>Quantos milissegundos até a conexão, e quantos até a resposta completa?</td><td><span class="mono">curl -w "%{time_connect} %{time_total}"</span></td></tr>
+            <tr><td class="mono" style="white-space:nowrap;">O-03</td><td>Qual o intervalo medido entre dois eventos SSE consecutivos?</td><td><span class="mono">curl -N</span> no stream, cronometrando dois <span class="mono">id:</span> seguidos</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout" style="margin-top:10px;">
+          <p style="font-size:0.7em;"><strong>Experimento obrigatório:</strong> apaguem a linha em branco depois do <span class="mono">data:</span>, reiniciem o servidor e observem o <span class="mono">curl -N</span>. Os bytes continuam saindo, mas o navegador para de disparar eventos. Registrem em uma linha o que mudou e devolvam o <span class="mono">\n\n</span> ao lugar.</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Obrigatório</span>
+          <p>Cada resposta precisa de um número medido por vocês, não de uma explicação genérica. Resposta sem número não conta como resposta.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – Passo 4 – Inspeção</div>
+          <div class="footer-page">30</div>
+        </div>
+      </section>
+
+      <!-- ==================== 31: PASSO 5 ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 5 de 5: Pull Request e Code Review cruzado</h2>
+        </div>
+
+        <p style="font-size:0.74em;">A entrega é o <strong>Pull Request aprovado</strong>, não o código solto. Quem aprova é a dupla vizinha, adicionada como colaboradora.</p>
+
+        <div class="figure-split" style="grid-template-columns: 1fr 1fr; gap:20px; margin-top:6px; align-items:start;">
+          <div>
+            <pre style="margin:0; font-size:0.58em;"><code class="language-bash">git add http-l7/ docs/OBSERVACOES.md
+git commit -m "feat(api): expoe posicoes da frota via HTTP"
+git commit -m "feat(sse): transmite posicoes novas por SSE"
+git push -u origin feature/http-telemetry
+
+# abrir o PR: feature/http-telemetry -> main</code></pre>
+          </div>
+          <div class="concept-cards" style="grid-template-columns:1fr; gap:9px; margin-top:0;">
+            <div class="concept-card" style="padding:12px 15px;">
+              <h4>O que o PR precisa ter</h4>
+              <p style="font-size:0.66em;">No mínimo <strong>2 commits</strong> em Conventional Commits e uma descrição com 3 seções: o que mudou, como testar e o que ficou de fora.</p>
+            </div>
+            <div class="concept-card" style="padding:12px 15px;">
+              <h4>O que a revisão precisa ter</h4>
+              <p style="font-size:0.66em;">No mínimo <strong>2 comentários</strong> em linha, cada um apontando linha, efeito e sugestão, e <strong>1 aprovação</strong> registrada em Review.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Ordem que vale</span>
+          <p>Merge só depois da aprovação. Se aprovarem sem ler, a dupla revisora responde pelo que passou: é assim no mercado e é assim aqui.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – Passo 5 – Pull Request</div>
+          <div class="footer-page">31</div>
+        </div>
+      </section>
+
+      <!-- ==================== 32: FORMULÁRIO DE ENTREGA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Formulário de Entrega</h2>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1.15fr 1fr; gap:26px; align-items:start; margin-top:4px;">
+          <div class="pending-box">
+            <span class="pending-tag">URL PENDENTE</span>
+            <h3>Formulário da Aula 02 ainda não publicado</h3>
+            <p>O endereço será divulgado pelo professor no início do Bloco 2 e substituirá este quadro no deck.</p>
+            <p style="margin-top:12px; font-weight:700;">Não utilizem o formulário da Aula 01: ele coleta a entrega de PRD e SDD e não serve para esta atividade.</p>
+          </div>
+
+          <div>
+            <div class="concept-cards" style="grid-template-columns:1fr; gap:10px; margin-top:0;">
+              <div class="concept-card" style="padding:13px 16px;">
+                <h4>O que enviar</h4>
+                <p style="font-size:0.68em;">A URL do <strong>Pull Request</strong>, no formato<br><span class="mono">github.com/usuario/mwe-2026-2-lab02-duplaXX/pull/1</span></p>
+              </div>
+              <div class="concept-card" style="padding:13px 16px;">
+                <h4>Quem envia</h4>
+                <p style="font-size:0.68em;">Um envio por dupla, identificando os dois integrantes e a dupla que fez a revisão.</p>
+              </div>
+              <div class="concept-card" style="padding:13px 16px;">
+                <h4>Até quando</h4>
+                <p style="font-size:0.68em;">Até o fim da aula de hoje, 22h50, com o Pull Request já aprovado.</p>
+              </div>
+            </div>
+
+            <div class="callout" style="margin-top:11px; display:flex; justify-content:space-between; align-items:center; gap:16px;">
+              <span style="font-size:0.7em;">Critérios de aceitação completos no README do Lab Kit.</span>
+              <a href="https://github.com/josercf/mwe-2026-2-lab02-http-sse" target="_blank" style="color:var(--fiap-pink); font-weight:700; font-size:0.7em; white-space:nowrap;">Abrir o Lab Kit</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – Entrega da Atividade</div>
+          <div class="footer-page">32</div>
+        </div>
+      </section>
+
+      <!-- ==================== 33: REFERÊNCIAS ==================== -->
+      <section id="ref-slide" class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Referências Bibliográficas e Documentação</h2>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px 28px; font-size:0.62em; line-height:1.55; color:var(--fiap-gray);">
+          <div>
+            <p style="margin:0 0 10px;"><strong style="color:var(--fiap-pink);">[1] HTTP: semântica, verbos, status e headers</strong><br>
+            IETF: <a href="https://www.rfc-editor.org/rfc/rfc9110.html" target="_blank" style="color:var(--fiap-pink);">RFC 9110: HTTP Semantics</a><br>
+            IETF: <a href="https://www.rfc-editor.org/rfc/rfc9112.html" target="_blank" style="color:var(--fiap-pink);">RFC 9112: HTTP/1.1</a><br>
+            MDN: <a href="https://developer.mozilla.org/pt-BR/docs/Web/HTTP" target="_blank" style="color:var(--fiap-pink);">Documentação de HTTP</a></p>
+
+            <p style="margin:0 0 10px;"><strong style="color:var(--fiap-pink);">[2] Evolução do HTTP e Head-of-Line blocking</strong><br>
+            IETF: <a href="https://www.rfc-editor.org/rfc/rfc9113.html" target="_blank" style="color:var(--fiap-pink);">RFC 9113: HTTP/2</a> | <a href="https://www.rfc-editor.org/rfc/rfc9114.html" target="_blank" style="color:var(--fiap-pink);">RFC 9114: HTTP/3</a><br>
+            IETF: <a href="https://www.rfc-editor.org/rfc/rfc9000.html" target="_blank" style="color:var(--fiap-pink);">RFC 9000: QUIC</a><br>
+            CLOUDFLARE: <a href="https://blog.cloudflare.com/http3-the-past-present-and-future/" target="_blank" style="color:var(--fiap-pink);">HTTP/3: past, present and future</a></p>
+
+            <p style="margin:0 0 10px;"><strong style="color:var(--fiap-pink);">[3] TLS e o handshake</strong><br>
+            IETF: <a href="https://www.rfc-editor.org/rfc/rfc8446.html" target="_blank" style="color:var(--fiap-pink);">RFC 8446: TLS 1.3</a><br>
+            CLOUDFLARE: <a href="https://www.cloudflare.com/learning/ssl/what-happens-in-a-tls-handshake/" target="_blank" style="color:var(--fiap-pink);">What happens in a TLS handshake</a></p>
+
+            <p style="margin:0;"><strong style="color:var(--fiap-pink);">[4] Server-Sent Events</strong><br>
+            WHATWG: <a href="https://html.spec.whatwg.org/multipage/server-sent-events.html" target="_blank" style="color:var(--fiap-pink);">Especificação de Server-Sent Events</a><br>
+            MDN: <a href="https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events" target="_blank" style="color:var(--fiap-pink);">Using server-sent events</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/API/EventSource" target="_blank" style="color:var(--fiap-pink);">EventSource</a></p>
+          </div>
+
+          <div>
+            <p style="margin:0 0 10px;"><strong style="color:var(--fiap-pink);">[5] WebSocket</strong><br>
+            IETF: <a href="https://www.rfc-editor.org/rfc/rfc6455.html" target="_blank" style="color:var(--fiap-pink);">RFC 6455: The WebSocket Protocol</a><br>
+            MDN: <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API" target="_blank" style="color:var(--fiap-pink);">WebSockets API</a></p>
+
+            <p style="margin:0 0 10px;"><strong style="color:var(--fiap-pink);">[6] Inspeção de tráfego com cURL</strong><br>
+            CURL: <a href="https://everything.curl.dev/" target="_blank" style="color:var(--fiap-pink);">Everything curl</a><br>
+            CURL: <a href="https://curl.se/docs/manpage.html" target="_blank" style="color:var(--fiap-pink);">Manual de referência das opções</a></p>
+
+            <p style="margin:0 0 10px;"><strong style="color:var(--fiap-pink);">[7] Git Workflows, Pull Request e Code Review</strong><br>
+            GITHUB: <a href="https://docs.github.com/pt/pull-requests" target="_blank" style="color:var(--fiap-pink);">Documentação de Pull Requests</a><br>
+            GOOGLE: <a href="https://google.github.io/eng-practices/review/" target="_blank" style="color:var(--fiap-pink);">Engineering Practices: Code Review</a><br>
+            <a href="https://www.conventionalcommits.org/pt-br/v1.0.0/" target="_blank" style="color:var(--fiap-pink);">Conventional Commits v1.0.0</a></p>
+
+            <p style="margin:0;"><strong style="color:var(--fiap-pink);">[8] Implementação em Node.js</strong><br>
+            NODE.JS: <a href="https://nodejs.org/api/http.html" target="_blank" style="color:var(--fiap-pink);">Módulo http</a> | <a href="https://nodejs.org/api/dgram.html" target="_blank" style="color:var(--fiap-pink);">Módulo dgram (UDP)</a><br>
+            LAB KIT: <a href="https://github.com/josercf/mwe-2026-2-lab02-http-sse" target="_blank" style="color:var(--fiap-pink);">mwe-2026-2-lab02-http-sse</a></p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – Bibliografia da Aula</div>
+          <div class="footer-page">33</div>
+        </div>
+      </section>
+
+      <!-- ==================== 34: ENCERRAMENTO ==================== -->
       <section class="end-slide">
         <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" style="max-width:350px;">
-        <div class="copyright">Copyright &copy; 2026<br>Prof.º José Romualdo da Costa Filho<br><br>Todos direitos reservados.</div>
+        <div class="copyright">
+          Copyright &copy; 2026<br>
+          Prof. José Romualdo da Costa Filho<br><br>
+          Todos os direitos reservados. É expressamente proibida a reprodução, divulgação<br>
+          total ou parcial, deste material acadêmico sem autorização formal,<br>
+          por escrito, do Professor autor da ementa.
+        </div>
       </section>
+
     </div>
   </div>
+
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
   <script src="../assets/js/fiap-quiz.js"></script>
   <script>
-    Reveal.initialize({ hash: true, slideNumber: false, width: 1280, height: 720, margin: 0, minScale: 0.2, maxScale: 2.0, center: false, pdfMaxPagesPerSlide: 1, pdfSeparateFragments: false, transition: 'slide', transitionSpeed: 'default', plugins: [RevealHighlight] });
+    Reveal.initialize({
+      hash: true,
+      slideNumber: false,
+      width: 1280,
+      height: 720,
+      margin: 0,
+      minScale: 0.2,
+      maxScale: 2.0,
+      center: false,
+      pdfMaxPagesPerSlide: 1,
+      pdfSeparateFragments: false,
+      transition: 'slide',
+      transitionSpeed: 'default',
+      plugins: [RevealHighlight]
+    });
+    // startTimer(elementId, segundos) vem de ../assets/js/fiap-quiz.js
   </script>
 </body>
 </html>
