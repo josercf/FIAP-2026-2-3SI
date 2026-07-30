@@ -708,3 +708,136 @@
 .reveal .hljs {
   background: transparent;
 }
+
+/* --- Botão Imprimir / Exportar PDF --- */
+.pdf-print-btn {
+  position: absolute;
+  top: 15px;
+  right: 200px;
+  z-index: 100;
+  background: var(--fiap-pink);
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.7em;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(237, 20, 91, 0.4);
+  transition: all 0.2s ease;
+}
+.pdf-print-btn:hover {
+  background: #c70c49;
+  transform: translateY(-2px);
+}
+
+/* --- Timer & Quiz Custom Elements --- */
+.quiz-timer-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #111;
+  border: 1px solid var(--fiap-pink);
+  padding: 8px 16px;
+  border-radius: 25px;
+  font-size: 0.8em;
+  font-weight: 700;
+  color: #fff;
+  width: fit-content;
+  margin-top: 10px;
+}
+.quiz-timer-btn {
+  background: var(--fiap-pink);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9em;
+}
+
+.quiz-qr-container {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: rgba(255,255,255,0.05);
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-top: 15px;
+}
+.quiz-qr-code {
+  width: 90px;
+  height: 90px;
+  background: white;
+  padding: 5px;
+  border-radius: 6px;
+}
+
+/* --- Animação de Linguagem Ubíqua em Círculo --- */
+.ubiquitous-circle-container {
+  position: relative;
+  width: 420px;
+  height: 420px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ubiquitous-center {
+  width: 140px;
+  height: 140px;
+  background: linear-gradient(135deg, var(--fiap-pink), #ff5c8d);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  font-weight: 800;
+  font-size: 0.85em;
+  box-shadow: 0 0 30px rgba(237, 20, 91, 0.6);
+  z-index: 10;
+  padding: 10px;
+}
+.ubiquitous-sector {
+  position: absolute;
+  background: #252525;
+  border: 1px solid #444;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 0.7em;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  transition: all 0.4s ease;
+}
+.ubiquitous-sector-1 { top: 10px; left: 130px; }
+.ubiquitous-sector-2 { top: 110px; right: 10px; }
+.ubiquitous-sector-3 { bottom: 110px; right: 10px; }
+.ubiquitous-sector-4 { bottom: 10px; left: 130px; }
+.ubiquitous-sector-5 { bottom: 110px; left: 10px; }
+.ubiquitous-sector-6 { top: 110px; left: 10px; }
+
+/* --- Citações / Badges de Referência --- */
+.ref-badge {
+  display: inline-block;
+  background: rgba(237, 20, 91, 0.15);
+  color: var(--fiap-pink);
+  border: 1px solid var(--fiap-pink);
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-size: 0.65em;
+  font-weight: 700;
+  margin-left: 6px;
+  vertical-align: middle;
+  text-decoration: none;
+}
+.ref-badge:hover {
+  background: var(--fiap-pink);
+  color: white;
+}
+
