@@ -20,18 +20,18 @@ O curso foi estruturado sob a **Metodologia de Aprendizagem em Espiral (Spiral L
    - *Estruturais:* Adapter, Facade, Decorator.
    - *Comportamentais:* Strategy, Observer, Command.
 5. **Pirâmide de Testes Completa:** Testes de Unidade/Mocks (TDD com JUnit, xUnit, PyTest, Vitest), Testes de Integração com Testcontainers, Testes E2E/UI com Playwright/Cypress e Testes de Carga com k6.
-6. **Arquitetura Web, Infraestrutura & Ecossistema AI-First:** Modelo OSI, TCP/UDP, HTTP/1.1 a 3, SSE, Wireshark, Docker Multi-stage, Docker Compose, AI Gateways, Function Calling, RAG com `pgvector`, Model Context Protocol (MCP), OAuth2/JWT e OWASP Top 10 for LLMs.
+6. **Arquitetura Web, Infraestrutura & Ecossistema AI-First:** Modelo OSI, TCP/UDP, HTTP/1.1 a 3, SSE, inspeção de tráfego com `cURL`, Docker Multi-stage, Docker Compose, AI Gateways, Function Calling, RAG com `pgvector`, Model Context Protocol (MCP), OAuth2/JWT e OWASP Top 10 for LLMs.
 
 ---
 
 ## 2. Matriz de Preservação e Rastreabilidade de Conteúdos
 
-Nenhum conteúdo original foi removido. Todos os tópicos técnicos foram integrados em camadas dentro da espiral pedagógica:
+Os tópicos técnicos foram integrados em camadas dentro da espiral pedagógica, com uma única exceção documentada: o **Wireshark saiu do programa**, por decisão registrada na `docs/adrs/ADR-002-escopo-do-laboratorio-da-aula-02.md`. O objetivo de aprendizagem que ele atendia, inspecionar o tráfego de uma requisição, permanece na Aula 02 e passa a ser cumprido com `cURL`, sem custo de instalação para a turma. Os demais conteúdos originais foram preservados:
 
 | Conteúdo Técnico Original | Onde Está Alocado no Plano (1º Semestre) | Como se Conecta aos Novos Conceitos (POO/Patterns/Git) |
 | :--- | :--- | :--- |
 | **Modelo OSI & Sockets TCP/UDP** | **Aula 01** (04/08) | Base L4 do sistema. Conecta-se ao PRD/SDD e aos comandos Iniciais do Git. |
-| **HTTP/1.1, HTTP/2, HTTP/3, SSE, Wireshark** | **Aula 02** (11/08) | Evolução L7 do Socket da Aula 01. Prática com Git Branching e Pull Requests. A inspeção de tráfego é feita com `cURL` no laboratório; o Wireshark fica como demonstração conduzida pelo professor (ADR-002). |
+| **HTTP/1.1, HTTP/2, HTTP/3, SSE, Inspeção de Tráfego** | **Aula 02** (11/08) | Evolução L7 do Socket da Aula 01. Inspeção de tráfego com `cURL`. Prática com Git Branching e Pull Requests. |
 | **Docker I (Images, Multi-Stage, Volumes)** | **Aula 03** (18/08) | Empacotamento dos serviços de Socket e HTTP desenvolvidos nas Aulas 01 e 02. |
 | **Java (Spring Boot) & C# (.NET Core)** | **Aula 05** (01/09) | Implementação dos serviços core aplicando **POO, SOLID, Factory & Singleton Patterns**. |
 | **Node.js (TypeScript) & Python (FastAPI)** | **Aula 06** (08/09) | Microsserviços de apoio aplicando **Adapter Pattern & Decorator Pattern**. |

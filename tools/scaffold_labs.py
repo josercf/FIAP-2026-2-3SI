@@ -45,7 +45,7 @@ LABS = [
     {
         "n": "02", "slug": "http-sse", "img": "node", "docker": False,
         "titulo": "Sockets L4, HTTP/1.1 a 3 e Server-Sent Events",
-        "aula": "Aula 02 - Protocolos de Aplicacao, SSE, Wireshark e Git Workflows",
+        "aula": "Aula 02 - Protocolos de Aplicacao, SSE, cURL e Git Workflows",
         "data": "11/08/2026",
         "missao": "Implementar o servidor de telemetria especificado na Aula 01: sockets TCP/UDP em Python e, sobre eles, um feed de rastreamento via SSE em Node.",
         "entrega": ["sockets-l4/server_telemetry.py", "sse/server.js"],

@@ -65,7 +65,7 @@ Toda disciplina de Engenharia Web / Microsserviços deve contemplar os seguintes
    - *Integração:* Testcontainers (bancos e serviços reais em containers de teste).
    - *Interface / E2E:* Playwright e Cypress.
    - *Carga / Performance:* k6 (instrumentação de SLAs, throughput RPS e latência p95/p99).
-6. **Infraestrutura & Ecossistema AI-First:** Sockets TCP/UDP, HTTP/1.1 a 3, SSE, Wireshark, Docker Multi-stage, Docker Compose, AI Gateways (LiteLLM/Portkey), RAG com `pgvector`, Model Context Protocol (MCP), Keycloak/OAuth2/JWT e OWASP Top 10 for LLMs.
+6. **Infraestrutura & Ecossistema AI-First:** Sockets TCP/UDP, HTTP/1.1 a 3, SSE, inspeção de tráfego com `cURL`, Docker Multi-stage, Docker Compose, AI Gateways (LiteLLM/Portkey), RAG com `pgvector`, Model Context Protocol (MCP), Keycloak/OAuth2/JWT e OWASP Top 10 for LLMs.
 
 ---
 

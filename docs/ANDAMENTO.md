@@ -65,7 +65,7 @@ Verificado nesta sessão: o GitHub Models responde com o token do professor. Ate
 
 `docs/adrs/ADR-001-votacao-ao-vivo-nos-quizzes.md` — a votação ao vivo dos quizzes será um produto separado, fora do contexto FIAP, hospedado no `home01` sob `jrcf.dev`, atrás do nginx-proxy-manager e usando o PostgreSQL que já rodam lá. Sugestão de subdomínio: `vote.jrcf.dev`. Nada foi implementado ainda; o QR nos slides é placeholder tracejado escrito "em breve".
 
-`docs/adrs/ADR-002-escopo-do-laboratorio-da-aula-02.md` — o laboratório da Aula 02 entrega o coletor de sockets L4 pronto, tira o Wireshark e troca o relatório de captura por três medições numéricas com `cURL`. A comunicação entre o coletor e o gateway é por arquivo JSON Lines, simplificação declarada, a ser substituída na Aula 07. **Status: Proposta.** Marcar como Aceita quando o professor confirmar.
+`docs/adrs/ADR-002-escopo-do-laboratorio-da-aula-02.md` — **Aceita.** O laboratório da Aula 02 entrega o coletor de sockets L4 pronto e troca o relatório de captura por três medições numéricas com `cURL`. O **Wireshark saiu do programa da disciplina**, não só do laboratório, por decisão do professor em 30/07/2026. A comunicação entre o coletor e o gateway é por arquivo JSON Lines, simplificação declarada, a ser substituída na Aula 07.
 
 ---
 
@@ -96,11 +96,13 @@ discrimina de verdade.
   os decks 02, 03, 05, 06, 07 e 08. Recuperável pelo histórico do git; substituído
   por `tools/scaffold_labs.py`.
 - **`PLANO_DE_ENSINO.md` e `PLANEJAMENTO_AULA_A_AULA.md` alinhados com a ADR-002.**
-  O Wireshark segue na ementa e na matriz de rastreabilidade, para não quebrar a
-  promessa de que nenhum conteúdo original foi removido, mas as partes operacionais
-  (live coding, agenda e entregável) passaram a citar `cURL`. Corrigida de passagem
-  a sobreposição de horário na agenda da Aula 02, que tinha dois blocos começando
-  às 21h20.
+  Corrigida de passagem a sobreposição de horário na agenda da Aula 02, que tinha
+  dois blocos começando às 21h20.
+- **O Wireshark foi removido de todo o acervo**, por decisão do professor. Saiu da
+  ementa, da matriz de rastreabilidade, do `SKILL.md` e do `scaffold_labs.py`. A
+  matriz afirmava que nenhum conteúdo original havia sido removido; passou a
+  registrar essa exceção em vez de manter a afirmação. O que resta de menção ao
+  Wireshark está na ADR-002 e aqui, que são o registro da decisão.
 
 ---
 
@@ -108,7 +110,7 @@ discrimina de verdade.
 
 ### Do professor
 
-- [ ] **Criar o formulário de entrega da Aula 02** no Microsoft Forms e passar a URL. O da Aula 01 é `https://forms.cloud.microsoft/r/sy6dHWsBHJ`. O slide da Aula 02 fica com marcador de URL pendente até lá.
+- [ ] **Criar o formulário de entrega de cada aula nova** no Microsoft Forms e passar a URL, para que o slide de entrega saia com o embed no lugar do marcador pendente. Os que já existem: Aula 01 em `https://forms.cloud.microsoft/r/sy6dHWsBHJ`, Aula 02 em `https://forms.cloud.microsoft/r/ykGYKsPAj7`.
 - [ ] Decidir o subdomínio da votação ao vivo (`vote.jrcf.dev` foi a sugestão).
 
 ### Técnicas

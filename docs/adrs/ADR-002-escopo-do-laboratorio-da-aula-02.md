@@ -1,7 +1,7 @@
 # ADR-002: Escopo do laboratório da Aula 02
 
 - **Data:** 2026-07-30
-- **Status:** Proposta
+- **Status:** Aceita
 - **Decisores:** Prof. José Romualdo da Costa Filho
 
 ## Contexto
@@ -33,7 +33,8 @@ O laboratório da Aula 02 passa a ter **três recortes**:
 
 1. **O coletor de sockets L4 é entregue pronto** no Lab Kit, como ponto de
    partida. O aluno escreve apenas a camada HTTP/SSE por cima dele.
-2. **O Wireshark sai da aula.** A inspeção de tráfego permanece, feita apenas com
+2. **O Wireshark sai do programa da disciplina**, não apenas do laboratório. A
+   inspeção de tráfego permanece como objetivo de aprendizagem, feita apenas com
    `cURL`, e o relatório de captura é substituído por **três medições numéricas**
    registradas em `docs/OBSERVACOES.md`.
 3. **A comunicação entre o coletor L4 e o gateway L7 é por arquivo**
@@ -71,9 +72,9 @@ revisão cruzada entre duplas.
 |---|---|
 | O aluno chega ao CP1 sem nunca ter escrito um socket | O CP1 cobre sockets. O coletor entregue é comentado linha a linha e o Passo 2 obriga a lê-lo; a Aula 03 volta a mexer nos dois serviços ao conteinerizá-los |
 | A passagem por arquivo passar a impressão de que é assim que se faz em produção | Declarado como simplificação no README, no slide do Passo 2 e nesta ADR, com o ponto de substituição nomeado (Aula 07) |
-| Sair o Wireshark e a disciplina perder a leitura de pacote | O tema continua no `PLANO_DE_ENSINO.md` como conteúdo do módulo; se o professor quiser retomá-lo, o lugar natural é uma demonstração conduzida por ele, sem custo de instalação para a turma |
+| Sair o Wireshark e a disciplina perder a leitura de pacote | O objetivo de aprendizagem que ele atendia, inspecionar o tráfego de uma requisição, continua na Aula 02 e é cumprido com `cURL`. A leitura de pacote em si deixa de ser conteúdo da disciplina, e a matriz do `PLANO_DE_ENSINO.md` registra a exceção em vez de afirmar que nada foi removido |
 | O aluno completar os TODO sem entender e o PR ser aprovado por camaradagem | `http-l7/verificar.mjs` checa os sete critérios objetivamente e a revisão exige dois comentários em linha com efeito e sugestão |
-| Divergência entre o material e os documentos de planejamento | Registrada como pendência: `PLANO_DE_ENSINO.md` e `PLANEJAMENTO_AULA_A_AULA.md` ainda citam Wireshark e relatório de captura para a Aula 02 |
+| Divergência entre o material e os documentos de planejamento | Resolvida em 30/07/2026: `PLANO_DE_ENSINO.md`, `PLANEJAMENTO_AULA_A_AULA.md`, `aulas-1sem/SKILL.md` e `tools/scaffold_labs.py` foram alinhados, e o Wireshark não aparece mais em nenhum documento do acervo |
 
 ## Consequências
 
