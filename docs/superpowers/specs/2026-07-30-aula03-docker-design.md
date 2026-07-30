@@ -255,7 +255,7 @@ imprime o placar. Critérios:
 | Etapa | Critério objetivo |
 |---|---|
 | 1 | `etapas/01-isolamento/RESPOSTAS.md` com os quatro valores pedidos, preenchidos |
-| 2 | `etapas/02-imagem/RESPOSTAS.md` traz o `docker ps` do coletor rodando sobre `python:3.13-alpine` sem Dockerfile, e a prova de que o arquivo escrito na camada gravável sumiu após o `docker rm` |
+| 2 | `etapas/02-imagem/RESPOSTAS.md` traz o `docker ps` do coletor rodando sobre `python:3.12-alpine` sem Dockerfile, e a prova de que o arquivo escrito na camada gravável sumiu após o `docker rm` |
 | 3 | `Dockerfile.coletor` builda e o container resultante responde |
 | 4 | Os dois Dockerfiles têm no mínimo 2 estágios e um `USER` não-root, e a redução contra a baseline de `Dockerfile.<servico>.ingenuo` é de no mínimo 80% |
 | 5 | Volume `logitech-telemetria` existe e o arquivo de telemetria sobrevive a `docker rm` |
@@ -292,7 +292,9 @@ slide 52 e citado no README.
 ### Por que o entregável muda em relação ao plano
 
 O `PLANO_DE_ENSINO.md` pede imagem abaixo de 100 MB para os dois serviços. Para o
-coletor Python isso é folgado, porque `python:3.13-alpine` fica perto de 55 MB.
+coletor Python isso é folgado, porque `python:3.12-alpine` fica perto de 55 MB. A versao 3.12 acompanha a
+imagem do devcontainer do lab03, para o aluno nao encontrar diferenca de
+comportamento entre o que roda no Codespace e o que roda no container.
 Para o gateway Node não é alcançável sem distroless ou binário estático, porque
 `node:22-alpine` sozinho já passa de 150 MB. Por isso o critério principal passou
 a ser percentual de redução, e o valor absoluto de 100 MB foi mantido só onde é
