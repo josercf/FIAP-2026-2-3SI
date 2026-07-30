@@ -394,7 +394,7 @@ regenerar e ressincronizar 13 repositórios, e os alunos que já forkaram os lab
 |---|---|
 | O `docker agent` pode não falar com o GitHub Models no devcontainer | Smoke test antes de escrever o deck, com dois níveis de fallback definidos na seção 7 |
 | O `qwen3.5:2b` pode não sustentar o loop de tool calling | Mesmo smoke test; se falhar, a demonstração vai no Copilot e o `agente.yaml` fica documentado como exercício de casa |
-| A redução de 80% pode não se confirmar na medição real | Medir os quatro tamanhos de verdade antes de fixar o critério no README, e ajustar o número se necessário |
+| A redução de 80% pode não se confirmar na medição real | **Risco fechado.** Medição real em arm64 confirmou 95,2% de redução no coletor e 86,2% no gateway, os dois acima do mínimo de 80%. Detalhe na tabela da seção 6, "Por que o entregável muda em relação ao plano" |
 | Sete atividades em 3,5 h é apertado | Ordem de corte definida na seção 3; cronometrar na primeira aplicação |
 | Aluno sem conta no Docker Hub trava no ciclo 7 | Pré-requisito anunciado pelo professor antes da aula, repetido no slide 5 e no README |
 | Atividade progressiva propaga travamento entre etapas | Diretório `resgate/`, com uso registrado em `EVIDENCIAS.md` |
