@@ -69,7 +69,7 @@ Verificado nesta sessão: o GitHub Models responde com o token do professor. Ate
 
 ---
 
-### Aula 02 — pronta e commitada
+### Aula 02 — pronta, publicada e com o repositório de lab sincronizado
 
 34 slides validados em 1280x720, com diagramas SVG inline para a evolução do HTTP,
 o handshake TLS e o fluxo do SSE. Lab Kit completo em `aulas-1sem/labs/aula02-lab/`.
@@ -79,10 +79,26 @@ O escopo do laboratório está registrado na
 entregue pronto, o Wireshark sai do escopo e a inspeção de tráfego passa a ser
 feita com `cURL`, com três medições numéricas em `docs/OBSERVACOES.md`.
 
-Validado de ponta a ponta nesta sessão: subindo o coletor, a frota simulada e o
-gateway, o `http-l7/verificar.mjs` passa nos 7 critérios com o gabarito e passa em
-apenas 1 com o esqueleto entregue ao aluno, saindo com código 1. O verificador
-discrimina de verdade.
+Validado de ponta a ponta nesta sessão, inclusive **dentro da imagem do
+devcontainer** (`typescript-node:1-22-bookworm`, que traz Python 3.11, Node 22 e
+`cURL`): subindo o coletor, a frota simulada e o gateway, o `http-l7/verificar.mjs`
+passa nos 7 critérios com o gabarito e passa em apenas 1 com o esqueleto entregue
+ao aluno, saindo com código 1. O verificador discrimina de verdade.
+
+O formulário de entrega está publicado: <https://forms.cloud.microsoft/r/ykGYKsPAj7>,
+embutido no slide 32 e citado no README do lab.
+
+**O repositório que o aluno forka foi sincronizado**, em
+<https://github.com/josercf/mwe-2026-2-lab02-http-sse>. Ele tinha só o esqueleto do
+scaffolder, com um README que ainda mandava implementar os sockets e capturar
+tráfego com Wireshark. Agora traz `sockets-l4/`, `http-l7/`, `docs/OBSERVACOES.md` e
+o README real, **sem o `gabarito/`**.
+
+> **Atenção ao publicar qualquer aula:** o repositório de lab é separado do acervo
+> e **não é sincronizado por nada automático**. Depois de mexer em
+> `aulas-1sem/labs/aulaXX-lab/`, é preciso clonar `josercf/mwe-2026-2-labNN-tema`,
+> copiar o conteúdo (nunca o `gabarito/`), preservar `.devcontainer/` e `ai/ask.py`,
+> e dar push. Foi assim que a Aula 02 foi sincronizada.
 
 ### Saneamento do acervo (30/07/2026)
 
@@ -117,7 +133,8 @@ discrimina de verdade.
 
 - [ ] **Aulas 03 a 16 ainda são rasas.** Decks de ~140 a ~370 linhas, sem figura, quizzes genéricos. Cada uma precisa passar pelo `construtor-aulas`. **A próxima é a Aula 03** (Docker I, 18/08), que empacota justamente o coletor Python e o gateway Node da Aula 02.
 - [ ] **Labs 03 a 16 têm só o esqueleto.** Devcontainer e README funcionam; falta o conteúdo de cada laboratório.
-- [ ] **Decidir o destino do `gabarito/server.js`.** Ele está commitado em `labs/aula02-lab/gabarito/`, e o workflow publica o repositório inteiro no GitHub Pages: um aluno que navegue pelo acervo acha a resposta. O repositório de lab que o aluno forka é outro (`josercf/mwe-2026-2-lab02-http-sse`) e não leva o gabarito, então o risco é de quem procura no acervo. Avaliar se o gabarito sai do repositório público ou se fica assumido.
+- [ ] **Decidir o destino do `gabarito/server.js`.** Ele está commitado em `labs/aula02-lab/gabarito/`, e o workflow publica o repositório inteiro no GitHub Pages: um aluno que navegue pelo acervo acha a resposta. Confirmado que o repositório que o aluno forka **não** leva o gabarito, então o risco é só de quem procura no acervo. Avaliar se o gabarito sai do repositório público ou se fica assumido.
+- [ ] **Os outros 12 repositórios de lab provavelmente estão como o da Aula 02 estava:** só o esqueleto do scaffolder, com README genérico. Ao construir cada aula, sincronizar o repositório correspondente junto, senão o aluno abre um kit que não bate com o slide.
 - [ ] **A passagem por arquivo entre o coletor e o gateway precisa ser desfeita na Aula 07.** Está declarada como simplificação deliberada na ADR-002, no README do lab e no slide do Passo 2, com a Aula 07 nomeada como ponto de substituição. Ao construir a Aula 07, cobrar essa dívida.
 - [ ] Duplicação no `home01`: `~/infra/docker-compose.yml` e `~/homelab/docker-compose.yml` **definem os dois o nginx-proxy-manager e o n8n**. Parece migração inacabada. Resolver antes de subir serviço novo, senão um `compose up` pode derrubar o proxy no meio de uma aula.
 
