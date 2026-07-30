@@ -71,8 +71,6 @@
   </style>
 </head>
 <body>
-  <button onclick="window.location.search='?print-pdf'" class="pdf-print-btn" title="Exportar para PDF / Modo de Impressão">Exportar PDF</button>
-
   <div class="reveal">
     <div class="slides">
 
@@ -335,7 +333,7 @@
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>PRD (Product Requirements Document)</h2>
+          <h2>PRD (Product Requirements Document) <a href="#/ref-slide" class="ref-badge" title="Ver referencias">[1]</a></h2>
         </div>
 
         <p>O <strong>PRD</strong> não é apenas uma lista de funcionalidades; é o instrumento central de alinhamento estratégico que responde de forma conclusiva à pergunta: <em>"Por que estamos construindo este produto e para quem?"</em></p>
@@ -373,7 +371,7 @@
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>SDD (System Design Document)</h2>
+          <h2>SDD (System Design Document) <a href="#/ref-slide" class="ref-badge" title="Ver referencias">[2]</a></h2>
         </div>
 
         <p>Enquanto o PRD foca no produto (o <em>"Quê"</em>), o <strong>SDD</strong> traduz as necessidades de negócio em uma arquitetura de software concreta (o <em>"Como"</em>). Ele é o contrato técnico entre arquitetos, desenvolvedores e infraestrutura.</p>
@@ -409,7 +407,7 @@
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>DDD: A Importância da Linguagem Ubíqua</h2>
+          <h2>DDD: A Importância da Linguagem Ubíqua <a href="#/ref-slide" class="ref-badge" title="Ver referencias">[3]</a></h2>
         </div>
 
         <p>No Domain-Driven Design (DDD), a <strong>Linguagem Ubíqua (Ubiquitous Language)</strong> é o idioma único e rigorosamente compartilhado por especialistas de domínio (negócio) e engenheiros de software.</p>
@@ -436,7 +434,7 @@
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>O Caso Prático da Prefeitura</h2>
+          <h2>O Caso Prático da Prefeitura <a href="#/ref-slide" class="ref-badge" title="Ver referencias">[3]</a></h2>
         </div>
 
         <p>Considere uma administração pública onde diversos departamentos precisam lidar com o mesmo evento físico no mundo real, mas o nomeiam de forma fragmentada, gerando silos de informação:</p>
@@ -472,7 +470,7 @@
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Unificação na Linguagem Ubíqua</h2>
+          <h2>Unificação na Linguagem Ubíqua <a href="#/ref-slide" class="ref-badge" title="Ver referencias">[3]</a></h2>
         </div>
 
         <p>A solução proposta pelo DDD é abstrair as visões departamentais isoladas e forjar um conceito central e unificado que todos adotam formalmente:</p>
@@ -502,7 +500,7 @@
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Bounded Contexts & Monolith-First</h2>
+          <h2>Bounded Contexts & Monolith-First <a href="#/ref-slide" class="ref-badge" title="Ver referencias">[4]</a></h2>
         </div>
 
         <div class="concept-cards" style="grid-template-columns: 1fr 1fr;">
@@ -528,7 +526,7 @@
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>SDLC: Ciclo de Vida de Desenvolvimento de Software</h2>
+          <h2>SDLC: Ciclo de Vida de Desenvolvimento de Software <a href="#/ref-slide" class="ref-badge" title="Ver referencias">[5]</a></h2>
         </div>
 
         <p>O SDLC (Software Development Life Cycle) é a estrutura metodológica adotada por corporações para projetar, construir e manter softwares de alta qualidade.</p>
@@ -567,15 +565,69 @@
           <h2>Versionamento com Git: Trabalho Colaborativo</h2>
         </div>
 
-        <div class="concept-cards" style="grid-template-columns: 1fr 1fr;">
-          <div class="concept-card">
-            <h4>Desenvolvimento Isolado</h4>
-            <p>Sem um sistema de controle de versão (VCS), o desenvolvimento em equipe resulta na sobrescrita acidental de código, ausência de histórico rastreável e incapacidade de reverter o projeto de forma segura após falhas sistêmicas.</p>
-          </div>
-          <div class="concept-card">
-            <h4>Sinergia de Equipe</h4>
-            <p>Utilizando o Git, múltiplos engenheiros de software alteram o mesmo ecossistema simultaneamente através de ramificações (branches) independentes, fundindo (merge) o trabalho via algoritmos robustos de resolução de conflitos.</p>
-          </div>
+        <p>Software profissional não é escrito sozinho. O problema que o Git resolve aparece no instante em que a segunda pessoa toca no mesmo arquivo.</p>
+
+        <div class="slide-figure">
+          <svg viewBox="0 0 1120 320" role="img" aria-label="Evolução do desenvolvimento solo para colaborativo com conflito e merge">
+            <defs>
+              <marker id="arrowGray" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+                <path d="M0,0 L9,4.5 L0,9 Z" fill="#999"/>
+              </marker>
+              <marker id="arrowPink" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+                <path d="M0,0 L9,4.5 L0,9 Z" fill="#ED145B"/>
+              </marker>
+            </defs>
+
+            <!-- CENÁRIO 1: uma pessoa -->
+            <text x="150" y="24" text-anchor="middle" font-size="17" font-weight="800" fill="#1a1a1a">1 pessoa</text>
+            <text x="150" y="44" text-anchor="middle" font-size="13" fill="#777">Sem conflito, mas sem rede de proteção</text>
+            <circle cx="150" cy="95" r="24" fill="#1a1a1a"/>
+            <circle cx="150" cy="88" r="8" fill="#fff"/>
+            <path d="M136,108 a14,12 0 0,1 28,0 Z" fill="#fff"/>
+            <line x1="150" y1="125" x2="150" y2="165" stroke="#999" stroke-width="2.5" marker-end="url(#arrowGray)"/>
+            <rect x="80" y="172" width="140" height="52" rx="6" fill="#f5f5f5" stroke="#ccc" stroke-width="2"/>
+            <text x="150" y="195" text-anchor="middle" font-size="14" font-weight="700" fill="#333">projeto/</text>
+            <text x="150" y="213" text-anchor="middle" font-size="12" fill="#777">app_final_v2_OK.zip</text>
+            <text x="150" y="256" text-anchor="middle" font-size="12" fill="#c0392b" font-weight="600">Sem histórico. Sem reverter.</text>
+
+            <line x1="265" y1="150" x2="305" y2="150" stroke="#ddd" stroke-width="2" stroke-dasharray="5,5"/>
+
+            <!-- CENÁRIO 2: duas pessoas, conflito -->
+            <text x="500" y="24" text-anchor="middle" font-size="17" font-weight="800" fill="#1a1a1a">2 pessoas, sem VCS</text>
+            <text x="500" y="44" text-anchor="middle" font-size="13" fill="#777">Um sobrescreve o trabalho do outro</text>
+            <circle cx="415" cy="95" r="24" fill="#1a1a1a"/>
+            <circle cx="415" cy="88" r="8" fill="#fff"/>
+            <path d="M401,108 a14,12 0 0,1 28,0 Z" fill="#fff"/>
+            <circle cx="585" cy="95" r="24" fill="#1a1a1a"/>
+            <circle cx="585" cy="88" r="8" fill="#fff"/>
+            <path d="M571,108 a14,12 0 0,1 28,0 Z" fill="#fff"/>
+            <line x1="428" y1="118" x2="478" y2="166" stroke="#e74c3c" stroke-width="2.5" marker-end="url(#arrowGray)"/>
+            <line x1="572" y1="118" x2="522" y2="166" stroke="#e74c3c" stroke-width="2.5" marker-end="url(#arrowGray)"/>
+            <rect x="430" y="172" width="140" height="52" rx="6" fill="#fdedec" stroke="#e74c3c" stroke-width="2"/>
+            <text x="500" y="195" text-anchor="middle" font-size="14" font-weight="700" fill="#c0392b">main.py</text>
+            <text x="500" y="213" text-anchor="middle" font-size="12" fill="#c0392b">escrita simultânea</text>
+            <text x="500" y="256" text-anchor="middle" font-size="12" fill="#c0392b" font-weight="600">Código perdido silenciosamente.</text>
+
+            <line x1="620" y1="150" x2="660" y2="150" stroke="#ddd" stroke-width="2" stroke-dasharray="5,5"/>
+
+            <!-- CENÁRIO 3: Git -->
+            <text x="890" y="24" text-anchor="middle" font-size="17" font-weight="800" fill="#ED145B">2 pessoas, com Git</text>
+            <text x="890" y="44" text-anchor="middle" font-size="13" fill="#777">Branches isolam, o merge reconcilia</text>
+            <circle cx="800" cy="95" r="24" fill="#ED145B"/>
+            <circle cx="800" cy="88" r="8" fill="#fff"/>
+            <path d="M786,108 a14,12 0 0,1 28,0 Z" fill="#fff"/>
+            <circle cx="980" cy="95" r="24" fill="#ED145B"/>
+            <circle cx="980" cy="88" r="8" fill="#fff"/>
+            <path d="M966,108 a14,12 0 0,1 28,0 Z" fill="#fff"/>
+            <text x="800" y="140" text-anchor="middle" font-size="11" font-weight="700" fill="#ED145B">feature/rota</text>
+            <text x="980" y="140" text-anchor="middle" font-size="11" font-weight="700" fill="#ED145B">feature/frete</text>
+            <path d="M800,148 C800,180 840,180 885,182" fill="none" stroke="#ED145B" stroke-width="2.5" marker-end="url(#arrowPink)"/>
+            <path d="M980,148 C980,180 940,180 895,182" fill="none" stroke="#ED145B" stroke-width="2.5" marker-end="url(#arrowPink)"/>
+            <rect x="820" y="188" width="140" height="52" rx="6" fill="#eafaf1" stroke="#27ae60" stroke-width="2"/>
+            <text x="890" y="211" text-anchor="middle" font-size="14" font-weight="700" fill="#1e8449">main</text>
+            <text x="890" y="229" text-anchor="middle" font-size="12" fill="#1e8449">merge revisado</text>
+            <text x="890" y="272" text-anchor="middle" font-size="12" fill="#1e8449" font-weight="600">Histórico completo e reversível.</text>
+          </svg>
         </div>
 
         <div class="slide-footer">
@@ -590,19 +642,48 @@
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Evolução dos Sistemas de Controle de Versão</h2>
+          <h2>Evolução dos Sistemas de Controle de Versão <a href="#/ref-slide" class="ref-badge" title="Ver referencias">[6]</a></h2>
         </div>
 
-        <table>
-          <thead>
-            <tr><th>Geração</th><th>Modelo Arquitetural</th><th>Características Principais</th><th>Ferramentas</th></tr>
-          </thead>
-          <tbody>
-            <tr><td><strong>1ª Geração</strong></td><td>Local (Baseado em Arquivos)</td><td>Controle isolado em uma única máquina, altamente suscetível a perdas de hardware.</td><td>RCS, SCCS</td></tr>
-            <tr><td><strong>2ª Geração</strong></td><td>Centralizado (Síncrono)</td><td>Dependência de um servidor central. Necessidade de bloqueio (lock) de arquivos durante edição.</td><td>CVS, SVN (Subversion)</td></tr>
-            <tr><td><strong>3ª Geração</strong></td><td>Distribuído (Assíncrono)</td><td>O repositório completo e o histórico são clonados integralmente em cada máquina cliente.</td><td><strong>Git</strong>, Mercurial</td></tr>
-          </tbody>
-        </table>
+        <p>A virada decisiva foi sair do modelo <strong>síncrono</strong> (servidor central, arquivo travado, precisa estar online) para o <strong>distribuído</strong>, em que cada máquina tem o repositório inteiro.</p>
+
+        <div class="timeline">
+          <div class="tl-item is-past">
+            <div class="tl-dot"></div>
+            <span class="tl-year">1972 – 1982</span>
+            <span class="tl-tool">SCCS / RCS</span>
+            <span class="tl-desc">Local. Versiona arquivo a arquivo na própria máquina. Perdeu o disco, perdeu tudo.</span>
+          </div>
+          <div class="tl-item is-past">
+            <div class="tl-dot"></div>
+            <span class="tl-year">1990</span>
+            <span class="tl-tool">CVS</span>
+            <span class="tl-desc">Primeiro servidor central. Vários devs no mesmo projeto, mas merge frágil.</span>
+          </div>
+          <div class="tl-item is-past">
+            <div class="tl-dot"></div>
+            <span class="tl-year">2000</span>
+            <span class="tl-tool">SVN (Subversion)</span>
+            <span class="tl-desc">Centralizado e síncrono. Commit exige rede e o lock trava o arquivo para os demais.</span>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <span class="tl-year">2005</span>
+            <span class="tl-tool">Git / Mercurial</span>
+            <span class="tl-desc">Distribuído e assíncrono. Clone integral do histórico, commit e branch offline.</span>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot"></div>
+            <span class="tl-year">2008 &rarr; hoje</span>
+            <span class="tl-tool">GitHub / GitLab</span>
+            <span class="tl-desc">O Git vira plataforma: Pull Request, CI/CD, code review e automação em cima do mesmo grafo.</span>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Takeaway</span>
+          <p>Git venceu porque desacoplou o ato de versionar do ato de compartilhar. Você comita no avião; sincroniza quando quiser.</p>
+        </div>
 
         <div class="slide-footer">
           <div class="footer-bar">01 – Evolução do Git</div>
@@ -650,19 +731,29 @@
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Commits, Branches e o Fluxo Temporal</h2>
+          <h2>Commits, Branches e o Multiverso</h2>
         </div>
 
-        <p>A arquitetura fundamental do Git permite a criação de linhas do tempo divergentes e convergentes.</p>
+        <div class="figure-split">
+          <img src="../assets/img/git-multiverse.jpg" alt="Linhas do tempo divergentes representando branches do Git">
 
-        <div class="concept-cards" style="grid-template-columns: 1fr 1fr;">
-          <div class="concept-card">
-            <h4>O conceito de Branching</h4>
-            <p>Cada <code>branch</code> representa um contexto de experimento temporal isolado. Funcionalidades de alto risco e correções críticas de produção podem ser desenvolvidas em paralelo sem interferir na estabilidade do ramo principal da aplicação.</p>
-          </div>
-          <div class="concept-card">
-            <h4>Reconciliação e Merge</h4>
-            <p>Após a validação por testes automatizados em um ramo separado, a operação de <code>merge</code> executa a convergência segura dos dados, unificando os estados do sistema de volta para a linha do tempo canônica (main).</p>
+          <div>
+            <p style="font-size:0.8em;">Quando o Doutor Estranho abre os quatorze milhões de futuros possíveis, ele faz exatamente o que o Git faz: <strong>cria linhas do tempo paralelas a partir de um mesmo ponto</strong>, explora cada uma isoladamente e só uma converge de volta.</p>
+
+            <div class="concept-cards" style="grid-template-columns: 1fr; margin-top:14px;">
+              <div class="concept-card">
+                <h4>Commit: o ponto na linha do tempo</h4>
+                <p>Um snapshot imutável e identificado por hash. É a menor unidade que se pode revisar, reverter ou culpar (<code>git blame</code>).</p>
+              </div>
+              <div class="concept-card">
+                <h4>Branch: a realidade alternativa</h4>
+                <p>Uma feature arriscada ou um hotfix de produção evoluem em paralelo sem ameaçar a <code>main</code>. Se der errado, descarta-se a linha inteira.</p>
+              </div>
+              <div class="concept-card">
+                <h4>Merge: a convergência</h4>
+                <p>Depois de revisada e testada, a linha alternativa é reconciliada com a canônica. O conflito não é falha: é o Git avisando que duas realidades tocaram o mesmo ponto.</p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -678,7 +769,7 @@
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Commits Semânticos e Governança</h2>
+          <h2>Commits Semânticos e Governança <a href="#/ref-slide" class="ref-badge" title="Ver referencias">[6]</a></h2>
         </div>
 
         <pre><code class="language-bash"># O padrão corporativo Conventional Commits mapeia o objetivo da alteração
@@ -702,7 +793,7 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Estratégias Avançadas de Branching</h2>
+          <h2>Estratégias Avançadas de Branching <a href="#/ref-slide" class="ref-badge" title="Ver referencias">[6]</a></h2>
         </div>
 
         <div class="concept-cards" style="grid-template-columns: 1fr 1fr;">
@@ -743,6 +834,26 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
                data-correct-msg="Correto. A padronização estrita é a base da automação (CI/CD) de geração de releases e logs operacionais."
                data-incorrect-msg="Incorreto. Revise a documentação sobre governança de repositórios e Conventional Commits.">
           </div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz1Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz1Timer">01:00</span>
+            </div>
+          </div>
         </div>
 
         <div class="slide-footer">
@@ -757,22 +868,32 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>O Modelo OSI (Open Systems Interconnection)</h2>
+          <h2>O Modelo OSI (Open Systems Interconnection) <a href="#/ref-slide" class="ref-badge" title="Ver referencias">[7]</a></h2>
         </div>
 
-        <table>
-          <thead>
-            <tr><th>Camada</th><th>Nome da Camada</th><th>Função e Propósito Principal</th><th>Exemplos Clássicos</th></tr>
-          </thead>
-          <tbody>
-            <tr><td><strong>L7</strong></td><td>Aplicação</td><td>Apresenta a interface final de rede aos softwares de usuário.</td><td>HTTP, HTTPS, gRPC, DNS</td></tr>
-            <tr><td><strong>L6</strong></td><td>Apresentação</td><td>Manipula a formatação lógica de dados, compressão e criptografia.</td><td>TLS/SSL, JSON, XML</td></tr>
-            <tr><td><strong>L5</strong></td><td>Sessão</td><td>Responsável por criar, manter e derrubar o diálogo da comunicação.</td><td>RPC, NetBIOS</td></tr>
-            <tr><td><strong>L4</strong></td><td>Transporte</td><td>Garante e coordena a comunicação lógica fim a fim (host-to-host).</td><td><strong>TCP, UDP</strong></td></tr>
-            <tr><td><strong>L3</strong></td><td>Rede</td><td>Gerencia o endereçamento lógico e os roteamentos complexos globais.</td><td>IP (IPv4/v6), ICMP</td></tr>
-            <tr><td><strong>L2/L1</strong></td><td>Enlace e Física</td><td>Gerencia endereços físicos (MAC) e converte bits em sinais físicos (cobre, luz, onda).</td><td>Ethernet, Wi-Fi, 5G</td></tr>
-          </tbody>
-        </table>
+        <div class="figure-split" style="grid-template-columns: 1.35fr 1fr;">
+          <img src="../assets/img/osi-tcpip.svg" alt="Comparação entre as sete camadas do modelo OSI e as quatro camadas da pilha TCP/IP, com exemplos de protocolo por camada">
+
+          <div>
+            <p style="font-size:0.78em;">O OSI é um <strong>modelo de referência</strong> didático de sete camadas. O que roda de fato na internet é a pilha <strong>TCP/IP</strong>, com quatro. Saber mapear uma na outra é o que permite localizar um problema.</p>
+
+            <div class="concept-cards" style="grid-template-columns: 1fr; margin-top:12px;">
+              <div class="concept-card">
+                <h4>Onde cada camada te encontra no dia a dia</h4>
+                <p><strong>L7</strong> a API que você escreve (HTTP, gRPC).<br>
+                <strong>L6</strong> o TLS do cadeado do navegador.<br>
+                <strong>L4</strong> a escolha entre TCP e UDP: o tema da Aula 01.<br>
+                <strong>L3</strong> o IP e a rota até o destino.<br>
+                <strong>L2/L1</strong> o cabo, o Wi-Fi, o 5G.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Takeaway</span>
+          <p>A camada define onde você depura. Latência alta em uma query é L7; pacote que nunca chega é L3/L4; o site abre em HTTP e falha em HTTPS é L6. Diagnosticar sem saber a camada é chutar.</p>
+        </div>
 
         <div class="slide-footer">
           <div class="footer-bar">01 – Modelo de Referência OSI</div>
@@ -786,20 +907,96 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Camada de Transporte (L4): Protocolo TCP</h2>
+          <h2>Camada de Transporte (L4): Protocolo TCP <a href="#/ref-slide" class="ref-badge" title="Ver referencias">[7]</a></h2>
         </div>
 
-        <p>O <strong>TCP (Transmission Control Protocol)</strong> é o protocolo orientando a conexão padrão ouro para confiabilidade em redes modernas.</p>
+        <p>Caso de uso: <strong>uma transferência bancária de R$ 2.500,00</strong>. Aqui, perder um pacote em silêncio é inaceitável, então o protocolo confirma cada etapa antes de prosseguir.</p>
 
-        <div class="concept-cards" style="grid-template-columns: 1fr 1fr;">
-          <div class="concept-card">
-            <h4>Confiabilidade e Handshake</h4>
-            <p>Realiza o <em>3-Way Handshake</em> (SYN -> SYN-ACK -> ACK) antes de iniciar a transmissão. Ele ordena os pacotes matematicamente na chegada e exige confirmação contínua; qualquer segmento não confirmado é retransmitido automaticamente.</p>
-          </div>
-          <div class="concept-card">
-            <h4>Aplicações e Limitações</h4>
-            <p>Usado fundamentalmente em operações bancárias financeiras, transações de banco de dados corporativos e envio de e-mails, onde a integridade total do payload é mais importante que o overhead de tempo para transmiti-lo.</p>
-          </div>
+        <div class="slide-figure">
+          <svg viewBox="0 0 1120 300" role="img" aria-label="Animação do 3-way handshake do TCP entre cliente e servidor, seguido do envio de dados e da confirmação">
+            <!-- Atores -->
+            <rect x="60" y="20" width="180" height="46" rx="6" fill="#1a1a1a"/>
+            <text x="150" y="49" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">App do Banco</text>
+            <rect x="880" y="20" width="180" height="46" rx="6" fill="#1a1a1a"/>
+            <text x="970" y="49" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">Servidor</text>
+
+            <!-- Lifelines -->
+            <line x1="150" y1="70" x2="150" y2="285" stroke="#ddd" stroke-width="2.5"/>
+            <line x1="970" y1="70" x2="970" y2="285" stroke="#ddd" stroke-width="2.5"/>
+
+            <!-- Trilhos -->
+            <line x1="160" y1="100" x2="960" y2="100" stroke="#f0f0f0" stroke-width="1.5"/>
+            <line x1="160" y1="140" x2="960" y2="140" stroke="#f0f0f0" stroke-width="1.5"/>
+            <line x1="160" y1="180" x2="960" y2="180" stroke="#f0f0f0" stroke-width="1.5"/>
+            <line x1="160" y1="230" x2="960" y2="230" stroke="#f0f0f0" stroke-width="1.5"/>
+            <line x1="160" y1="270" x2="960" y2="270" stroke="#f0f0f0" stroke-width="1.5"/>
+
+            <text x="1075" y="105" text-anchor="end" font-size="11" fill="#aaa">handshake</text>
+            <text x="1075" y="235" text-anchor="end" font-size="11" fill="#aaa">dados</text>
+
+            <!-- 1. SYN -->
+            <g transform="translate(190,88)">
+              <rect width="120" height="24" rx="12" fill="#ED145B"/>
+              <text x="60" y="17" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">SYN</text>
+              <animateTransform attributeName="transform" type="translate" dur="8s" repeatCount="indefinite"
+                keyTimes="0;0.15;1" values="190,88; 810,88; 810,88"/>
+              <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
+                keyTimes="0;0.15;0.151;1" values="1;1;0;0"/>
+            </g>
+
+            <!-- 2. SYN-ACK -->
+            <g transform="translate(810,128)">
+              <rect width="120" height="24" rx="12" fill="#1a1a1a"/>
+              <text x="60" y="17" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">SYN-ACK</text>
+              <animateTransform attributeName="transform" type="translate" dur="8s" repeatCount="indefinite"
+                keyTimes="0;0.175;0.325;1" values="810,128; 810,128; 190,128; 190,128"/>
+              <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
+                keyTimes="0;0.174;0.175;0.325;0.326;1" values="0;0;1;1;0;0"/>
+            </g>
+
+            <!-- 3. ACK -->
+            <g transform="translate(190,168)">
+              <rect width="120" height="24" rx="12" fill="#ED145B"/>
+              <text x="60" y="17" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">ACK</text>
+              <animateTransform attributeName="transform" type="translate" dur="8s" repeatCount="indefinite"
+                keyTimes="0;0.35;0.5;1" values="190,168; 190,168; 810,168; 810,168"/>
+              <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
+                keyTimes="0;0.349;0.35;0.5;0.501;1" values="0;0;1;1;0;0"/>
+            </g>
+
+            <!-- Conexão estabelecida -->
+            <text x="560" y="207" text-anchor="middle" font-size="13" font-weight="800" fill="#27ae60" opacity="0">
+              CONEXÃO ESTABELECIDA
+              <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
+                keyTimes="0;0.5;0.52;0.98;1" values="0;0;1;1;0"/>
+            </text>
+
+            <!-- 4. DADOS -->
+            <g transform="translate(190,218)">
+              <rect width="190" height="24" rx="12" fill="#ED145B"/>
+              <text x="95" y="17" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">TRANSFERE R$ 2.500,00</text>
+              <animateTransform attributeName="transform" type="translate" dur="8s" repeatCount="indefinite"
+                keyTimes="0;0.525;0.675;1" values="190,218; 190,218; 740,218; 740,218"/>
+              <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
+                keyTimes="0;0.524;0.525;0.675;0.676;1" values="0;0;1;1;0;0"/>
+            </g>
+
+            <!-- 5. ACK dos dados -->
+            <g transform="translate(790,258)">
+              <rect width="140" height="24" rx="12" fill="#27ae60"/>
+              <text x="70" y="17" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">ACK: recebido</text>
+              <animateTransform attributeName="transform" type="translate" dur="8s" repeatCount="indefinite"
+                keyTimes="0;0.7;0.85;1" values="790,258; 790,258; 190,258; 190,258"/>
+              <animate attributeName="opacity" dur="8s" repeatCount="indefinite"
+                keyTimes="0;0.699;0.7;0.85;0.851;1" values="0;0;1;1;0;0"/>
+            </g>
+          </svg>
+          <figcaption>3-Way Handshake (SYN, SYN-ACK, ACK) e confirmação explícita de cada envio.</figcaption>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Quando usar</span>
+          <p>Integridade vale mais que milissegundos: transação financeira, escrita em banco, upload de arquivo, e-mail. Se um segmento não for confirmado, o TCP retransmite sozinho e reordena na chegada. O preço é o overhead do handshake.</p>
         </div>
 
         <div class="slide-footer">
@@ -814,20 +1011,79 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Camada de Transporte (L4): Protocolo UDP</h2>
+          <h2>Camada de Transporte (L4): Protocolo UDP <a href="#/ref-slide" class="ref-badge" title="Ver referencias">[7]</a></h2>
         </div>
 
-        <p>O <strong>UDP (User Datagram Protocol)</strong> opera sem criar uma conexão prévia (connectionless), focado exclusivamente na agilidade e baixo overhead computacional.</p>
+        <p>Caso de uso: <strong>o rastreador GPS de um caminhão da LogiTech</strong> emitindo posição a cada segundo. Não há handshake, não há confirmação: o datagrama sai e o emissor nem fica sabendo se chegou.</p>
 
-        <div class="concept-cards" style="grid-template-columns: 1fr 1fr;">
-          <div class="concept-card">
-            <h4>Velocidade Bruta e Fire-and-Forget</h4>
-            <p>Não realiza handshake, nem se importa com controle de congestionamento ou com a retransmissão de pacotes perdidos no caminho. É despachado do servidor instantaneamente sob o paradigma "best-effort".</p>
-          </div>
-          <div class="concept-card">
-            <h4>Aplicações e Resiliência Adaptativa</h4>
-            <p>Pilar das infraestruturas de DNS mundiais, telemetria constante (IoT e GPS de frotas), streaming de áudio/vídeo e jogos online em tempo real. Nestes cenários corporativos, a fluidez instantânea compensa eventuais perdas marginais de frames.</p>
-          </div>
+        <div class="slide-figure">
+          <svg viewBox="0 0 1120 300" role="img" aria-label="Animação do UDP: datagramas de GPS enviados continuamente sem confirmação, um deles perdido no caminho">
+            <!-- Atores -->
+            <rect x="60" y="20" width="180" height="46" rx="6" fill="#1a1a1a"/>
+            <text x="150" y="49" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">Rastreador GPS</text>
+            <rect x="880" y="20" width="180" height="46" rx="6" fill="#1a1a1a"/>
+            <text x="970" y="49" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">Central</text>
+
+            <line x1="150" y1="70" x2="150" y2="285" stroke="#ddd" stroke-width="2.5"/>
+            <line x1="970" y1="70" x2="970" y2="285" stroke="#ddd" stroke-width="2.5"/>
+
+            <!-- Zona de perda -->
+            <rect x="520" y="80" width="90" height="200" rx="6" fill="#fdedec" opacity="0.65"/>
+            <text x="565" y="296" text-anchor="middle" font-size="11" fill="#c0392b" font-weight="600">área de perda</text>
+
+            <!-- Datagrama 1 -->
+            <g transform="translate(190,95)">
+              <rect width="170" height="24" rx="4" fill="#ED145B"/>
+              <text x="85" y="17" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">lat -23.55 lng -46.63</text>
+              <animateTransform attributeName="transform" type="translate" dur="5s" repeatCount="indefinite"
+                keyTimes="0;0.4;1" values="190,95; 790,95; 790,95"/>
+              <animate attributeName="opacity" dur="5s" repeatCount="indefinite"
+                keyTimes="0;0.4;0.401;1" values="1;1;0;0"/>
+            </g>
+
+            <!-- Datagrama 2 -->
+            <g transform="translate(190,140)">
+              <rect width="170" height="24" rx="4" fill="#ED145B"/>
+              <text x="85" y="17" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">lat -23.56 lng -46.64</text>
+              <animateTransform attributeName="transform" type="translate" dur="5s" repeatCount="indefinite"
+                keyTimes="0;0.15;0.55;1" values="190,140; 190,140; 790,140; 790,140"/>
+              <animate attributeName="opacity" dur="5s" repeatCount="indefinite"
+                keyTimes="0;0.149;0.15;0.55;0.551;1" values="0;0;1;1;0;0"/>
+            </g>
+
+            <!-- Datagrama 3: PERDIDO na travessia -->
+            <g transform="translate(190,185)">
+              <rect width="170" height="24" rx="4" fill="#999"/>
+              <text x="85" y="17" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">lat -23.57 lng -46.65</text>
+              <animateTransform attributeName="transform" type="translate" dur="5s" repeatCount="indefinite"
+                keyTimes="0;0.3;0.56;1" values="190,185; 190,185; 480,185; 480,185"/>
+              <animate attributeName="opacity" dur="5s" repeatCount="indefinite"
+                keyTimes="0;0.299;0.3;0.5;0.56;1" values="0;0;1;1;0;0"/>
+            </g>
+            <text x="565" y="190" text-anchor="middle" font-size="13" font-weight="800" fill="#c0392b" opacity="0">
+              PACOTE PERDIDO
+              <animate attributeName="opacity" dur="5s" repeatCount="indefinite"
+                keyTimes="0;0.56;0.58;0.82;0.84;1" values="0;0;1;1;0;0"/>
+            </text>
+
+            <!-- Datagrama 4 -->
+            <g transform="translate(190,230)">
+              <rect width="170" height="24" rx="4" fill="#ED145B"/>
+              <text x="85" y="17" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">lat -23.58 lng -46.66</text>
+              <animateTransform attributeName="transform" type="translate" dur="5s" repeatCount="indefinite"
+                keyTimes="0;0.45;0.85;1" values="190,230; 190,230; 790,230; 790,230"/>
+              <animate attributeName="opacity" dur="5s" repeatCount="indefinite"
+                keyTimes="0;0.449;0.45;0.85;0.851;1" values="0;0;1;1;0;0"/>
+            </g>
+
+            <text x="560" y="278" text-anchor="middle" font-size="13" font-weight="700" fill="#777">nenhum ACK volta</text>
+          </svg>
+          <figcaption>Fire-and-forget: o emissor segue transmitindo. O pacote perdido simplesmente não existe para ninguém.</figcaption>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Quando usar</span>
+          <p>Frescor vale mais que completude: telemetria, GPS de frota, voz e vídeo ao vivo, jogos online, DNS. A posição de um segundo atrás já não interessa, então retransmitir seria pior que perder. Nunca use em transação financeira.</p>
         </div>
 
         <div class="slide-footer">
@@ -837,21 +1093,20 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
       </section>
 
       <!-- ==================== SLIDE 27: INTERVALO ==================== -->
-      <section class="content-slide" style="text-align:center;">
-        <div class="top-bar"></div>
-        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        
-        <div style="margin-top:100px;">
-          <h2 style="font-size:3.5em; color:var(--fiap-pink); margin-bottom:20px;">Intervalo</h2>
-          <h3 style="font-size:2em; color:var(--fiap-dark);">30 minutos de pausa</h3>
-          
-          <div class="quiz-timer-box" style="margin:40px auto 0 auto; padding:15px 30px; font-size:1.2em;">
-            <button class="quiz-timer-btn" style="width:40px; height:40px; font-size:1.2em;" onclick="startTimer('breakTimer', 1800)">▶</button>
-            <span>Retorno em: <span id="breakTimer">30:00</span></span>
+      <!-- background transparente: .content-slide pinta branco e taparia a imagem de fundo -->
+      <section class="content-slide" style="text-align:center; background:transparent;"
+               data-background-image="../assets/img/coffee-relax.jpg"
+               data-background-size="cover"
+               data-background-opacity="0.45">
+        <div style="margin-top:150px;">
+          <h2 style="font-size:4em; color:var(--fiap-pink); margin-bottom:10px; text-shadow:0 2px 12px rgba(255,255,255,0.9);">Intervalo</h2>
+          <h3 style="font-size:2.2em; color:var(--fiap-dark); text-shadow:0 2px 10px rgba(255,255,255,0.9);">30 minutos</h3>
+
+          <div class="quiz-timer-box" style="margin:40px auto 0 auto; padding:15px 30px; font-size:1.3em;">
+            <button class="quiz-timer-btn" style="width:40px; height:40px; font-size:1.2em;" onclick="startTimer('breakTimer', 1800)" aria-label="Iniciar cronômetro do intervalo">&#9654;</button>
+            <span id="breakTimer">30:00</span>
           </div>
         </div>
-
-        <div class="slide-footer"><div class="footer-page">27</div></div>
       </section>
 
       <!-- ==================== SLIDE 28: QUIZ 2 ==================== -->
@@ -874,6 +1129,26 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
           <div class="quiz-feedback"
                data-correct-msg="Correto. O Bounded Context isola lógicas de negócio em microsserviços e previne o acoplamento sistêmico."
                data-incorrect-msg="Incorreto. Lembre-se que Bounded Context é estritamente ligado ao design da solução lógica.">
+          </div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz2Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz2Timer">01:00</span>
+            </div>
           </div>
         </div>
 
@@ -904,6 +1179,26 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
                data-correct-msg="Correto. Telemetria requer velocidade bruta (Fire-and-Forget) em favor da tolerância a perdas menores de informação."
                data-incorrect-msg="Incorreto. Avalie com cuidado as necessidades de performance entre UDP e TCP.">
           </div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz3Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz3Timer">01:00</span>
+            </div>
+          </div>
         </div>
 
         <div class="slide-footer">
@@ -918,31 +1213,33 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Atividade Prática (Engenharia e Configuração de Redes)</h2>
+          <h2>Atividade Prática em Dupla: Especificar antes de Codificar</h2>
         </div>
 
-        <div class="concept-cards" style="grid-template-columns: repeat(4, 1fr);">
+        <p style="font-size:0.8em;">Hoje ninguém escreve código. A entrega é a <strong>especificação</strong> do serviço de telemetria da LogiTech, produzida com apoio de um modelo de IA rodando na sua máquina. Na Aula 02 vocês implementam exatamente o que especificaram aqui.</p>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(4, 1fr); margin-top:14px;">
           <div class="concept-card">
-            <h4>1. Repositório Corporativo</h4>
-            <p>Criar o repositório de laboratório no GitHub, aplicando as diretrizes iniciais e organizando as chaves de acesso seguras (Tokens/SSH).</p>
+            <h4>1. Repositório (10 min)</h4>
+            <p>Criar conta no GitHub, abrir o repositório <code>fiap-2026-2-3si-duplaXX</code> e adicionar o colega e o professor como colaboradores.</p>
           </div>
           <div class="concept-card">
-            <h4>2. Definição Estratégica</h4>
-            <p>Produzir e versionar o documento fundamental da arquitetura base (PRD) para a solução do servidor propostos, garantindo alinhamento total.</p>
+            <h4>2. SLM local (10 min)</h4>
+            <p>Subir o <code>qwen2.5:3b</code> via Ollama na própria máquina. Nenhum dado sai do notebook, nenhuma chave de API é necessária.</p>
           </div>
           <div class="concept-card">
-            <h4>3. Implementação TCP/UDP</h4>
-            <p>Construir, a nível de código Python, os processos de escuta em rede nas portas definidas (TCP 8080 e UDP 8081), processando os payloads locais.</p>
+            <h4>3. PRD e SDD (30 min)</h4>
+            <p>Gerar <code>docs/PRD.md</code> e <code>docs/SDD.md</code> com a skill de PRD, e então <strong>revisar criticamente</strong>: o modelo erra, e achar o erro é a atividade.</p>
           </div>
           <div class="concept-card">
-            <h4>4. Processo de Entrega</h4>
-            <p>Validar a integridade técnica do repositório final e consolidar o envio administrativo pelo link formal da instituição na plataforma avaliativa.</p>
+            <h4>4. Commit e entrega (10 min)</h4>
+            <p>Commit em Conventional Commits, push na <code>main</code> e envio da URL do repositório no formulário da disciplina.</p>
           </div>
         </div>
 
-        <div class="callout" style="margin-top:20px; display:flex; justify-content:space-between; align-items:center;">
-          <span><strong>Validação Laboratorial:</strong> Consulte o arquivo README.md do laboratório para métricas estritas de aceitação (Acceptance Criteria).</span>
-          <a href="https://forms.office.com" target="_blank" class="pdf-print-btn" style="position:static; transform:none; box-shadow:none;">Portal de Entrega</a>
+        <div class="callout" style="margin-top:18px; display:flex; justify-content:space-between; align-items:center; gap:20px;">
+          <span style="font-size:0.78em;"><strong>Critérios de aceitação:</strong> o passo a passo completo, os prompts sugeridos e a checklist de avaliação estão no README do laboratório.</span>
+          <a href="../labs/aula01-lab/README.md" style="color:var(--fiap-pink); font-weight:700; font-size:0.78em; white-space:nowrap;">Abrir o Lab Kit</a>
         </div>
 
         <div class="slide-footer">
@@ -960,14 +1257,52 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
           <h2>Referências Bibliográficas e Documentação</h2>
         </div>
 
-        <div style="font-size:0.75em; line-height:1.8; color:var(--fiap-gray); max-height:450px; overflow-y:auto;">
-          <p><strong>[1] PRD:</strong> PM3 — <a href="https://pm3.com.br/glossario/prd-product-requirements-document/" target="_blank" style="color:var(--fiap-pink);">Glossário PRD</a> | Atlassian — <a href="https://www.atlassian.com/br/agile/product-management/requirements" target="_blank" style="color:var(--fiap-pink);">Product Requirements Guide</a></p>
-          <p><strong>[2] SDD:</strong> GitHub Spec Kit — <a href="https://github.com/github/spec-kit/blob/main/spec-driven.md" target="_blank" style="color:var(--fiap-pink);">Spec Driven Development Docs</a> | Architecture Guidelines</p>
-          <p><strong>[3] DDD & Linguagem Ubíqua:</strong> Martin Fowler — <a href="https://martinfowler.com/bliki/UbiquitousLanguage.html" target="_blank" style="color:var(--fiap-pink);">Ubiquitous Language Patterns</a> | Elemar Jr — <a href="https://elemarjr.com/linguagem-onipresente-ubiquitous-language/" target="_blank" style="color:var(--fiap-pink);">Linguagem Onipresente</a></p>
-          <p><strong>[4] Bounded Contexts:</strong> Martin Fowler — <a href="https://martinfowler.com/bliki/BoundedContext.html" target="_blank" style="color:var(--fiap-pink);">Bounded Context Definition</a> | Arquitetura Monolith-First: <a href="https://martinfowler.com/bliki/MonolithFirst.html" target="_blank" style="color:var(--fiap-pink);">MonolithFirst</a></p>
-          <p><strong>[5] SDLC:</strong> AWS — <a href="https://aws.amazon.com/pt/what-is/sdlc/" target="_blank" style="color:var(--fiap-pink);">O que é SDLC Corporativo</a> | Microsoft — <a href="https://www.microsoft.com/pt-br/power-platform/topics/phases-of-the-software-development-lifecycle" target="_blank" style="color:var(--fiap-pink);">Gestão do Ciclo de Vida</a></p>
-          <p><strong>[6] Git & Commits Semânticos:</strong> Documentação Oficial — <a href="https://www.conventionalcommits.org/en/v1.0.0/" target="_blank" style="color:var(--fiap-pink);">Conventional Commits Specification v1.0.0</a> | Git Hooks (Husky Reference)</p>
-          <p><strong>[7] Modelo OSI e Sockets de Rede:</strong> AWS — <a href="https://aws.amazon.com/pt/what-is/osi-model/" target="_blank" style="color:var(--fiap-pink);">Referência Técnica Modelo OSI</a> | Microsoft Windows Network OSI — <a href="https://learn.microsoft.com/pt-br/windows-hardware/drivers/network/windows-network-architecture-and-the-osi-model" target="_blank" style="color:var(--fiap-pink);">Driver Architecture</a></p>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px 28px; font-size:0.62em; line-height:1.55; color:var(--fiap-gray);">
+          <div>
+            <p style="margin:0 0 10px;"><strong style="color:var(--fiap-pink);">[1] PRD (Product Requirements Document)</strong><br>
+            PM3 — <a href="https://pm3.com.br/glossario/prd-product-requirements-document/" target="_blank" style="color:var(--fiap-pink);">Glossário: PRD</a><br>
+            ATLASSIAN — <a href="https://www.atlassian.com/br/agile/product-management/requirements" target="_blank" style="color:var(--fiap-pink);">Product Requirements</a><br>
+            GITHUB — <a href="https://github.com/github/awesome-copilot/blob/main/skills/prd/SKILL.md" target="_blank" style="color:var(--fiap-pink);">awesome-copilot: skill de PRD</a></p>
+
+            <p style="margin:0 0 10px;"><strong style="color:var(--fiap-pink);">[2] SDD (Spec Driven Development)</strong><br>
+            GITHUB — <a href="https://github.com/github/spec-kit/blob/main/spec-driven.md" target="_blank" style="color:var(--fiap-pink);">Spec Kit: spec-driven.md</a><br>
+            UNIVERSIDADE LIVRE — <a href="https://github.com/Universidade-Livre/ciencia-da-computacao/blob/main/extras/bibliography/22_software_engineering.md" target="_blank" style="color:var(--fiap-pink);">Bibliografia de Engenharia de Software</a></p>
+
+            <p style="margin:0 0 10px;"><strong style="color:var(--fiap-pink);">[3] Linguagem Ubíqua</strong><br>
+            FOWLER, M. — <a href="https://martinfowler.com/bliki/UbiquitousLanguage.html" target="_blank" style="color:var(--fiap-pink);">UbiquitousLanguage</a><br>
+            ELEMAR JR — <a href="https://elemarjr.com/linguagem-onipresente-ubiquitous-language/" target="_blank" style="color:var(--fiap-pink);">Linguagem Onipresente</a><br>
+            EXÍMIA — <a href="https://eximia.co/linguagem-onipresente/" target="_blank" style="color:var(--fiap-pink);">Linguagem Onipresente</a><br>
+            SANTOS DEV, W. — <a href="https://dev.to/wsantosdev/alem-do-codigo-linguagem-ubiqua-e-idioma-do-codigo-197o" target="_blank" style="color:var(--fiap-pink);">Além do código</a></p>
+
+            <p style="margin:0;"><strong style="color:var(--fiap-pink);">[4] Bounded Contexts e Monolith First</strong><br>
+            FOWLER, M. — <a href="https://martinfowler.com/bliki/BoundedContext.html" target="_blank" style="color:var(--fiap-pink);">BoundedContext</a> | <a href="https://martinfowler.com/bliki/MonolithFirst.html" target="_blank" style="color:var(--fiap-pink);">MonolithFirst</a><br>
+            PIRES, E. — <a href="https://www.eduardopires.net.br/2016/03/ddd-bounded-context/" target="_blank" style="color:var(--fiap-pink);">DDD: Bounded Context</a></p>
+          </div>
+
+          <div>
+            <p style="margin:0 0 10px;"><strong style="color:var(--fiap-pink);">[5] SDLC (Ciclo de Vida do Software)</strong><br>
+            AWS — <a href="https://aws.amazon.com/pt/what-is/sdlc/" target="_blank" style="color:var(--fiap-pink);">O que é SDLC</a><br>
+            IBM — <a href="https://www.ibm.com/br-pt/think/topics/sdlc" target="_blank" style="color:var(--fiap-pink);">SDLC</a><br>
+            MICROSOFT — <a href="https://www.microsoft.com/pt-br/power-platform/topics/phases-of-the-software-development-lifecycle" target="_blank" style="color:var(--fiap-pink);">Fases do ciclo de vida</a><br>
+            SERVICENOW — <a href="https://www.servicenow.com/br/products/devops/what-is-sdlc.html" target="_blank" style="color:var(--fiap-pink);">What is SDLC</a></p>
+
+            <p style="margin:0 0 10px;"><strong style="color:var(--fiap-pink);">[6] Git, Commits Semânticos e Hooks</strong><br>
+            <a href="https://www.conventionalcommits.org/en/v1.0.0/" target="_blank" style="color:var(--fiap-pink);">Conventional Commits v1.0.0</a> | <a href="https://www.conventionalcommits.org/en/about/" target="_blank" style="color:var(--fiap-pink);">About</a><br>
+            GIT SCM — <a href="https://git-scm.com/book/pt-br/v2/Customizing-Git-Git-Hooks" target="_blank" style="color:var(--fiap-pink);">Git Hooks (Pro Git)</a><br>
+            DEV.TO — <a href="https://dev.to/fedtti/how-to-use-semantic-versioning-and-conventional-commits-with-husky-1g6i" target="_blank" style="color:var(--fiap-pink);">Semantic Versioning com Husky</a></p>
+
+            <p style="margin:0 0 10px;"><strong style="color:var(--fiap-pink);">[7] Modelo OSI e Camada de Transporte</strong><br>
+            AWS — <a href="https://aws.amazon.com/pt/what-is/osi-model/" target="_blank" style="color:var(--fiap-pink);">Modelo OSI</a><br>
+            MICROSOFT — <a href="https://learn.microsoft.com/pt-br/windows-hardware/drivers/network/windows-network-architecture-and-the-osi-model" target="_blank" style="color:var(--fiap-pink);">Arquitetura de rede e o modelo OSI</a><br>
+            CISCO — <a href="https://community.cisco.com/t5/artigos-gerais/protocolos-b%C3%A1sicos-de-rede-na-compreens%C3%A3o-do-modelo-osi/ta-p/4802414" target="_blank" style="color:var(--fiap-pink);">Protocolos básicos de rede</a></p>
+
+            <p style="margin:0;"><strong style="color:var(--fiap-pink);">[8] Videografia</strong><br>
+            <a href="https://www.youtube.com/watch?v=2f5BnXsMwbQ" target="_blank" style="color:var(--fiap-pink);">PRD na prática</a> &middot;
+            <a href="https://www.youtube.com/watch?v=cAcGrs7RHBM" target="_blank" style="color:var(--fiap-pink);">Spec Driven Development</a> &middot;
+            <a href="https://www.youtube.com/watch?v=cFdV0RbZ70E" target="_blank" style="color:var(--fiap-pink);">Conventional Commits</a> &middot;
+            <a href="https://www.youtube.com/watch?v=1eTofdmfq1g" target="_blank" style="color:var(--fiap-pink);">Git Hooks</a> &middot;
+            <a href="https://www.youtube.com/watch?v=0jw8RpHuZ-Q" target="_blank" style="color:var(--fiap-pink);">Estratégias de branching</a></p>
+          </div>
         </div>
 
         <div class="slide-footer">
@@ -1010,29 +1345,7 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
       transitionSpeed: 'default',
       plugins: [RevealHighlight]
     });
-
-    function startTimer(elementId, seconds) {
-      var display = document.getElementById(elementId);
-      var timer = seconds, minutes, secs;
-      var interval = setInterval(function () {
-        minutes = parseInt(timer / 60, 10);
-        secs = parseInt(timer % 60, 10);
-
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        secs = secs < 10 ? "0" + secs : secs;
-
-        if (seconds >= 60) {
-          display.textContent = minutes + ":" + secs;
-        } else {
-          display.textContent = secs;
-        }
-
-        if (--timer < 0) {
-          clearInterval(interval);
-          display.textContent = "TEMPO ESGOTADO!";
-        }
-      }, 1000);
-    }
+    // startTimer(elementId, segundos) vem de ../assets/js/fiap-quiz.js
   </script>
 </body>
 </html>

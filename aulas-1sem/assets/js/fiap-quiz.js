@@ -2,22 +2,37 @@
  * FIAP Quiz System for Reveal.js
  * Sistema de quizzes interativos para as aulas
  *
- * Suporta dois padrões de markup:
+ * Suporta três padrões de markup:
  *
- * 1) Label/radio (recomendado):
+ * 1) Lista (padrão usado pelos decks das aulas):
+ *    <div class="quiz-container">
+ *      <div class="quiz-question">Enunciado</div>
+ *      <ul class="quiz-options">
+ *        <li data-correct="false"><span class="option-letter">A</span> Opção A</li>
+ *        <li data-correct="true"><span class="option-letter">B</span> Opção B</li>
+ *      </ul>
+ *      <div class="quiz-feedback"
+ *           data-correct-msg="Mensagem quando acerta"
+ *           data-incorrect-msg="Mensagem quando erra"></div>
+ *    </div>
+ *
+ * 2) Label/radio:
  *    <ul class="quiz-options">
  *      <label><input type="radio" name="q1" value="a"> Opção A</label>
  *      <label><input type="radio" name="q1" value="b"> Opção B</label>
  *    </ul>
  *
- * 2) Button (legacy):
+ * 3) Button (legacy):
  *    <ul>
  *      <li><button class="quiz-option" data-value="a">Opção A</button></li>
  *    </ul>
  *
- * Em ambos os casos, a section deve ter:
+ * Nos padrões 2 e 3 a section deve ter:
  *   data-correct="valor_correto"
  *   data-quiz-feedback="Texto de feedback"
+ *
+ * No padrão 1 a resposta certa é o <li data-correct="true"> e as mensagens
+ * vêm dos atributos data-correct-msg / data-incorrect-msg do .quiz-feedback.
  */
 
 (function () {
@@ -31,15 +46,61 @@
   }
 
   function setupQuiz(slide) {
+    // Os listeners são registrados uma única vez por slide. Revisitar o slide
+    // apenas limpa o estado visual (ver resetQuizOnSlideChange); registrar de
+    // novo acumularia handlers a cada visita.
+    if (slide._quizInit) return;
+    slide._quizInit = true;
+
     // Detectar qual padrão está sendo usado
     var labels = slide.querySelectorAll('.quiz-options label');
     var buttons = slide.querySelectorAll('button.quiz-option');
+    var items = slide.querySelectorAll('.quiz-options li[data-correct]');
 
     if (labels.length > 0) {
       initLabelQuiz(slide, labels);
     } else if (buttons.length > 0) {
       initButtonQuiz(slide, buttons);
+    } else if (items.length > 0) {
+      initListQuiz(slide, items);
     }
+  }
+
+  /**
+   * Padrão lista: ul.quiz-options > li[data-correct="true|false"]
+   * As mensagens vêm do próprio .quiz-feedback (data-correct-msg/data-incorrect-msg).
+   */
+  function initListQuiz(slide, items) {
+    var feedbackEl = slide.querySelector('.quiz-feedback');
+    var answered = false;
+
+    for (var i = 0; i < items.length; i++) {
+      (function (item) {
+        item.addEventListener('click', function () {
+          if (answered) return;
+          answered = true;
+
+          var isCorrect = item.getAttribute('data-correct') === 'true';
+
+          for (var j = 0; j < items.length; j++) {
+            var li = items[j];
+            li.style.pointerEvents = 'none';
+
+            if (li.getAttribute('data-correct') === 'true') {
+              li.classList.add('is-correct');
+            } else if (li === item) {
+              li.classList.add('is-wrong');
+            } else {
+              li.classList.add('is-dimmed');
+            }
+          }
+
+          showFeedback(feedbackEl, isCorrect, null);
+        });
+      })(items[i]);
+    }
+
+    slide._quizReset = function () { answered = false; };
   }
 
   /**
@@ -156,27 +217,19 @@
   function showFeedback(feedbackEl, isCorrect, feedbackText) {
     if (!feedbackEl) return;
 
-    feedbackEl.style.display = 'block';
-    feedbackEl.style.padding = '14px 22px';
-    feedbackEl.style.borderRadius = '8px';
-    feedbackEl.style.fontSize = '0.75em';
-    feedbackEl.style.fontWeight = '600';
-    feedbackEl.style.lineHeight = '1.5';
-    feedbackEl.style.marginTop = '15px';
-
-    if (isCorrect) {
-      feedbackEl.style.background = '#eafaf1';
-      feedbackEl.style.borderLeft = '5px solid #27ae60';
-      feedbackEl.style.color = '#1e8449';
-      feedbackEl.className = 'quiz-feedback correct';
-      feedbackEl.innerHTML = 'Correto! ' + feedbackText;
+    // feedbackText null => usar as mensagens declaradas no próprio elemento,
+    // que já vêm redigidas por extenso (não recebem prefixo).
+    var message;
+    if (feedbackText === null) {
+      message = feedbackEl.getAttribute(
+        isCorrect ? 'data-correct-msg' : 'data-incorrect-msg'
+      ) || '';
     } else {
-      feedbackEl.style.background = '#fdedec';
-      feedbackEl.style.borderLeft = '5px solid #e74c3c';
-      feedbackEl.style.color = '#c0392b';
-      feedbackEl.className = 'quiz-feedback incorrect';
-      feedbackEl.innerHTML = 'Incorreto. ' + feedbackText;
+      message = (isCorrect ? 'Correto! ' : 'Incorreto. ') + feedbackText;
     }
+
+    feedbackEl.className = 'quiz-feedback ' + (isCorrect ? 'correct' : 'incorrect');
+    feedbackEl.innerHTML = message;
   }
 
   /**
@@ -213,49 +266,73 @@
         buttons[j].style.opacity = '';
       }
 
+      // Reset itens de lista
+      var items = prevSlide.querySelectorAll('.quiz-options li[data-correct]');
+      for (var n = 0; n < items.length; n++) {
+        items[n].style.pointerEvents = '';
+        items[n].classList.remove('is-correct', 'is-wrong', 'is-dimmed');
+      }
+
       // Reset radios
       var radios = prevSlide.querySelectorAll('input[type="radio"]');
       for (var k = 0; k < radios.length; k++) {
         radios[k].checked = false;
       }
 
-      // Reset feedback
+      // Reset feedback (limpar o inline display para a classe voltar a mandar)
       var feedbackEl = prevSlide.querySelector('.quiz-feedback');
       if (feedbackEl) {
-        feedbackEl.style.display = 'none';
+        feedbackEl.style.display = '';
         feedbackEl.className = 'quiz-feedback';
         feedbackEl.innerHTML = '';
       }
 
-      // Reset answered state
+      // Reset answered state (os listeners continuam registrados)
       if (prevSlide._quizReset) {
         prevSlide._quizReset();
       }
-
-      // Re-init quiz
-      setupQuiz(prevSlide);
     });
   }
 
   /**
-   * Timer para exercícios
+   * Timer regressivo para quizzes e intervalo.
+   *
+   *   startTimer('quiz1Timer', 60)   // 60 segundos
+   *   startTimer('breakTimer', 1800) // 30 minutos
+   *
+   * A duração é sempre em SEGUNDOS. Chamadas repetidas no mesmo elemento são
+   * ignoradas enquanto o timer estiver correndo, para que apertar o play duas
+   * vezes não crie dois intervalos disputando o mesmo display.
    */
-  window.startTimer = function (elementId, minutes) {
+  var runningTimers = {};
+
+  window.startTimer = function (elementId, seconds) {
     var el = document.getElementById(elementId);
-    if (!el) return;
-    var totalSeconds = minutes * 60;
-    var interval = setInterval(function() {
-      var mins = Math.floor(totalSeconds / 60);
-      var secs = totalSeconds % 60;
+    if (!el || runningTimers[elementId]) return;
+
+    var remaining = seconds;
+
+    function render() {
+      var mins = Math.floor(remaining / 60);
+      var secs = remaining % 60;
       el.textContent = (mins < 10 ? '0' : '') + mins + ':' + (secs < 10 ? '0' : '') + secs;
-      if (totalSeconds <= 0) {
+    }
+
+    render();
+    el.classList.remove('timer-done');
+
+    var interval = setInterval(function () {
+      remaining--;
+      render();
+      if (remaining <= 0) {
         clearInterval(interval);
-        el.textContent = '00:00';
-        el.style.color = '#e74c3c';
-        el.style.fontWeight = '700';
+        delete runningTimers[elementId];
+        el.textContent = 'TEMPO ESGOTADO';
+        el.classList.add('timer-done');
       }
-      totalSeconds--;
     }, 1000);
+
+    runningTimers[elementId] = interval;
     return interval;
   };
 

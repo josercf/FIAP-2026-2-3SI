@@ -385,6 +385,85 @@
   vertical-align: middle;
 }
 
+/* List-based quiz options (padrão dos decks): ul.quiz-options > li[data-correct] */
+.quiz-slide .quiz-container {
+  max-width: 940px;
+  margin: 0 auto;
+}
+
+.quiz-slide .quiz-question {
+  font-size: 0.9em;
+  font-weight: 700;
+  color: var(--fiap-dark);
+  line-height: 1.45;
+  margin-bottom: 18px;
+}
+
+.quiz-slide .quiz-options li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--fiap-light-gray);
+  border: 2px solid #e0e0e0;
+  border-left: 5px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px 20px;
+  margin-bottom: 10px;
+  font-size: 0.78em;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.quiz-slide .quiz-options li:hover {
+  border-color: var(--fiap-pink);
+  border-left-color: var(--fiap-pink);
+  background: #fff5f8;
+}
+
+.quiz-slide .quiz-options .option-letter {
+  flex: 0 0 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--fiap-dark);
+  color: var(--fiap-white);
+  font-weight: 800;
+  font-size: 0.85em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Estados aplicados por fiap-quiz.js após a resposta */
+.quiz-slide .quiz-options li.is-correct {
+  background: #eafaf1;
+  border-color: #27ae60;
+  border-left-color: #27ae60;
+  color: #1e8449;
+  font-weight: 700;
+}
+
+.quiz-slide .quiz-options li.is-correct .option-letter {
+  background: #27ae60;
+}
+
+.quiz-slide .quiz-options li.is-wrong {
+  background: #fdedec;
+  border-color: #e74c3c;
+  border-left-color: #e74c3c;
+  color: #c0392b;
+  text-decoration: line-through;
+}
+
+.quiz-slide .quiz-options li.is-wrong .option-letter {
+  background: #e74c3c;
+  text-decoration: none;
+}
+
+.quiz-slide .quiz-options li.is-dimmed {
+  opacity: 0.4;
+}
+
 /* Button-based quiz options (legacy support) */
 .quiz-slide button.quiz-option {
   display: block;
@@ -794,5 +873,184 @@
 .ref-badge:hover {
   background: var(--fiap-pink);
   color: white;
+}
+
+/* --- Timer esgotado --- */
+.timer-done {
+  color: #ff6b6b !important;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+/* --- Barra de apoio do quiz (QR de votação + timer) --- */
+.quiz-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  max-width: 940px;
+  margin: 18px auto 0;
+  background: var(--fiap-dark);
+  border-radius: 10px;
+  padding: 14px 20px;
+}
+
+.quiz-toolbar .quiz-vote {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--fiap-white);
+}
+
+.quiz-toolbar .quiz-vote-text {
+  font-size: 0.62em;
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.quiz-toolbar .quiz-vote-text span {
+  display: block;
+  color: #999;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.quiz-toolbar .quiz-timer-box {
+  margin-top: 0;
+  background: #000;
+}
+
+/* --- Figura em destaque (slides visuais) --- */
+.slide-figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.slide-figure img,
+.slide-figure svg {
+  max-width: 100%;
+  max-height: 420px;
+  border-radius: 8px;
+}
+
+.slide-figure figcaption {
+  font-size: 0.62em;
+  color: #777;
+  margin-top: 10px;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Slide dividido: figura de um lado, texto do outro */
+.figure-split {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 28px;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.figure-split img,
+.figure-split svg {
+  width: 100%;
+  border-radius: 8px;
+}
+
+/* --- Linha do tempo horizontal --- */
+.timeline {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 0;
+  margin-top: 28px;
+  position: relative;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 13px;
+  left: 6%;
+  right: 6%;
+  height: 3px;
+  background: linear-gradient(90deg, #ccc 0%, var(--fiap-pink) 100%);
+}
+
+.timeline .tl-item {
+  position: relative;
+  text-align: center;
+  padding: 0 8px;
+}
+
+.timeline .tl-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--fiap-white);
+  border: 3px solid var(--fiap-pink);
+  margin: 0 auto 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.timeline .tl-item.is-past .tl-dot {
+  border-color: #bbb;
+}
+
+.timeline .tl-year {
+  font-size: 0.62em;
+  font-weight: 800;
+  color: var(--fiap-pink);
+  display: block;
+}
+
+.timeline .tl-item.is-past .tl-year {
+  color: #888;
+}
+
+.timeline .tl-tool {
+  font-size: 0.72em;
+  font-weight: 700;
+  color: var(--fiap-dark);
+  display: block;
+  margin: 4px 0 4px;
+}
+
+.timeline .tl-desc {
+  font-size: 0.58em;
+  color: #666;
+  line-height: 1.35;
+  display: block;
+}
+
+/* --- Takeaway de engenharia --- */
+.takeaway {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--fiap-dark);
+  color: var(--fiap-white);
+  border-left: 5px solid var(--fiap-pink);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 20px;
+  margin-top: 18px;
+}
+
+.takeaway .takeaway-label {
+  font-size: 0.6em;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--fiap-pink);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.takeaway p {
+  font-size: 0.7em;
+  margin: 0;
+  line-height: 1.5;
+  color: #eee;
 }
 
