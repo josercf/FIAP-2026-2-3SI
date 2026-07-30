@@ -12,6 +12,20 @@
   <script>if(/print-pdf/gi.test(window.location.search)){var link=document.createElement('link');link.rel='stylesheet';link.href='https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/css/print/pdf.css';document.head.appendChild(link);}</script>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
+    /* Aviso discreto no pe do slide, para instrucao operacional que nao e conteudo */
+    .reveal .aviso-resgate {
+      position: absolute;
+      left: 60px;
+      right: 60px;
+      bottom: 62px;
+      margin: 0;
+      font-size: 0.54em;
+      line-height: 1.5;
+      color: #6b6b6b;
+      border-top: 1px solid #e0e0e0;
+      padding-top: 8px;
+    }
+    .reveal .aviso-resgate a { color: var(--fiap-pink); font-weight: 700; }
     /* Tabelas compactas dos slides de protocolo */
     .reveal table.compact-table { font-size: 0.62em; margin: 8px 0; }
     .reveal table.compact-table th { padding: 7px 12px; }
@@ -107,6 +121,12 @@
           <p>Antes de escrever a primeira linha de Node.js, abram o SDD de vocês. Cada rota que criarem hoje precisa apontar para um RF, e cada decisão de header precisa apontar para um RNF.</p>
         </div>
 
+        <p class="aviso-resgate">Onde achar o que vocês escreveram: no fork da dupla da Aula 01,
+          <span class="mono">github.com/SEU-USUARIO/mwe-2026-2-lab01-duplaXX</span>, arquivos
+          <span class="mono">docs/PRD.md</span> e <span class="mono">docs/SDD.md</span>. Perdeu o endereço? Abra
+          <a href="https://github.com/josercf/mwe-2026-2-lab01-requisitos/forks" target="_blank">josercf/mwe-2026-2-lab01-requisitos</a>
+          e procure o fork de vocês na aba Forks.</p>
+
         <div class="slide-footer">
           <div class="footer-bar">02 – Resgate da Espiral</div>
           <div class="footer-page">4</div>
@@ -122,22 +142,22 @@
           <h2>O Desafio do Mini Mundo: a torre de controle da LogiTech</h2>
         </div>
 
-        <p style="font-size:0.76em;">Os 400 caminhões já emitem posição por socket UDP. O problema agora é de <strong>consumo</strong>: a sala de operações precisa ver isso em um painel no navegador, e o navegador não fala socket cru.</p>
+        <p style="font-size:0.76em;">Os 400 caminhões emitem posição por socket UDP, e é isso que o SDD de vocês descreve. Hoje esse desenho vira código, e o problema seguinte já aparece: a sala de operações precisa ver a frota em um painel, e o navegador não fala socket cru.</p>
 
         <div class="figure-split" style="grid-template-columns: 1fr 1fr; gap:24px; margin-top:8px;">
           <div>
             <div style="background:#fdedec; border-radius:8px; padding:15px 18px; border-left:4px solid #e74c3c;">
-              <div style="font-size:0.64em; font-weight:800; color:#c0392b; letter-spacing:1px; margin-bottom:8px;">O QUE TEMOS DEPOIS DA AULA 01</div>
+              <div style="font-size:0.64em; font-weight:800; color:#c0392b; letter-spacing:1px; margin-bottom:8px;">O QUE A AULA 01 DEIXOU PRONTO</div>
               <p style="font-size:0.7em; color:#7b241c; margin:0; line-height:1.6;">
-                Um processo Python escutando datagramas na porta 8081. Para ler os dados é preciso ter acesso ao servidor, abrir um terminal e olhar o log. Nenhum operador de logística vai fazer isso.
+                A especificação, e só ela: o PRD, o SDD e o diagrama de comunicação L4 com a escolha de UDP justificada por RNF. Código, nenhuma linha. O coletor da porta 8081 existe hoje só no papel de vocês.
               </p>
             </div>
           </div>
           <div>
             <div style="background:#eafaf1; border-radius:8px; padding:15px 18px; border-left:4px solid #27ae60;">
-              <div style="font-size:0.64em; font-weight:800; color:#1e8449; letter-spacing:1px; margin-bottom:8px;">O QUE PRECISA EXISTIR HOJE</div>
+              <div style="font-size:0.64em; font-weight:800; color:#1e8449; letter-spacing:1px; margin-bottom:8px;">O QUE PRECISA EXISTIR AO FIM DE HOJE</div>
               <p style="font-size:0.7em; color:#145a32; margin:0; line-height:1.6;">
-                Um endereço que qualquer navegador abre, que devolve a posição da frota em JSON e que empurra cada nova posição para a tela sem o operador apertar F5.
+                O coletor UDP recebendo de verdade, e sobre ele um endereço que qualquer navegador abre, devolve a frota em JSON e empurra cada nova posição para a tela sem ninguém apertar F5.
               </p>
             </div>
           </div>
@@ -315,61 +335,118 @@ Cache-Control: max-age=5
         <p style="font-size:0.74em;">A primeira classe já separa responsabilidade: <strong>4xx é erro de quem chamou</strong>, <strong>5xx é erro de quem respondeu</strong>. Devolver 200 com <span class="mono">{"erro": ...}</span> no corpo destrói essa informação.</p>
 
         <div class="slide-figure" style="margin-top:2px;">
-          <svg viewBox="0 0 1120 250" role="img" aria-label="As cinco famílias de status code HTTP com exemplos da API de telemetria da LogiTech">
+          <svg viewBox="0 0 1120 392" role="img" aria-label="As cinco famílias de status code HTTP com exemplos da API de telemetria da LogiTech">
             <!-- 1xx -->
-            <rect x="8" y="10" width="212" height="212" rx="9" fill="#f4f4f4" stroke="#aaa" stroke-width="2"/>
-            <rect x="8" y="10" width="212" height="34" rx="9" fill="#8a8a8a"/>
-            <text x="114" y="34" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">1xx Informativo</text>
-            <text x="24" y="72" font-size="13" font-weight="700" fill="#333">100 Continue</text>
-            <text x="24" y="94" font-size="13" font-weight="700" fill="#333">101 Switching Protocols</text>
-            <text x="24" y="126" font-size="12" fill="#666">O 101 é o que o</text>
-            <text x="24" y="146" font-size="12" fill="#666">WebSocket usa para</text>
-            <text x="24" y="166" font-size="12" fill="#666">sair do HTTP.</text>
-            <text x="24" y="198" font-size="12" fill="#999" font-style="italic">Raro no dia a dia.</text>
+            <g class="fragment">
+              <rect x="8" y="10" width="212" height="374" rx="9" fill="#f4f4f4" stroke="#aaa" stroke-width="2"/>
+              <rect x="8" y="10" width="212" height="34" rx="9" fill="#8a8a8a"/>
+              <text x="114" y="34" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">1xx Informativo</text>
+              <text x="24" y="72" font-size="13" font-weight="700" fill="#333">100 Continue</text>
+              <text x="24" y="94" font-size="13" font-weight="700" fill="#333">101 Switching Protocols</text>
+              <line x1="24" y1="110" x2="204" y2="110" stroke="#ddd" stroke-width="1.5"/>
+              <text x="24" y="132" font-size="12" fill="#666">O 101 é o que o WebSocket</text>
+              <text x="24" y="150" font-size="12" fill="#666">usa para sair do HTTP e</text>
+              <text x="24" y="168" font-size="12" fill="#666">trocar de protocolo.</text>
+              <text x="24" y="200" font-size="12" fill="#666">O 100 aparece quando o</text>
+              <text x="24" y="218" font-size="12" fill="#666">cliente manda</text>
+              <text x="24" y="236" font-size="12" fill="#666">Expect: 100-continue e</text>
+              <text x="24" y="254" font-size="12" fill="#666">espera permissão antes de</text>
+              <text x="24" y="272" font-size="12" fill="#666">enviar um corpo grande.</text>
+              <rect x="24" y="292" width="180" height="76" rx="5" fill="#e8e8e8"/>
+              <text x="36" y="312" font-size="11" font-weight="800" fill="#555">NA LOGITECH</text>
+              <text x="36" y="332" font-size="11.5" fill="#666">Nenhum. Nossa API não</text>
+              <text x="36" y="349" font-size="11.5" fill="#666">troca de protocolo nem</text>
+              <text x="36" y="366" font-size="11.5" fill="#666">recebe upload grande.</text>
+            </g>
 
             <!-- 2xx -->
-            <rect x="230" y="10" width="212" height="212" rx="9" fill="#eafaf1" stroke="#27ae60" stroke-width="2"/>
-            <rect x="230" y="10" width="212" height="34" rx="9" fill="#27ae60"/>
-            <text x="336" y="34" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">2xx Sucesso</text>
-            <text x="246" y="72" font-size="13" font-weight="700" fill="#145a32">200 OK</text>
-            <text x="246" y="94" font-size="13" font-weight="700" fill="#145a32">201 Created</text>
-            <text x="246" y="116" font-size="13" font-weight="700" fill="#145a32">204 No Content</text>
-            <text x="246" y="148" font-size="12" fill="#1e8449">201 ao registrar uma</text>
-            <text x="246" y="168" font-size="12" fill="#1e8449">ocorrência, com Location</text>
-            <text x="246" y="188" font-size="12" fill="#1e8449">apontando o recurso novo.</text>
+            <g class="fragment">
+              <rect x="230" y="10" width="212" height="374" rx="9" fill="#eafaf1" stroke="#27ae60" stroke-width="2"/>
+              <rect x="230" y="10" width="212" height="34" rx="9" fill="#27ae60"/>
+              <text x="336" y="34" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">2xx Sucesso</text>
+              <text x="246" y="72" font-size="13" font-weight="700" fill="#145a32">200 OK</text>
+              <text x="246" y="94" font-size="13" font-weight="700" fill="#145a32">201 Created</text>
+              <text x="246" y="116" font-size="13" font-weight="700" fill="#145a32">202 Accepted</text>
+              <text x="246" y="138" font-size="13" font-weight="700" fill="#145a32">204 No Content</text>
+              <line x1="246" y1="154" x2="426" y2="154" stroke="#c8e6d4" stroke-width="1.5"/>
+              <text x="246" y="176" font-size="12" fill="#1e8449">201 devolve Location</text>
+              <text x="246" y="194" font-size="12" fill="#1e8449">apontando o recurso novo.</text>
+              <text x="246" y="220" font-size="12" fill="#1e8449">202 é "aceitei, mas ainda</text>
+              <text x="246" y="238" font-size="12" fill="#1e8449">não processei": fila.</text>
+              <text x="246" y="264" font-size="12" fill="#1e8449">204 responde sem corpo.</text>
+              <rect x="246" y="292" width="180" height="76" rx="5" fill="#d6f0e0"/>
+              <text x="258" y="312" font-size="11" font-weight="800" fill="#145a32">NA LOGITECH</text>
+              <text x="258" y="332" font-size="11.5" fill="#1e8449">200 em /api/v1/posicoes.</text>
+              <text x="258" y="349" font-size="11.5" fill="#1e8449">201 ao registrar uma</text>
+              <text x="258" y="366" font-size="11.5" fill="#1e8449">ocorrência de entrega.</text>
+            </g>
 
             <!-- 3xx -->
-            <rect x="452" y="10" width="212" height="212" rx="9" fill="#eef4fb" stroke="#5b8db8" stroke-width="2"/>
-            <rect x="452" y="10" width="212" height="34" rx="9" fill="#5b8db8"/>
-            <text x="558" y="34" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">3xx Redirecionamento</text>
-            <text x="468" y="72" font-size="13" font-weight="700" fill="#2c4d6b">301 Moved Permanently</text>
-            <text x="468" y="94" font-size="13" font-weight="700" fill="#2c4d6b">304 Not Modified</text>
-            <text x="468" y="126" font-size="12" fill="#3d6d94">304 é o que economiza</text>
-            <text x="468" y="146" font-size="12" fill="#3d6d94">banda: o painel pergunta,</text>
-            <text x="468" y="166" font-size="12" fill="#3d6d94">e o servidor responde</text>
-            <text x="468" y="186" font-size="12" fill="#3d6d94">"nada mudou".</text>
+            <g class="fragment">
+              <rect x="452" y="10" width="212" height="374" rx="9" fill="#eef4fb" stroke="#5b8db8" stroke-width="2"/>
+              <rect x="452" y="10" width="212" height="34" rx="9" fill="#5b8db8"/>
+              <text x="558" y="34" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">3xx Redirecionamento</text>
+              <text x="468" y="72" font-size="13" font-weight="700" fill="#2c4d6b">301 Moved Permanently</text>
+              <text x="468" y="94" font-size="13" font-weight="700" fill="#2c4d6b">302 Found</text>
+              <text x="468" y="116" font-size="13" font-weight="700" fill="#2c4d6b">304 Not Modified</text>
+              <text x="468" y="138" font-size="13" font-weight="700" fill="#2c4d6b">307 / 308</text>
+              <line x1="468" y1="154" x2="648" y2="154" stroke="#cfe0ee" stroke-width="1.5"/>
+              <text x="468" y="176" font-size="12" fill="#3d6d94">304 economiza banda: o</text>
+              <text x="468" y="194" font-size="12" fill="#3d6d94">painel pergunta e ouve</text>
+              <text x="468" y="212" font-size="12" fill="#3d6d94">"nada mudou", sem corpo.</text>
+              <text x="468" y="238" font-size="12" fill="#3d6d94">301 é permanente e fica</text>
+              <text x="468" y="256" font-size="12" fill="#3d6d94">em cache. Errar dói.</text>
+              <rect x="468" y="292" width="180" height="76" rx="5" fill="#dde9f4"/>
+              <text x="480" y="312" font-size="11" font-weight="800" fill="#2c4d6b">NA LOGITECH</text>
+              <text x="480" y="332" font-size="11.5" fill="#3d6d94">304 quando o painel manda</text>
+              <text x="480" y="349" font-size="11.5" fill="#3d6d94">If-None-Match e a frota</text>
+              <text x="480" y="366" font-size="11.5" fill="#3d6d94">não se moveu.</text>
+            </g>
 
             <!-- 4xx -->
-            <rect x="674" y="10" width="212" height="212" rx="9" fill="#fef5e7" stroke="#e0a800" stroke-width="2"/>
-            <rect x="674" y="10" width="212" height="34" rx="9" fill="#e0a800"/>
-            <text x="780" y="34" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">4xx Erro do cliente</text>
-            <text x="690" y="72" font-size="13" font-weight="700" fill="#7d5a00">400 Bad Request</text>
-            <text x="690" y="94" font-size="13" font-weight="700" fill="#7d5a00">401 / 403</text>
-            <text x="690" y="116" font-size="13" font-weight="700" fill="#7d5a00">404 Not Found</text>
-            <text x="690" y="138" font-size="13" font-weight="700" fill="#7d5a00">405 Method Not Allowed</text>
-            <text x="690" y="170" font-size="12" fill="#8a6d00">401 é "não sei quem é";</text>
-            <text x="690" y="190" font-size="12" fill="#8a6d00">403 é "sei, e não pode".</text>
+            <g class="fragment">
+              <rect x="674" y="10" width="212" height="374" rx="9" fill="#fef5e7" stroke="#e0a800" stroke-width="2"/>
+              <rect x="674" y="10" width="212" height="34" rx="9" fill="#e0a800"/>
+              <text x="780" y="34" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">4xx Erro do cliente</text>
+              <text x="690" y="72" font-size="13" font-weight="700" fill="#7d5a00">400 Bad Request</text>
+              <text x="690" y="94" font-size="13" font-weight="700" fill="#7d5a00">401 / 403</text>
+              <text x="690" y="116" font-size="13" font-weight="700" fill="#7d5a00">404 Not Found</text>
+              <text x="690" y="138" font-size="13" font-weight="700" fill="#7d5a00">405 Method Not Allowed</text>
+              <text x="690" y="160" font-size="13" font-weight="700" fill="#7d5a00">409 Conflict</text>
+              <text x="690" y="182" font-size="13" font-weight="700" fill="#7d5a00">422 / 429</text>
+              <line x1="690" y1="198" x2="870" y2="198" stroke="#f0e2bd" stroke-width="1.5"/>
+              <text x="690" y="220" font-size="12" fill="#8a6d00">401 é "não sei quem é";</text>
+              <text x="690" y="238" font-size="12" fill="#8a6d00">403 é "sei, e não pode".</text>
+              <text x="690" y="264" font-size="12" fill="#8a6d00">422 é sintaxe boa, sentido</text>
+              <text x="690" y="282" font-size="12" fill="#8a6d00">de negócio ruim.</text>
+              <rect x="690" y="292" width="180" height="76" rx="5" fill="#faedcd"/>
+              <text x="702" y="312" font-size="11" font-weight="800" fill="#7d5a00">NA LOGITECH</text>
+              <text x="702" y="332" font-size="11.5" fill="#8a6d00">405 no POST em /posicoes.</text>
+              <text x="702" y="349" font-size="11.5" fill="#8a6d00">409 na entrega confirmada</text>
+              <text x="702" y="366" font-size="11.5" fill="#8a6d00">duas vezes. 429 na frota.</text>
+            </g>
 
             <!-- 5xx -->
-            <rect x="896" y="10" width="212" height="212" rx="9" fill="#fdedec" stroke="#e74c3c" stroke-width="2"/>
-            <rect x="896" y="10" width="212" height="34" rx="9" fill="#e74c3c"/>
-            <text x="1002" y="34" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">5xx Erro do servidor</text>
-            <text x="912" y="72" font-size="13" font-weight="700" fill="#7b241c">500 Internal Server Error</text>
-            <text x="912" y="94" font-size="13" font-weight="700" fill="#7b241c">502 Bad Gateway</text>
-            <text x="912" y="116" font-size="13" font-weight="700" fill="#7b241c">503 Service Unavailable</text>
-            <text x="912" y="148" font-size="12" fill="#a04000">503 quando o coletor de</text>
-            <text x="912" y="168" font-size="12" fill="#a04000">telemetria está fora:</text>
-            <text x="912" y="188" font-size="12" fill="#a04000">o cliente pode tentar de novo.</text>
+            <g class="fragment">
+              <rect x="896" y="10" width="212" height="374" rx="9" fill="#fdedec" stroke="#e74c3c" stroke-width="2"/>
+              <rect x="896" y="10" width="212" height="34" rx="9" fill="#e74c3c"/>
+              <text x="1002" y="34" text-anchor="middle" font-size="16" font-weight="800" fill="#fff">5xx Erro do servidor</text>
+              <text x="912" y="72" font-size="13" font-weight="700" fill="#7b241c">500 Internal Server Error</text>
+              <text x="912" y="94" font-size="13" font-weight="700" fill="#7b241c">502 Bad Gateway</text>
+              <text x="912" y="116" font-size="13" font-weight="700" fill="#7b241c">503 Service Unavailable</text>
+              <text x="912" y="138" font-size="13" font-weight="700" fill="#7b241c">504 Gateway Timeout</text>
+              <line x1="912" y1="154" x2="1092" y2="154" stroke="#f5d5d1" stroke-width="1.5"/>
+              <text x="912" y="176" font-size="12" fill="#a04000">500 é a falha que você não</text>
+              <text x="912" y="194" font-size="12" fill="#a04000">previu: sempre um bug.</text>
+              <text x="912" y="220" font-size="12" fill="#a04000">503 é temporário e aceita</text>
+              <text x="912" y="238" font-size="12" fill="#a04000">Retry-After no header.</text>
+              <text x="912" y="264" font-size="12" fill="#a04000">504 é dependência lenta.</text>
+              <rect x="912" y="292" width="180" height="76" rx="5" fill="#f9dedb"/>
+              <text x="924" y="312" font-size="11" font-weight="800" fill="#7b241c">NA LOGITECH</text>
+              <text x="924" y="332" font-size="11.5" fill="#a04000">503 com o coletor fora do</text>
+              <text x="924" y="349" font-size="11.5" fill="#a04000">ar. 504 quando ele demora</text>
+              <text x="924" y="366" font-size="11.5" fill="#a04000">mais que o limite.</text>
+            </g>
           </svg>
         </div>
 
@@ -935,19 +1012,6 @@ curl -o /dev/null -s -w "conexao: %{time_connect}s total: %{time_total}s\n" \
             <text x="358" y="30" text-anchor="middle" font-size="12" fill="#888" font-family="monospace">curl -v http://localhost:3000/api/v1/posicoes</text>
             <line x1="8" y1="42" x2="708" y2="42" stroke="#333" stroke-width="1.5"/>
 
-            <text x="26" y="66" font-size="13" font-family="monospace" fill="#7fb3d5">*   Trying 127.0.0.1:3000...</text>
-            <text x="26" y="86" font-size="13" font-family="monospace" fill="#7fb3d5">* Connected to localhost (127.0.0.1) port 3000</text>
-
-            <text x="26" y="116" font-size="13" font-family="monospace" fill="#f7a1c4">&gt; GET /api/v1/posicoes HTTP/1.1</text>
-            <text x="26" y="134" font-size="13" font-family="monospace" fill="#f7a1c4">&gt; Host: localhost:3000</text>
-            <text x="26" y="152" font-size="13" font-family="monospace" fill="#f7a1c4">&gt; User-Agent: curl/8.4.0</text>
-            <text x="26" y="170" font-size="13" font-family="monospace" fill="#f7a1c4">&gt; Accept: */*</text>
-
-            <text x="26" y="200" font-size="13" font-family="monospace" fill="#8fd18f">&lt; HTTP/1.1 200 OK</text>
-            <text x="26" y="218" font-size="13" font-family="monospace" fill="#8fd18f">&lt; Content-Type: application/json; charset=utf-8</text>
-            <text x="26" y="236" font-size="13" font-family="monospace" fill="#8fd18f">&lt; Cache-Control: max-age=5</text>
-            <text x="26" y="254" font-size="13" font-family="monospace" fill="#8fd18f">&lt; Content-Length: 412</text>
-
             <!-- Anotacoes -->
             <defs>
               <marker id="setaCurl" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
@@ -955,23 +1019,39 @@ curl -o /dev/null -s -w "conexao: %{time_connect}s total: %{time_total}s\n" \
               </marker>
             </defs>
 
-            <line x1="716" y1="76" x2="756" y2="76" stroke="#888" stroke-width="2" marker-end="url(#setaCurl)"/>
-            <rect x="762" y="52" width="346" height="48" rx="6" fill="#eef4fb" stroke="#5b8db8" stroke-width="2"/>
-            <text x="776" y="72" font-size="13" font-weight="800" fill="#2c4d6b">L4: a conexão TCP da Aula 01</text>
-            <text x="776" y="90" font-size="12" fill="#3d6d94">o handshake acontece antes de qualquer HTTP</text>
+            <g class="fragment">
+              <text x="26" y="66" font-size="13" font-family="monospace" fill="#7fb3d5">*   Trying 127.0.0.1:3000...</text>
+              <text x="26" y="86" font-size="13" font-family="monospace" fill="#7fb3d5">* Connected to localhost (127.0.0.1) port 3000</text>
+              <line x1="716" y1="76" x2="756" y2="76" stroke="#888" stroke-width="2" marker-end="url(#setaCurl)"/>
+              <rect x="762" y="52" width="346" height="48" rx="6" fill="#eef4fb" stroke="#5b8db8" stroke-width="2"/>
+              <text x="776" y="72" font-size="13" font-weight="800" fill="#2c4d6b">L4: a conexão TCP da Aula 01</text>
+              <text x="776" y="90" font-size="12" fill="#3d6d94">o handshake acontece antes de qualquer HTTP</text>
+            </g>
 
-            <line x1="716" y1="140" x2="756" y2="140" stroke="#888" stroke-width="2" marker-end="url(#setaCurl)"/>
-            <rect x="762" y="110" width="346" height="62" rx="6" fill="#fff5f8" stroke="#ED145B" stroke-width="2"/>
-            <text x="776" y="130" font-size="13" font-weight="800" fill="#ED145B">L7: a requisição que saiu</text>
-            <text x="776" y="148" font-size="12" fill="#a01243">verbo, alvo, versão e os headers que o cliente</text>
-            <text x="776" y="164" font-size="12" fill="#a01243">enviou, inclusive os que o curl põe sozinho</text>
+            <g class="fragment">
+              <text x="26" y="116" font-size="13" font-family="monospace" fill="#f7a1c4">&gt; GET /api/v1/posicoes HTTP/1.1</text>
+              <text x="26" y="134" font-size="13" font-family="monospace" fill="#f7a1c4">&gt; Host: localhost:3000</text>
+              <text x="26" y="152" font-size="13" font-family="monospace" fill="#f7a1c4">&gt; User-Agent: curl/8.4.0</text>
+              <text x="26" y="170" font-size="13" font-family="monospace" fill="#f7a1c4">&gt; Accept: */*</text>
+              <line x1="716" y1="140" x2="756" y2="140" stroke="#888" stroke-width="2" marker-end="url(#setaCurl)"/>
+              <rect x="762" y="110" width="346" height="62" rx="6" fill="#fff5f8" stroke="#ED145B" stroke-width="2"/>
+              <text x="776" y="130" font-size="13" font-weight="800" fill="#ED145B">L7: a requisição que saiu</text>
+              <text x="776" y="148" font-size="12" fill="#a01243">verbo, alvo, versão e os headers que o cliente</text>
+              <text x="776" y="164" font-size="12" fill="#a01243">enviou, inclusive os que o curl põe sozinho</text>
+            </g>
 
-            <line x1="716" y1="218" x2="756" y2="218" stroke="#888" stroke-width="2" marker-end="url(#setaCurl)"/>
-            <rect x="762" y="182" width="346" height="76" rx="6" fill="#eafaf1" stroke="#27ae60" stroke-width="2"/>
-            <text x="776" y="202" font-size="13" font-weight="800" fill="#1e8449">L7: a resposta que voltou</text>
-            <text x="776" y="220" font-size="12" fill="#145a32">status, tipo do conteúdo, política de cache e</text>
-            <text x="776" y="236" font-size="12" fill="#145a32">tamanho do corpo. Contar estas linhas responde</text>
-            <text x="776" y="252" font-size="12" fill="#145a32">a pergunta O-01 do laboratório.</text>
+            <g class="fragment">
+              <text x="26" y="200" font-size="13" font-family="monospace" fill="#8fd18f">&lt; HTTP/1.1 200 OK</text>
+              <text x="26" y="218" font-size="13" font-family="monospace" fill="#8fd18f">&lt; Content-Type: application/json; charset=utf-8</text>
+              <text x="26" y="236" font-size="13" font-family="monospace" fill="#8fd18f">&lt; Cache-Control: max-age=5</text>
+              <text x="26" y="254" font-size="13" font-family="monospace" fill="#8fd18f">&lt; Content-Length: 412</text>
+              <line x1="716" y1="218" x2="756" y2="218" stroke="#888" stroke-width="2" marker-end="url(#setaCurl)"/>
+              <rect x="762" y="182" width="346" height="76" rx="6" fill="#eafaf1" stroke="#27ae60" stroke-width="2"/>
+              <text x="776" y="202" font-size="13" font-weight="800" fill="#1e8449">L7: a resposta que voltou</text>
+              <text x="776" y="220" font-size="12" fill="#145a32">status, tipo do conteúdo, política de cache e</text>
+              <text x="776" y="236" font-size="12" fill="#145a32">tamanho do corpo. Contar estas linhas responde</text>
+              <text x="776" y="252" font-size="12" fill="#145a32">a pergunta O-01 do laboratório.</text>
+            </g>
           </svg>
           <figcaption>Sobre HTTPS, as linhas de <span class="mono">*</span> passam a incluir o handshake TLS e o certificado apresentado; o corpo continua legível aqui porque quem descriptografa é o próprio curl, não a rede.</figcaption>
         </div>
@@ -1106,7 +1186,61 @@ curl -o /dev/null -s -w "conexao: %{time_connect}s total: %{time_total}s\n" \
         </div>
       </section>
 
-      <!-- ==================== 22: QUIZ 1 ==================== -->
+      <!-- ==================== 22: SKILL DE CODE REVIEW ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Revisão assistida: a skill de Code Review <a href="#/ref-slide" class="ref-badge" title="Ver referências">[9]</a></h2>
+        </div>
+
+        <p style="font-size:0.7em;">Uma <strong>skill</strong> é um arquivo que ensina um procedimento ao assistente de IA: instala uma vez, invoca sempre. A nossa biblioteca já traz uma de revisão de código.</p>
+
+        <div class="figure-split" style="grid-template-columns: 1fr 1.02fr; gap:18px; margin-top:4px; align-items:start;">
+          <div>
+            <div style="font-size:0.57em; font-weight:800; color:var(--fiap-pink); letter-spacing:1px; margin-bottom:4px;">INSTALAR, UMA VEZ POR REPOSITÓRIO</div>
+            <pre style="margin:0; font-size:0.5em;"><code class="language-bash">git clone https://github.com/josercf/skill-library.git /tmp/sl
+mkdir -p .claude/skills
+cp -r /tmp/sl/skills/code-review .claude/skills/</code></pre>
+            <div style="font-size:0.57em; font-weight:800; color:var(--fiap-pink); letter-spacing:1px; margin:8px 0 4px;">USAR NO PR DA DUPLA VIZINHA</div>
+            <pre style="margin:0; font-size:0.5em;"><code class="language-bash">git fetch origin feature/http-telemetry
+git diff main...origin/feature/http-telemetry > /tmp/pr.diff
+
+python ai/ask.py "$(cat .claude/skills/code-review/SKILL.md)
+Revise este diff de um gateway HTTP/SSE em Node.
+Aponte linha, efeito e sugestao.
+$(cat /tmp/pr.diff)"</code></pre>
+          </div>
+
+          <div class="concept-cards" style="grid-template-columns:1fr; gap:7px; margin-top:0;">
+            <div class="concept-card" style="padding:9px 14px;">
+              <h4>Perguntas que rendem</h4>
+              <p style="font-size:0.6em;">"Que caso de erro este handler SSE não trata?" | "Vaza o observador quando o cliente fecha a aba?" | "Os campos batem com este glossário?"</p>
+            </div>
+            <div class="concept-card" style="padding:9px 14px;">
+              <h4>Perguntas que não rendem</h4>
+              <p style="font-size:0.6em;">"Este código está bom?" devolve elogio genérico. "Corrija para mim" devolve código que você não entende e não defende na revisão.</p>
+            </div>
+            <div class="concept-card" style="padding:9px 14px;">
+              <h4>O que a skill não faz</h4>
+              <p style="font-size:0.6em;">Não aprova o Pull Request e não assina por você. A aprovação continua sendo ato de quem revisou, e responde por ela quem clicou.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="takeaway" style="margin-top:8px;">
+          <span class="takeaway-label">A regra</span>
+          <p>Todo comentário que vocês postarem precisa ser um comentário que vocês conseguem explicar. Se a IA apontou algo que não entenderam, estudem até entender ou não postem.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">02 – Skill de Code Review</div>
+          <div class="footer-page">22</div>
+        </div>
+      </section>
+
+      <!-- ==================== 23: QUIZ 1 ==================== -->
       <section class="quiz-slide content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1151,7 +1285,7 @@ curl -o /dev/null -s -w "conexao: %{time_connect}s total: %{time_total}s\n" \
 
         <div class="slide-footer">
           <div class="footer-bar">02 – Verificação de Aprendizado</div>
-          <div class="footer-page">22</div>
+          <div class="footer-page">23</div>
         </div>
       </section>
 
@@ -1216,7 +1350,7 @@ curl -o /dev/null -s -w "conexao: %{time_connect}s total: %{time_total}s\n" \
 
         <div class="slide-footer">
           <div class="footer-bar">02 – Verificação de Aprendizado</div>
-          <div class="footer-page">24</div>
+          <div class="footer-page">25</div>
         </div>
       </section>
 
@@ -1265,7 +1399,7 @@ curl -o /dev/null -s -w "conexao: %{time_connect}s total: %{time_total}s\n" \
 
         <div class="slide-footer">
           <div class="footer-bar">02 – Verificação de Aprendizado</div>
-          <div class="footer-page">25</div>
+          <div class="footer-page">26</div>
         </div>
       </section>
 
@@ -1278,28 +1412,28 @@ curl -o /dev/null -s -w "conexao: %{time_connect}s total: %{time_total}s\n" \
           <h2>Atividade Prática em Dupla: a API de telemetria da LogiTech</h2>
         </div>
 
-        <p style="font-size:0.76em;">O coletor de sockets L4 <strong>já vem pronto no Lab Kit</strong>. Ele é o resultado da Aula 01 e hoje é ponto de partida, não tarefa. O que vocês escrevem é a camada HTTP/SSE por cima dele.</p>
+        <p style="font-size:0.76em;">Hoje o SDD de vocês vira software: primeiro o <strong>coletor L4</strong> que vocês especificaram, depois a <strong>camada HTTP/SSE</strong> por cima dele, e no fim o Pull Request revisado pela dupla vizinha.</p>
 
         <div class="concept-cards" style="grid-template-columns: repeat(5, 1fr); margin-top:14px; gap:10px;">
           <div class="concept-card" style="padding:13px 14px;"><h4>1. Branch</h4><p style="font-size:0.64em;">Fork e <span class="mono">feature/http-telemetry</span></p></div>
-          <div class="concept-card" style="padding:13px 14px;"><h4>2. Coletor</h4><p style="font-size:0.64em;">Subir os sockets prontos</p></div>
+          <div class="concept-card" style="padding:13px 14px;"><h4>2. Coletor</h4><p style="font-size:0.64em;">Completar o socket UDP</p></div>
           <div class="concept-card" style="padding:13px 14px;"><h4>3. HTTP/SSE</h4><p style="font-size:0.64em;">Escrever o servidor Node.js</p></div>
           <div class="concept-card" style="padding:13px 14px;"><h4>4. Inspecionar</h4><p style="font-size:0.64em;">Medir o tráfego com cURL</p></div>
           <div class="concept-card" style="padding:13px 14px;"><h4>5. Pull Request</h4><p style="font-size:0.64em;">Abrir, revisar e aprovar</p></div>
         </div>
 
         <div class="callout" style="margin-top:14px;">
-          <p style="font-size:0.72em;"><strong>Por que o coletor vem pronto:</strong> implementar sockets, subir para HTTP, inspecionar o tráfego e conduzir um Pull Request não cabe em 60 minutos. O objetivo desta aula é a camada de aplicação e o fluxo de revisão, então é neles que o tempo é gasto.</p>
+          <p style="font-size:0.72em;"><strong>O que já vem pronto e por quê:</strong> o lado TCP do coletor, o simulador da frota e o painel do operador. Eles são modelo e andaime, não tarefa. O que vocês escrevem é o socket UDP, o servidor HTTP/SSE e a revisão, que é onde está o aprendizado de hoje.</p>
         </div>
 
         <div class="takeaway">
           <span class="takeaway-label">Tempo</span>
-          <p>60 minutos, em dupla: 5 para a branch, 8 para o coletor, 27 para o servidor HTTP/SSE, 10 para a inspeção com cURL e 10 para o Pull Request cruzado.</p>
+          <p>72 minutos, em dupla: 5 para a branch, 12 para o coletor, 27 para o servidor HTTP/SSE, 10 para a inspeção com cURL e 10 para o Pull Request cruzado.</p>
         </div>
 
         <div class="slide-footer">
           <div class="footer-bar">02 – Atividade Prática</div>
-          <div class="footer-page">26</div>
+          <div class="footer-page">27</div>
         </div>
       </section>
 
@@ -1335,11 +1469,12 @@ git branch --show-current</code></pre>
               <span style="color:var(--fiap-pink); font-weight:700;">mwe-2026-2-lab02-http-sse</span>
             </div>
             <div style="margin-top:13px; font-size:0.58em; color:#aaa; line-height:1.75;">
-              sockets-l4/ &nbsp;coletor pronto, da Aula 01<br>
+              sockets-l4/server_telemetry.py &nbsp;UDP a completar<br>
+              sockets-l4/verificar.py &nbsp;autoavaliação do Passo 2<br>
               http-l7/server.js &nbsp;esqueleto a completar<br>
               http-l7/public/ &nbsp;painel que consome o SSE<br>
-              http-l7/verificar.mjs &nbsp;autoavaliação<br>
-              docs/ &nbsp;onde entram as observações
+              http-l7/verificar.mjs &nbsp;autoavaliação do Passo 3<br>
+              docs/ &nbsp;observações e o registro da revisão
             </div>
           </div>
         </div>
@@ -1351,7 +1486,7 @@ git branch --show-current</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">02 – Passo 1 – Branch</div>
-          <div class="footer-page">27</div>
+          <div class="footer-page">28</div>
         </div>
       </section>
 
@@ -1361,41 +1496,45 @@ git branch --show-current</code></pre>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Passo 2 de 5: Subir o coletor de sockets da Aula 01</h2>
+          <h2>Passo 2 de 5: Completar o coletor de sockets do seu SDD</h2>
         </div>
 
-        <p style="font-size:0.74em;">Dois terminais. O coletor escuta os datagramas UDP dos caminhões e grava cada posição em <span class="mono">data/telemetria.jsonl</span>. O simulador faz o papel da frota.</p>
+        <p style="font-size:0.74em;">O lado <strong>TCP já está escrito</strong> e é o modelo. Vocês completam os quatro TODO de <span class="mono">escutar_udp</span>: criar o socket, receber, decodificar e gravar em <span class="mono">data/telemetria.jsonl</span>.</p>
 
-        <div class="figure-split" style="grid-template-columns: 1fr 1fr; gap:20px; margin-top:6px; align-items:start;">
+        <div class="figure-split" style="grid-template-columns: 1.05fr 1fr; gap:18px; margin-top:6px; align-items:start;">
           <div>
-            <div style="font-size:0.6em; font-weight:800; color:var(--fiap-pink); letter-spacing:1px; margin-bottom:5px;">TERMINAL 1: O COLETOR</div>
-            <pre style="margin:0; font-size:0.58em;"><code class="language-bash">python3 sockets-l4/server_telemetry.py
-
-# [TCP] confirmacoes de entrega na porta 8080
-# [UDP] telemetria de GPS na porta 8081
-# gravando em data/telemetria.jsonl</code></pre>
+            <div style="font-size:0.6em; font-weight:800; color:var(--fiap-pink); letter-spacing:1px; margin-bottom:5px;">OS QUATRO TODO, EM server_telemetry.py</div>
+            <pre style="margin:0; font-size:0.55em;"><code class="language-python"># TODO 1  socket UDP (SOCK_DGRAM) e bind na 8081
+# TODO 2  laco com recvfrom(2048)
+# TODO 3  json.loads, descartando o ilegivel
+# TODO 4  validar e anexar em telemetria.jsonl</code></pre>
+            <div style="font-size:0.6em; font-weight:800; color:var(--fiap-pink); letter-spacing:1px; margin:9px 0 5px;">DEPOIS, EM DOIS TERMINAIS</div>
+            <pre style="margin:0; font-size:0.55em;"><code class="language-bash">python3 sockets-l4/server_telemetry.py
+python3 sockets-l4/client_telemetry.py \
+        --caminhoes 5 --intervalo 1</code></pre>
           </div>
-          <div>
-            <div style="font-size:0.6em; font-weight:800; color:var(--fiap-pink); letter-spacing:1px; margin-bottom:5px;">TERMINAL 2: A FROTA SIMULADA</div>
-            <pre style="margin:0; font-size:0.58em;"><code class="language-bash">python3 sockets-l4/client_telemetry.py \
-        --caminhoes 5 --intervalo 1
-
-# 5 caminhoes emitindo 1 posicao por segundo</code></pre>
+          <div style="background:#1a1a1a; border-radius:8px; padding:14px 17px;">
+            <div style="font-size:0.58em; color:#888; letter-spacing:1px; font-weight:800; margin-bottom:8px;">A AUTOAVALIAÇÃO DO PASSO 2</div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:0.55em; color:#8fd18f; line-height:1.75;">
+              $ python3 sockets-l4/verificar.py<br><br>
+              [PASSOU] CA-L4-01 grava em telemetria.jsonl<br>
+              [PASSOU] CA-L4-02 uma posição por linha<br>
+              [PASSOU] CA-L4-03 placa, lat, lng, recebido_em<br>
+              [PASSOU] CA-L4-04 descarta datagrama ruim<br>
+              [PASSOU] CA-L4-05 sobrevive ao lixo
+            </div>
+            <div style="margin-top:10px; font-size:0.55em; color:#aaa; line-height:1.6;">Ele manda os datagramas sozinho: não precisa do simulador junto.</div>
           </div>
-        </div>
-
-        <div class="callout" style="margin-top:12px;">
-          <p style="font-size:0.7em;"><strong>Confiram antes de seguir:</strong> o arquivo <span class="mono">data/telemetria.jsonl</span> precisa estar crescendo. Se ele não existe ou não cresce, o Passo 3 não terá o que transmitir. <span class="mono">wc -l data/telemetria.jsonl</span> duas vezes, com alguns segundos de intervalo, responde isso.</p>
         </div>
 
         <div class="takeaway">
-          <span class="takeaway-label">Simplificação assumida</span>
-          <p>A passagem do coletor para a API é por arquivo, de propósito: mantém o laboratório previsível. Da Aula 07 em diante isso vira comunicação entre containers, que é como se faz de verdade.</p>
+          <span class="takeaway-label">Por que UDP, e por que ele não pode cair</span>
+          <p>Posição de GPS prefere frescor a completude, e foi isso que vocês justificaram no SDD. Por isso um datagrama corrompido se descarta e o laço continua: derrubar o coletor por causa de um pacote ruim reprova no <span class="mono">verificar.py</span>.</p>
         </div>
 
         <div class="slide-footer">
           <div class="footer-bar">02 – Passo 2 – Coletor</div>
-          <div class="footer-page">28</div>
+          <div class="footer-page">29</div>
         </div>
       </section>
 
@@ -1429,7 +1568,7 @@ git branch --show-current</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">02 – Passo 3 – HTTP/SSE</div>
-          <div class="footer-page">29</div>
+          <div class="footer-page">30</div>
         </div>
       </section>
 
@@ -1466,7 +1605,7 @@ git branch --show-current</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">02 – Passo 4 – Inspeção</div>
-          <div class="footer-page">30</div>
+          <div class="footer-page">31</div>
         </div>
       </section>
 
@@ -1479,37 +1618,45 @@ git branch --show-current</code></pre>
           <h2>Passo 5 de 5: Pull Request e Code Review cruzado</h2>
         </div>
 
-        <p style="font-size:0.74em;">A entrega é o <strong>Pull Request aprovado</strong>, não o código solto. Quem aprova é a dupla vizinha, adicionada como colaboradora.</p>
+        <p style="font-size:0.72em;">São <strong>duas entregas</strong>: o Pull Request de vocês aprovado, e a revisão que vocês fizeram no PR da dupla vizinha, registrada em <span class="mono">docs/CODE_REVIEW.md</span>.</p>
 
-        <div class="figure-split" style="grid-template-columns: 1fr 1fr; gap:20px; margin-top:6px; align-items:start;">
+        <div class="figure-split" style="grid-template-columns: 1fr 1.05fr; gap:18px; margin-top:2px; align-items:start;">
           <div>
-            <pre style="margin:0; font-size:0.58em;"><code class="language-bash">git add http-l7/ docs/OBSERVACOES.md
-git commit -m "feat(api): expoe posicoes da frota via HTTP"
+            <pre style="margin:0; font-size:0.5em;"><code class="language-bash">git add sockets-l4/ http-l7/ docs/
+git commit -m "feat(l4): completa o coletor UDP de telemetria"
 git commit -m "feat(sse): transmite posicoes novas por SSE"
 git push -u origin feature/http-telemetry
+# abrir o PR: feature/http-telemetry -> main
 
-# abrir o PR: feature/http-telemetry -> main</code></pre>
+# revisando o PR da dupla vizinha, com a skill
+python ai/ask.py "$(cat .claude/skills/code-review/SKILL.md)
+Aponte linha, efeito e sugestao neste diff.
+$(git diff main...origin/feature/http-telemetry)"</code></pre>
           </div>
-          <div class="concept-cards" style="grid-template-columns:1fr; gap:9px; margin-top:0;">
-            <div class="concept-card" style="padding:12px 15px;">
+          <div class="concept-cards" style="grid-template-columns:1fr; gap:8px; margin-top:0;">
+            <div class="concept-card" style="padding:11px 15px;">
               <h4>O que o PR precisa ter</h4>
-              <p style="font-size:0.66em;">No mínimo <strong>2 commits</strong> em Conventional Commits e uma descrição com 3 seções: o que mudou, como testar e o que ficou de fora.</p>
+              <p style="font-size:0.64em;">No mínimo <strong>2 commits</strong> em Conventional Commits e descrição com 3 seções: o que mudou, como testar e o que ficou de fora.</p>
             </div>
-            <div class="concept-card" style="padding:12px 15px;">
+            <div class="concept-card" style="padding:11px 15px;">
               <h4>O que a revisão precisa ter</h4>
-              <p style="font-size:0.66em;">No mínimo <strong>2 comentários</strong> em linha, cada um apontando linha, efeito e sugestão, e <strong>1 aprovação</strong> registrada em Review.</p>
+              <p style="font-size:0.64em;">No mínimo <strong>2 comentários</strong> em linha, cada um com linha, efeito e sugestão, e <strong>1 aprovação</strong> registrada em Review.</p>
+            </div>
+            <div class="concept-card" style="padding:11px 15px;">
+              <h4>O que vai no CODE_REVIEW.md</h4>
+              <p style="font-size:0.64em;">Qual PR revisaram, <strong>como</strong> revisaram, o que <strong>encontraram</strong> e qual <strong>sugestão</strong> deram. Usou a skill? Diga o que ela apontou e o que vocês descartaram.</p>
             </div>
           </div>
         </div>
 
-        <div class="takeaway">
+        <div class="takeaway" style="margin-top:2px; padding-top:8px; padding-bottom:8px;">
           <span class="takeaway-label">Ordem que vale</span>
-          <p>Merge só depois da aprovação. Se aprovarem sem ler, a dupla revisora responde pelo que passou: é assim no mercado e é assim aqui.</p>
+          <p>Merge só depois da aprovação. Quem aprova sem ler responde pelo que passou: é assim no mercado e é assim aqui.</p>
         </div>
 
         <div class="slide-footer">
           <div class="footer-bar">02 – Passo 5 – Pull Request</div>
-          <div class="footer-page">31</div>
+          <div class="footer-page">32</div>
         </div>
       </section>
 
@@ -1556,7 +1703,7 @@ git push -u origin feature/http-telemetry
 
         <div class="slide-footer">
           <div class="footer-bar">02 – Entrega da Atividade</div>
-          <div class="footer-page">32</div>
+          <div class="footer-page">33</div>
         </div>
       </section>
 
@@ -1604,15 +1751,19 @@ git push -u origin feature/http-telemetry
             GOOGLE: <a href="https://google.github.io/eng-practices/review/" target="_blank" style="color:var(--fiap-pink);">Engineering Practices: Code Review</a><br>
             <a href="https://www.conventionalcommits.org/pt-br/v1.0.0/" target="_blank" style="color:var(--fiap-pink);">Conventional Commits v1.0.0</a></p>
 
-            <p style="margin:0;"><strong style="color:var(--fiap-pink);">[8] Implementação em Node.js</strong><br>
-            NODE.JS: <a href="https://nodejs.org/api/http.html" target="_blank" style="color:var(--fiap-pink);">Módulo http</a> | <a href="https://nodejs.org/api/dgram.html" target="_blank" style="color:var(--fiap-pink);">Módulo dgram (UDP)</a><br>
+            <p style="margin:0 0 10px;"><strong style="color:var(--fiap-pink);">[8] Implementação em Node.js e Python</strong><br>
+            NODE.JS: <a href="https://nodejs.org/api/http.html" target="_blank" style="color:var(--fiap-pink);">Módulo http</a> | PYTHON: <a href="https://docs.python.org/3/library/socket.html" target="_blank" style="color:var(--fiap-pink);">Módulo socket</a><br>
             LAB KIT: <a href="https://github.com/josercf/mwe-2026-2-lab02-http-sse" target="_blank" style="color:var(--fiap-pink);">mwe-2026-2-lab02-http-sse</a></p>
+
+            <p style="margin:0;"><strong style="color:var(--fiap-pink);">[9] Revisão assistida por IA</strong><br>
+            BIBLIOTECA: <a href="https://github.com/josercf/skill-library" target="_blank" style="color:var(--fiap-pink);">josercf/skill-library</a>, skill <span class="mono">code-review</span><br>
+            ORIGEM: <a href="https://github.com/awesome-skills/code-review-skill" target="_blank" style="color:var(--fiap-pink);">awesome-skills/code-review-skill</a>, licença MIT</p>
           </div>
         </div>
 
         <div class="slide-footer">
           <div class="footer-bar">02 – Bibliografia da Aula</div>
-          <div class="footer-page">33</div>
+          <div class="footer-page">34</div>
         </div>
       </section>
 

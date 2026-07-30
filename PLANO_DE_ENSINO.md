@@ -120,8 +120,8 @@ graph TD
 - **Conteúdo Expositivo & Prático:**
   - *Protocolos:* HTTP/1.1 vs HTTP/2 (multiplexação) vs HTTP/3 (QUIC/UDP). Verbos HTTP, Status Codes, Headers e TLS/SSL Handshake.
   - *Git Workflows:* Trabalhando com Branches (`feature/telemetry-api`) e Pull Requests com Code Review.
-  - *Construção Guiada (Live Coding):* Servidor HTTP em Node.js consumindo os Sockets da Aula 01 e servindo eventos SSE. Inspeção de tráfego com `cURL` (`curl -v` para headers e handshake, `curl -N` para o stream do SSE).
-- **Entregável:** Pull Request aprovado contendo o servidor HTTP/SSE + três medições numéricas de tráfego registradas em `docs/OBSERVACOES.md`.
+  - *Construção Guiada (Live Coding):* Coletor de sockets UDP implementado a partir do SDD da Aula 01 e, sobre ele, servidor HTTP em Node.js servindo eventos SSE. Inspeção de tráfego com `cURL` (`curl -v` para headers e handshake, `curl -N` para o stream do SSE).
+- **Entregável:** Pull Request aprovado contendo o coletor UDP e o servidor HTTP/SSE, três medições numéricas de tráfego em `docs/OBSERVACOES.md` e o registro da revisão cruzada em `docs/CODE_REVIEW.md`.
 
 #### Aula 03 (18/08/2026) - Docker I: Engine, Imagens, Dockerfile Multi-Stage & Persistência
 - **Espiral & Conexão:** **Recupera Aulas 01 e 02** (Empacotando o projeto em containers seguindo a arquitetura descrita no SDD).

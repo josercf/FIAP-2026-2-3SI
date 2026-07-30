@@ -2,8 +2,8 @@
 """
 LogiTech Enterprise - Coletor de Telemetria na camada L4 (OSI).
 
-Este e o servico que voces especificaram na Aula 01, no diagrama de
-comunicacao L4 do SDD. Agora ele sai do papel.
+Este e o servico da Aula 01, entregue pronto na Aula 02. Ele nao e tarefa:
+e o ponto de partida sobre o qual voces constroem a camada HTTP/SSE.
 
 Dois sockets, conforme o SDD:
 
@@ -13,16 +13,8 @@ Dois sockets, conforme o SDD:
   TCP 8080  confirmacao de entrega assinada pelo motorista (UC02)
             integridade vale mais que milissegundos, precisa de ACK
 
-O LADO TCP JA ESTA PRONTO e serve de modelo: leia `escutar_tcp` e
-`atender_conexao` antes de comecar. O LADO UDP E TAREFA SUA: sao os quatro
-TODO da funcao `escutar_udp`, logo abaixo.
-
-Cada datagrama valido e anexado a data/telemetria.jsonl, uma linha por
-posicao. E dessa linha que o servidor HTTP do Passo 3 le: se o UDP nao
-gravar, o painel do operador fica vazio.
-
-Confira o seu trabalho com:
-    python3 sockets-l4/verificar.py
+Cada datagrama recebido e anexado a data/telemetria.jsonl, uma linha por
+posicao. E dessa linha que o servidor HTTP da Aula 02 le.
 
 Uso:
     python3 sockets-l4/server_telemetry.py
@@ -75,57 +67,34 @@ def validar_posicao(dados):
 
 
 def escutar_udp(porta):
-    """Telemetria de GPS. Fire-and-forget: nao existe resposta.
-
-    ===================== TAREFA DO PASSO 2 =====================
-
-    Quatro TODO. O modelo de tudo que voce precisa esta em `escutar_tcp` e
-    `atender_conexao`, logo abaixo: a diferenca e que la o socket e de
-    fluxo (SOCK_STREAM, com accept e resposta) e aqui e de datagrama
-    (SOCK_DGRAM, sem conexao e sem resposta).
-
-    Por que UDP aqui, e nao TCP? Esta no SDD de voces: para posicao de GPS,
-    frescor vale mais que completude. Perder um datagrama e aceitavel,
-    porque em um segundo vem outro mais novo. Esperar retransmissao, nao.
-
-    Nao invente campos: `validar_posicao` ja diz quais sao obrigatorios, e
-    `anexar` ja resolve a gravacao com flush.
-    """
-    # TODO 1: criar o socket UDP e prepara-lo para receber.
-    #   - socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    #   - setsockopt com SO_REUSEADDR, para reiniciar sem esperar a porta
-    #   - bind em ("0.0.0.0", porta)
-    #   Compare com as tres primeiras linhas de `escutar_tcp`: a unica
-    #   diferenca real e SOCK_DGRAM no lugar de SOCK_STREAM, e a ausencia
-    #   de listen(), porque nao existe conexao a aceitar.
-    raise NotImplementedError(
-        "Passo 2, TODO 1: crie o socket UDP e faca bind na porta %d. "
-        "Apague este raise quando implementar." % porta)
-
+    """Telemetria de GPS. Fire-and-forget: nao existe resposta."""
+    servidor = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    servidor.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    servidor.bind(("0.0.0.0", porta))
     print("[UDP] telemetria de GPS escutando na porta %d" % porta)
 
     while True:
-        # TODO 2: receber um datagrama.
-        #   servidor.recvfrom(2048) devolve a tupla (bytes, remetente).
-        #   Diferente do TCP, nao ha accept nem conexao: cada datagrama
-        #   chega solto, ja com o endereco de quem mandou.
-        dados, remetente = None, None
+        dados, remetente = servidor.recvfrom(2048)
+        try:
+            posicao = json.loads(dados.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError):
+            _contadores["invalidos"] += 1
+            print("[UDP] datagrama ilegivel de %s:%d, descartado" % remetente)
+            continue
 
-        # TODO 3: transformar os bytes em dict, descartando o que for ilegivel.
-        #   json.loads(dados.decode("utf-8")) dentro de try/except para
-        #   UnicodeDecodeError e json.JSONDecodeError. Datagrama corrompido
-        #   e normal em UDP: conte em _contadores["invalidos"], imprima e
-        #   siga com `continue`. Derrubar o coletor por um pacote ruim
-        #   seria o erro grave aqui.
-        posicao = None
+        erro = validar_posicao(posicao)
+        if erro:
+            _contadores["invalidos"] += 1
+            print("[UDP] datagrama rejeitado de %s:%d, %s" % (remetente[0], remetente[1], erro))
+            continue
 
-        # TODO 4: validar e gravar.
-        #   - erro = validar_posicao(posicao); se houver, conte e descarte
-        #   - posicao["recebido_em"] = agora_iso()
-        #   - anexar(ARQ_TELEMETRIA, posicao)
-        #   - _contadores["telemetria"] += 1
-        #   Sem esta gravacao o Passo 3 nao tem o que transmitir.
-        pass
+        posicao["recebido_em"] = agora_iso()
+        anexar(ARQ_TELEMETRIA, posicao)
+        _contadores["telemetria"] += 1
+
+        if _contadores["telemetria"] % 10 == 0:
+            print("[UDP] %d posicoes gravadas em data/telemetria.jsonl"
+                  % _contadores["telemetria"])
 
 
 def atender_conexao(conexao, remetente):

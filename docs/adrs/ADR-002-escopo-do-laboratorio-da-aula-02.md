@@ -1,8 +1,14 @@
 # ADR-002: Escopo do laboratório da Aula 02
 
 - **Data:** 2026-07-30
-- **Status:** Aceita
+- **Status:** Aceita, com a **decisão 1 superada pela ADR-003**
 - **Decisores:** Prof. José Romualdo da Costa Filho
+
+> **Atualização de 30/07/2026:** a decisão 1 desta ADR, que entregava o coletor de
+> sockets L4 pronto, foi revertida pela
+> `ADR-003-o-aluno-escreve-o-coletor-l4-na-aula-02.md`. O aluno passa a completar
+> o coletor a partir de um esqueleto com TODO. As decisões 2 e 3 desta ADR, a
+> saída do Wireshark e a passagem por arquivo, seguem valendo.
 
 ## Contexto
 

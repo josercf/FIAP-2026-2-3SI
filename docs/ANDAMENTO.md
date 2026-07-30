@@ -71,19 +71,46 @@ Verificado nesta sessão: o GitHub Models responde com o token do professor. Ate
 
 ### Aula 02 — pronta, publicada e com o repositório de lab sincronizado
 
-34 slides validados em 1280x720, com diagramas SVG inline para a evolução do HTTP,
+35 slides validados em 1280x720, com diagramas SVG inline para a evolução do HTTP,
 o handshake TLS e o fluxo do SSE. Lab Kit completo em `aulas-1sem/labs/aula02-lab/`.
 
-O escopo do laboratório está registrado na
-`docs/adrs/ADR-002-escopo-do-laboratorio-da-aula-02.md`: o coletor de sockets L4 é
-entregue pronto, o Wireshark sai do escopo e a inspeção de tráfego passa a ser
-feita com `cURL`, com três medições numéricas em `docs/OBSERVACOES.md`.
+O escopo do laboratório está em duas ADRs. A
+`ADR-002-escopo-do-laboratorio-da-aula-02.md` tirou o Wireshark e trocou o
+relatório de captura por três medições numéricas com `cURL`. A
+`ADR-003-o-aluno-escreve-o-coletor-l4-na-aula-02.md` **superou a decisão 1 da
+002**: o aluno passou a completar o coletor L4 em vez de recebê-lo pronto.
 
-Validado de ponta a ponta nesta sessão, inclusive **dentro da imagem do
-devcontainer** (`typescript-node:1-22-bookworm`, que traz Python 3.11, Node 22 e
-`cURL`): subindo o coletor, a frota simulada e o gateway, o `http-l7/verificar.mjs`
-passa nos 7 critérios com o gabarito e passa em apenas 1 com o esqueleto entregue
-ao aluno, saindo com código 1. O verificador discrimina de verdade.
+**Por que a 003 existe:** o slide do Desafio do Mini Mundo afirmava que "depois da
+Aula 01 temos um processo Python escutando na 8081", o que era falso, já que a
+Aula 01 entregou só PRD e SDD. Corrigir só o texto deixaria de pé o problema
+maior, que a própria ADR-002 tinha registrado como risco: o aluno chegaria ao CP1,
+uma prova prática individual que cobra Sockets TCP/UDP, sem nunca ter escrito um.
+O coletor virou esqueleto com quatro TODO no lado UDP, com o lado TCP pronto como
+modelo, e ganhou `sockets-l4/verificar.py` com cinco critérios. O laboratório foi
+de 60 para 72 minutos, dentro dos ~75 do Bloco 2.
+
+**Revisão de código assistida por IA.** A skill `code-review` foi importada de
+`awesome-skills/code-review-skill` (MIT) para `josercf/skill-library`, com
+`ORIGEM.md` registrando procedência, licença e commit. Entrou um slide novo com
+instalação e exemplos de uso, e a revisão virou entregável: `docs/CODE_REVIEW.md`
+pede qual PR foi revisado, como, o que se encontrou e qual sugestão foi dada,
+incluindo o que a IA sugeriu e a dupla **descartou**, com a razão.
+
+Validado de ponta a ponta **dentro da imagem do devcontainer**
+(`typescript-node:1-22-bookworm`, que traz Python 3.11, Node 22 e `cURL`), nas
+quatro combinações:
+
+| | esqueleto entregue | gabarito |
+|---|---|---|
+| `sockets-l4/verificar.py` | 0 de 5, sai com 1 | 5 de 5, sai com 0 |
+| `http-l7/verificar.mjs` | 1 de 7, sai com 1 | 7 de 7, sai com 0 |
+
+A cadeia completa também roda: coletor do gabarito alimentando o gateway do
+gabarito. Os dois verificadores discriminam de verdade.
+
+As animações por clique dos slides 9 e 19 são conferidas em navegador: nada
+visível antes do primeiro avanço, e um grupo por vez depois. `fragment` dentro de
+SVG funciona, mas não é óbvio, então existe teste.
 
 O formulário de entrega está publicado: <https://forms.cloud.microsoft/r/ykGYKsPAj7>,
 embutido no slide 32 e citado no README do lab.
@@ -133,7 +160,8 @@ o README real, **sem o `gabarito/`**.
 
 - [ ] **Aulas 03 a 16 ainda são rasas.** Decks de ~140 a ~370 linhas, sem figura, quizzes genéricos. Cada uma precisa passar pelo `construtor-aulas`. **A próxima é a Aula 03** (Docker I, 18/08), que empacota justamente o coletor Python e o gateway Node da Aula 02.
 - [ ] **Labs 03 a 16 têm só o esqueleto.** Devcontainer e README funcionam; falta o conteúdo de cada laboratório.
-- [ ] **Decidir o destino do `gabarito/server.js`.** Ele está commitado em `labs/aula02-lab/gabarito/`, e o workflow publica o repositório inteiro no GitHub Pages: um aluno que navegue pelo acervo acha a resposta. Confirmado que o repositório que o aluno forka **não** leva o gabarito, então o risco é só de quem procura no acervo. Avaliar se o gabarito sai do repositório público ou se fica assumido.
+- [ ] **Decidir o destino do `gabarito/`.** Agora são dois arquivos, `server.js` e `server_telemetry.py`, commitados em `labs/aula02-lab/gabarito/`, e o workflow publica o repositório inteiro no GitHub Pages: um aluno que navegue pelo acervo acha as duas respostas. Confirmado que o repositório que o aluno forka **não** leva o gabarito, então o risco é só de quem procura no acervo. Avaliar se o gabarito sai do repositório público ou se fica assumido. A ADR-003 lista isto como risco aberto.
+- [ ] **Os 72 minutos do lab da Aula 02 deixam só 3 de folga no Bloco 2.** Se a turma atrasar, o corte previsto na ADR-003 é a segunda metade do Passo 4, que são medições independentes, e não o Passo 5. Vale cronometrar na primeira aplicação e ajustar.
 - [ ] **Os outros 12 repositórios de lab provavelmente estão como o da Aula 02 estava:** só o esqueleto do scaffolder, com README genérico. Ao construir cada aula, sincronizar o repositório correspondente junto, senão o aluno abre um kit que não bate com o slide.
 - [ ] **A passagem por arquivo entre o coletor e o gateway precisa ser desfeita na Aula 07.** Está declarada como simplificação deliberada na ADR-002, no README do lab e no slide do Passo 2, com a Aula 07 nomeada como ponto de substituição. Ao construir a Aula 07, cobrar essa dívida.
 - [ ] Duplicação no `home01`: `~/infra/docker-compose.yml` e `~/homelab/docker-compose.yml` **definem os dois o nginx-proxy-manager e o n8n**. Parece migração inacabada. Resolver antes de subir serviço novo, senão um `compose up` pode derrubar o proxy no meio de uma aula.

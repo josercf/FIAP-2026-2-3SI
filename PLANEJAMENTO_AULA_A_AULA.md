@@ -66,8 +66,8 @@
   - `20h35 - 20h50`: **Pergunta de Verificação #1** + Tira-dúvidas.
   - `20h50 - 21h20`: ☕ **INTERVALO (30 min)**.
   - `21h20 - 21h35`: **Perguntas de Verificação #2 e #3**.
-  - `21h35 - 22h35`: **Atividade Prática em Dupla:** Criar uma branch `feature/http-telemetry`, desenvolver um servidor em Node.js exposto via HTTP/SSE sobre o coletor de sockets entregue pronto, e medir o tráfego com `cURL`.
-  - `22h35 - 22h50`: Abrir e aprovar Pull Request no Git com revisão cruzada entre duplas + Tira-dúvidas.
+  - `21h35 - 22h35`: **Atividade Prática em Dupla:** Criar uma branch `feature/http-telemetry`, completar o coletor de sockets UDP especificado no SDD, desenvolver sobre ele um servidor em Node.js exposto via HTTP/SSE, e medir o tráfego com `cURL`.
+  - `22h35 - 22h50`: Abrir e aprovar Pull Request no Git com revisão cruzada entre duplas, apoiada pela skill `code-review` + Tira-dúvidas.
 - **Sessão de Perguntas de Verificação:**
   1. *Pergunta 1:* Como a multiplexação no HTTP/2 resolve o problema de Head-of-Line Blocking do HTTP/1.1?  
      *Resposta Esperada:* O HTTP/2 divide as mensagens em frames binários e permite enviar múltiplas requisições/respostas simultâneas sobre uma única conexão TCP, sem que uma requisição lenta bloqueie as demais.
@@ -75,7 +75,7 @@
      *Resposta Esperada:* O SSE opera sobre HTTP padrão com reconexão automática nativa do navegador e menor overhead, sendo ideal para cenários onde apenas o servidor envia atualizações contínuas ao cliente.
   3. *Pergunta 3:* Qual a diferença prática entre trabalhar direto na branch `main` e utilizar um fluxo de Git Branching com Pull Requests?  
      *Resposta Esperada:* Trabalhar em branches isoladas permite desenvolver sem quebrar o ambiente estável (`main`), possibilita a revisão de código por pares e testes automatizados de integração antes do merge.
-- **Entregável Prático:** Pull Request aprovado contendo o servidor HTTP/SSE em Node.js e três medições numéricas de tráfego em `docs/OBSERVACOES.md`. O escopo do laboratório está registrado na ADR-002.
+- **Entregável Prático:** Pull Request aprovado contendo o coletor UDP completado, o servidor HTTP/SSE em Node.js, três medições numéricas de tráfego em `docs/OBSERVACOES.md` e o registro da revisão feita no PR da dupla vizinha em `docs/CODE_REVIEW.md`. O escopo do laboratório está registrado nas ADRs 002 e 003.
 
 ---
 
