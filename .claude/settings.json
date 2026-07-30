@@ -1,0 +1,21 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r \".tool_input.file_path // .tool_response.filePath // empty\" | { read -r f || exit 0; case \"$f\" in *aulas-1sem/aulas/aula*.html) ;; *) exit 0 ;; esac; r=$(python3 \"${CLAUDE_PROJECT_DIR:-.}/tools/check_slides.py\" \"$f\" 2>/dev/null); if [ $? -ne 0 ]; then printf \"%s\\n\" \"$r\"; exit 2; fi; exit 0; }",
+            "async": true,
+            "asyncRewake": true,
+            "timeout": 180,
+            "statusMessage": "Validando os slides com Playwright",
+            "rewakeSummary": "Slides estourando 1280x720",
+            "rewakeMessage": "O validador de slides encontrou conteudo que estoura a area util do slide. Corrija antes de seguir:"
+          }
+        ]
+      }
+    ]
+  }
+}

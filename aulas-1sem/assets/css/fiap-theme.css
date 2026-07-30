@@ -407,10 +407,10 @@
   border: 2px solid #e0e0e0;
   border-left: 5px solid #e0e0e0;
   border-radius: 8px;
-  padding: 12px 20px;
-  margin-bottom: 10px;
-  font-size: 0.78em;
-  line-height: 1.4;
+  padding: 10px 18px;
+  margin-bottom: 8px;
+  font-size: 0.72em;
+  line-height: 1.35;
   cursor: pointer;
   transition: all 0.25s ease;
 }
@@ -889,10 +889,10 @@
   justify-content: space-between;
   gap: 20px;
   max-width: 940px;
-  margin: 18px auto 0;
+  margin: 12px auto 0;
   background: var(--fiap-dark);
   border-radius: 10px;
-  padding: 14px 20px;
+  padding: 10px 18px;
 }
 
 .quiz-toolbar .quiz-vote {
@@ -1034,8 +1034,8 @@
   color: var(--fiap-white);
   border-left: 5px solid var(--fiap-pink);
   border-radius: 0 8px 8px 0;
-  padding: 14px 20px;
-  margin-top: 18px;
+  padding: 11px 18px;
+  margin-top: 12px;
 }
 
 .takeaway .takeaway-label {
@@ -1048,9 +1048,9 @@
 }
 
 .takeaway p {
-  font-size: 0.7em;
+  font-size: 0.66em;
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.45;
   color: #eee;
 }
 

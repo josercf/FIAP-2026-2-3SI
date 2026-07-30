@@ -101,26 +101,27 @@
           <h2>Apresentação do Professor</h2>
         </div>
 
-        <div style="display:grid; grid-template-columns: 280px 1fr; gap:30px; align-items:center;">
-          <div style="text-align:center;">
-            <img src="../assets/img/prof-jose.jpg" alt="Prof. José Romualdo" style="width:240px; height:240px; border-radius:50%; border:4px solid var(--fiap-pink); object-fit:cover; box-shadow:0 8px 20px rgba(0,0,0,0.3);">
-            <div style="margin-top:15px; font-weight:800; font-size:1.1em; color:var(--fiap-pink);">José Romualdo</div>
-            <div style="font-size:0.75em; color:#888;">Engenheiro de Software & Professor</div>
-          </div>
+        <div style="display:grid; grid-template-columns: 470px 1fr; gap:34px; align-items:start; margin-top:6px;">
           <div>
-            <div class="concept-cards" style="grid-template-columns: 1fr 1fr; margin-top:0;">
-              <div class="concept-card">
-                <h4>Trajetória Acadêmica & Profissional</h4>
-                <p>Mestre e Especialista em Engenharia de Software com atuação focada em arquiteturas distribuídas e Inteligência Artificial.</p>
-              </div>
-              <div class="concept-card">
-                <h4>Contato Institucional</h4>
-                <p><code>profjose.filho@fiap.com.br</code><br><a href="https://www.linkedin.com/in/jose-romualdo/" target="_blank" style="color:var(--fiap-pink); font-size:0.85em; font-weight:700;">LinkedIn: /in/jose-romualdo</a></p>
-              </div>
-              <div class="concept-card" style="grid-column: span 2;">
-                <h4>Lado Pessoal</h4>
-                <p>Marido da Mari, pai orgulhoso da Ana Clara e torcedor apaixonado do Palmeiras!</p>
-              </div>
+            <img src="../assets/img/prof-jose.jpg" alt="José Romualdo com a esposa Mari e a filha Ana Clara"
+                 style="width:100%; border-radius:10px; border:3px solid var(--fiap-pink); box-shadow:0 8px 22px rgba(0,0,0,0.28); display:block;">
+            <div style="margin-top:12px; font-weight:800; font-size:0.95em; color:var(--fiap-pink);">José Romualdo da Costa Filho</div>
+            <div style="font-size:0.68em; color:#888; margin-top:2px;">Com a Mari e a Ana Clara</div>
+          </div>
+
+          <div class="concept-cards" style="grid-template-columns: 1fr; margin-top:0; gap:12px;">
+            <div class="concept-card">
+              <h4>Trajetória Acadêmica e Profissional</h4>
+              <p>Mestre e Especialista em Engenharia de Software, com atuação em arquiteturas distribuídas e Inteligência Artificial.</p>
+            </div>
+            <div class="concept-card">
+              <h4>Contato</h4>
+              <p><code>profjose.filho@fiap.com.br</code><br>
+              <a href="https://www.linkedin.com/in/jose-romualdo/" target="_blank" style="color:var(--fiap-pink); font-size:0.9em; font-weight:700;">linkedin.com/in/jose-romualdo</a></p>
+            </div>
+            <div class="concept-card">
+              <h4>Fora do trabalho</h4>
+              <p>Marido da Mari, pai da Ana Clara e torcedor do Palmeiras.</p>
             </div>
           </div>
         </div>
@@ -288,13 +289,11 @@
           </tbody>
         </table>
 
-        <!-- Utilizando melhor o espaço inferior -->
-        <div class="callout" style="display:flex; justify-content:space-between; align-items:center; margin-top:30px; background:var(--fiap-light-gray); border-left:6px solid var(--fiap-dark);">
+        <div class="callout" style="display:flex; justify-content:space-between; align-items:center; margin-top:26px; background:var(--fiap-light-gray); border-left:6px solid var(--fiap-dark);">
           <div>
-            <h4 style="margin:0 0 5px 0; color:var(--fiap-dark);">Leitura Preparatória</h4>
-            <p style="margin:0; font-size:0.8em; color:var(--fiap-gray);">Para garantir o sucesso nas avaliações, é fundamental compreender a documentação de requisitos.</p>
+            <h4 style="margin:0 0 5px 0; color:var(--fiap-dark);">O que cai nos Checkpoints</h4>
+            <p style="margin:0; font-size:0.8em; color:var(--fiap-gray);">Cada Checkpoint é acumulativo: cobra o conteúdo de todas as aulas anteriores, não apenas o do módulo mais recente.</p>
           </div>
-          <a href="https://github.com/josercf/FIAP-2026-2-3SI/blob/main/aulas-1sem/labs/aula01-lab/PRD.md" target="_blank" class="pdf-print-btn" style="position:static; transform:none; box-shadow:none;">Acessar PRD.md</a>
         </div>
 
         <div class="slide-footer">
@@ -337,27 +336,27 @@
           <h2>PRD (Product Requirements Document) <a href="#/ref-slide" class="ref-badge" title="Ver referencias">[1]</a></h2>
         </div>
 
-        <p>O <strong>PRD</strong> não é apenas uma lista de funcionalidades; é o instrumento central de alinhamento estratégico que responde de forma conclusiva à pergunta: <em>"Por que estamos construindo este produto e para quem?"</em></p>
+        <p style="font-size:0.8em;">O <strong>PRD</strong> não é uma lista de funcionalidades: é o documento que responde <em>por que estamos construindo isto e para quem</em>. Ele descreve o problema, nunca a solução técnica.</p>
 
-        <div class="concept-cards" style="grid-template-columns: 1fr 1fr;">
+        <div class="concept-cards" style="grid-template-columns: 1fr 1fr; gap:14px;">
           <div class="concept-card">
-            <h4>Estrutura Fundamental</h4>
-            <ul style="margin:0; padding-left:20px; font-size:0.8em; color:#444;">
-              <li><strong>Visão de Produto:</strong> A tese de investimento e o problema real do mercado.</li>
-              <li><strong>Personas & Use Cases:</strong> O perfil exato do usuário e sua jornada.</li>
-              <li><strong>Requisitos Funcionais/Não Funcionais:</strong> As restrições e regras estritas do negócio.</li>
-              <li><strong>Métricas de Sucesso (KPIs):</strong> Como mediremos se a feature foi bem sucedida.</li>
+            <h4>O que todo PRD precisa ter</h4>
+            <ul style="margin:0; padding-left:18px; font-size:0.72em; color:#444; line-height:1.5;">
+              <li><strong>Visão e Problema:</strong> a dor real do mercado</li>
+              <li><strong>Personas e Casos de Uso:</strong> quem usa e como</li>
+              <li><strong>Requisitos Funcionais e Não Funcionais:</strong> verificáveis, com identificador</li>
+              <li><strong>Métricas de Sucesso:</strong> como saberemos que deu certo</li>
             </ul>
           </div>
           <div class="concept-card">
-            <h4>Impacto na Engenharia de Software</h4>
-            <p>Sem um PRD robusto, equipes de desenvolvimento assumem regras de negócio por conta própria, resultando em retrabalho (churn), débitos técnicos severos e desalinhamento de expectativas entre a liderança corporativa e a engenharia de base.</p>
+            <h4>O que acontece sem ele</h4>
+            <p style="font-size:0.72em;">Sem PRD, cada desenvolvedor inventa a regra de negócio que falta. O resultado é retrabalho, débito técnico e a descoberta tardia de que o time construiu a coisa certa para o usuário errado.</p>
           </div>
         </div>
 
-        <div class="callout" style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
-          <span><strong>Integração com AI:</strong> Ferramentas modernas de GenAI utilizam o PRD como contexto (system prompt) para gerar arquiteturas coerentes.</span>
-          <a href="https://github.com/josercf/FIAP-2026-2-3SI/blob/main/aulas-1sem/labs/aula01-lab/PRD.md" target="_blank" style="color:var(--fiap-pink); font-weight:700; font-size:0.8em; text-decoration:underline;">Ver Exemplo PRD</a>
+        <div class="callout" style="display:flex; justify-content:space-between; align-items:center; margin-top:14px; gap:16px;">
+          <span style="font-size:0.72em;"><strong>PRD como contexto de IA:</strong> um PRD bem escrito vira o insumo que o modelo usa para gerar arquitetura e código coerentes. Lixo entra, lixo sai.</span>
+          <a href="https://github.com/josercf/mwe-2026-2-lab01-requisitos" target="_blank" style="color:var(--fiap-pink); font-weight:700; font-size:0.72em; white-space:nowrap;">Lab Kit da Aula 01</a>
         </div>
 
         <div class="slide-footer">
@@ -372,32 +371,44 @@
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>SDD (System Design Document) <a href="#/ref-slide" class="ref-badge" title="Ver referencias">[2]</a></h2>
+          <h2>SDD: Spec Driven Development <a href="#/ref-slide" class="ref-badge" title="Ver referencias">[2]</a></h2>
         </div>
 
-        <p>Enquanto o PRD foca no produto (o <em>"Quê"</em>), o <strong>SDD</strong> traduz as necessidades de negócio em uma arquitetura de software concreta (o <em>"Como"</em>). Ele é o contrato técnico entre arquitetos, desenvolvedores e infraestrutura.</p>
+        <p style="font-size:0.78em;">A engenharia de software sempre soube que <strong>especificar antes reduz risco</strong> (Pressman, Sommerville). O que mudou com a IA é que a especificação deixou de ser papel arquivado e virou <strong>a entrada executável do processo</strong>.</p>
 
-        <div class="arch-diagram">
-          <div class="arch-node">PRD<br><span style="font-size:0.6em;font-weight:400;">Requisitos de Negócio</span></div>
-          <div class="arch-arrow">➔</div>
-          <div class="arch-node">SDD<br><span style="font-size:0.6em;font-weight:400;">Decisões Arquiteturais</span></div>
-          <div class="arch-arrow">➔</div>
-          <div class="arch-node">Código-Fonte<br><span style="font-size:0.6em;font-weight:400;">Implementação Física</span></div>
+        <div class="figure-split" style="grid-template-columns: 1fr 1fr; gap:22px; margin-top:14px;">
+          <div>
+            <div style="background:#f5f5f5; border-radius:8px; padding:14px 16px; border-left:4px solid #bbb;">
+              <div style="font-size:0.68em; font-weight:800; color:#888; letter-spacing:1px; margin-bottom:8px;">MODELO TRADICIONAL</div>
+              <div style="font-size:0.7em; line-height:1.9; color:#555;">
+                Especificação escrita<br>
+                <span style="color:#bbb;">&darr;</span><br>
+                Código escrito à mão<br>
+                <span style="color:#bbb;">&darr;</span><br>
+                <strong>Spec vira documentação morta</strong>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div style="background:#fff5f8; border-radius:8px; padding:14px 16px; border-left:4px solid var(--fiap-pink);">
+              <div style="font-size:0.68em; font-weight:800; color:var(--fiap-pink); letter-spacing:1px; margin-bottom:8px;">SPEC DRIVEN DEVELOPMENT</div>
+              <div style="font-size:0.7em; line-height:1.9; color:#333;">
+                Especificação é a fonte da verdade<br>
+                <span style="color:var(--fiap-pink);">&darr;</span><br>
+                Plano técnico derivado dela<br>
+                <span style="color:var(--fiap-pink);">&darr;</span><br>
+                <strong>Código gerado e regenerável</strong>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div class="concept-cards" style="grid-template-columns: 1fr 1fr; margin-top:25px;">
-          <div class="concept-card">
-            <h4>Componentes do SDD</h4>
-            <p>Deve conter o desenho da topologia, escolha de protocolos (ex: TCP/UDP, gRPC, HTTP), mapeamento de schemas de banco de dados, estratégias de cache, escalabilidade (horizontal/vertical) e diagramas de sequência de comunicação (C4 Model).</p>
-          </div>
-          <div class="concept-card">
-            <h4>Redução de Risco</h4>
-            <p>Especificações formais preventivas (como defendido por Pressman e Sommerville na engenharia clássica) resolvem potenciais gargalos estruturais antes da primeira linha de código, economizando recursos em cloud.</p>
-          </div>
+        <div class="callout" style="margin-top:14px;">
+          <p style="font-size:0.72em;"><strong>A inversão:</strong> no modelo antigo o código era o artefato valioso e a spec, um subproduto. No Spec Driven Development a spec é o ativo, e o código passa a ser sua expressão. Mudou o requisito? Muda-se a spec e regenera-se, em vez de remendar o código.</p>
         </div>
 
         <div class="slide-footer">
-          <div class="footer-bar">01 – Specification Driven Development</div>
+          <div class="footer-bar">01 – Spec Driven Development</div>
           <div class="footer-page">11</div>
         </div>
       </section>
@@ -501,23 +512,140 @@
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Bounded Contexts & Monolith-First <a href="#/ref-slide" class="ref-badge" title="Ver referencias">[4]</a></h2>
+          <h2>Bounded Context: a mesma palavra, modelos diferentes <a href="#/ref-slide" class="ref-badge" title="Ver referencias">[4]</a></h2>
         </div>
 
-        <div class="concept-cards" style="grid-template-columns: 1fr 1fr;">
-          <div class="concept-card">
-            <h4>Bounded Context (Contexto Delimitado)</h4>
-            <p>É a fronteira explícita arquitetural onde o modelo de domínio se aplica e tem validade. A entidade "Cliente" no contexto de Vendas possui atributos distintos da entidade "Cliente" no contexto de Suporte Técnico. Isolamos essas fronteiras para evitar monólitos de código acoplados.</p>
-          </div>
-          <div class="concept-card">
-            <h4>Abordagem Monolith-First</h4>
-            <p>Conforme defendido por Martin Fowler, a prática recomendada é iniciar a arquitetura como um monólito modular (estruturado pelos Bounded Contexts). Dividir o sistema em microsserviços distribuídos precocemente eleva a complexidade de rede e orquestração de forma desnecessária.</p>
-          </div>
+        <p style="font-size:0.78em;">Um <strong>Bounded Context</strong> é a fronteira dentro da qual um modelo de domínio vale. Fora dela, o mesmo substantivo significa outra coisa. "Cliente" existe em toda a LogiTech, mas cada área precisa de um <em>Cliente</em> diferente.</p>
+
+        <div class="slide-figure" style="margin-top:6px;">
+          <svg viewBox="0 0 1120 300" role="img" aria-label="A entidade Cliente modelada de tres formas distintas em tres contextos delimitados">
+            <!-- Vendas -->
+            <rect x="20" y="20" width="330" height="230" rx="10" fill="#fff5f8" stroke="#ED145B" stroke-width="2.5"/>
+            <text x="185" y="48" text-anchor="middle" font-size="17" font-weight="800" fill="#ED145B">Contexto: Vendas</text>
+            <rect x="50" y="66" width="270" height="164" rx="6" fill="#fff" stroke="#e0b6c6"/>
+            <text x="70" y="92" font-size="16" font-weight="800" fill="#1a1a1a">Cliente</text>
+            <line x1="70" y1="102" x2="300" y2="102" stroke="#eee" stroke-width="1.5"/>
+            <text x="70" y="126" font-size="13" fill="#444">limiteDeCredito</text>
+            <text x="70" y="150" font-size="13" fill="#444">tabelaDePreco</text>
+            <text x="70" y="174" font-size="13" fill="#444">condicaoDePagamento</text>
+            <text x="70" y="198" font-size="13" fill="#444">vendedorResponsavel</text>
+            <text x="70" y="220" font-size="12" fill="#999" font-style="italic">quanto pode comprar</text>
+
+            <!-- Operacao -->
+            <rect x="395" y="20" width="330" height="230" rx="10" fill="#f4f8fb" stroke="#5b8db8" stroke-width="2.5"/>
+            <text x="560" y="48" text-anchor="middle" font-size="17" font-weight="800" fill="#3d6d94">Contexto: Operação</text>
+            <rect x="425" y="66" width="270" height="164" rx="6" fill="#fff" stroke="#c3d7e6"/>
+            <text x="445" y="92" font-size="16" font-weight="800" fill="#1a1a1a">Cliente</text>
+            <line x1="445" y1="102" x2="675" y2="102" stroke="#eee" stroke-width="1.5"/>
+            <text x="445" y="126" font-size="13" fill="#444">enderecoDeEntrega</text>
+            <text x="445" y="150" font-size="13" fill="#444">janelaDeRecebimento</text>
+            <text x="445" y="174" font-size="13" fill="#444">restricaoDeVeiculo</text>
+            <text x="445" y="198" font-size="13" fill="#444">docaDeDescarga</text>
+            <text x="445" y="220" font-size="12" fill="#999" font-style="italic">onde e quando entregar</text>
+
+            <!-- Faturamento -->
+            <rect x="770" y="20" width="330" height="230" rx="10" fill="#f6f8f4" stroke="#7a9c5e" stroke-width="2.5"/>
+            <text x="935" y="48" text-anchor="middle" font-size="17" font-weight="800" fill="#5c7a45">Contexto: Faturamento</text>
+            <rect x="800" y="66" width="270" height="164" rx="6" fill="#fff" stroke="#cdddc0"/>
+            <text x="820" y="92" font-size="16" font-weight="800" fill="#1a1a1a">Cliente</text>
+            <line x1="820" y1="102" x2="1050" y2="102" stroke="#eee" stroke-width="1.5"/>
+            <text x="820" y="126" font-size="13" fill="#444">inscricaoEstadual</text>
+            <text x="820" y="150" font-size="13" fill="#444">regimeTributario</text>
+            <text x="820" y="174" font-size="13" fill="#444">substituicaoTributaria</text>
+            <text x="820" y="198" font-size="13" fill="#444">centroDeCusto</text>
+            <text x="820" y="220" font-size="12" fill="#999" font-style="italic">como emitir a nota</text>
+
+            <text x="560" y="285" text-anchor="middle" font-size="14" font-weight="700" fill="#666">
+              Forçar um único modelo "Cliente" para os três produz uma classe com 40 campos, metade sempre nula.
+            </text>
+          </svg>
         </div>
 
         <div class="slide-footer">
           <div class="footer-bar">01 – Bounded Contexts</div>
           <div class="footer-page">15</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: MONOLITH FIRST ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Monolith First: por onde começar <a href="#/ref-slide" class="ref-badge" title="Ver referencias">[4]</a></h2>
+        </div>
+
+        <p style="font-size:0.78em;">Martin Fowler observou um padrão: quase todo sistema de microsserviços bem-sucedido <strong>começou como um monólito que foi quebrado</strong>. E quase todo sistema que já nasceu em microsserviços acabou em apuros.</p>
+
+        <div class="slide-figure" style="margin-top:4px;">
+          <svg viewBox="0 0 1120 250" role="img" aria-label="Evolucao recomendada: monolito, monolito modular e extracao de microsservicos">
+            <defs>
+              <marker id="setaEvo" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+                <path d="M0,0 L10,5 L0,10 Z" fill="#ED145B"/>
+              </marker>
+            </defs>
+
+            <!-- 1. Monolito -->
+            <rect x="30" y="46" width="250" height="150" rx="8" fill="#f5f5f5" stroke="#999" stroke-width="2"/>
+            <text x="155" y="32" text-anchor="middle" font-size="16" font-weight="800" fill="#1a1a1a">1. Monólito</text>
+            <rect x="55" y="72" width="200" height="100" rx="4" fill="#e4e4e4"/>
+            <text x="155" y="128" text-anchor="middle" font-size="14" font-weight="700" fill="#666">tudo junto</text>
+            <text x="155" y="218" text-anchor="middle" font-size="12" fill="#777">Rápido de entregar.</text>
+            <text x="155" y="234" text-anchor="middle" font-size="12" fill="#777">O domínio ainda é desconhecido.</text>
+
+            <line x1="292" y1="121" x2="332" y2="121" stroke="#ED145B" stroke-width="3" marker-end="url(#setaEvo)"/>
+
+            <!-- 2. Monolito modular -->
+            <rect x="345" y="46" width="250" height="150" rx="8" fill="#fff5f8" stroke="#ED145B" stroke-width="2.5"/>
+            <text x="470" y="32" text-anchor="middle" font-size="16" font-weight="800" fill="#ED145B">2. Monólito modular</text>
+            <rect x="368" y="70" width="94" height="48" rx="4" fill="#fff" stroke="#ED145B"/>
+            <text x="415" y="99" text-anchor="middle" font-size="11" font-weight="700" fill="#ED145B">Vendas</text>
+            <rect x="478" y="70" width="94" height="48" rx="4" fill="#fff" stroke="#ED145B"/>
+            <text x="525" y="99" text-anchor="middle" font-size="11" font-weight="700" fill="#ED145B">Operação</text>
+            <rect x="368" y="126" width="94" height="48" rx="4" fill="#fff" stroke="#ED145B"/>
+            <text x="415" y="155" text-anchor="middle" font-size="11" font-weight="700" fill="#ED145B">Faturam.</text>
+            <rect x="478" y="126" width="94" height="48" rx="4" fill="#fff" stroke="#ED145B"/>
+            <text x="525" y="155" text-anchor="middle" font-size="11" font-weight="700" fill="#ED145B">Frota</text>
+            <text x="470" y="218" text-anchor="middle" font-size="12" fill="#777">Um deploy só, mas com as</text>
+            <text x="470" y="234" text-anchor="middle" font-size="12" fill="#777">fronteiras já desenhadas.</text>
+
+            <line x1="607" y1="121" x2="647" y2="121" stroke="#ED145B" stroke-width="3" marker-end="url(#setaEvo)"/>
+
+            <!-- 3. Extracao -->
+            <rect x="660" y="46" width="250" height="150" rx="8" fill="#f6f8f4" stroke="#7a9c5e" stroke-width="2.5"/>
+            <text x="785" y="32" text-anchor="middle" font-size="16" font-weight="800" fill="#5c7a45">3. Extração sob demanda</text>
+            <rect x="683" y="70" width="94" height="48" rx="4" fill="#fff" stroke="#999" stroke-dasharray="4,3"/>
+            <text x="730" y="99" text-anchor="middle" font-size="11" font-weight="700" fill="#888">Vendas</text>
+            <rect x="793" y="66" width="98" height="56" rx="4" fill="#eafaf1" stroke="#27ae60" stroke-width="2"/>
+            <text x="842" y="90" text-anchor="middle" font-size="11" font-weight="800" fill="#1e8449">Operação</text>
+            <text x="842" y="107" text-anchor="middle" font-size="9" fill="#1e8449">serviço próprio</text>
+            <rect x="683" y="126" width="94" height="48" rx="4" fill="#fff" stroke="#999" stroke-dasharray="4,3"/>
+            <text x="730" y="155" text-anchor="middle" font-size="11" font-weight="700" fill="#888">Faturam.</text>
+            <rect x="793" y="130" width="98" height="48" rx="4" fill="#fff" stroke="#999" stroke-dasharray="4,3"/>
+            <text x="842" y="159" text-anchor="middle" font-size="11" font-weight="700" fill="#888">Frota</text>
+            <text x="785" y="218" text-anchor="middle" font-size="12" fill="#777">Extrai-se o módulo que tem</text>
+            <text x="785" y="234" text-anchor="middle" font-size="12" fill="#777">motivo real para escalar sozinho.</text>
+
+            <!-- Alerta -->
+            <rect x="930" y="46" width="170" height="150" rx="8" fill="#fdedec" stroke="#e74c3c" stroke-width="2"/>
+            <text x="1015" y="76" text-anchor="middle" font-size="13" font-weight="800" fill="#c0392b">O atalho que</text>
+            <text x="1015" y="94" text-anchor="middle" font-size="13" font-weight="800" fill="#c0392b">não funciona</text>
+            <text x="1015" y="122" text-anchor="middle" font-size="11" fill="#c0392b">Ir direto para</text>
+            <text x="1015" y="138" text-anchor="middle" font-size="11" fill="#c0392b">microsserviços sem</text>
+            <text x="1015" y="154" text-anchor="middle" font-size="11" fill="#c0392b">conhecer o domínio</text>
+            <text x="1015" y="176" text-anchor="middle" font-size="11" font-weight="700" fill="#c0392b">= fronteiras erradas</text>
+          </svg>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Takeaway</span>
+          <p>Errar a fronteira dentro de um monólito custa uma refatoração. Errar a fronteira entre microsserviços custa uma migração distribuída, com contrato de API, versionamento e dados espalhados.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">01 – Monolith First</div>
+          <div class="footer-page">16</div>
         </div>
       </section>
 
@@ -553,7 +681,7 @@
 
         <div class="slide-footer">
           <div class="footer-bar">01 – Ciclo de Vida de Software</div>
-          <div class="footer-page">16</div>
+          <div class="footer-page">17</div>
         </div>
       </section>
 
@@ -622,18 +750,19 @@
             <path d="M966,108 a14,12 0 0,1 28,0 Z" fill="#fff"/>
             <text x="800" y="140" text-anchor="middle" font-size="11" font-weight="700" fill="#ED145B">feature/rota</text>
             <text x="980" y="140" text-anchor="middle" font-size="11" font-weight="700" fill="#ED145B">feature/frete</text>
-            <path d="M800,148 C800,180 840,180 885,182" fill="none" stroke="#ED145B" stroke-width="2.5" marker-end="url(#arrowPink)"/>
-            <path d="M980,148 C980,180 940,180 895,182" fill="none" stroke="#ED145B" stroke-width="2.5" marker-end="url(#arrowPink)"/>
-            <rect x="820" y="188" width="140" height="52" rx="6" fill="#eafaf1" stroke="#27ae60" stroke-width="2"/>
-            <text x="890" y="211" text-anchor="middle" font-size="14" font-weight="700" fill="#1e8449">main</text>
-            <text x="890" y="229" text-anchor="middle" font-size="12" fill="#1e8449">merge revisado</text>
-            <text x="890" y="272" text-anchor="middle" font-size="12" fill="#1e8449" font-weight="600">Histórico completo e reversível.</text>
+            <!-- curvas terminam na borda superior do retangulo main (y=172), apontando para dentro -->
+            <path d="M800,150 C800,166 830,168 862,170" fill="none" stroke="#ED145B" stroke-width="2.5" marker-end="url(#arrowPink)"/>
+            <path d="M980,150 C980,166 950,168 918,170" fill="none" stroke="#ED145B" stroke-width="2.5" marker-end="url(#arrowPink)"/>
+            <rect x="820" y="176" width="140" height="52" rx="6" fill="#eafaf1" stroke="#27ae60" stroke-width="2"/>
+            <text x="890" y="199" text-anchor="middle" font-size="14" font-weight="700" fill="#1e8449">main</text>
+            <text x="890" y="217" text-anchor="middle" font-size="12" fill="#1e8449">merge revisado</text>
+            <text x="890" y="256" text-anchor="middle" font-size="12" fill="#1e8449" font-weight="600">Histórico completo e reversível.</text>
           </svg>
         </div>
 
         <div class="slide-footer">
           <div class="footer-bar">01 – Versionamento com Git</div>
-          <div class="footer-page">17</div>
+          <div class="footer-page">18</div>
         </div>
       </section>
 
@@ -688,7 +817,7 @@
 
         <div class="slide-footer">
           <div class="footer-bar">01 – Evolução do Git</div>
-          <div class="footer-page">18</div>
+          <div class="footer-page">19</div>
         </div>
       </section>
 
@@ -722,7 +851,7 @@
 
         <div class="slide-footer">
           <div class="footer-bar">01 – Ecossistema GitHub</div>
-          <div class="footer-page">19</div>
+          <div class="footer-page">20</div>
         </div>
       </section>
 
@@ -732,35 +861,149 @@
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Commits, Branches e o Multiverso</h2>
+          <h2>O Multiverso do Git</h2>
         </div>
 
-        <div class="figure-split">
-          <img src="../assets/img/git-multiverse.jpg" alt="Linhas do tempo divergentes representando branches do Git">
+        <div class="figure-split" style="grid-template-columns: 1.15fr 1fr; gap:26px;">
+          <img src="../assets/img/doutor-estranho.jpg" alt="Doutor Estranho manipulando linhas do tempo paralelas">
 
           <div>
-            <p style="font-size:0.8em;">Quando o Doutor Estranho abre os quatorze milhões de futuros possíveis, ele faz exatamente o que o Git faz: <strong>cria linhas do tempo paralelas a partir de um mesmo ponto</strong>, explora cada uma isoladamente e só uma converge de volta.</p>
+            <p style="font-size:0.8em; margin-bottom:14px;">Em <em>Guerra Infinita</em>, o Doutor Estranho avança no tempo e observa <strong>14.000.605 futuros possíveis</strong>. Ele explora cada linha isoladamente, descarta as que falham e volta ao presente sabendo qual seguir.</p>
 
-            <div class="concept-cards" style="grid-template-columns: 1fr; margin-top:14px;">
-              <div class="concept-card">
-                <h4>Commit: o ponto na linha do tempo</h4>
-                <p>Um snapshot imutável e identificado por hash. É a menor unidade que se pode revisar, reverter ou culpar (<code>git blame</code>).</p>
-              </div>
-              <div class="concept-card">
-                <h4>Branch: a realidade alternativa</h4>
-                <p>Uma feature arriscada ou um hotfix de produção evoluem em paralelo sem ameaçar a <code>main</code>. Se der errado, descarta-se a linha inteira.</p>
-              </div>
-              <div class="concept-card">
-                <h4>Merge: a convergência</h4>
-                <p>Depois de revisada e testada, a linha alternativa é reconciliada com a canônica. O conflito não é falha: é o Git avisando que duas realidades tocaram o mesmo ponto.</p>
-              </div>
+            <p style="font-size:0.8em;">É literalmente o que o Git faz. A partir de um mesmo ponto da história você abre quantas realidades quiser, testa cada uma sem risco, joga fora as que não deram certo e traz de volta só a que funcionou.</p>
+
+            <div class="callout" style="margin-top:16px;">
+              <p style="font-size:0.72em;">A diferença é que no Git você não precisa da Joia do Tempo: <code>git branch</code> resolve, e sai de graça.</p>
             </div>
           </div>
         </div>
 
         <div class="slide-footer">
           <div class="footer-bar">01 – Git Branching</div>
-          <div class="footer-page">20</div>
+          <div class="footer-page">21</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: O QUE E UM COMMIT ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O que é, de fato, um commit</h2>
+        </div>
+
+        <p style="font-size:0.76em;">Um commit não é "um pedaço de mudança": é uma <strong>fotografia completa e imutável do projeto inteiro</strong>, endereçada por um hash e ligada ao commit anterior.</p>
+
+        <div class="figure-split" style="grid-template-columns: 0.95fr 1.05fr; gap:24px; margin-top:6px; align-items:start;">
+          <svg viewBox="0 0 460 300" style="max-height:330px;" role="img" aria-label="Anatomia de um objeto commit do Git">
+            <rect x="10" y="10" width="440" height="280" rx="10" fill="#1a1a1a"/>
+            <text x="34" y="46" font-size="17" font-weight="800" fill="#ED145B">commit a3f9c21</text>
+            <line x1="34" y1="58" x2="426" y2="58" stroke="#3a3a3a" stroke-width="1.5"/>
+
+            <text x="34" y="88" font-size="13" fill="#888">tree</text>
+            <text x="150" y="88" font-size="13" fill="#fff" font-weight="600">9d2b0e4</text>
+            <text x="240" y="88" font-size="11" fill="#666">estado de TODOS os arquivos</text>
+
+            <text x="34" y="122" font-size="13" fill="#888">parent</text>
+            <text x="150" y="122" font-size="13" fill="#fff" font-weight="600">7c1a88f</text>
+            <text x="240" y="122" font-size="11" fill="#666">o commit anterior</text>
+
+            <text x="34" y="156" font-size="13" fill="#888">author</text>
+            <text x="150" y="156" font-size="13" fill="#fff" font-weight="600">José Romualdo</text>
+
+            <text x="34" y="190" font-size="13" fill="#888">date</text>
+            <text x="150" y="190" font-size="13" fill="#fff" font-weight="600">2026-08-04 21:14</text>
+
+            <text x="34" y="224" font-size="13" fill="#888">message</text>
+            <text x="150" y="224" font-size="13" fill="#fff" font-weight="600">feat(telemetria):</text>
+            <text x="150" y="244" font-size="13" fill="#fff" font-weight="600">adiciona listener UDP</text>
+
+            <rect x="24" y="258" width="412" height="24" rx="4" fill="#2a2a2a"/>
+            <text x="230" y="275" text-anchor="middle" font-size="11" fill="#999">mudar qualquer campo muda o hash: o histórico é à prova de adulteração</text>
+          </svg>
+
+          <div>
+            <div class="concept-cards" style="grid-template-columns: 1fr; gap:9px; margin-top:0;">
+              <div class="concept-card" style="padding:13px 16px;">
+                <h4>Cada commit aponta para o anterior</h4>
+                <p style="font-size:0.72em;">Essa corrente é a história do projeto. Percorrê-la de trás para frente é o que permite <code>git log</code>, <code>git blame</code> e <code>git revert</code>.</p>
+              </div>
+              <div class="concept-card" style="padding:13px 16px;">
+                <h4>Imutável por construção</h4>
+                <p style="font-size:0.72em;">O hash vem do conteúdo. Alterar um commit antigo muda o hash dele e o de todos os seguintes: a adulteração fica evidente.</p>
+              </div>
+              <div class="concept-card" style="padding:13px 16px;">
+                <h4>O tamanho certo</h4>
+                <p style="font-size:0.72em;">Uma mudança coerente, que você reverteria sozinha. "Fim do dia" não é commit; "corrige o frete do PAC" é.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">01 – Commits</div>
+          <div class="footer-page">22</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: O QUE E UMA BRANCH ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O que é, de fato, uma branch</h2>
+        </div>
+
+        <p style="font-size:0.78em;">Aqui está a parte que quase todo mundo entende errado: uma branch <strong>não é uma cópia do projeto</strong>. É um arquivo de 41 bytes contendo o hash de um commit. Criar uma branch é instantâneo porque nada é copiado.</p>
+
+        <div class="slide-figure" style="margin-top:6px;">
+          <svg viewBox="0 0 1120 250" role="img" aria-label="Branches como ponteiros para commits, divergindo da main e convergindo no merge">
+            <defs>
+              <marker id="setaBr" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+                <path d="M0,0 L9,4.5 L0,9 Z" fill="#888"/>
+              </marker>
+            </defs>
+
+            <!-- linha principal -->
+            <line x1="90" y1="150" x2="1030" y2="150" stroke="#ddd" stroke-width="3"/>
+            <circle cx="120" cy="150" r="16" fill="#1a1a1a"/><text x="120" y="155" text-anchor="middle" font-size="11" fill="#fff">c1</text>
+            <circle cx="260" cy="150" r="16" fill="#1a1a1a"/><text x="260" y="155" text-anchor="middle" font-size="11" fill="#fff">c2</text>
+            <circle cx="400" cy="150" r="16" fill="#1a1a1a"/><text x="400" y="155" text-anchor="middle" font-size="11" fill="#fff">c3</text>
+            <circle cx="820" cy="150" r="16" fill="#1a1a1a"/><text x="820" y="155" text-anchor="middle" font-size="11" fill="#fff">c6</text>
+            <circle cx="960" cy="150" r="18" fill="#27ae60"/><text x="960" y="156" text-anchor="middle" font-size="11" fill="#fff" font-weight="700">M</text>
+
+            <!-- ramo: comeca na borda de c3 para nao riscar o circulo -->
+            <path d="M416,146 C470,140 480,80 562,80" fill="none" stroke="#ED145B" stroke-width="3"/>
+            <circle cx="580" cy="80" r="16" fill="#ED145B"/><text x="580" y="85" text-anchor="middle" font-size="11" fill="#fff">c4</text>
+            <line x1="596" y1="80" x2="704" y2="80" stroke="#ED145B" stroke-width="3"/>
+            <circle cx="720" cy="80" r="16" fill="#ED145B"/><text x="720" y="85" text-anchor="middle" font-size="11" fill="#fff">c5</text>
+            <path d="M736,80 C820,80 900,110 944,140" fill="none" stroke="#ED145B" stroke-width="3"/>
+
+            <!-- ponteiros -->
+            <rect x="898" y="192" width="124" height="30" rx="15" fill="#1a1a1a"/>
+            <text x="960" y="212" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">main</text>
+            <line x1="960" y1="190" x2="960" y2="172" stroke="#888" stroke-width="2" marker-end="url(#setaBr)"/>
+
+            <rect x="660" y="20" width="180" height="30" rx="15" fill="#ED145B"/>
+            <text x="750" y="40" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">feature/rastreio</text>
+            <line x1="720" y1="52" x2="720" y2="62" stroke="#888" stroke-width="2" marker-end="url(#setaBr)"/>
+
+            <text x="120" y="196" text-anchor="middle" font-size="11" fill="#999">passado</text>
+            <text x="400" y="196" text-anchor="middle" font-size="11" fill="#ED145B" font-weight="700">ponto de divergência</text>
+            <text x="960" y="244" text-anchor="middle" font-size="11" fill="#27ae60" font-weight="700">merge: as duas histórias se juntam</text>
+          </svg>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Na prática</span>
+          <p>Como a branch é só um ponteiro, "trocar de branch" é o Git reescrever seus arquivos para o estado daquele commit. Por isso ele reclama quando há trabalho não commitado: ele não tem onde guardar o que você ainda não salvou.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">01 – Branches</div>
+          <div class="footer-page">23</div>
         </div>
       </section>
 
@@ -784,7 +1027,7 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">01 – Commits Semânticos</div>
-          <div class="footer-page">21</div>
+          <div class="footer-page">24</div>
         </div>
       </section>
 
@@ -810,7 +1053,7 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">01 – Branching Strategies</div>
-          <div class="footer-page">22</div>
+          <div class="footer-page">25</div>
         </div>
       </section>
 
@@ -824,7 +1067,7 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
         </div>
 
         <div class="quiz-container">
-          <div class="quiz-question">Qual é a finalidade corporativa primordial de se implementar Conventional Commits em um pipeline de Engenharia de Software?</div>
+          <div class="quiz-question">Para que servem os Conventional Commits?</div>
           <ul class="quiz-options">
             <li data-correct="false"><span class="option-letter">A</span> Aumentar a velocidade física de upload para os servidores da nuvem.</li>
             <li data-correct="true"><span class="option-letter">B</span> Estabelecer um formato rigoroso no histórico, permitindo a rastreabilidade mecânica e geração automática de changelogs.</li>
@@ -859,7 +1102,7 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">01 – Verificação de Aprendizado</div>
-          <div class="footer-page">23</div>
+          <div class="footer-page">26</div>
         </div>
       </section>
 
@@ -898,7 +1141,7 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">01 – Modelo de Referência OSI</div>
-          <div class="footer-page">24</div>
+          <div class="footer-page">27</div>
         </div>
       </section>
 
@@ -1002,7 +1245,7 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">01 – Protocolo TCP</div>
-          <div class="footer-page">25</div>
+          <div class="footer-page">28</div>
         </div>
       </section>
 
@@ -1015,7 +1258,7 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
           <h2>Camada de Transporte (L4): Protocolo UDP <a href="#/ref-slide" class="ref-badge" title="Ver referencias">[7]</a></h2>
         </div>
 
-        <p>Caso de uso: <strong>o rastreador GPS de um caminhão da LogiTech</strong> emitindo posição a cada segundo. Não há handshake, não há confirmação: o datagrama sai e o emissor nem fica sabendo se chegou.</p>
+        <p>Caso de uso: <strong>o rastreador GPS de um caminhão da LogiTech</strong>, emitindo posição a cada segundo. Sem handshake e sem confirmação: o datagrama sai e o emissor nunca sabe se chegou.</p>
 
         <div class="slide-figure">
           <svg viewBox="0 0 1120 300" role="img" aria-label="Animação do UDP: datagramas de GPS enviados continuamente sem confirmação, um deles perdido no caminho">
@@ -1079,17 +1322,17 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
 
             <text x="560" y="278" text-anchor="middle" font-size="13" font-weight="700" fill="#777">nenhum ACK volta</text>
           </svg>
-          <figcaption>Fire-and-forget: o emissor segue transmitindo. O pacote perdido simplesmente não existe para ninguém.</figcaption>
+          <figcaption>Fire-and-forget: o emissor segue transmitindo; o pacote perdido não existe para ninguém.</figcaption>
         </div>
 
         <div class="takeaway">
           <span class="takeaway-label">Quando usar</span>
-          <p>Frescor vale mais que completude: telemetria, GPS de frota, voz e vídeo ao vivo, jogos online, DNS. A posição de um segundo atrás já não interessa, então retransmitir seria pior que perder. Nunca use em transação financeira.</p>
+          <p>Frescor vale mais que completude: telemetria, GPS, voz e vídeo ao vivo, jogos, DNS. A posição de um segundo atrás não interessa mais, então retransmitir seria pior que perder. Nunca em transação financeira.</p>
         </div>
 
         <div class="slide-footer">
           <div class="footer-bar">01 – Protocolo UDP</div>
-          <div class="footer-page">26</div>
+          <div class="footer-page">29</div>
         </div>
       </section>
 
@@ -1120,7 +1363,7 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
         </div>
 
         <div class="quiz-container">
-          <div class="quiz-question">No contexto dos padrões de Engenharia de Software e Domain-Driven Design (DDD), o que define um Bounded Context?</div>
+          <div class="quiz-question">O que define um Bounded Context?</div>
           <ul class="quiz-options">
             <li data-correct="false"><span class="option-letter">A</span> O limite quantitativo de memória alocada por um container corporativo no Kubernetes.</li>
             <li data-correct="true"><span class="option-letter">B</span> A fronteira explícita de arquitetura de software onde um modelo de domínio e sua linguagem ubíqua possuem significado estrito e válido.</li>
@@ -1155,7 +1398,7 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">01 – Verificação de Aprendizado</div>
-          <div class="footer-page">28</div>
+          <div class="footer-page">31</div>
         </div>
       </section>
 
@@ -1169,7 +1412,7 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
         </div>
 
         <div class="quiz-container">
-          <div class="quiz-question">Do ponto de vista da infraestrutura de redes, por que engenheiros optam pelo uso de UDP ao invés de TCP em fluxos densos de telemetria de sensores móveis?</div>
+          <div class="quiz-question">Por que usar UDP, e não TCP, na telemetria de um rastreador GPS?</div>
           <ul class="quiz-options">
             <li data-correct="false"><span class="option-letter">A</span> Porque o protocolo UDP inclui funcionalidades extras de criptografia de ponta a ponta intrínsecas ao pacote.</li>
             <li data-correct="true"><span class="option-letter">B</span> Porque o UDP provê a latência mínima e o melhor throughput necessário ao ignorar retransmissões onerosas sobre as quais sistemas em tempo real não dependem criticamente.</li>
@@ -1204,11 +1447,11 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">01 – Verificação de Aprendizado</div>
-          <div class="footer-page">29</div>
+          <div class="footer-page">32</div>
         </div>
       </section>
 
-      <!-- ==================== SLIDE 30: ATIVIDADE PRÁTICA ==================== -->
+      <!-- ==================== SLIDE: ATIVIDADE (ABERTURA) ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1217,35 +1460,284 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
           <h2>Atividade Prática em Dupla: Especificar antes de Codificar</h2>
         </div>
 
-        <p style="font-size:0.8em;">Hoje ninguém escreve código. A entrega é a <strong>especificação</strong> do serviço de telemetria da LogiTech, produzida com apoio de um modelo de IA rodando na sua máquina. Na Aula 02 vocês implementam exatamente o que especificaram aqui.</p>
+        <p style="font-size:0.8em;">Equipes que usam técnicas de desenvolvimento modernas <strong>não escrevem mais código à mão</strong>. Elas escrevem a especificação, e o código é derivado dela. Hoje vocês vão exercitar a parte que continua sendo humana: <strong>especificar bem e revisar criticamente</strong>.</p>
 
-        <div class="concept-cards" style="grid-template-columns: repeat(4, 1fr); margin-top:14px;">
-          <div class="concept-card">
-            <h4>1. Repositório (10 min)</h4>
-            <p>Criar conta no GitHub, abrir o repositório <code>fiap-2026-2-3si-duplaXX</code> e adicionar o colega e o professor como colaboradores.</p>
-          </div>
-          <div class="concept-card">
-            <h4>2. SLM local (10 min)</h4>
-            <p>Subir o <code>qwen2.5:3b</code> via Ollama na própria máquina. Nenhum dado sai do notebook, nenhuma chave de API é necessária.</p>
-          </div>
-          <div class="concept-card">
-            <h4>3. PRD e SDD (30 min)</h4>
-            <p>Gerar <code>docs/PRD.md</code> e <code>docs/SDD.md</code> com a skill de PRD, e então <strong>revisar criticamente</strong>: o modelo erra, e achar o erro é a atividade.</p>
-          </div>
-          <div class="concept-card">
-            <h4>4. Commit e entrega (10 min)</h4>
-            <p>Commit em Conventional Commits, push na <code>main</code> e envio da URL do repositório no formulário da disciplina.</p>
-          </div>
+        <p style="font-size:0.8em;">A entrega é a especificação do serviço de telemetria da LogiTech. Na Aula 02 vocês implementam exatamente o que especificaram aqui.</p>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(5, 1fr); margin-top:16px; gap:10px;">
+          <div class="concept-card" style="padding:13px 14px;"><h4>1. Fork</h4><p style="font-size:0.66em;">Partir do Lab Kit oficial</p></div>
+          <div class="concept-card" style="padding:13px 14px;"><h4>2. Ambiente</h4><p style="font-size:0.66em;">Codespaces ou Dev Container</p></div>
+          <div class="concept-card" style="padding:13px 14px;"><h4>3. Gerar</h4><p style="font-size:0.66em;">PRD e SDD com IA</p></div>
+          <div class="concept-card" style="padding:13px 14px;"><h4>4. Revisar</h4><p style="font-size:0.66em;">Achar os erros do modelo</p></div>
+          <div class="concept-card" style="padding:13px 14px;"><h4>5. Entregar</h4><p style="font-size:0.66em;">Commit, push e formulário</p></div>
         </div>
 
-        <div class="callout" style="margin-top:18px; display:flex; justify-content:space-between; align-items:center; gap:20px;">
-          <span style="font-size:0.78em;"><strong>Critérios de aceitação:</strong> o passo a passo completo, os prompts sugeridos e a checklist de avaliação estão no README do laboratório.</span>
-          <a href="../labs/aula01-lab/README.md" style="color:var(--fiap-pink); font-weight:700; font-size:0.78em; white-space:nowrap;">Abrir o Lab Kit</a>
+        <div class="takeaway">
+          <span class="takeaway-label">Tempo</span>
+          <p>60 minutos, em dupla. O passo 4 é o que vale nota: a especificação que o modelo gera sozinho nunca está pronta.</p>
         </div>
 
         <div class="slide-footer">
-          <div class="footer-bar">01 – Atividade Prática Laboratorial</div>
-          <div class="footer-page">30</div>
+          <div class="footer-bar">01 – Atividade Prática</div>
+          <div class="footer-page">33</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: ATIVIDADE PASSO 1 ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 1 de 5: Fork do Lab Kit</h2>
+        </div>
+
+        <p style="font-size:0.78em;">Não comecem do zero. O Lab Kit já traz o ambiente pronto, o cliente de IA configurado e os critérios de aceitação.</p>
+
+        <div class="figure-split" style="grid-template-columns: 1fr 1fr; gap:24px; margin-top:10px;">
+          <div>
+            <div class="concept-card" style="padding:15px 18px;">
+              <h4>O que fazer</h4>
+              <p style="font-size:0.72em;">1. Abrir o repositório do Lab Kit<br>
+              2. Clicar em <strong>Fork</strong>, no canto superior direito<br>
+              3. Renomear o fork para <code>mwe-2026-2-lab01-duplaXX</code><br>
+              4. Em <em>Settings &gt; Collaborators</em>, adicionar o colega e o professor</p>
+            </div>
+            <div class="callout" style="margin-top:12px;">
+              <p style="font-size:0.7em;"><strong>Por que fork e não repositório novo?</strong> O fork mantém o vínculo com o original. Se eu corrigir algo no Lab Kit durante a aula, vocês conseguem trazer a correção.</p>
+            </div>
+          </div>
+
+          <div style="background:#1a1a1a; border-radius:8px; padding:18px 20px;">
+            <div style="font-size:0.62em; color:#888; letter-spacing:1px; font-weight:800; margin-bottom:10px;">LAB KIT DA AULA 01</div>
+            <div style="font-family:'JetBrains Mono',monospace; font-size:0.62em; color:#eee; line-height:1.8;">
+              github.com/josercf/<br>
+              <span style="color:var(--fiap-pink); font-weight:700;">mwe-2026-2-lab01-requisitos</span>
+            </div>
+            <div style="margin-top:14px; font-size:0.6em; color:#aaa; line-height:1.7;">
+              .devcontainer/ &nbsp;ambiente pronto<br>
+              ai/ask.py &nbsp;cliente de IA<br>
+              docs/ &nbsp;onde entram o PRD e o SDD<br>
+              README.md &nbsp;critérios de aceitação
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">01 – Passo 1 – Fork</div>
+          <div class="footer-page">34</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: ATIVIDADE PASSO 2 ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 2 de 5: Abrir o ambiente</h2>
+        </div>
+
+        <p style="font-size:0.78em;">O Lab Kit tem um <strong>Dev Container</strong>. Vocês não instalam nada: o ambiente sobe pronto, igual para todo mundo.</p>
+
+        <div class="concept-cards" style="grid-template-columns: 1fr 1fr; margin-top:12px;">
+          <div class="concept-card">
+            <h4>Opção A: GitHub Codespaces (recomendado)</h4>
+            <p style="font-size:0.72em;">No seu fork, clicar em <strong>Code &gt; Codespaces &gt; Create codespace on main</strong>. Roda no navegador, não usa recurso do seu notebook e o token de IA já vem configurado.</p>
+          </div>
+          <div class="concept-card">
+            <h4>Opção B: local, com Docker</h4>
+            <p style="font-size:0.72em;">Clonar o fork, abrir no VS Code e aceitar <em>Reopen in Container</em>. Requer Docker instalado e um <code>export GITHUB_TOKEN=$(gh auth token)</code>.</p>
+          </div>
+        </div>
+
+        <pre style="margin-top:14px;"><code class="language-bash"># testar se o assistente de IA responde
+python ai/ask.py "diga apenas: ambiente ok"</code></pre>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Atenção</span>
+          <p>Se o comando acima falhar, resolva agora. Sem ele, o passo 3 trava.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">01 – Passo 2 – Ambiente</div>
+          <div class="footer-page">35</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: ATIVIDADE PASSO 3 ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 3 de 5: Gerar o PRD e o SDD</h2>
+        </div>
+
+        <p style="font-size:0.78em;">Usem o assistente para produzir a primeira versão dos dois documentos. Ele é o rascunho, não a entrega.</p>
+
+        <div class="figure-split" style="grid-template-columns: 1fr 1fr; gap:22px; margin-top:8px;">
+          <div>
+            <div style="font-size:0.66em; font-weight:800; color:var(--fiap-pink); letter-spacing:1px; margin-bottom:6px;">PROMPT DO PRD</div>
+            <pre style="margin:0;"><code class="language-text">Escreva um PRD para o servico de
+telemetria de frota da LogiTech,
+transportadora com 400 caminhoes que
+nao sabe onde a carga esta entre a
+coleta e a entrega.
+
+Estruture em: Visao, Problema, Personas,
+Casos de Uso, Requisitos Funcionais e
+Nao Funcionais, Metricas de Sucesso.
+
+Cada requisito deve ser verificavel e
+ter identificador (RF-01, RNF-01).
+Nao proponha solucao tecnica.</code></pre>
+          </div>
+          <div>
+            <div style="font-size:0.66em; font-weight:800; color:var(--fiap-pink); letter-spacing:1px; margin-bottom:6px;">PROMPT DO SDD</div>
+            <pre style="margin:0;"><code class="language-text">Com base no PRD acima, escreva o SDD.
+
+Inclua: Bounded Contexts, a Linguagem
+Ubiqua (glossario do dominio) e a
+escolha da camada de transporte para
+cada fluxo de dados.
+
+Para cada escolha entre TCP e UDP,
+justifique a partir do requisito nao
+funcional que a motiva.</code></pre>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:12px;">
+          <p style="font-size:0.7em;">Salvem em <code>docs/PRD.md</code> e <code>docs/SDD.md</code>. Os prompts completos estão no README do Lab Kit.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">01 – Passo 3 – Gerar</div>
+          <div class="footer-page">36</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: ATIVIDADE PASSO 4 ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 4 de 5: Revisar criticamente (a parte avaliada)</h2>
+        </div>
+
+        <p style="font-size:0.78em;">O modelo <strong>vai errar</strong>. Encontrar onde ele errou é a competência que a disciplina quer desenvolver. Passem os dois documentos por esta checklist:</p>
+
+        <div class="concept-cards" style="grid-template-columns: 1fr 1fr; margin-top:12px; gap:12px;">
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Requisito que não dá para testar</h4>
+            <p style="font-size:0.7em;">"O sistema deve ser rápido" não é requisito. Qual latência, medida em qual percentil, sob qual carga?</p>
+          </div>
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Termo com dois nomes</h4>
+            <p style="font-size:0.7em;">O PRD diz "entrega" e o SDD diz "remessa"? A Linguagem Ubíqua já quebrou na primeira página.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Justificativa decorada</h4>
+            <p style="font-size:0.7em;">O SDD explicou o que é UDP, ou explicou por que <em>este</em> requisito pede UDP? Só o segundo conta.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Requisito que ninguém pediu</h4>
+            <p style="font-size:0.7em;">Modelos inventam funcionalidade para parecer completos. Apaguem o que não veio do problema.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Obrigatório</span>
+          <p>Acrescentem ao final do PRD uma seção <strong>"Revisão da Dupla"</strong> dizendo o que corrigiram e por quê. Sem ela, a entrega fica incompleta.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">01 – Passo 4 – Revisar</div>
+          <div class="footer-page">37</div>
+        </div>
+      </section>
+
+      <!-- ==================== SLIDE: ATIVIDADE PASSO 5 ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 5 de 5: Commit e entrega</h2>
+        </div>
+
+        <p style="font-size:0.78em;">A entrega é o link do repositório. O commit precisa seguir Conventional Commits, o padrão que vimos no Bloco 1.</p>
+
+        <pre style="margin-top:12px;"><code class="language-bash">git add docs/
+git commit -m "docs(telemetria): adiciona PRD e SDD do rastreamento de frota"
+git push origin main</code></pre>
+
+        <div class="concept-cards" style="grid-template-columns: 1fr 1fr; margin-top:14px;">
+          <div class="concept-card">
+            <h4>Checklist antes de enviar</h4>
+            <p style="font-size:0.72em;">Fork renomeado, colega e professor como colaboradores, <code>docs/PRD.md</code> e <code>docs/SDD.md</code> no repositório, seção "Revisão da Dupla" presente e ao menos um commit semântico.</p>
+          </div>
+          <div class="concept-card">
+            <h4>Onde entregar</h4>
+            <p style="font-size:0.72em;">Submeter a URL do fork no formulário da disciplina, até o fim da aula. Um envio por dupla.<br>
+            <a href="https://forms.cloud.microsoft/r/sy6dHWsBHJ" target="_blank" style="color:var(--fiap-pink); font-weight:700;">Abrir o formulário de entrega</a></p>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:14px; display:flex; justify-content:space-between; align-items:center; gap:20px;">
+          <span style="font-size:0.74em;">Critérios de aceitação completos, prompts e estrutura esperada estão no README do Lab Kit.</span>
+          <a href="https://github.com/josercf/mwe-2026-2-lab01-requisitos" target="_blank" style="color:var(--fiap-pink); font-weight:700; font-size:0.74em; white-space:nowrap;">Abrir o Lab Kit</a>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">01 – Passo 5 – Entrega</div>
+          <div class="footer-page">38</div>
+        </div>
+      </section>
+      <!-- ==================== SLIDE: FORMULARIO DE ENTREGA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Formulário de Entrega</h2>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 640px 1fr; gap:28px; align-items:start;">
+          <iframe src="https://forms.cloud.microsoft/r/sy6dHWsBHJ?embed=true"
+                  width="640" height="430"
+                  style="border:1px solid #ddd; border-radius:8px; max-width:100%;"
+                  title="Formulário de entrega da Atividade da Aula 01"
+                  allowfullscreen></iframe>
+
+          <div>
+            <div class="concept-cards" style="grid-template-columns:1fr; gap:11px; margin-top:0;">
+              <div class="concept-card" style="padding:14px 17px;">
+                <h4>O que enviar</h4>
+                <p style="font-size:0.7em;">A URL do <strong>fork</strong> da dupla, no formato<br><code>github.com/usuario/mwe-2026-2-lab01-duplaXX</code></p>
+              </div>
+              <div class="concept-card" style="padding:14px 17px;">
+                <h4>Quem envia</h4>
+                <p style="font-size:0.7em;">Um envio por dupla. Identifiquem os dois integrantes no formulário.</p>
+              </div>
+              <div class="concept-card" style="padding:14px 17px;">
+                <h4>Até quando</h4>
+                <p style="font-size:0.7em;">Até o fim da aula de hoje, 22h50.</p>
+              </div>
+            </div>
+
+            <div class="callout" style="margin-top:12px;">
+              <p style="font-size:0.68em;">Não abriu aqui?<br>
+              <a href="https://forms.cloud.microsoft/r/sy6dHWsBHJ" target="_blank" style="color:var(--fiap-pink); font-weight:700;">forms.cloud.microsoft/r/sy6dHWsBHJ</a></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">01 – Entrega da Atividade</div>
+          <div class="footer-page">39</div>
         </div>
       </section>
 
@@ -1308,7 +1800,7 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">01 – Bibliografia da Disciplina</div>
-          <div class="footer-page">31</div>
+          <div class="footer-page">40</div>
         </div>
       </section>
 

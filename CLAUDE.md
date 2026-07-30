@@ -19,6 +19,14 @@ python3 -m http.server 8000        # a partir da raiz do repositório
 # Exportar um deck em PDF: abrir a URL do deck com ?print-pdf e imprimir pelo navegador
 #         http://localhost:8000/aulas-1sem/aulas/aula01.html?print-pdf
 
+# Validar os decks: nenhum conteúdo pode estourar 1280x720
+python3 tools/check_slides.py                              # todos os decks
+python3 tools/check_slides.py aulas-1sem/aulas/aula01.html  # um deck
+python3 tools/check_slides.py --shots /tmp/shots            # com screenshots dos problemas
+
+# Regerar o esqueleto dos repositórios de laboratório
+LABS_OUT=/tmp/labs python3 tools/scaffold_labs.py
+
 # Push como josercf (o ssh-agent tem várias identidades e o GitHub autentica
 # primeiro como canaldoovidio, que não tem permissão de escrita neste repo)
 GIT_SSH_COMMAND='ssh -i ~/.ssh/id_ed25519_josercf -o IdentitiesOnly=yes' git push
@@ -60,11 +68,28 @@ Ordem canônica dos slides (ver `SKILL.md` §4): capa → título → agenda com
 
 ### Armadilhas conhecidas
 
-- **Os quizzes não funcionam.** Os 13 decks marcam a resposta com `<li data-correct="true">` dentro de `ul.quiz-options`, mas `assets/js/fiap-quiz.js` só reconhece dois outros padrões: `label > input[type=radio]` (com `data-correct` na `section`) e `button.quiz-option` legado. Nenhum listener é registrado, e as mensagens em `data-correct-msg`/`data-incorrect-msg` da `div.quiz-feedback` nunca são lidas. Ou o JS ganha suporte ao padrão `li`, ou o markup dos decks migra — escolher um e aplicar aos 13.
-- **`fiap-zoom.js` e `fiap-print.js` não são carregados por nenhum deck.** Existem, funcionam (zoom por `+`/`-`/`0`, FAB de impressão), mas nenhum `<script src>` os referencia. `aula01.html` tem um botão "Exportar PDF" inline próprio em vez de usar `fiap-print.js`.
+- **Slide que estoura os 720px não é detectável por `scrollHeight`.** A `section` tem altura fixa, então o valor vem sempre 720 mesmo com conteúdo vazando. Use `tools/check_slides.py`, que compara o retângulo de cada descendente com a área útil. Um hook `PostToolUse` roda isso automaticamente ao editar qualquer `aulas/aula*.html`.
+- **`fiap-zoom.js` e `fiap-print.js` não são carregados por nenhum deck.** Existem e funcionam (zoom por `+`/`-`/`0`, FAB de impressão), mas nenhum `<script src>` os referencia. A exportação de PDF hoje é feita pelo botão de cada card no portal, que abre o deck com `?print-pdf`.
 - **`generate_classes.py` é um scaffolder descartável, não um build.** Contém um `base_dir` absoluto hardcoded e **sobrescreve** `aulas/aulaXX.html` e `labs/aulaXX-lab/` das aulas 02, 03, 05, 06, 07 e 08. Rodá-lo hoje destrói qualquer refinamento feito nesses arquivos. Não executar sem intenção explícita.
 - **Maturidade desigual entre decks.** `aula01.html` (~1000 linhas) é o padrão-ouro, escrito à mão, com CSS inline próprio. Os decks 02–08 (~140 linhas) são saída crua do scaffolder e ainda são rasos. 10–16 estão no meio do caminho.
 - Vários labs (`aula02`, `aula03`, `aula05`, `aula06`, `aula07`, `aula08`, `aula10`, `aula11`, `aula12`) estão sem `README.md`, contrariando o padrão da `SKILL.md`, e alguns têm apenas stubs.
+
+## Automação
+
+- **`tools/check_slides.py`** — validador de layout via Playwright. Serve o repositório, abre cada deck em 1280x720 e reporta qualquer elemento que ultrapasse a área útil. Sai com código 1 se houver problema.
+- **Hook `PostToolUse`** (`.claude/settings.json`) — dispara o validador ao editar um deck. Roda em background e só interrompe se encontrar estouro.
+- **Agente `revisor-slides`** (`.claude/agents/`) — revisa um deck contra layout, convenções editoriais, profundidade pedagógica, links e numeração de rodapé.
+- **`tools/scaffold_labs.py`** — gera o esqueleto dos 13 repositórios de laboratório (devcontainer com Ollama, cliente de IA, README). Respeita `LABS_OUT`.
+
+## Laboratórios
+
+Cada aula com lab tem um repositório público próprio em `josercf/mwe-2026-2-labNN-tema`, autocontido e independente dos demais. O aluno faz **fork**, não clone. Cada um traz:
+
+- devcontainer sobre a imagem oficial da stack, com Ollama e `qwen2.5:1.5b` já baixados
+- `ai/ask.py`, cliente sem dependências que usa GitHub Models (o `GITHUB_TOKEN` vem injetado no Codespaces) e cai para o Ollama local quando a cota acaba
+- README com missão ancorada no case, passo a passo e entregáveis específicos
+
+Os arquivos em `aulas-1sem/labs/` são a referência do professor; o que o aluno abre é o repositório.
 
 ## Convenções editoriais
 
