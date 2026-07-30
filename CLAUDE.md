@@ -78,7 +78,8 @@ Ordem canônica dos slides (ver `SKILL.md` §4): capa → título → agenda com
 
 - **`tools/check_slides.py`** — validador de layout via Playwright. Serve o repositório, abre cada deck em 1280x720 e reporta qualquer elemento que ultrapasse a área útil. Sai com código 1 se houver problema.
 - **Hook `PostToolUse`** (`.claude/settings.json`) — dispara o validador ao editar um deck. Roda em background e só interrompe se encontrar estouro.
-- **Agente `revisor-slides`** (`.claude/agents/`) — revisa um deck contra layout, convenções editoriais, profundidade pedagógica, links e numeração de rodapé.
+- **Agente `construtor-aulas`** (`.claude/agents/`) — constrói ou reformula uma aula inteira (deck + Lab Kit) seguindo a metodologia. Consolida a espiral, o case, a anatomia do deck, o markup de quiz que funciona, os padrões de figura e as convenções editoriais. **Ponto de partida para qualquer aula nova.**
+- **Agente `revisor-slides`** (`.claude/agents/`) — revisa um deck contra layout, convenções editoriais, profundidade pedagógica, links e numeração de rodapé. Rode depois do construtor.
 - **`tools/scaffold_labs.py`** — gera o esqueleto dos 13 repositórios de laboratório (devcontainer com Ollama, cliente de IA, README). Respeita `LABS_OUT`.
 
 ## Laboratórios
