@@ -12,37 +12,6 @@
   <script>if(/print-pdf/gi.test(window.location.search)){var link=document.createElement('link');link.rel='stylesheet';link.href='https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/css/print/pdf.css';document.head.appendChild(link);}</script>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    /* Marcador de pendência: usado no slide de entrega enquanto o formulário não existe */
-    .pending-box {
-      border: 3px dashed #e0a800;
-      background: #fffbe6;
-      border-radius: 10px;
-      padding: 26px 30px;
-      text-align: center;
-    }
-    .pending-box .pending-tag {
-      display: inline-block;
-      background: #e0a800;
-      color: #1a1a1a;
-      font-size: 0.6em;
-      font-weight: 800;
-      letter-spacing: 1.5px;
-      padding: 5px 14px;
-      border-radius: 14px;
-      margin-bottom: 14px;
-    }
-    .pending-box h3 {
-      font-size: 1.1em;
-      color: #8a6d00;
-      margin: 0 0 10px 0;
-      font-weight: 800;
-    }
-    .pending-box p {
-      font-size: 0.72em;
-      color: #7a6000;
-      margin: 0;
-      line-height: 1.6;
-    }
     /* Tabelas compactas dos slides de protocolo */
     .reveal table.compact-table { font-size: 0.62em; margin: 8px 0; }
     .reveal table.compact-table th { padding: 7px 12px; }
@@ -1553,13 +1522,12 @@ git push -u origin feature/http-telemetry
           <h2>Formulário de Entrega</h2>
         </div>
 
-        <div style="display:grid; grid-template-columns: 1.15fr 1fr; gap:26px; align-items:start; margin-top:4px;">
-          <div class="pending-box">
-            <span class="pending-tag">URL PENDENTE</span>
-            <h3>Formulário da Aula 02 ainda não publicado</h3>
-            <p>O endereço será divulgado pelo professor no início do Bloco 2 e substituirá este quadro no deck.</p>
-            <p style="margin-top:12px; font-weight:700;">Não utilizem o formulário da Aula 01: ele coleta a entrega de PRD e SDD e não serve para esta atividade.</p>
-          </div>
+        <div style="display:grid; grid-template-columns: 620px 1fr; gap:26px; align-items:start; margin-top:4px;">
+          <iframe src="https://forms.cloud.microsoft/r/ykGYKsPAj7?embed=true"
+                  width="620" height="420"
+                  style="border:1px solid #ddd; border-radius:8px; max-width:100%;"
+                  title="Formulário de entrega da Atividade da Aula 02"
+                  allowfullscreen></iframe>
 
           <div>
             <div class="concept-cards" style="grid-template-columns:1fr; gap:10px; margin-top:0;">
@@ -1577,9 +1545,11 @@ git push -u origin feature/http-telemetry
               </div>
             </div>
 
-            <div class="callout" style="margin-top:11px; display:flex; justify-content:space-between; align-items:center; gap:16px;">
-              <span style="font-size:0.7em;">Critérios de aceitação completos no README do Lab Kit.</span>
-              <a href="https://github.com/josercf/mwe-2026-2-lab02-http-sse" target="_blank" style="color:var(--fiap-pink); font-weight:700; font-size:0.7em; white-space:nowrap;">Abrir o Lab Kit</a>
+            <div class="callout" style="margin-top:9px; padding:11px 15px;">
+              <p style="font-size:0.64em; margin:0; line-height:1.5;">Se o formulário não abrir aqui:
+                <a href="https://forms.cloud.microsoft/r/ykGYKsPAj7" target="_blank" style="color:var(--fiap-pink); font-weight:700;">forms.cloud.microsoft/r/ykGYKsPAj7</a><br>
+                Critérios de aceitação completos no
+                <a href="https://github.com/josercf/mwe-2026-2-lab02-http-sse" target="_blank" style="color:var(--fiap-pink); font-weight:700;">README do Lab Kit</a></p>
             </div>
           </div>
         </div>

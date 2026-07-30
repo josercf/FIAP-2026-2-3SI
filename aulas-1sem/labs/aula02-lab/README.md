@@ -195,17 +195,19 @@ Merge só depois da aprovação. Quem aprova sem ler responde pelo que passou.
 
 ## Como entregar
 
-Submeta a **URL do Pull Request** no formulário da disciplina, no formato:
+Submeta a **URL do Pull Request** no formulário da Aula 02, no formato:
 
 ```
 https://github.com/SEU-USUARIO/mwe-2026-2-lab02-duplaXX/pull/1
 ```
 
+**Formulário:** <https://forms.cloud.microsoft/r/ykGYKsPAj7>
+
 Um envio por dupla, identificando os dois integrantes e a dupla revisora, até o
 fim da aula.
 
-> O formulário da Aula 02 ainda não foi publicado. Não utilizem o da Aula 01:
-> ele coleta a entrega de PRD e SDD e não serve para esta atividade.
+> Não utilizem o formulário da Aula 01: ele coleta a entrega de PRD e SDD e não
+> serve para esta atividade.
 
 ---
 
