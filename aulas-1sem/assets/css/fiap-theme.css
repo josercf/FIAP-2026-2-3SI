@@ -612,6 +612,18 @@
   color: #d4d4d4;
 }
 
+/* Bloco de código para slides que já trazem outro conteúdo acima, como os
+   cards de conceito do hands-on. Sem isto o código estoura os 720px. */
+.reveal pre.code-compact {
+  font-size: 0.48em;
+  padding: 12px;
+  margin: 10px 0;
+}
+
+.reveal pre.code-compact code {
+  line-height: 1.4;
+}
+
 /* --- Cards de Conceito --- */
 .concept-cards {
   display: grid;

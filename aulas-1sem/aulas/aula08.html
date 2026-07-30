@@ -104,7 +104,7 @@
           <div class="concept-card"><h4>Missão</h4><p>Implementar o Command Pattern simulando as ferramentas de um Agente IA de Logística.</p></div>
           <div class="concept-card"><h4>Passo a Passo</h4><p>1. Criar interface `ToolCommand`<br>2. Implementar `RastrearPedidoCommand`<br>3. Invocar baseado no JSON simulado.</p></div>
         </div>
-        <pre><code class="language-python"># agent.py
+        <pre class="code-compact"><code class="language-python"># agent.py
 class Command:
     def execute(self, **kwargs):
         pass
@@ -115,10 +115,7 @@ class RastrearPedido(Command):
         return f"Pedido {pedido_id} está em trânsito."
 
 # Simulando resposta do LLM
-llm_response = {
-    "tool": "rastrear",
-    "args": {"pedido_id": "LOG-1234"}
-}
+llm_response = {"tool": "rastrear", "args": {"pedido_id": "LOG-1234"}}
 
 tools = {"rastrear": RastrearPedido()}
 comando = tools.get(llm_response["tool"])
@@ -135,6 +132,8 @@ if comando:
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
   <script src="../assets/js/fiap-quiz.js"></script>
+  <script src="../assets/js/fiap-zoom.js"></script>
+  <script src="../assets/js/fiap-print.js"></script>
   <script>
     Reveal.initialize({ hash: true, slideNumber: false, width: 1280, height: 720, margin: 0, minScale: 0.2, maxScale: 2.0, center: false, pdfMaxPagesPerSlide: 1, pdfSeparateFragments: false, transition: 'slide', transitionSpeed: 'default', plugins: [RevealHighlight] });
   </script>
