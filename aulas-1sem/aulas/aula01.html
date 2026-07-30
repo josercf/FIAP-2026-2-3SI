@@ -11,20 +11,77 @@
   <link rel="stylesheet" href="../assets/css/fiap-print.css">
   <script>if(/print-pdf/gi.test(window.location.search)){var link=document.createElement('link');link.rel='stylesheet';link.href='https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/css/print/pdf.css';document.head.appendChild(link);}</script>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* Robust fix for Ubiquitous Language slide */
+    .ubiquitous-flex-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .ubiquitous-center-box {
+      background: linear-gradient(135deg, var(--fiap-pink), #ff5c8d);
+      color: white;
+      padding: 20px 40px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 1.2em;
+      box-shadow: 0 8px 20px rgba(237, 20, 91, 0.4);
+    }
+    .ubiquitous-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      width: 100%;
+      max-width: 900px;
+    }
+    .ubiquitous-item {
+      background: #252525;
+      color: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 0.8em;
+      font-weight: 600;
+      text-align: center;
+      border-top: 3px solid var(--fiap-pink);
+    }
+    /* SDD Architecture Diagram Classes */
+    .arch-diagram {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .arch-node {
+      background: #fff;
+      border: 2px solid var(--fiap-dark);
+      padding: 15px 25px;
+      border-radius: 6px;
+      font-weight: 700;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .arch-arrow {
+      font-size: 1.5em;
+      color: var(--fiap-pink);
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-  <!-- Botão de exportar PDF no cabeçalho fixo -->
-  <button onclick="window.location.search='?print-pdf'" class="pdf-print-btn" title="Exportar para PDF / Modo de Impressão">🖨️ Exportar PDF</button>
+  <button onclick="window.location.search='?print-pdf'" class="pdf-print-btn" title="Exportar para PDF / Modo de Impressão">Exportar PDF</button>
 
   <div class="reveal">
     <div class="slides">
 
-      <!-- ==================== SLIDE 1: CAPA FIAP ==================== -->
+      <!-- ==================== SLIDE 1: CAPA ==================== -->
       <section class="cover-slide">
         <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" class="fiap-logo-full">
       </section>
 
-      <!-- ==================== SLIDE 2: TÍTULO DA AULA ==================== -->
+      <!-- ==================== SLIDE 2: TÍTULO ==================== -->
       <section class="title-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -55,28 +112,27 @@
           <div>
             <div class="concept-cards" style="grid-template-columns: 1fr 1fr; margin-top:0;">
               <div class="concept-card">
-                <h4>🎓 Trajetória Acadêmica & Tech</h4>
-                <p>Mestre/Especialista em Engenharia de Software com atuação em arquiteturas distribuídas e IA.</p>
+                <h4>Trajetória Acadêmica & Profissional</h4>
+                <p>Mestre e Especialista em Engenharia de Software com atuação focada em arquiteturas distribuídas e Inteligência Artificial.</p>
               </div>
               <div class="concept-card">
-                <h4>✉️ Contato Institucional</h4>
-                <p><code>profjose.filho@fiap.com.br</code><br><a href="https://www.linkedin.com/in/jose-romualdo/" target="_blank" style="color:var(--fiap-pink); font-size:0.85em; font-weight:700;">LinkedIn /in/jose-romualdo</a></p>
+                <h4>Contato Institucional</h4>
+                <p><code>profjose.filho@fiap.com.br</code><br><a href="https://www.linkedin.com/in/jose-romualdo/" target="_blank" style="color:var(--fiap-pink); font-size:0.85em; font-weight:700;">LinkedIn: /in/jose-romualdo</a></p>
               </div>
               <div class="concept-card" style="grid-column: span 2;">
-                <h4>💚 Lado Pessoal & Vida</h4>
-                <p>Marido da <strong>Mari</strong> 💑, pai orgulhoso da <strong>Ana Clara</strong> 👧 e torcedor apaixonado do <strong>Palmeiras</strong> 🟢⚪!</p>
+                <h4>Lado Pessoal</h4>
+                <p>Marido da Mari, pai orgulhoso da Ana Clara e torcedor apaixonado do Palmeiras!</p>
               </div>
             </div>
           </div>
         </div>
-
         <div class="slide-footer">
-          <div class="footer-bar">01 – Apresentação & Contrato Pedagógico</div>
+          <div class="footer-bar">01 – Apresentação</div>
           <div class="footer-page">3</div>
         </div>
       </section>
 
-      <!-- ==================== SLIDE 4: OBJETIVO DA DISCIPLINA ==================== -->
+      <!-- ==================== SLIDE 4: OBJETIVO ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -86,23 +142,22 @@
         </div>
 
         <div style="text-align:center; margin-top:40px;">
-          <h3 style="font-size:1.6em; color:var(--fiap-pink); margin-bottom:30px;">O que você espera aprender nesta disciplina? 🤔</h3>
+          <h3 style="font-size:1.6em; color:var(--fiap-pink); margin-bottom:30px;">O que você espera aprender nesta disciplina?</h3>
           
           <div class="fragment callout" style="background:#1a1a1a; border-left:6px solid var(--fiap-pink); padding:30px; text-align:left; max-width:900px; margin:0 auto; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
-            <h4 style="color:#fff; font-size:1.3em; margin-bottom:15px;">🎯 Objetivo Oficial FIAP (Bacharelado em Sistemas de Informação):</h4>
+            <h4 style="color:#fff; font-size:1.3em; margin-bottom:15px;">Objetivo Oficial FIAP (Bacharelado em Sistemas de Informação):</h4>
             <p style="font-size:1em; color:#ddd; line-height:1.7;">
               Capacitar os alunos na concepção, arquitetura e implementação de <strong>sistemas web complexos</strong> e <strong>microsserviços poliglotas</strong>, utilizando conteinerização moderna, engenharia de requisitos corporativa (PRD/SDD), resiliência, automação de testes e <strong>inteligência artificial aplicada (AI-First Architecture)</strong>.
             </p>
           </div>
         </div>
-
         <div class="slide-footer">
           <div class="footer-bar">01 – Objetivos da Disciplina</div>
           <div class="footer-page">4</div>
         </div>
       </section>
 
-      <!-- ==================== SLIDE 5: VISÃO 1º SEMESTRE (2026-2) ==================== -->
+      <!-- ==================== SLIDE 5: VISÃO 1º SEMESTRE ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -114,11 +169,11 @@
         <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); margin-top:20px;">
           <div class="concept-card">
             <h4>1. Fundamentos & Redes</h4>
-            <p>Engenharia de Requisitos (PRD/SDD), DDD, Modelo OSI (L1-L7), Sockets TCP/UDP, HTTP/1.1 a 3, SSE e captura com Wireshark.</p>
+            <p>Engenharia de Requisitos (PRD/SDD), DDD, Modelo OSI, Sockets TCP/UDP, HTTP/1.1 a 3, SSE e captura com Wireshark.</p>
           </div>
           <div class="concept-card">
             <h4>2. Containers & Backend Poliglota</h4>
-            <p>Docker Multi-Stage, Docker Compose, POO, SOLID e Design Patterns em Java, C#, Node.js e Python.</p>
+            <p>Docker Multi-Stage, Docker Compose, POO, SOLID e Design Patterns aplicados em Java, C#, Node.js e Python.</p>
           </div>
           <div class="concept-card">
             <h4>3. Arquitetura AI-First</h4>
@@ -130,21 +185,20 @@
           </div>
           <div class="concept-card">
             <h4>5. Testes & RAG/MCP</h4>
-            <p>TDD/Mocks, busca semântica em bancos vetoriais com <code>pgvector</code> e integração via Model Context Protocol (MCP).</p>
+            <p>TDD/Mocks, busca semântica em bancos vetoriais com pgvector e integração via Model Context Protocol (MCP).</p>
           </div>
           <div class="concept-card">
             <h4>6. Segurança Enterprise</h4>
             <p>Autenticação corporativa com Keycloak (OAuth2, OIDC, JWT, RBAC), OWASP Top 10 for LLMs e Trivy Container Scan.</p>
           </div>
         </div>
-
         <div class="slide-footer">
           <div class="footer-bar">01 – Visão 1º Semestre</div>
           <div class="footer-page">5</div>
         </div>
       </section>
 
-      <!-- ==================== SLIDE 6: VISÃO 2º SEMESTRE (2027-1) ==================== -->
+      <!-- ==================== SLIDE 6: VISÃO 2º SEMESTRE ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -179,14 +233,13 @@
             <p>Esteiras automatizadas de CI/CD via GitHub Actions e infraestrutura como código (IaC) declarativa com Terraform.</p>
           </div>
         </div>
-
         <div class="slide-footer">
           <div class="footer-bar">01 – Visão 2º Semestre</div>
           <div class="footer-page">6</div>
         </div>
       </section>
 
-      <!-- ==================== SLIDE 7: COMBINADOS DA AULA ==================== -->
+      <!-- ==================== SLIDE 7: COMBINADOS ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -197,30 +250,25 @@
 
         <div class="concept-cards" style="grid-template-columns: 1fr 1fr;">
           <div class="concept-card">
-            <h4>⏰ Horário & Pontualidade</h4>
+            <h4>Horário & Pontualidade</h4>
             <p>Início às <strong>19h20</strong>. Pausa de 30 minutos às <strong>20h50</strong> e encerramento às <strong>22h50</strong>.</p>
           </div>
           <div class="concept-card">
-            <h4>💻 Computadores & Prática</h4>
-            <p>Traga o notebook para todas as aulas! O aprendizado é 80% mãos-na-massa nos laboratórios.</p>
-          </div>
-          <div class="concept-card">
-            <h4>🙋‍♂️ Engajamento & Quizzes</h4>
+            <h4>Engajamento & Quizzes</h4>
             <p>Responda aos quizzes interativos em sala e tire dúvidas nos espaços reservados de cada bloco.</p>
           </div>
-          <div class="concept-card">
-            <h4>📦 Governança Git</h4>
-            <p>Todas as entregas do laboratório devem ser versionadas no repositório Git da dupla/grupo.</p>
+          <div class="concept-card" style="grid-column: span 2;">
+            <h4>Governança Git</h4>
+            <p>Todas as entregas de laboratório e projetos devem ser rigorosamente versionadas no repositório Git designado, seguindo os padrões de Conventional Commits.</p>
           </div>
         </div>
-
         <div class="slide-footer">
           <div class="footer-bar">01 – Combinados da Aula</div>
           <div class="footer-page">7</div>
         </div>
       </section>
 
-      <!-- ==================== SLIDE 8: DATAS IMPORTANTES ==================== -->
+      <!-- ==================== SLIDE 8: DATAS ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -231,18 +279,23 @@
 
         <table>
           <thead>
-            <tr><th>Avaliação</th><th>Data</th><th>Formato</th><th>Peso & Descrição</th></tr>
+            <tr><th>Avaliação</th><th>Data</th><th>Formato</th><th>Conteúdo Abordado</th></tr>
           </thead>
           <tbody>
-            <tr><td><strong>Checkpoint 1 (CP1)</strong></td><td>25/08/2026</td><td>Prática Individual em Lab</td><td><strong>20% da média:</strong> Sockets, HTTP, Git e Docker.</td></tr>
-            <tr><td><strong>Checkpoint 2 (CP2)</strong></td><td>29/09/2026</td><td>Prática Individual em Lab</td><td><strong>20% da média:</strong> SOLID, Patterns e Docker Compose.</td></tr>
-            <tr><td><strong>Checkpoint 3 (CP3)</strong></td><td>27/10/2026</td><td>Prática Individual em Lab</td><td><strong>20% da média:</strong> Testes, React/Angular e RAG/MCP.</td></tr>
-            <tr><td><strong>Global Solution (GS)</strong></td><td>24/11 & 01/12</td><td>Banca de Projetos</td><td><strong>60% da nota semestral:</strong> Plataforma Integrada.</td></tr>
+            <tr><td><strong>Checkpoint 1 (CP1)</strong></td><td>25/08/2026</td><td>Prática Individual em Lab</td><td>Sockets, HTTP, Git e Docker.</td></tr>
+            <tr><td><strong>Checkpoint 2 (CP2)</strong></td><td>29/09/2026</td><td>Prática Individual em Lab</td><td>SOLID, Patterns e Docker Compose.</td></tr>
+            <tr><td><strong>Checkpoint 3 (CP3)</strong></td><td>27/10/2026</td><td>Prática Individual em Lab</td><td>Testes, React/Angular e RAG/MCP.</td></tr>
+            <tr><td><strong>Global Solution (GS)</strong></td><td>24/11 & 01/12</td><td>Banca de Projetos</td><td>Plataforma Integrada de Soluções.</td></tr>
           </tbody>
         </table>
 
-        <div class="callout" style="margin-top:20px;">
-          <p><strong>Fórmula de Cálculo:</strong> $\text{Nota Semestral} = (\text{Média CPs} \times 0.20) + (\text{Challenge} \times 0.20) + (\text{Global Solution} \times 0.60)$</p>
+        <!-- Utilizando melhor o espaço inferior -->
+        <div class="callout" style="display:flex; justify-content:space-between; align-items:center; margin-top:30px; background:var(--fiap-light-gray); border-left:6px solid var(--fiap-dark);">
+          <div>
+            <h4 style="margin:0 0 5px 0; color:var(--fiap-dark);">Leitura Preparatória</h4>
+            <p style="margin:0; font-size:0.8em; color:var(--fiap-gray);">Para garantir o sucesso nas avaliações, é fundamental compreender a documentação de requisitos.</p>
+          </div>
+          <a href="https://github.com/josercf/FIAP-2026-2-3SI/blob/main/aulas-1sem/labs/aula01-lab/PRD.md" target="_blank" class="pdf-print-btn" style="position:static; transform:none; box-shadow:none;">Acessar PRD.md</a>
         </div>
 
         <div class="slide-footer">
@@ -251,7 +304,7 @@
         </div>
       </section>
 
-      <!-- ==================== SLIDE 9: AGENDA DO ENCONTRO ==================== -->
+      <!-- ==================== SLIDE 9: AGENDA ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -265,12 +318,11 @@
             <tr><th>Bloco</th><th>Horário</th><th>Conteúdo & Atividades</th></tr>
           </thead>
           <tbody>
-            <tr><td><strong>Bloco 1</strong></td><td>19h20 – 20h50</td><td>Apresentação + PRD/SDD + DDD (Linguagem Ubíqua & Bounded Contexts) + SDLC & Git + Modelo OSI & Sockets + Quiz #1</td></tr>
-            <tr><td><strong>Intervalo</strong></td><td>20h50 – 21h20</td><td>☕ Intervalo (30 minutos)</td></tr>
-            <tr><td><strong>Bloco 2</strong></td><td>21h20 – 22h50</td><td>Quizzes #2 e #3 + Hands-on Lab (PRD/SDD + Sockets em Python) + Commit Git & Dúvidas</td></tr>
+            <tr><td><strong>Bloco 1</strong></td><td>19h20 – 20h50</td><td>Apresentação, PRD/SDD, DDD (Linguagem Ubíqua & Bounded Contexts), SDLC & Git, Modelo OSI & Sockets, Quiz #1</td></tr>
+            <tr><td><strong>Intervalo</strong></td><td>20h50 – 21h20</td><td>Intervalo (30 minutos)</td></tr>
+            <tr><td><strong>Bloco 2</strong></td><td>21h20 – 22h50</td><td>Quizzes #2 e #3, Hands-on Lab (PRD/SDD + Sockets em Python), Commit Git & Dúvidas</td></tr>
           </tbody>
         </table>
-
         <div class="slide-footer">
           <div class="footer-bar">01 – Agenda do Encontro</div>
           <div class="footer-page">9</div>
@@ -283,25 +335,30 @@
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>PRD (Product Requirement Document) <a href="#/ref-slide" class="ref-badge">[1]</a></h2>
+          <h2>PRD (Product Requirements Document)</h2>
         </div>
 
-        <p>O <strong>PRD</strong> é o documento mestre de produto que alinha o time de negócios e engenharia sobre o <em>QUE</em> construir:</p>
+        <p>O <strong>PRD</strong> não é apenas uma lista de funcionalidades; é o instrumento central de alinhamento estratégico que responde de forma conclusiva à pergunta: <em>"Por que estamos construindo este produto e para quem?"</em></p>
 
         <div class="concept-cards" style="grid-template-columns: 1fr 1fr;">
           <div class="concept-card">
-            <h4>📄 O que deve conter um PRD?</h4>
-            <p>• Visão e objetivos de negócio.<br>• Personas e casos de uso (Use Cases).<br>• Regras de negócio e critérios de aceite.<br>• Métricas de sucesso (KPIs).</p>
+            <h4>Estrutura Fundamental</h4>
+            <ul style="margin:0; padding-left:20px; font-size:0.8em; color:#444;">
+              <li><strong>Visão de Produto:</strong> A tese de investimento e o problema real do mercado.</li>
+              <li><strong>Personas & Use Cases:</strong> O perfil exato do usuário e sua jornada.</li>
+              <li><strong>Requisitos Funcionais/Não Funcionais:</strong> As restrições e regras estritas do negócio.</li>
+              <li><strong>Métricas de Sucesso (KPIs):</strong> Como mediremos se a feature foi bem sucedida.</li>
+            </ul>
           </div>
           <div class="concept-card">
-            <h4>💡 Exemplo de Template (LogiTech)</h4>
-            <p><code>PRD.md</code> preenchido no repositório:<br><em>"Permitir que motoristas enviem confirmações de entrega em tempo real com tolerância a falhas de rede."</em></p>
+            <h4>Impacto na Engenharia de Software</h4>
+            <p>Sem um PRD robusto, equipes de desenvolvimento assumem regras de negócio por conta própria, resultando em retrabalho (churn), débitos técnicos severos e desalinhamento de expectativas entre a liderança corporativa e a engenharia de base.</p>
           </div>
         </div>
 
-        <div class="callout" style="display:flex; justify-content:space-between; align-items:center;">
-          <span><strong>Skill da Biblioteca:</strong> Recomendado utilizar a skill <code>skills/prd/SKILL.md</code> da nossa skill-library!</span>
-          <a href="https://pm3.com.br/glossario/prd-product-requirements-document/" target="_blank" style="color:var(--fiap-pink); font-weight:700; font-size:0.8em;">Ler Artigo PM3 ↗</a>
+        <div class="callout" style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
+          <span><strong>Integração com AI:</strong> Ferramentas modernas de GenAI utilizam o PRD como contexto (system prompt) para gerar arquiteturas coerentes.</span>
+          <a href="https://github.com/josercf/FIAP-2026-2-3SI/blob/main/aulas-1sem/labs/aula01-lab/PRD.md" target="_blank" style="color:var(--fiap-pink); font-weight:700; font-size:0.8em; text-decoration:underline;">Ver Exemplo PRD</a>
         </div>
 
         <div class="slide-footer">
@@ -316,24 +373,28 @@
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>SDD (Specification Driven Development) <a href="#/ref-slide" class="ref-badge">[2]</a></h2>
+          <h2>SDD (System Design Document)</h2>
         </div>
 
-        <p>Enquanto o PRD foca no produto, o <strong>SDD (System Design Document)</strong> traduz a necessidade em <em>COMO</em> construir:</p>
+        <p>Enquanto o PRD foca no produto (o <em>"Quê"</em>), o <strong>SDD</strong> traduz as necessidades de negócio em uma arquitetura de software concreta (o <em>"Como"</em>). Ele é o contrato técnico entre arquitetos, desenvolvedores e infraestrutura.</p>
 
-        <div class="concept-cards" style="grid-template-columns: 1fr 1fr;">
-          <div class="concept-card">
-            <h4>📐 Especificação Técnica</h4>
-            <p>Mapeamento de arquitetura, protocolo de transporte (TCP/UDP), schema de dados e limites de concorrência.</p>
-          </div>
-          <div class="concept-card">
-            <h4>📚 Clássicos de Engenharia</h4>
-            <p>Fundamentado na engenharia de software clássica (Pressman & Sommerville): especificações formais previnem 80% dos bugs de integração.</p>
-          </div>
+        <div class="arch-diagram">
+          <div class="arch-node">PRD<br><span style="font-size:0.6em;font-weight:400;">Requisitos de Negócio</span></div>
+          <div class="arch-arrow">➔</div>
+          <div class="arch-node">SDD<br><span style="font-size:0.6em;font-weight:400;">Decisões Arquiteturais</span></div>
+          <div class="arch-arrow">➔</div>
+          <div class="arch-node">Código-Fonte<br><span style="font-size:0.6em;font-weight:400;">Implementação Física</span></div>
         </div>
 
-        <div class="callout">
-          <p><strong>Dica de Mercado:</strong> Projetos AI-First utilizam SDDs estruturados em Markdown para orientar agentes de codificação autônoma.</p>
+        <div class="concept-cards" style="grid-template-columns: 1fr 1fr; margin-top:25px;">
+          <div class="concept-card">
+            <h4>Componentes do SDD</h4>
+            <p>Deve conter o desenho da topologia, escolha de protocolos (ex: TCP/UDP, gRPC, HTTP), mapeamento de schemas de banco de dados, estratégias de cache, escalabilidade (horizontal/vertical) e diagramas de sequência de comunicação (C4 Model).</p>
+          </div>
+          <div class="concept-card">
+            <h4>Redução de Risco</h4>
+            <p>Especificações formais preventivas (como defendido por Pressman e Sommerville na engenharia clássica) resolvem potenciais gargalos estruturais antes da primeira linha de código, economizando recursos em cloud.</p>
+          </div>
         </div>
 
         <div class="slide-footer">
@@ -342,71 +403,70 @@
         </div>
       </section>
 
-      <!-- ==================== SLIDE 12: LINGUAGEM UBÍQUA I ==================== -->
+      <!-- ==================== SLIDE 12: DDD LINGUAGEM UBÍQUA ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>DDD: Linguagem Ubíqua (Conceito) <a href="#/ref-slide" class="ref-badge">[3]</a></h2>
+          <h2>DDD: A Importância da Linguagem Ubíqua</h2>
         </div>
 
-        <p>No Domain-Driven Design (DDD), a <strong>Linguagem Ubíqua (Ubiquitous Language)</strong> é o idioma único rigorosamente compartilhado por especialistas de negócio e desenvolvedores.</p>
+        <p>No Domain-Driven Design (DDD), a <strong>Linguagem Ubíqua (Ubiquitous Language)</strong> é o idioma único e rigorosamente compartilhado por especialistas de domínio (negócio) e engenheiros de software.</p>
 
         <div class="concept-cards" style="grid-template-columns: 1fr 1fr;">
           <div class="concept-card">
-            <h4>❌ Sem Linguagem Ubíqua</h4>
-            <p>O time de produto fala em "Pedido", o banco chama de "Ordem_Venda", e a API expõe <code>transaction_id</code>. Caos e traduções constantes.</p>
+            <h4>Cenário Sem Linguagem Ubíqua</h4>
+            <p>O time comercial discute um "Contrato", o banco de dados armazena em uma tabela chamada "T_DOCUMENTO_LEGAL", e a API expõe uma rota <code>/api/agreements</code>. Essa dissonância gera bugs sistêmicos e lentidão na manutenção.</p>
           </div>
           <div class="concept-card">
-            <h4>✅ Com Linguagem Ubíqua</h4>
-            <p>O termo <code>Pedido</code> é idêntico no PRD, na classe Java, no schema do banco e na conversa de reunião.</p>
+            <h4>Cenário Com Linguagem Ubíqua</h4>
+            <p>O termo é estritamente definido como <code>Contrato</code>. Ele existe no PRD, existe como uma classe <code>Contrato</code> no C#, é salvo na coleção <code>Contratos</code> e os eventos publicados na mensageria são <code>ContratoAssinadoEvent</code>.</p>
           </div>
         </div>
-
         <div class="slide-footer">
-          <div class="footer-bar">01 – DDD Linguagem Ubíqua</div>
+          <div class="footer-bar">01 – Domain-Driven Design</div>
           <div class="footer-page">12</div>
         </div>
       </section>
 
-      <!-- ==================== SLIDE 13: LINGUAGEM UBÍQUA II (EXEMPLO PREFEITURA) ==================== -->
+      <!-- ==================== SLIDE 13: DDD EXEMPLO ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>O Caso Prático da Prefeitura 🏢</h2>
+          <h2>O Caso Prático da Prefeitura</h2>
         </div>
 
-        <p>Imagine uma Prefeitura onde cada departamento cria um nome diferente para o mesmo problema físico na rua:</p>
+        <p>Considere uma administração pública onde diversos departamentos precisam lidar com o mesmo evento físico no mundo real, mas o nomeiam de forma fragmentada, gerando silos de informação:</p>
 
         <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr);">
           <div class="concept-card">
             <h4>Secretaria de Obras</h4>
-            <p><em>"Avaria Asfáltica Tipo B"</em></p>
+            <p>"Avaria Asfáltica Tipo B"</p>
           </div>
           <div class="concept-card">
-            <h4>Cidadão / Atendimento</h4>
-            <p><em>"Buraco na Rua"</em></p>
+            <h4>Atendimento ao Cidadão</h4>
+            <p>"Buraco na Rua"</p>
           </div>
           <div class="concept-card">
             <h4>Fiscalização de Trânsito</h4>
-            <p><em>"Obstáculo em Via Pública"</em></p>
+            <p>"Obstáculo em Via Pública"</p>
           </div>
         </div>
 
         <div class="callout" style="margin-top:20px;">
-          <p><strong>Resultado sem DDD:</strong> 3 bancos de dados diferentes criados, relatórios duplicados e sistemas de TI incomunicáveis!</p>
+          <p><strong>Consequência Direta:</strong> A criação de múltiplos bancos de dados paralelos, relatórios administrativos duplicados, desperdício de dinheiro público e sistemas de software incapazes de trocar informações via API de forma coesa.</p>
         </div>
 
         <div class="slide-footer">
-          <div class="footer-bar">01 – DDD Linguagem Ubíqua</div>
+          <div class="footer-bar">01 – Domain-Driven Design</div>
           <div class="footer-page">13</div>
         </div>
       </section>
 
-      <!-- ==================== SLIDE 14: LINGUAGEM UBÍQUA III (ANIMAÇÃO CÍRCULO) ==================== -->
+      <!-- ==================== SLIDE 14: LINGUAGEM UBÍQUA UNIFICAÇÃO ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -415,44 +475,49 @@
           <h2>Unificação na Linguagem Ubíqua</h2>
         </div>
 
-        <div class="ubiquitous-circle-container">
-          <div class="ubiquitous-center">Ocorrência de Via</div>
-          <div class="ubiquitous-sector ubiquitous-sector-1 fragment">Obras: Avaria Asfáltica</div>
-          <div class="ubiquitous-sector ubiquitous-sector-2 fragment">Trânsito: Obstáculo</div>
-          <div class="ubiquitous-sector ubiquitous-sector-3 fragment">Cidadão: Buraco</div>
-          <div class="ubiquitous-sector ubiquitous-sector-4 fragment">Finanças: Depreciação</div>
-          <div class="ubiquitous-sector ubiquitous-sector-5 fragment">SAC: Chamado Zoonose</div>
-          <div class="ubiquitous-sector ubiquitous-sector-6 fragment">Geoprocessamento: Ponto</div>
+        <p>A solução proposta pelo DDD é abstrair as visões departamentais isoladas e forjar um conceito central e unificado que todos adotam formalmente:</p>
+
+        <div class="ubiquitous-flex-container">
+          <div class="ubiquitous-center-box">Entidade Central: Ocorrência de Via</div>
+          
+          <div class="ubiquitous-grid">
+            <div class="ubiquitous-item fragment">Visão Obras:<br>Avaria Asfáltica</div>
+            <div class="ubiquitous-item fragment">Visão Trânsito:<br>Obstáculo</div>
+            <div class="ubiquitous-item fragment">Visão Cidadão:<br>Buraco</div>
+            <div class="ubiquitous-item fragment">Visão Finanças:<br>Depreciação de Ativo</div>
+            <div class="ubiquitous-item fragment">Visão SAC:<br>Chamado de Zoonose</div>
+            <div class="ubiquitous-item fragment">Visão Geoprocessamento:<br>Ponto Cartográfico</div>
+          </div>
         </div>
 
         <div class="slide-footer">
-          <div class="footer-bar">01 – DDD Linguagem Ubíqua</div>
+          <div class="footer-bar">01 – Domain-Driven Design</div>
           <div class="footer-page">14</div>
         </div>
       </section>
 
-      <!-- ==================== SLIDE 15: BOUNDED CONTEXTS & MONOLITH FIRST ==================== -->
+      <!-- ==================== SLIDE 15: BOUNDED CONTEXTS ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Bounded Contexts & Monolith-First <a href="#/ref-slide" class="ref-badge">[4]</a></h2>
+          <h2>Bounded Contexts & Monolith-First</h2>
         </div>
 
         <div class="concept-cards" style="grid-template-columns: 1fr 1fr;">
           <div class="concept-card">
-            <h4>📦 Bounded Context (DDD)</h4>
-            <p>Fronteira explícita onde o modelo de domínio se aplica. O contexto de <strong>Pedidos</strong> tem regras e entidades totalmente separadas do contexto de <strong>Telemetria</strong>.</p>
+            <h4>Bounded Context (Contexto Delimitado)</h4>
+            <p>É a fronteira explícita arquitetural onde o modelo de domínio se aplica e tem validade. A entidade "Cliente" no contexto de Vendas possui atributos distintos da entidade "Cliente" no contexto de Suporte Técnico. Isolamos essas fronteiras para evitar monólitos de código acoplados.</p>
           </div>
           <div class="concept-card">
-            <h4>🏛️ Monolith-First Approach</h4>
-            <p>Martin Fowler defende: comece com um monolito bem estruturado por contextos delimitados antes de dividir precocemente em microsserviços.</p>
+            <h4>Abordagem Monolith-First</h4>
+            <p>Conforme defendido por Martin Fowler, a prática recomendada é iniciar a arquitetura como um monólito modular (estruturado pelos Bounded Contexts). Dividir o sistema em microsserviços distribuídos precocemente eleva a complexidade de rede e orquestração de forma desnecessária.</p>
           </div>
         </div>
 
         <div class="slide-footer">
-          <div class="footer-bar">01 – Bounded Contexts & Monolith-First</div>
+          <div class="footer-bar">01 – Bounded Contexts</div>
           <div class="footer-page">15</div>
         </div>
       </section>
@@ -463,30 +528,28 @@
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>SDLC: Ciclo de Vida de Desenvolvimento <a href="#/ref-slide" class="ref-badge">[5]</a></h2>
+          <h2>SDLC: Ciclo de Vida de Desenvolvimento de Software</h2>
         </div>
+
+        <p>O SDLC (Software Development Life Cycle) é a estrutura metodológica adotada por corporações para projetar, construir e manter softwares de alta qualidade.</p>
 
         <div class="concept-cards" style="grid-template-columns: repeat(4, 1fr);">
           <div class="concept-card">
             <h4>1. Planejamento</h4>
-            <p>Requisitos, PRD, viabilidade técnica e arquitetura.</p>
+            <p>Definição de requisitos corporativos (PRD), viabilidade financeira, estimativas e desenho de arquitetura (SDD).</p>
           </div>
           <div class="concept-card">
             <h4>2. Construção</h4>
-            <p>Código, TDD, Design Patterns e Code Reviews.</p>
+            <p>Escrita de código limpo, aplicação de Design Patterns, versionamento rigoroso (Git) e revisões (Code Review).</p>
           </div>
           <div class="concept-card">
-            <h4>3. Operação</h4>
-            <p>Deploy Docker/K8s, monitoramento e SLAs.</p>
+            <h4>3. Operação & Testes</h4>
+            <p>Validação via Pirâmide de Testes, orquestração com Docker/Kubernetes, monitoramento contínuo e gestão de SLAs.</p>
           </div>
           <div class="concept-card">
             <h4>4. Descontinuação</h4>
-            <p>Migração de dados e desativação (Sunset).</p>
+            <p>O processo ordenado de desligar o software (Sunset), incluindo portabilidade de banco de dados e expiração de APIs antigas.</p>
           </div>
-        </div>
-
-        <div class="callout" style="margin-top:20px;">
-          <p><strong>Cascata (Waterfall) vs Ágil:</strong> O SDLC moderno itera continuamente em ciclos curtos de entrega valorizando automação.</p>
         </div>
 
         <div class="slide-footer">
@@ -495,23 +558,23 @@
         </div>
       </section>
 
-      <!-- ==================== SLIDE 17: VERSIONAMENTO GIT - COLABORAÇÃO ==================== -->
+      <!-- ==================== SLIDE 17: VERSIONAMENTO GIT ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Versionamento com Git: Trabalho em Equipe</h2>
+          <h2>Versionamento com Git: Trabalho Colaborativo</h2>
         </div>
 
         <div class="concept-cards" style="grid-template-columns: 1fr 1fr;">
           <div class="concept-card">
-            <h4>👤 Desenvolvimento Solo</h4>
-            <p>Sem Git: Sobrescreve arquivos locais, altera sem histórico e não possui ponto de restauração.</p>
+            <h4>Desenvolvimento Isolado</h4>
+            <p>Sem um sistema de controle de versão (VCS), o desenvolvimento em equipe resulta na sobrescrita acidental de código, ausência de histórico rastreável e incapacidade de reverter o projeto de forma segura após falhas sistêmicas.</p>
           </div>
           <div class="concept-card">
-            <h4>👥 Equipes Colaborativas</h4>
-            <p>Com Git: Múltiplos desenvolvedores alteram o mesmo projeto simultaneamente via branches, gerenciando conflitos de forma segura.</p>
+            <h4>Sinergia de Equipe</h4>
+            <p>Utilizando o Git, múltiplos engenheiros de software alteram o mesmo ecossistema simultaneamente através de ramificações (branches) independentes, fundindo (merge) o trabalho via algoritmos robustos de resolução de conflitos.</p>
           </div>
         </div>
 
@@ -521,7 +584,7 @@
         </div>
       </section>
 
-      <!-- ==================== SLIDE 18: EVOLUÇÃO DAS FERRAMENTAS VCS ==================== -->
+      <!-- ==================== SLIDE 18: EVOLUÇÃO VCS ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -532,12 +595,12 @@
 
         <table>
           <thead>
-            <tr><th>Geração</th><th>Modelo</th><th>Características</th><th>Exemplos</th></tr>
+            <tr><th>Geração</th><th>Modelo Arquitetural</th><th>Características Principais</th><th>Ferramentas</th></tr>
           </thead>
           <tbody>
-            <tr><td><strong>1ª Geração</strong></td><td>Local / Arquivos</td><td>Controle de um único arquivo no computador local</td><td>RCS, SCCS</td></tr>
-            <tr><td><strong>2ª Geração</strong></td><td>Centralizado (Síncrono)</td><td>Servidor central obrigatório. Bloqueio de arquivos.</td><td>CVS, SVN (Subversion)</td></tr>
-            <tr><td><strong>3ª Geração</strong></td><td>Distribuído (Assíncrono)</td><td>Cada dev possui cópia completa do repositório local.</td><td><strong>Git</strong>, Mercurial</td></tr>
+            <tr><td><strong>1ª Geração</strong></td><td>Local (Baseado em Arquivos)</td><td>Controle isolado em uma única máquina, altamente suscetível a perdas de hardware.</td><td>RCS, SCCS</td></tr>
+            <tr><td><strong>2ª Geração</strong></td><td>Centralizado (Síncrono)</td><td>Dependência de um servidor central. Necessidade de bloqueio (lock) de arquivos durante edição.</td><td>CVS, SVN (Subversion)</td></tr>
+            <tr><td><strong>3ª Geração</strong></td><td>Distribuído (Assíncrono)</td><td>O repositório completo e o histórico são clonados integralmente em cada máquina cliente.</td><td><strong>Git</strong>, Mercurial</td></tr>
           </tbody>
         </table>
 
@@ -547,7 +610,7 @@
         </div>
       </section>
 
-      <!-- ==================== SLIDE 19: O ECOSSISTEMA GITHUB ==================== -->
+      <!-- ==================== SLIDE 19: ECOSSISTEMA GITHUB ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -558,20 +621,20 @@
 
         <div class="concept-cards" style="grid-template-columns: repeat(4, 1fr);">
           <div class="concept-card">
-            <h4>🔀 Pull Requests</h4>
-            <p>Code Review automatizado e discussão de código antes do merge.</p>
+            <h4>Pull Requests (PRs)</h4>
+            <p>O mecanismo corporativo para realizar Code Review, promover discussões técnicas formais e aprovar integrações de código.</p>
           </div>
           <div class="concept-card">
-            <h4>⚙️ GitHub Actions</h4>
-            <p>Esteiras automatizadas de CI/CD para build e testes.</p>
+            <h4>GitHub Actions</h4>
+            <p>Ferramental nativo de automação para construção de esteiras de Integração Contínua (CI) e Entrega Contínua (CD).</p>
           </div>
           <div class="concept-card">
-            <h4>🤖 GitHub Copilot</h4>
-            <p>Assistente de código por IA integrado à IDE.</p>
+            <h4>GitHub Copilot</h4>
+            <p>Inteligência Artificial generativa integrada ao fluxo de desenvolvimento e IDE para maximização de produtividade.</p>
           </div>
           <div class="concept-card">
-            <h4>☁️ Codespaces</h4>
-            <p>Ambientes completos de dev em nuvem no navegador.</p>
+            <h4>Codespaces</h4>
+            <p>Ambientes de desenvolvimento conteinerizados e hospedados na nuvem, acessíveis instantaneamente pelo navegador.</p>
           </div>
         </div>
 
@@ -581,49 +644,50 @@
         </div>
       </section>
 
-      <!-- ==================== SLIDE 20: COMMITS & PARÁBOLA DO MULTIVERSO ==================== -->
+      <!-- ==================== SLIDE 20: COMMITS & BRANCHES ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Commits, Branches & O Multiverso 🌌</h2>
+          <h2>Commits, Branches e o Fluxo Temporal</h2>
         </div>
 
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; align-items:center;">
-          <div>
-            <p>Assim como a <strong>Mestre Anciã</strong> explica ao Doutor Estranho sobre ramificações do multiverso:</p>
-            <div class="callout" style="background:#111; border-left:4px solid var(--fiap-pink);">
-              <p>Cada <code>branch</code> no Git é uma linha do tempo alternativa! Criamos experimentos em ramos isolados e usamos o <code>merge</code> para unificar as realidades de forma segura.</p>
-            </div>
+        <p>A arquitetura fundamental do Git permite a criação de linhas do tempo divergentes e convergentes.</p>
+
+        <div class="concept-cards" style="grid-template-columns: 1fr 1fr;">
+          <div class="concept-card">
+            <h4>O conceito de Branching</h4>
+            <p>Cada <code>branch</code> representa um contexto de experimento temporal isolado. Funcionalidades de alto risco e correções críticas de produção podem ser desenvolvidas em paralelo sem interferir na estabilidade do ramo principal da aplicação.</p>
           </div>
-          <div style="text-align:center;">
-            <img src="../assets/img/git-multiverse.jpg" alt="Git Multiverso" style="width:100%; max-height:280px; border-radius:8px; object-fit:cover; box-shadow:0 8px 20px rgba(0,0,0,0.5);">
+          <div class="concept-card">
+            <h4>Reconciliação e Merge</h4>
+            <p>Após a validação por testes automatizados em um ramo separado, a operação de <code>merge</code> executa a convergência segura dos dados, unificando os estados do sistema de volta para a linha do tempo canônica (main).</p>
           </div>
         </div>
 
         <div class="slide-footer">
-          <div class="footer-bar">01 – Branches & Multiverso</div>
+          <div class="footer-bar">01 – Git Branching</div>
           <div class="footer-page">20</div>
         </div>
       </section>
 
-      <!-- ==================== SLIDE 21: COMMITS SEMÂNTICOS & HUSKY ==================== -->
+      <!-- ==================== SLIDE 21: COMMITS SEMÂNTICOS ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Commits Semânticos & Git Hooks <a href="#/ref-slide" class="ref-badge">[6]</a></h2>
+          <h2>Commits Semânticos e Governança</h2>
         </div>
 
-        <pre><code class="language-bash"># Padrão Conventional Commits (feat, fix, docs, refactor)
-git commit -m "feat(telemetry): implement TCP socket listener for truck GPS"
-git commit -m "fix(security): sanitize inputs against prompt injection"
-</code></pre>
+        <pre><code class="language-bash"># O padrão corporativo Conventional Commits mapeia o objetivo da alteração
+git commit -m "feat(telemetry): implementa o listener de sockets TCP para GPS"
+git commit -m "fix(security): sanitiza inputs na API prevenindo Injeção SQL"
+git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
 
-        <div class="callout">
-          <p><strong>Automação com Husky:</strong> Git Hooks interceptam o commit antes de ser salvo, garantindo por script que o desenvolvedor siga o padrão estabelecido.</p>
+        <div class="callout" style="margin-top:20px;">
+          <p><strong>Automação de Governança (Git Hooks):</strong> Para garantir a aplicação estrita destas normas na equipe, utilizam-se hooks (como a ferramenta Husky), que bloqueiam sumariamente, via script, tentativas de submeter mensagens fora do formato padronizado.</p>
         </div>
 
         <div class="slide-footer">
@@ -638,17 +702,17 @@ git commit -m "fix(security): sanitize inputs against prompt injection"
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Estratégias de Branching: Trunk-Based vs GitFlow</h2>
+          <h2>Estratégias Avançadas de Branching</h2>
         </div>
 
         <div class="concept-cards" style="grid-template-columns: 1fr 1fr;">
           <div class="concept-card">
-            <h4>🚀 Trunk-Based Development</h4>
-            <p>Todos os devs integram pequenas alterações frequentemente na branch <code>main</code>. Ideal para empresas de alta velocidade e integração contínua (CI/CD).</p>
+            <h4>Trunk-Based Development</h4>
+            <p>Modelo de alta frequência onde os desenvolvedores integram atualizações curtas e constantes (várias vezes ao dia) diretamente na ramificação principal. Requer disciplina excepcional, uso de Feature Flags e automação de testes exaustiva. Padrão nas principais Big Techs.</p>
           </div>
           <div class="concept-card">
-            <h4>🌿 GitFlow Pattern</h4>
-            <p>Uso de branches de longa duração (<code>develop</code>, <code>release</code>, <code>feature</code>, <code>hotfix</code>). Recomendado para softwares com ciclos rígidos de lançamento.</p>
+            <h4>GitFlow Pattern</h4>
+            <p>Estratégia mais burocrática, que cria ramificações de longa vida nominalmente isoladas (<code>develop</code>, <code>release</code>, <code>hotfix</code>). É apropriada e recomendada para softwares sob estritas regulações de compliance e ciclos de lançamento engessados de menor frequência.</p>
           </div>
         </div>
 
@@ -664,80 +728,54 @@ git commit -m "fix(security): sanitize inputs against prompt injection"
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Quiz #1</h2>
+          <h2>Quiz de Verificação</h2>
         </div>
 
         <div class="quiz-container">
-          <div class="quiz-question">Qual a principal vantagem da convenção Conventional Commits no ciclo de vida de desenvolvimento (SDLC)?</div>
+          <div class="quiz-question">Qual é a finalidade corporativa primordial de se implementar Conventional Commits em um pipeline de Engenharia de Software?</div>
           <ul class="quiz-options">
-            <li data-correct="false">
-              <span class="option-letter">A</span>
-              Aumenta a velocidade da placa de rede durante o upload do código
-            </li>
-            <li data-correct="true">
-              <span class="option-letter">B</span>
-              Padroniza o histórico de alterações, permitindo rastreabilidade e geração automatizada de changelogs
-            </li>
-            <li data-correct="false">
-              <span class="option-letter">C</span>
-              Impede que o código em Python seja executado sem compilador
-            </li>
-            <li data-correct="false">
-              <span class="option-letter">D</span>
-              Substitui a necessidade de escrever testes de unidade no projeto
-            </li>
+            <li data-correct="false"><span class="option-letter">A</span> Aumentar a velocidade física de upload para os servidores da nuvem.</li>
+            <li data-correct="true"><span class="option-letter">B</span> Estabelecer um formato rigoroso no histórico, permitindo a rastreabilidade mecânica e geração automática de changelogs.</li>
+            <li data-correct="false"><span class="option-letter">C</span> Proibir os desenvolvedores de comitar código que não possua testes unitários.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Desabilitar ferramentas auxiliares como o GitHub Copilot no ambiente corporativo.</li>
           </ul>
           <div class="quiz-feedback"
-               data-correct-msg="Excelente! Conventional Commits trazem padronização e automação ao repositório."
-               data-incorrect-msg="Cuidado! O foco dos commits semânticos é a padronização e governança do histórico.">
-          </div>
-        </div>
-
-        <div class="quiz-qr-container">
-          <div class="quiz-qr-code">
-            <svg viewBox="0 0 100 100" width="100%" height="100%"><path d="M0,0 h30 v30 h-30 z M10,10 h10 v10 h-10 z M70,0 h30 v30 h-30 z M80,10 h10 v10 h-10 z M0,70 h30 v30 h-30 z M10,80 h10 v10 h-10 z M40,40 h20 v20 h-20 z M50,10 h10 v20 h-10 z M10,50 h20 v10 h-20 z M70,70 h30 v30 h-30 z" fill="#000"/></svg>
-          </div>
-          <div>
-            <div style="font-weight:700; color:#fff; font-size:0.85em;">📱 Vote pelo Smartphone</div>
-            <div style="font-size:0.7em; color:#aaa;">Aponte a câmera para responder interativamente no painel</div>
-            <div class="quiz-timer-box">
-              <button class="quiz-timer-btn" onclick="startTimer('timer1', 60)">▶</button>
-              <span>Tempo restante: <span id="timer1">60</span>s</span>
-            </div>
+               data-correct-msg="Correto. A padronização estrita é a base da automação (CI/CD) de geração de releases e logs operacionais."
+               data-incorrect-msg="Incorreto. Revise a documentação sobre governança de repositórios e Conventional Commits.">
           </div>
         </div>
 
         <div class="slide-footer">
-          <div class="footer-bar">01 – Quiz Interativo</div>
+          <div class="footer-bar">01 – Verificação de Aprendizado</div>
           <div class="footer-page">23</div>
         </div>
       </section>
 
-      <!-- ==================== SLIDE 24: MODELO OSI ==================== -->
+      <!-- ==================== SLIDE 24: OSI MODEL ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>O Modelo OSI (Open Systems Interconnection) <a href="#/ref-slide" class="ref-badge">[7]</a></h2>
+          <h2>O Modelo OSI (Open Systems Interconnection)</h2>
         </div>
 
         <table>
           <thead>
-            <tr><th>Camada</th><th>Nome</th><th>Função Principal</th><th>Exemplos de Protocolos</th></tr>
+            <tr><th>Camada</th><th>Nome da Camada</th><th>Função e Propósito Principal</th><th>Exemplos Clássicos</th></tr>
           </thead>
           <tbody>
-            <tr><td><strong>L7</strong></td><td>Aplicação</td><td>Interface com o usuário/aplicação web</td><td>HTTP, HTTPS, gRPC, DNS</td></tr>
-            <tr><td><strong>L6</strong></td><td>Apresentação</td><td>Formatação, criptografia e compressão</td><td>TLS/SSL, JSON, XML</td></tr>
-            <tr><td><strong>L5</strong></td><td>Sessão</td><td>Controle e manutenção de sessões de rede</td><td>RPC, NetBIOS</td></tr>
-            <tr><td><strong>L4</strong></td><td>Transporte</td><td>Comunicação end-to-end e controle de fluxo</td><td><strong>TCP, UDP</strong></td></tr>
-            <tr><td><strong>L3</strong></td><td>Rede</td><td>Endereçamento lógico e roteamento IP</td><td>IP (IPv4/v6), ICMP</td></tr>
-            <tr><td><strong>L2/L1</strong></td><td>Enlace / Física</td><td>Endereço físico (MAC) e transmissão de bits</td><td>Ethernet, Wi-Fi, Fibra Optica</td></tr>
+            <tr><td><strong>L7</strong></td><td>Aplicação</td><td>Apresenta a interface final de rede aos softwares de usuário.</td><td>HTTP, HTTPS, gRPC, DNS</td></tr>
+            <tr><td><strong>L6</strong></td><td>Apresentação</td><td>Manipula a formatação lógica de dados, compressão e criptografia.</td><td>TLS/SSL, JSON, XML</td></tr>
+            <tr><td><strong>L5</strong></td><td>Sessão</td><td>Responsável por criar, manter e derrubar o diálogo da comunicação.</td><td>RPC, NetBIOS</td></tr>
+            <tr><td><strong>L4</strong></td><td>Transporte</td><td>Garante e coordena a comunicação lógica fim a fim (host-to-host).</td><td><strong>TCP, UDP</strong></td></tr>
+            <tr><td><strong>L3</strong></td><td>Rede</td><td>Gerencia o endereçamento lógico e os roteamentos complexos globais.</td><td>IP (IPv4/v6), ICMP</td></tr>
+            <tr><td><strong>L2/L1</strong></td><td>Enlace e Física</td><td>Gerencia endereços físicos (MAC) e converte bits em sinais físicos (cobre, luz, onda).</td><td>Ethernet, Wi-Fi, 5G</td></tr>
           </tbody>
         </table>
 
         <div class="slide-footer">
-          <div class="footer-bar">01 – Modelo OSI</div>
+          <div class="footer-bar">01 – Modelo de Referência OSI</div>
           <div class="footer-page">24</div>
         </div>
       </section>
@@ -748,17 +786,19 @@ git commit -m "fix(security): sanitize inputs against prompt injection"
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Camada L4: Protocolo TCP</h2>
+          <h2>Camada de Transporte (L4): Protocolo TCP</h2>
         </div>
+
+        <p>O <strong>TCP (Transmission Control Protocol)</strong> é o protocolo orientando a conexão padrão ouro para confiabilidade em redes modernas.</p>
 
         <div class="concept-cards" style="grid-template-columns: 1fr 1fr;">
           <div class="concept-card">
-            <h4>🤝 3-Way Handshake</h4>
-            <p>1. <code>SYN</code> (Cliente convida)<br>2. <code>SYN-ACK</code> (Servidor confirma)<br>3. <code>ACK</code> (Conexão estabelecida!)</p>
+            <h4>Confiabilidade e Handshake</h4>
+            <p>Realiza o <em>3-Way Handshake</em> (SYN -> SYN-ACK -> ACK) antes de iniciar a transmissão. Ele ordena os pacotes matematicamente na chegada e exige confirmação contínua; qualquer segmento não confirmado é retransmitido automaticamente.</p>
           </div>
           <div class="concept-card">
-            <h4>💳 Exemplo Prático: Transação Bancária</h4>
-            <p>Exige garantia de entrega e ordenação estrita de pacotes. Um pacote perdido é retransmitido automaticamente antes de confirmar a operação.</p>
+            <h4>Aplicações e Limitações</h4>
+            <p>Usado fundamentalmente em operações bancárias financeiras, transações de banco de dados corporativos e envio de e-mails, onde a integridade total do payload é mais importante que o overhead de tempo para transmiti-lo.</p>
           </div>
         </div>
 
@@ -774,17 +814,19 @@ git commit -m "fix(security): sanitize inputs against prompt injection"
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Camada L4: Protocolo UDP</h2>
+          <h2>Camada de Transporte (L4): Protocolo UDP</h2>
         </div>
+
+        <p>O <strong>UDP (User Datagram Protocol)</strong> opera sem criar uma conexão prévia (connectionless), focado exclusivamente na agilidade e baixo overhead computacional.</p>
 
         <div class="concept-cards" style="grid-template-columns: 1fr 1fr;">
           <div class="concept-card">
-            <h4>⚡ Sem Conexão (Fire & Forget)</h4>
-            <p>Envia datagramas diretamente sem handshake e sem confirmação de recebimento. Prioriza velocidade máxima e baixa latência.</p>
+            <h4>Velocidade Bruta e Fire-and-Forget</h4>
+            <p>Não realiza handshake, nem se importa com controle de congestionamento ou com a retransmissão de pacotes perdidos no caminho. É despachado do servidor instantaneamente sob o paradigma "best-effort".</p>
           </div>
           <div class="concept-card">
-            <h4>📡 Exemplo Prático: Telemetria GPS</h4>
-            <p>Sensores enviando localização a cada 500ms. Se um pacote de coordenada for perdido, a próxima coordenada atualizada em breve corrige a posição.</p>
+            <h4>Aplicações e Resiliência Adaptativa</h4>
+            <p>Pilar das infraestruturas de DNS mundiais, telemetria constante (IoT e GPS de frotas), streaming de áudio/vídeo e jogos online em tempo real. Nestes cenários corporativos, a fluidez instantânea compensa eventuais perdas marginais de frames.</p>
           </div>
         </div>
 
@@ -799,18 +841,13 @@ git commit -m "fix(security): sanitize inputs against prompt injection"
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:30px; align-items:center; margin-top:30px;">
-          <div>
-            <h2 style="font-size:2.8em; color:var(--fiap-pink); margin-bottom:10px;">☕ Intervalo</h2>
-            <h3 style="font-size:1.8em; color:#fff;">30 minutos</h3>
-            
-            <div class="quiz-timer-box" style="margin:25px auto 0 auto; padding:12px 24px; font-size:1em;">
-              <button class="quiz-timer-btn" style="width:36px; height:36px; font-size:1.1em;" onclick="startTimer('breakTimer', 1800)">▶</button>
-              <span>Pausa: <span id="breakTimer">30:00</span></span>
-            </div>
-          </div>
-          <div>
-            <img src="../assets/img/coffee-relax.jpg" alt="Intervalo" style="width:100%; max-height:300px; border-radius:12px; object-fit:cover; box-shadow:0 10px 30px rgba(0,0,0,0.6);">
+        <div style="margin-top:100px;">
+          <h2 style="font-size:3.5em; color:var(--fiap-pink); margin-bottom:20px;">Intervalo</h2>
+          <h3 style="font-size:2em; color:var(--fiap-dark);">30 minutos de pausa</h3>
+          
+          <div class="quiz-timer-box" style="margin:40px auto 0 auto; padding:15px 30px; font-size:1.2em;">
+            <button class="quiz-timer-btn" style="width:40px; height:40px; font-size:1.2em;" onclick="startTimer('breakTimer', 1800)">▶</button>
+            <span>Retorno em: <span id="breakTimer">30:00</span></span>
           </div>
         </div>
 
@@ -823,50 +860,25 @@ git commit -m "fix(security): sanitize inputs against prompt injection"
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Quiz #2</h2>
+          <h2>Quiz de Verificação</h2>
         </div>
 
         <div class="quiz-container">
-          <div class="quiz-question">No contexto de Domain-Driven Design (DDD), o que define um Bounded Context?</div>
+          <div class="quiz-question">No contexto dos padrões de Engenharia de Software e Domain-Driven Design (DDD), o que define um Bounded Context?</div>
           <ul class="quiz-options">
-            <li data-correct="false">
-              <span class="option-letter">A</span>
-              O limite de uso de CPU do container Docker
-            </li>
-            <li data-correct="true">
-              <span class="option-letter">B</span>
-              A fronteira explícita onde um modelo de domínio e sua linguagem ubíqua possuem significado estrito
-            </li>
-            <li data-correct="false">
-              <span class="option-letter">C</span>
-              A quantidade máxima de linhas de código por arquivo Python
-            </li>
-            <li data-correct="false">
-              <span class="option-letter">D</span>
-              Um comando de limpeza de cache no Git
-            </li>
+            <li data-correct="false"><span class="option-letter">A</span> O limite quantitativo de memória alocada por um container corporativo no Kubernetes.</li>
+            <li data-correct="true"><span class="option-letter">B</span> A fronteira explícita de arquitetura de software onde um modelo de domínio e sua linguagem ubíqua possuem significado estrito e válido.</li>
+            <li data-correct="false"><span class="option-letter">C</span> A convenção limite para quantidade de linhas de código toleradas em uma mesma classe antes de demandar refatoração.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Um padrão do gitflow utilizado especificamente para branches de manutenção crítica.</li>
           </ul>
           <div class="quiz-feedback"
-               data-correct-msg="Correto! Bounded Context delimita onde cada regra de domínio se aplica."
-               data-incorrect-msg="Incorreto. Bounded Context é a fronteira lógica do domínio de negócio em DDD.">
-          </div>
-        </div>
-
-        <div class="quiz-qr-container">
-          <div class="quiz-qr-code">
-            <svg viewBox="0 0 100 100" width="100%" height="100%"><path d="M0,0 h30 v30 h-30 z M10,10 h10 v10 h-10 z M70,0 h30 v30 h-30 z M80,10 h10 v10 h-10 z M0,70 h30 v30 h-30 z M10,80 h10 v10 h-10 z M40,40 h20 v20 h-20 z M50,10 h10 v20 h-10 z M10,50 h20 v10 h-20 z M70,70 h30 v30 h-30 z" fill="#000"/></svg>
-          </div>
-          <div>
-            <div style="font-weight:700; color:#fff; font-size:0.85em;">📱 Vote pelo Smartphone</div>
-            <div class="quiz-timer-box">
-              <button class="quiz-timer-btn" onclick="startTimer('timer2', 60)">▶</button>
-              <span>Tempo restante: <span id="timer2">60</span>s</span>
-            </div>
+               data-correct-msg="Correto. O Bounded Context isola lógicas de negócio em microsserviços e previne o acoplamento sistêmico."
+               data-incorrect-msg="Incorreto. Lembre-se que Bounded Context é estritamente ligado ao design da solução lógica.">
           </div>
         </div>
 
         <div class="slide-footer">
-          <div class="footer-bar">01 – Quiz Interativo</div>
+          <div class="footer-bar">01 – Verificação de Aprendizado</div>
           <div class="footer-page">28</div>
         </div>
       </section>
@@ -877,89 +889,64 @@ git commit -m "fix(security): sanitize inputs against prompt injection"
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Quiz #3</h2>
+          <h2>Quiz de Verificação</h2>
         </div>
 
         <div class="quiz-container">
-          <div class="quiz-question">Por que a telemetria frequente de GPS de frotas pode utilizar UDP em vez de TCP?</div>
+          <div class="quiz-question">Do ponto de vista da infraestrutura de redes, por que engenheiros optam pelo uso de UDP ao invés de TCP em fluxos densos de telemetria de sensores móveis?</div>
           <ul class="quiz-options">
-            <li data-correct="false">
-              <span class="option-letter">A</span>
-              Porque o UDP obriga a confirmação de cada pacote de dados enviado
-            </li>
-            <li data-correct="true">
-              <span class="option-letter">B</span>
-              Porque prioriza alta velocidade e baixa latência sem a necessidade de retransmissão de pacotes perdidos
-            </li>
-            <li data-correct="false">
-              <span class="option-letter">C</span>
-              Porque o TCP é incompatível com a linguagem Python
-            </li>
-            <li data-correct="false">
-              <span class="option-letter">D</span>
-              Não há diferença entre os dois protocolos na camada de transporte
-            </li>
+            <li data-correct="false"><span class="option-letter">A</span> Porque o protocolo UDP inclui funcionalidades extras de criptografia de ponta a ponta intrínsecas ao pacote.</li>
+            <li data-correct="true"><span class="option-letter">B</span> Porque o UDP provê a latência mínima e o melhor throughput necessário ao ignorar retransmissões onerosas sobre as quais sistemas em tempo real não dependem criticamente.</li>
+            <li data-correct="false"><span class="option-letter">C</span> Porque é fisicamente impossível desenvolver aplicações em linguagem Python que gerenciem Sockets em arquitetura TCP.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Porque a camada de transporte anula qualquer diferença real entre ambos quando roteada através de cabos de fibra ótica.</li>
           </ul>
           <div class="quiz-feedback"
-               data-correct-msg="Exato! UDP é mais leve e rápido para dados frequentes como telemetria de GPS."
-               data-incorrect-msg="Atenção! UDP não realiza retransmissões, sendo ideal para telemetria de alta velocidade.">
-          </div>
-        </div>
-
-        <div class="quiz-qr-container">
-          <div class="quiz-qr-code">
-            <svg viewBox="0 0 100 100" width="100%" height="100%"><path d="M0,0 h30 v30 h-30 z M10,10 h10 v10 h-10 z M70,0 h30 v30 h-30 z M80,10 h10 v10 h-10 z M0,70 h30 v30 h-30 z M10,80 h10 v10 h-10 z M40,40 h20 v20 h-20 z M50,10 h10 v20 h-10 z M10,50 h20 v10 h-20 z M70,70 h30 v30 h-30 z" fill="#000"/></svg>
-          </div>
-          <div>
-            <div style="font-weight:700; color:#fff; font-size:0.85em;">📱 Vote pelo Smartphone</div>
-            <div class="quiz-timer-box">
-              <button class="quiz-timer-btn" onclick="startTimer('timer3', 60)">▶</button>
-              <span>Tempo restante: <span id="timer3">60</span>s</span>
-            </div>
+               data-correct-msg="Correto. Telemetria requer velocidade bruta (Fire-and-Forget) em favor da tolerância a perdas menores de informação."
+               data-incorrect-msg="Incorreto. Avalie com cuidado as necessidades de performance entre UDP e TCP.">
           </div>
         </div>
 
         <div class="slide-footer">
-          <div class="footer-bar">01 – Quiz Interativo</div>
+          <div class="footer-bar">01 – Verificação de Aprendizado</div>
           <div class="footer-page">29</div>
         </div>
       </section>
 
-      <!-- ==================== SLIDE 30: ATIVIDADE PRÁTICA EM DUPLA ==================== -->
+      <!-- ==================== SLIDE 30: ATIVIDADE PRÁTICA ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Atividade Prática em Dupla (Passo a Passo)</h2>
+          <h2>Atividade Prática (Engenharia e Configuração de Redes)</h2>
         </div>
 
         <div class="concept-cards" style="grid-template-columns: repeat(4, 1fr);">
           <div class="concept-card">
-            <h4>Passo 1: Conta & Repo</h4>
-            <p>Criar/acessar conta no GitHub e criar repositório <code>fiap-2026-2-3si-duplaXX</code>.</p>
+            <h4>1. Repositório Corporativo</h4>
+            <p>Criar o repositório de laboratório no GitHub, aplicando as diretrizes iniciais e organizando as chaves de acesso seguras (Tokens/SSH).</p>
           </div>
           <div class="concept-card">
-            <h4>Passo 2: PRD & SDD (SLM)</h4>
-            <p>Usar modelo pequeno local (Qwen) ou Skill <code>prd-authoring</code> para gerar o <code>PRD.md</code>.</p>
+            <h4>2. Definição Estratégica</h4>
+            <p>Produzir e versionar o documento fundamental da arquitetura base (PRD) para a solução do servidor propostos, garantindo alinhamento total.</p>
           </div>
           <div class="concept-card">
-            <h4>Passo 3: Sockets L4</h4>
-            <p>Desenvolver o servidor <code>server_telemetry.py</code> em Python (TCP 8080 e UDP 8081).</p>
+            <h4>3. Implementação TCP/UDP</h4>
+            <p>Construir, a nível de código Python, os processos de escuta em rede nas portas definidas (TCP 8080 e UDP 8081), processando os payloads locais.</p>
           </div>
           <div class="concept-card">
-            <h4>Passo 4: Entrega Forms</h4>
-            <p>Enviar a URL do repositório no formulário de entrega institucional.</p>
+            <h4>4. Processo de Entrega</h4>
+            <p>Validar a integridade técnica do repositório final e consolidar o envio administrativo pelo link formal da instituição na plataforma avaliativa.</p>
           </div>
         </div>
 
         <div class="callout" style="margin-top:20px; display:flex; justify-content:space-between; align-items:center;">
-          <span><strong>Link de Submissão:</strong> Submeta a solução no formulário institucional até 23h59 de hoje.</span>
-          <a href="https://forms.office.com" target="_blank" class="btn btn-slides" style="padding:6px 16px; font-size:0.8em;">Formulário de Entrega ↗</a>
+          <span><strong>Validação Laboratorial:</strong> Consulte o arquivo README.md do laboratório para métricas estritas de aceitação (Acceptance Criteria).</span>
+          <a href="https://forms.office.com" target="_blank" class="pdf-print-btn" style="position:static; transform:none; box-shadow:none;">Portal de Entrega</a>
         </div>
 
         <div class="slide-footer">
-          <div class="footer-bar">01 – Atividade Prática</div>
+          <div class="footer-bar">01 – Atividade Prática Laboratorial</div>
           <div class="footer-page">30</div>
         </div>
       </section>
@@ -970,21 +957,21 @@ git commit -m "fix(security): sanitize inputs against prompt injection"
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Referências Bibliográficas & Leitura</h2>
+          <h2>Referências Bibliográficas e Documentação</h2>
         </div>
 
-        <div style="font-size:0.75em; line-height:1.8; color:#bbb; max-height:450px; overflow-y:auto;">
-          <p><strong>[1] PRD:</strong> PM3 — <a href="https://pm3.com.br/glossario/prd-product-requirements-document/" target="_blank" style="color:var(--fiap-pink);">Glossário PRD</a> | Atlassian — <a href="https://www.atlassian.com/br/agile/product-management/requirements" target="_blank" style="color:var(--fiap-pink);">Product Requirements</a> | GitHub — <a href="https://github.com/github/awesome-copilot/blob/main/skills/prd/SKILL.md" target="_blank" style="color:var(--fiap-pink);">Copilot PRD Skill</a> | Video: <a href="https://www.youtube.com/watch?v=2f5BnXsMwbQ" target="_blank" style="color:var(--fiap-pink);">Entendendo PRD</a></p>
-          <p><strong>[2] SDD:</strong> GitHub Spec Kit — <a href="https://github.com/github/spec-kit/blob/main/spec-driven.md" target="_blank" style="color:var(--fiap-pink);">Spec Driven Development</a> | Video: <a href="https://www.youtube.com/watch?v=cAcGrs7RHBM" target="_blank" style="color:var(--fiap-pink);">Spec-Driven Architecture</a></p>
-          <p><strong>[3] DDD & Linguagem Ubíqua:</strong> Martin Fowler — <a href="https://martinfowler.com/bliki/UbiquitousLanguage.html" target="_blank" style="color:var(--fiap-pink);">Ubiquitous Language</a> | Elemar Jr — <a href="https://elemarjr.com/linguagem-onipresente-ubiquitous-language/" target="_blank" style="color:var(--fiap-pink);">Linguagem Onipresente</a> | Exímia — <a href="https://eximia.co/linguagem-onipresente/" target="_blank" style="color:var(--fiap-pink);">DDD e Linguagem</a></p>
-          <p><strong>[4] Bounded Contexts:</strong> Martin Fowler — <a href="https://martinfowler.com/bliki/BoundedContext.html" target="_blank" style="color:var(--fiap-pink);">Bounded Context</a> | Eduardo Pires — <a href="https://www.eduardopires.net.br/2016/03/ddd-bounded-context/" target="_blank" style="color:var(--fiap-pink);">DDD Bounded Context</a> | Monolith First: <a href="https://martinfowler.com/bliki/MonolithFirst.html" target="_blank" style="color:var(--fiap-pink);">MonolithFirst</a></p>
-          <p><strong>[5] SDLC:</strong> AWS — <a href="https://aws.amazon.com/pt/what-is/sdlc/" target="_blank" style="color:var(--fiap-pink);">O que é SDLC</a> | IBM — <a href="https://www.ibm.com/br-pt/think/topics/sdlc" target="_blank" style="color:var(--fiap-pink);">Fases do SDLC</a> | Microsoft — <a href="https://www.microsoft.com/pt-br/power-platform/topics/phases-of-the-software-development-lifecycle" target="_blank" style="color:var(--fiap-pink);">Ciclo de Vida</a></p>
-          <p><strong>[6] Git & Commits Semânticos:</strong> Conventional Commits — <a href="https://www.conventionalcommits.org/en/v1.0.0/" target="_blank" style="color:var(--fiap-pink);">Specification v1.0.0</a> | Git Hooks: <a href="https://git-scm.com/book/pt-br/v2/Customizing-Git-Git-Hooks" target="_blank" style="color:var(--fiap-pink);">Git Book</a> | Dev.to — <a href="https://dev.to/fedtti/how-to-use-semantic-versioning-and-conventional-commits-with-husky-1g6i" target="_blank" style="color:var(--fiap-pink);">Husky Integration</a></p>
-          <p><strong>[7] Modelo OSI & Redes:</strong> AWS — <a href="https://aws.amazon.com/pt/what-is/osi-model/" target="_blank" style="color:var(--fiap-pink);">Modelo OSI</a> | Microsoft — <a href="https://learn.microsoft.com/pt-br/windows-hardware/drivers/network/windows-network-architecture-and-the-osi-model" target="_blank" style="color:var(--fiap-pink);">Windows Network OSI</a> | Cisco — <a href="https://community.cisco.com/t5/artigos-gerais/protocolos-b%C3%A1sicos-de-rede-na-compreens%C3%A3o-do-modelo-osi/ta-p/4802414" target="_blank" style="color:var(--fiap-pink);">Protocolos de Rede</a></p>
+        <div style="font-size:0.75em; line-height:1.8; color:var(--fiap-gray); max-height:450px; overflow-y:auto;">
+          <p><strong>[1] PRD:</strong> PM3 — <a href="https://pm3.com.br/glossario/prd-product-requirements-document/" target="_blank" style="color:var(--fiap-pink);">Glossário PRD</a> | Atlassian — <a href="https://www.atlassian.com/br/agile/product-management/requirements" target="_blank" style="color:var(--fiap-pink);">Product Requirements Guide</a></p>
+          <p><strong>[2] SDD:</strong> GitHub Spec Kit — <a href="https://github.com/github/spec-kit/blob/main/spec-driven.md" target="_blank" style="color:var(--fiap-pink);">Spec Driven Development Docs</a> | Architecture Guidelines</p>
+          <p><strong>[3] DDD & Linguagem Ubíqua:</strong> Martin Fowler — <a href="https://martinfowler.com/bliki/UbiquitousLanguage.html" target="_blank" style="color:var(--fiap-pink);">Ubiquitous Language Patterns</a> | Elemar Jr — <a href="https://elemarjr.com/linguagem-onipresente-ubiquitous-language/" target="_blank" style="color:var(--fiap-pink);">Linguagem Onipresente</a></p>
+          <p><strong>[4] Bounded Contexts:</strong> Martin Fowler — <a href="https://martinfowler.com/bliki/BoundedContext.html" target="_blank" style="color:var(--fiap-pink);">Bounded Context Definition</a> | Arquitetura Monolith-First: <a href="https://martinfowler.com/bliki/MonolithFirst.html" target="_blank" style="color:var(--fiap-pink);">MonolithFirst</a></p>
+          <p><strong>[5] SDLC:</strong> AWS — <a href="https://aws.amazon.com/pt/what-is/sdlc/" target="_blank" style="color:var(--fiap-pink);">O que é SDLC Corporativo</a> | Microsoft — <a href="https://www.microsoft.com/pt-br/power-platform/topics/phases-of-the-software-development-lifecycle" target="_blank" style="color:var(--fiap-pink);">Gestão do Ciclo de Vida</a></p>
+          <p><strong>[6] Git & Commits Semânticos:</strong> Documentação Oficial — <a href="https://www.conventionalcommits.org/en/v1.0.0/" target="_blank" style="color:var(--fiap-pink);">Conventional Commits Specification v1.0.0</a> | Git Hooks (Husky Reference)</p>
+          <p><strong>[7] Modelo OSI e Sockets de Rede:</strong> AWS — <a href="https://aws.amazon.com/pt/what-is/osi-model/" target="_blank" style="color:var(--fiap-pink);">Referência Técnica Modelo OSI</a> | Microsoft Windows Network OSI — <a href="https://learn.microsoft.com/pt-br/windows-hardware/drivers/network/windows-network-architecture-and-the-osi-model" target="_blank" style="color:var(--fiap-pink);">Driver Architecture</a></p>
         </div>
 
         <div class="slide-footer">
-          <div class="footer-bar">01 – Referências Bibliográficas</div>
+          <div class="footer-bar">01 – Bibliografia da Disciplina</div>
           <div class="footer-page">31</div>
         </div>
       </section>
@@ -994,10 +981,10 @@ git commit -m "fix(security): sanitize inputs against prompt injection"
         <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" style="max-width:350px;">
         <div class="copyright">
           Copyright &copy; 2026<br>
-          Prof.º José Romualdo da Costa Filho<br><br>
-          Todos direitos reservados. Reprodução ou divulgação total ou parcial<br>
-          deste documento é expressamente proibido sem o consentimento formal,<br>
-          por escrito, do Professor (autor).
+          Prof. José Romualdo da Costa Filho<br><br>
+          Todos os direitos reservados. É expressamente proibida a reprodução, divulgação<br>
+          total ou parcial, deste material acadêmico sem autorização formal,<br>
+          por escrito, do Professor autor da ementa.
         </div>
       </section>
 
@@ -1024,7 +1011,6 @@ git commit -m "fix(security): sanitize inputs against prompt injection"
       plugins: [RevealHighlight]
     });
 
-    // Função para timers regressivos interativos
     function startTimer(elementId, seconds) {
       var display = document.getElementById(elementId);
       var timer = seconds, minutes, secs;
@@ -1043,7 +1029,7 @@ git commit -m "fix(security): sanitize inputs against prompt injection"
 
         if (--timer < 0) {
           clearInterval(interval);
-          display.textContent = "FIM!";
+          display.textContent = "TEMPO ESGOTADO!";
         }
       }, 1000);
     }
