@@ -12,18 +12,16 @@
   <script>if(/print-pdf/gi.test(window.location.search)){var link=document.createElement('link');link.rel='stylesheet';link.href='https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/css/print/pdf.css';document.head.appendChild(link);}</script>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    /* Aviso discreto no pe do slide, para instrucao operacional que nao e conteudo */
+    /* Aviso discreto no pe do slide, para instrucao operacional que nao e conteudo.
+       Fica no fluxo normal de proposito: posicionado em absoluto ele sobrepunha
+       o takeaway acima, e o validador de layout nao detecta sobreposicao. */
     .reveal .aviso-resgate {
-      position: absolute;
-      left: 60px;
-      right: 60px;
-      bottom: 62px;
-      margin: 0;
-      font-size: 0.54em;
-      line-height: 1.5;
+      margin: 10px 0 0;
+      font-size: 0.5em;
+      line-height: 1.45;
       color: #6b6b6b;
       border-top: 1px solid #e0e0e0;
-      padding-top: 8px;
+      padding-top: 7px;
     }
     .reveal .aviso-resgate a { color: var(--fiap-pink); font-weight: 700; }
     /* Tabelas compactas dos slides de protocolo */
@@ -95,7 +93,7 @@
           <h2>Resgate da Espiral: o que vocês entregaram na Aula 01</h2>
         </div>
 
-        <p style="font-size:0.76em;">Na Aula 01 a entrega foi a <strong>especificação</strong>, não o código: <code>docs/PRD.md</code> e <code>docs/SDD.md</code> do serviço de telemetria da LogiTech. Hoje se implementa exatamente o que está lá.</p>
+        <p style="font-size:0.72em; margin-bottom:0;">Na Aula 01 a entrega foi a <strong>especificação</strong>, não o código: <code>docs/PRD.md</code> e <code>docs/SDD.md</code> do serviço de telemetria da LogiTech. Hoje se implementa exatamente o que está lá.</p>
 
         <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:13px; margin-top:10px;">
           <div class="concept-card" style="padding:14px 17px;">
@@ -112,8 +110,8 @@
           </div>
         </div>
 
-        <div class="callout" style="margin-top:14px;">
-          <p style="font-size:0.74em;"><strong>O aviso que fizemos e se cumpre hoje:</strong> especificação vaga vai doer agora. Requisito sem valor numérico não diz qual endpoint precisa de cache; termo com dois nomes vira campo JSON inconsistente; Bounded Context mal traçado vira uma API que faz coisa demais.</p>
+        <div class="callout" style="margin-top:11px; padding:11px 18px;">
+          <p style="font-size:0.7em;"><strong>O aviso que fizemos e se cumpre hoje:</strong> requisito sem valor numérico não diz qual endpoint precisa de cache; termo com dois nomes vira campo JSON inconsistente; Bounded Context mal traçado vira API que faz coisa demais.</p>
         </div>
 
         <div class="takeaway">
@@ -121,11 +119,10 @@
           <p>Antes de escrever a primeira linha de Node.js, abram o SDD de vocês. Cada rota que criarem hoje precisa apontar para um RF, e cada decisão de header precisa apontar para um RNF.</p>
         </div>
 
-        <p class="aviso-resgate">Onde achar o que vocês escreveram: no fork da dupla da Aula 01,
-          <span class="mono">github.com/SEU-USUARIO/mwe-2026-2-lab01-duplaXX</span>, arquivos
-          <span class="mono">docs/PRD.md</span> e <span class="mono">docs/SDD.md</span>. Perdeu o endereço? Abra
-          <a href="https://github.com/josercf/mwe-2026-2-lab01-requisitos/forks" target="_blank">josercf/mwe-2026-2-lab01-requisitos</a>
-          e procure o fork de vocês na aba Forks.</p>
+        <p class="aviso-resgate">Onde achar: fork da Aula 01,
+          <span class="mono">mwe-2026-2-lab01-duplaXX</span>, arquivos <span class="mono">docs/PRD.md</span> e
+          <span class="mono">docs/SDD.md</span>. Perdeu o endereço? Aba Forks de
+          <a href="https://github.com/josercf/mwe-2026-2-lab01-requisitos/forks" target="_blank">josercf/mwe-2026-2-lab01-requisitos</a>.</p>
 
         <div class="slide-footer">
           <div class="footer-bar">02 – Resgate da Espiral</div>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Fixture de layout para o check_slides</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
+  <link rel="stylesheet" href="../../aulas-1sem/assets/css/fiap-theme.css">
+  <style>
+    /* Bloco em absoluto que cobre o bloco anterior: e exatamente o defeito
+       que passou despercebido na Aula 02, slide 3. */
+    /* O .takeaway do slide 1 ocupa cerca de 95px a 144px. Este bloco comeca em
+       110px de proposito, para cobri-lo sem estourar os 720px do slide. */
+    .reveal .bloco-sobreposto {
+      position: absolute;
+      left: 60px;
+      right: 60px;
+      top: 110px;
+      margin: 0;
+      background: #fff;
+    }
+    .reveal .bloco-alto { height: 620px; background: #eee; }
+  </style>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- 0: limpo. Nao pode acusar nada. -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <div class="slide-title-area"><div class="accent-bar"></div><h2>Slide limpo</h2></div>
+        <p>Este slide cabe e nao tem bloco sobreposto.</p>
+        <div class="takeaway"><span class="takeaway-label">Nota</span><p>Tudo no lugar.</p></div>
+        <div class="slide-footer"><div class="footer-bar">fixture</div><div class="footer-page">1</div></div>
+      </section>
+
+      <!-- 1: sobreposicao, sem estourar. E o caso que a checagem de estouro nao ve. -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <div class="slide-title-area"><div class="accent-bar"></div><h2>Slide com sobreposicao</h2></div>
+        <div class="takeaway"><span class="takeaway-label">Bloco de baixo</span>
+          <p>Este texto fica coberto pelo aviso posicionado em absoluto, e o leitor perde a informacao.</p></div>
+        <p class="bloco-sobreposto">Aviso que cobre o bloco acima.</p>
+        <div class="slide-footer"><div class="footer-bar">fixture</div><div class="footer-page">2</div></div>
+      </section>
+
+      <!-- 2: estouro puro, sem sobreposicao. -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <div class="slide-title-area"><div class="accent-bar"></div><h2>Slide que estoura</h2></div>
+        <div class="bloco-alto">Bloco alto demais para os 720px.</div>
+        <div class="slide-footer"><div class="footer-bar">fixture</div><div class="footer-page">3</div></div>
+      </section>
+
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+  <script>
+    Reveal.initialize({ width: 1280, height: 720, margin: 0, center: false, minScale: 0.2, maxScale: 2.0 });
+  </script>
+</body>
+</html>

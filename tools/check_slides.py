@@ -2,10 +2,18 @@
 """
 Valida os decks Reveal.js procurando conteudo que estoura o slide.
 
-O tema fixa cada <section> em 1280x720. Qualquer elemento que ultrapasse essa
-caixa aparece cortado na projecao. Medir `scrollHeight` da section NAO detecta
-isso de forma confiavel, entao aqui percorremos os descendentes e comparamos o
-retangulo de cada um com a area util do slide (ja descontado o padding).
+Duas checagens, porque sao dois defeitos diferentes:
+
+1. ESTOURO. O tema fixa cada <section> em 1280x720. Qualquer elemento que
+   ultrapasse essa caixa aparece cortado na projecao. Medir `scrollHeight` da
+   section NAO detecta isso de forma confiavel, entao percorremos os
+   descendentes e comparamos o retangulo de cada um com a area util do slide
+   (ja descontado o padding).
+
+2. SOBREPOSICAO. Um bloco posicionado em absoluto cabe dentro dos 720px e ainda
+   assim cobre o bloco de cima, deixando texto ilegivel. Isso passa inteiro pela
+   checagem de estouro. Aqui comparamos os filhos diretos da section entre si:
+   como o layout deles e empilhado, qualquer intersecao real e defeito.
 
 Uso:
     python3 tools/check_slides.py                      # todos os decks
@@ -90,6 +98,42 @@ JS_MEDIR = """
       }
     }
 
+    // --- Sobreposicao entre os blocos empilhados do slide --------------
+    // So os filhos diretos: comparar descendentes daria falso positivo, ja
+    // que todo filho intersecta o proprio pai.
+    const rotulo = (el) => {
+      const c = (el.className && el.className.baseVal !== undefined
+                  ? el.className.baseVal : el.className || '').toString().trim();
+      return el.tagName.toLowerCase() + (c ? '.' + c.split(/\\s+/).join('.') : '');
+    };
+
+    const blocos = [...sec.children].filter((el) => {
+      const ecs = getComputedStyle(el);
+      if (ecs.display === 'none' || ecs.visibility === 'hidden') return false;
+      // Decoracao de borda: sobrepoe de proposito
+      if (el.matches('.slide-footer, .top-bar, [class*="logo-header"]')) return false;
+      const r = el.getBoundingClientRect();
+      return r.width > 0 && r.height > 0;
+    });
+
+    const sobreposicoes = [];
+    for (let a = 0; a < blocos.length; a++) {
+      for (let b = a + 1; b < blocos.length; b++) {
+        const ra = blocos[a].getBoundingClientRect();
+        const rb = blocos[b].getBoundingClientRect();
+        const vertical = Math.min(ra.bottom, rb.bottom) - Math.max(ra.top, rb.top);
+        const horizontal = Math.min(ra.right, rb.right) - Math.max(ra.left, rb.left);
+        if (vertical > 2 && horizontal > 2) {
+          sobreposicoes.push({
+            a: rotulo(blocos[a]),
+            b: rotulo(blocos[b]),
+            px: Math.round(vertical),
+            texto: (blocos[b].textContent || '').trim().replace(/\\s+/g, ' ').slice(0, 60),
+          });
+        }
+      }
+    }
+
     sec.setAttribute('style', estiloAnterior);
 
     const titulo = sec.querySelector('h2');
@@ -100,6 +144,7 @@ JS_MEDIR = """
       pior: vazamentos.sort((a, b) =>
         (b.abaixo + b.direita) - (a.abaixo + a.direita))[0] || null,
       total: vazamentos.length,
+      sobreposicoes: sobreposicoes.sort((x, y) => y.px - x.px).slice(0, 3),
     };
   });
 }
@@ -111,22 +156,30 @@ def checar(page, url, nome, shots_dir=None):
     page.wait_for_timeout(900)
     slides = page.evaluate(JS_MEDIR)
 
-    problemas = [s for s in slides if s["pior"]]
+    problemas = [s for s in slides if s["pior"] or s.get("sobreposicoes")]
     print("\n%s  (%d slides)" % (nome, len(slides)))
     if not problemas:
-        print("  OK: nenhum conteudo estourando 1280x720")
+        print("  OK: nada estourando 1280x720 e nenhum bloco sobreposto")
         return 0
 
     for s in problemas:
-        p = s["pior"]
-        eixo = []
-        if p["abaixo"] > TOLERANCIA:
-            eixo.append("%dpx abaixo do limite" % p["abaixo"])
-        if p["direita"] > TOLERANCIA:
-            eixo.append("%dpx a direita" % p["direita"])
         print("  slide %-2d  %-52s" % (s["indice"], s["titulo"]))
-        print("           %s  <%s class=%r>" % (", ".join(eixo), p["tag"], p["classe"]))
-        print("           texto: %s" % p["texto"])
+
+        p = s["pior"]
+        if p:
+            eixo = []
+            if p["abaixo"] > TOLERANCIA:
+                eixo.append("%dpx abaixo do limite" % p["abaixo"])
+            if p["direita"] > TOLERANCIA:
+                eixo.append("%dpx a direita" % p["direita"])
+            print("           ESTOURO: %s  <%s class=%r>"
+                  % (", ".join(eixo), p["tag"], p["classe"]))
+            print("           texto: %s" % p["texto"])
+
+        for sob in s.get("sobreposicoes", []):
+            print("           SOBREPOSICAO: %s cobre %s em %dpx"
+                  % (sob["a"], sob["b"], sob["px"]))
+            print("           texto coberto: %s" % sob["texto"])
 
         if shots_dir:
             os.makedirs(shots_dir, exist_ok=True)
@@ -177,9 +230,9 @@ def main():
 
     print("\n" + "=" * 62)
     if total:
-        print("%d slide(s) com conteudo estourando." % total)
+        print("%d slide(s) com problema de layout, entre estouro e sobreposicao." % total)
         return 1
-    print("Todos os slides cabem em 1280x720.")
+    print("Todos os slides cabem em 1280x720, sem bloco sobreposto.")
     return 0
 
 
