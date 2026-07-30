@@ -14,27 +14,39 @@ Um agregador de votos exige estado compartilhado entre dezenas de dispositivos e
 
 ## Decisão
 
-A votação ao vivo será implementada como um **serviço apartado, em repositório próprio**, consumido pelos decks via um pequeno cliente JavaScript. Os decks permanecem estáticos e continuam funcionando sem o serviço.
+A votação ao vivo será implementada como um **produto independente, em repositório próprio e fora do contexto FIAP**, hospedado no laboratório interno (`home01`) sob o domínio **`jrcf.dev`**, e consumido pelos decks via um pequeno cliente JavaScript. Os decks permanecem estáticos e continuam funcionando sem o serviço.
+
+O serviço não conhece FIAP, disciplina ou turma: ele expõe o conceito genérico de **sessão de votação**, para ser reutilizado em palestras, workshops e outras turmas.
 
 ## Motivações
 
 - **O deck não pode depender do serviço.** As aulas precisam abrir e funcionar offline, em sala sem rede ou anos depois. Sem o serviço no ar, o quiz degrada para o modo clique-e-veja-o-gabarito, que já funciona hoje.
 - **Ciclo de vida diferente.** O material didático é versionado por semestre e raramente muda; um serviço com backend tem deploy, credenciais, monitoramento e custo. Misturar os dois no mesmo repositório contamina o acervo com preocupações de infraestrutura.
-- **Reaproveitamento.** O mesmo serviço serve as demais disciplinas e semestres, e pode virar material de aula sobre SSE, o tema da Aula 02.
+- **Reaproveitamento fora da FIAP.** O mesmo serviço atende palestras, workshops e outras turmas. Amarrá-lo ao acervo de uma disciplina inviabilizaria isso.
 - **Publicação.** O repositório do acervo é público e o workflow envia a árvore inteira para o Pages. Qualquer segredo de backend commitado aqui vaza.
+- **Infraestrutura já existente.** O `home01` já roda nginx-proxy-manager com Let's Encrypt e PostgreSQL em Docker. O serviço entra como mais um container na rede `proxy-net`, sem custo marginal de infraestrutura.
 
 ## Arquitetura proposta
 
 ```
-Deck (GitHub Pages, estático)          Serviço de votação (repo apartado)
-  quiz-slide                             POST /sessions            abre sessão da questão
-    QR -> /v/<sessionId>       ----->    POST /sessions/:id/votes  registra voto do aluno
-    barra de resultado         <-----    GET  /sessions/:id/stream  SSE com a apuração
+Deck (GitHub Pages, estático)        home01 / rede proxy-net
+  quiz-slide                           nginx-proxy-manager  (TLS, 80/443, já existente)
+    QR -> jrcf.dev/v/<id>    ----->      |
+    barra de resultado       <-----      +-- voting-api   POST /sessions
+                                         |                POST /sessions/:id/votes
+                                         |                GET  /sessions/:id/stream  (SSE)
+                                         +-- postgres     (instância já existente, 5432)
 ```
+
+Hospedagem no `home01` (Ubuntu 24.04, 4 vCPU, 7,7 GB RAM), aproveitando o que já roda lá:
+
+- **`nginx-proxy-manager`** já publica 80/443 e gerencia certificados; basta um proxy host novo para o subdomínio.
+- **`postgres`** já está no ar em `~/infra/docker-compose.yml`, na rede `proxy-net`. Basta um database dedicado.
+- **Subdomínio sugerido:** `vote.jrcf.dev`, ou `quiz.jrcf.dev`.
 
 - **Transporte da apuração:** SSE (`text/event-stream`), não WebSocket. O fluxo é unidirecional servidor para cliente, que é exatamente o caso de uso do SSE, e o tema já é ensinado na Aula 02. Reconexão automática vem de graça.
 - **Voto:** `POST` simples com o identificador da sessão e a alternativa. Sem login: a granularidade desejada é a turma, não o aluno.
-- **Estado:** efêmero, em memória, com expiração por sessão. Não há dado pessoal e não há nada a preservar depois da aula.
+- **Estado:** sessões e votos na instância PostgreSQL existente, com expiração automática. Não há dado pessoal e nada precisa sobreviver ao semestre.
 - **Integração no deck:** o cliente lê um `data-quiz-session` no `.quiz-container`. Ausente o atributo, ou falhando a conexão, o slide segue no comportamento local.
 
 ## Riscos conhecidos
@@ -44,7 +56,9 @@ Deck (GitHub Pages, estático)          Serviço de votação (repo apartado)
 | Serviço fora do ar durante a aula | O deck degrada para o modo local. O QR mostra estado de indisponível e a aula segue |
 | Rede da sala instável ou bloqueando a origem | Reconexão automática do SSE; o professor pode seguir na votação por levantar a mão |
 | Voto múltiplo do mesmo aluno | Aceito. A métrica é a distribuição da turma, não a nota individual. Se necessário, limitar por fingerprint de sessão no navegador |
-| Custo de manter o serviço no ar | Escopo mínimo, sem banco de dados, em plataforma de free tier |
+| `home01` indisponível durante a aula (link residencial, queda de energia) | O deck degrada para o modo local. Este é o risco mais provável de todos e é o motivo de o deck nunca poder depender do serviço |
+| Expor um serviço da rede doméstica à internet | Entra atrás do nginx-proxy-manager já existente, com TLS, sem porta nova publicada e sem dado sensível trafegando |
+| Disputa de recursos com os demais containers do `home01` | O host tem ~3,8 GB de RAM disponíveis e 28 GB de disco livres. O serviço é pequeno, mas convém fixar limites de CPU e memória no compose |
 | QR placeholder ser confundido com QR real | O placeholder atual é uma moldura tracejada com o texto "em breve", não um QR escaneável |
 
 ## Consequências
