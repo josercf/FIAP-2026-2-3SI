@@ -291,14 +291,33 @@ slide 52 e citado no README.
 
 ### Por que o entregável muda em relação ao plano
 
-O `PLANO_DE_ENSINO.md` pede imagem abaixo de 100 MB para os dois serviços. Para o
-coletor Python isso é folgado, porque `python:3.12-alpine` fica perto de 55 MB. A versao 3.12 acompanha a
-imagem do devcontainer do lab03, para o aluno nao encontrar diferenca de
-comportamento entre o que roda no Codespace e o que roda no container.
-Para o gateway Node não é alcançável sem distroless ou binário estático, porque
-`node:22-alpine` sozinho já passa de 150 MB. Por isso o critério principal passou
-a ser percentual de redução, e o valor absoluto de 100 MB foi mantido só onde é
-honesto, no coletor.
+O `PLANO_DE_ENSINO.md` pede imagem abaixo de 100 MB para os dois serviços. A
+medição real, feita em arm64 (Apple Silicon, Docker Desktop 29.6.2, builds
+locais dos dois gabaritos da Aula 02), substitui as estimativas informais que
+estavam aqui:
+
+| Serviço | Baseline ingênua | Final multi-stage | Redução |
+|---|---|---|---|
+| Coletor (`python:3.12` completa) | 1638,4 MB | 78,9 MB (`python:3.12-alpine`, `USER` não-root) | 95,2% |
+| Gateway (`node:22` completa) | 1658,9 MB | 229,0 MB (`node:22-alpine`, `USER` não-root) | 86,2% |
+
+A versão 3.12 do coletor acompanha a imagem do devcontainer do lab03, para o
+aluno não encontrar diferença de comportamento entre o que roda no Codespace e
+o que roda no container.
+
+As duas reduções ficam acima dos 80% mínimos do entregável 2, então o critério
+percentual da lista de entregáveis se sustenta sem alteração, sem precisar
+baixar o corte. O critério absoluto de 100 MB, que a lista de entregáveis já
+restringia ao coletor, também se confirma: 78,9 MB fica dentro do limite. Para
+o gateway, 229 MB confirma que o absoluto nunca foi alcançável nesse serviço
+sem distroless ou binário estático, o que a versão anterior deste spec já
+antecipava de forma informal, por isso o critério absoluto continua reservado
+só ao coletor.
+
+Números medidos em arquitetura arm64. Quem reproduzir a medição em amd64 deve
+esperar valores absolutos um pouco diferentes, porque a razão entre imagem
+ingênua e multi-stage é o que importa aqui, não o valor em megabytes de uma
+arquitetura específica.
 
 ---
 
