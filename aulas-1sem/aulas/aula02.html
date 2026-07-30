@@ -16,12 +16,12 @@
        Fica no fluxo normal de proposito: posicionado em absoluto ele sobrepunha
        o takeaway acima, e o validador de layout nao detecta sobreposicao. */
     .reveal .aviso-resgate {
-      margin: 10px 0 0;
-      font-size: 0.5em;
-      line-height: 1.45;
+      margin: 6px 0 0;
+      font-size: 0.62em;
+      line-height: 1.4;
       color: #6b6b6b;
       border-top: 1px solid #e0e0e0;
-      padding-top: 7px;
+      padding-top: 5px;
     }
     .reveal .aviso-resgate a { color: var(--fiap-pink); font-weight: 700; }
     /* Tabelas compactas dos slides de protocolo */
@@ -67,9 +67,9 @@
             <tr><th>Bloco</th><th>Horário</th><th>Conteúdo &amp; Atividades</th></tr>
           </thead>
           <tbody>
-            <tr><td><strong>Bloco 1</strong></td><td>19h20 – 20h50</td><td>Resgate da Aula 01, do Socket L4 ao HTTP L7, verbos, status codes e headers, HTTP/1.1 a 3, TLS, SSE, inspeção com cURL, Git Workflows, Quiz #1</td></tr>
+            <tr><td><strong>Bloco 1</strong></td><td>19h20 – 20h50</td><td>Resgate da Aula 01, do Socket L4 ao HTTP L7, verbos, status codes e headers, HTTP/1.1 a 3, TLS, SSE, inspeção com cURL, Git Workflows, Pull Request e Code Review, revisão assistida por IA, Quiz #1</td></tr>
             <tr><td><strong>Intervalo</strong></td><td>20h50 – 21h20</td><td>Intervalo (30 minutos)</td></tr>
-            <tr><td><strong>Bloco 2</strong></td><td>21h20 – 22h50</td><td>Quizzes #2 e #3, Hands-on Lab (servidor HTTP/SSE em Node.js), Pull Request e Code Review, Entrega</td></tr>
+            <tr><td><strong>Bloco 2</strong></td><td>21h20 – 22h50</td><td>Quizzes #2 e #3, Hands-on Lab (coletor UDP e servidor HTTP/SSE em Node.js), Pull Request e revisão cruzada entre duplas, Entrega</td></tr>
           </tbody>
         </table>
 
@@ -672,7 +672,6 @@ Cache-Control: max-age=5
             <rect x="606" y="78" width="150" height="16" rx="3" fill="#ED145B"/>
             <rect x="762" y="78" width="150" height="16" rx="3" fill="#ED145B"/>
             <rect x="918" y="78" width="156" height="16" rx="3" fill="#ED145B"/>
-            <text x="1090" y="91" text-anchor="end" font-size="10" fill="#1e8449"> </text>
 
             <rect x="600" y="104" width="480" height="24" rx="4" fill="#fff" stroke="#b7dfc6"/>
             <rect x="606" y="108" width="150" height="16" rx="3" fill="#999" stroke="#c0392b" stroke-width="1.5" stroke-dasharray="3,2"/>
@@ -964,7 +963,7 @@ data: {"placa":"ABC1D23","lat":-23.56}</code></pre>
 
         <p style="font-size:0.72em;">O navegador esconde o protocolo: mostra a página pronta e engole os detalhes. O <span class="mono">curl</span> devolve a mensagem exatamente como ela vai e volta, e é a primeira ferramenta a abrir quando uma integração falha.</p>
 
-        <pre style="font-size:0.56em; margin-top:4px;"><code class="language-bash"># -i mostra os headers da resposta junto com o corpo
+        <pre style="font-size:0.52em; margin-top:2px;"><code class="language-bash"># -i mostra os headers da resposta junto com o corpo
 curl -i http://localhost:3000/api/v1/posicoes
 
 # -v mostra a conversa inteira: conexao, requisicao enviada e resposta recebida
@@ -982,7 +981,7 @@ curl -o /dev/null -s -w "conexao: %{time_connect}s total: %{time_total}s\n" \
 
         <div class="takeaway">
           <span class="takeaway-label">No laboratório</span>
-          <p>Estes cinco comandos são o roteiro inteiro do Passo 4.</p>
+          <p>Três destes respondem o Passo 4. O <span class="mono">-X</span> prova o 405 do Passo 3, e o <span class="mono">-v</span> é o primeiro a rodar quando algo falha.</p>
         </div>
 
         <div class="slide-footer">
@@ -1286,7 +1285,7 @@ $(cat /tmp/pr.diff)"</code></pre>
         </div>
       </section>
 
-      <!-- ==================== 23: INTERVALO ==================== -->
+      <!-- ==================== 24: INTERVALO ==================== -->
       <section class="content-slide" style="text-align:center; background:transparent;"
                data-background-image="../assets/img/coffee-relax.jpg"
                data-background-size="cover"
@@ -1302,7 +1301,7 @@ $(cat /tmp/pr.diff)"</code></pre>
         </div>
       </section>
 
-      <!-- ==================== 24: QUIZ 2 ==================== -->
+      <!-- ==================== 25: QUIZ 2 ==================== -->
       <section class="quiz-slide content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1351,7 +1350,7 @@ $(cat /tmp/pr.diff)"</code></pre>
         </div>
       </section>
 
-      <!-- ==================== 25: QUIZ 3 ==================== -->
+      <!-- ==================== 26: QUIZ 3 ==================== -->
       <section class="quiz-slide content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1400,7 +1399,7 @@ $(cat /tmp/pr.diff)"</code></pre>
         </div>
       </section>
 
-      <!-- ==================== 26: ATIVIDADE (ABERTURA) ==================== -->
+      <!-- ==================== 27: ATIVIDADE (ABERTURA) ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1425,7 +1424,7 @@ $(cat /tmp/pr.diff)"</code></pre>
 
         <div class="takeaway">
           <span class="takeaway-label">Tempo</span>
-          <p>72 minutos, em dupla: 5 para a branch, 12 para o coletor, 27 para o servidor HTTP/SSE, 10 para a inspeção com cURL e 10 para o Pull Request cruzado.</p>
+          <p>64 minutos, em dupla: 5 para a branch, 12 para o coletor, 27 para o servidor HTTP/SSE, 10 para a inspeção com cURL e 10 para o Pull Request cruzado. O Bloco 2 dá cerca de 75, então sobra folga para quem travar.</p>
         </div>
 
         <div class="slide-footer">
@@ -1434,7 +1433,7 @@ $(cat /tmp/pr.diff)"</code></pre>
         </div>
       </section>
 
-      <!-- ==================== 27: PASSO 1 ==================== -->
+      <!-- ==================== 28: PASSO 1 ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1487,7 +1486,7 @@ git branch --show-current</code></pre>
         </div>
       </section>
 
-      <!-- ==================== 28: PASSO 2 ==================== -->
+      <!-- ==================== 29: PASSO 2 ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1535,7 +1534,7 @@ python3 sockets-l4/client_telemetry.py \
         </div>
       </section>
 
-      <!-- ==================== 29: PASSO 3 ==================== -->
+      <!-- ==================== 30: PASSO 3 ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1569,7 +1568,7 @@ python3 sockets-l4/client_telemetry.py \
         </div>
       </section>
 
-      <!-- ==================== 30: PASSO 4 ==================== -->
+      <!-- ==================== 31: PASSO 4 ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1606,7 +1605,7 @@ python3 sockets-l4/client_telemetry.py \
         </div>
       </section>
 
-      <!-- ==================== 31: PASSO 5 ==================== -->
+      <!-- ==================== 32: PASSO 5 ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1657,7 +1656,7 @@ $(git diff main...origin/feature/http-telemetry)"</code></pre>
         </div>
       </section>
 
-      <!-- ==================== 32: FORMULÁRIO DE ENTREGA ==================== -->
+      <!-- ==================== 33: FORMULÁRIO DE ENTREGA ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1704,7 +1703,7 @@ $(git diff main...origin/feature/http-telemetry)"</code></pre>
         </div>
       </section>
 
-      <!-- ==================== 33: REFERÊNCIAS ==================== -->
+      <!-- ==================== 34: REFERÊNCIAS ==================== -->
       <section id="ref-slide" class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1764,7 +1763,7 @@ $(git diff main...origin/feature/http-telemetry)"</code></pre>
         </div>
       </section>
 
-      <!-- ==================== 34: ENCERRAMENTO ==================== -->
+      <!-- ==================== 35: ENCERRAMENTO ==================== -->
       <section class="end-slide">
         <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" style="max-width:350px;">
         <div class="copyright">

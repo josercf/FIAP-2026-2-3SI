@@ -13,7 +13,7 @@ Hoje aquele desenho vira software: primeiro o **coletor L4** que vocês
 especificaram, depois a **camada HTTP/SSE** por cima dele, e no fim o Pull
 Request revisado pela dupla vizinha.
 
-**Duração:** 72 minutos, em dupla.
+**Duração:** 64 minutos, em dupla.
 
 ---
 
@@ -117,7 +117,7 @@ python3 sockets-l4/client_telemetry.py --caminhoes 5 --intervalo 1
 
 > **Simplificação assumida:** a passagem do coletor para a API é por arquivo
 > (`data/telemetria.jsonl`), de propósito, para manter o laboratório previsível
-> em 60 minutos. Da Aula 07 em diante isso vira comunicação entre containers.
+> dentro do tempo de aula. Da Aula 07 em diante isso vira comunicação entre containers.
 
 ---
 

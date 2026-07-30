@@ -87,7 +87,7 @@ maior, que a própria ADR-002 tinha registrado como risco: o aluno chegaria ao C
 uma prova prática individual que cobra Sockets TCP/UDP, sem nunca ter escrito um.
 O coletor virou esqueleto com quatro TODO no lado UDP, com o lado TCP pronto como
 modelo, e ganhou `sockets-l4/verificar.py` com cinco critérios. O laboratório foi
-de 60 para 72 minutos, dentro dos ~75 do Bloco 2.
+de 60 para 64 minutos, dentro dos ~75 do Bloco 2.
 
 **Revisão de código assistida por IA.** A skill `code-review` foi importada de
 `awesome-skills/code-review-skill` (MIT) para `josercf/skill-library`, com
@@ -161,7 +161,7 @@ o README real, **sem o `gabarito/`**.
 - [ ] **Aulas 03 a 16 ainda são rasas.** Decks de ~140 a ~370 linhas, sem figura, quizzes genéricos. Cada uma precisa passar pelo `construtor-aulas`. **A próxima é a Aula 03** (Docker I, 18/08), que empacota justamente o coletor Python e o gateway Node da Aula 02.
 - [ ] **Labs 03 a 16 têm só o esqueleto.** Devcontainer e README funcionam; falta o conteúdo de cada laboratório.
 - [ ] **Decidir o destino do `gabarito/`.** Agora são dois arquivos, `server.js` e `server_telemetry.py`, commitados em `labs/aula02-lab/gabarito/`, e o workflow publica o repositório inteiro no GitHub Pages: um aluno que navegue pelo acervo acha as duas respostas. Confirmado que o repositório que o aluno forka **não** leva o gabarito, então o risco é só de quem procura no acervo. Avaliar se o gabarito sai do repositório público ou se fica assumido. A ADR-003 lista isto como risco aberto.
-- [ ] **Os 72 minutos do lab da Aula 02 deixam só 3 de folga no Bloco 2.** Se a turma atrasar, o corte previsto na ADR-003 é a segunda metade do Passo 4, que são medições independentes, e não o Passo 5. Vale cronometrar na primeira aplicação e ajustar.
+- [ ] **Cronometrar o lab da Aula 02 na primeira aplicação.** São 64 minutos previstos para os ~75 do Bloco 2, ou seja cerca de 11 de margem. Se faltar, o corte previsto na ADR-003 é a segunda metade do Passo 4, que são medições independentes, e nunca o Passo 5.
 - [ ] **Os outros 12 repositórios de lab provavelmente estão como o da Aula 02 estava:** só o esqueleto do scaffolder, com README genérico. Ao construir cada aula, sincronizar o repositório correspondente junto, senão o aluno abre um kit que não bate com o slide.
 - [ ] **A passagem por arquivo entre o coletor e o gateway precisa ser desfeita na Aula 07.** Está declarada como simplificação deliberada na ADR-002, no README do lab e no slide do Passo 2, com a Aula 07 nomeada como ponto de substituição. Ao construir a Aula 07, cobrar essa dívida.
 - [ ] Duplicação no `home01`: `~/infra/docker-compose.yml` e `~/homelab/docker-compose.yml` **definem os dois o nginx-proxy-manager e o n8n**. Parece migração inacabada. Resolver antes de subir serviço novo, senão um `compose up` pode derrubar o proxy no meio de uma aula.

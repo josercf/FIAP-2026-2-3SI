@@ -71,6 +71,9 @@ Ordem canônica dos slides (ver `SKILL.md` §4): capa → título → agenda com
 ### Armadilhas conhecidas
 
 - **Slide que estoura os 720px não é detectável por `scrollHeight`.** A `section` tem altura fixa, então o valor vem sempre 720 mesmo com conteúdo vazando. Use `tools/check_slides.py`, que compara o retângulo de cada descendente com a área útil. Um hook `PostToolUse` roda isso automaticamente ao editar qualquer `aulas/aula*.html`.
+- **`position: absolute` em slide de blocos empilhados quebra sem estourar.** O elemento cabe nos 720px e mesmo assim cobre o bloco de cima. O `check_slides.py` hoje detecta isso e reporta `SOBREPOSICAO`, mas só entre filhos diretos da `section`. Prefira o fluxo normal: um bloco absoluto ajustado a olho volta a quebrar assim que o texto acima muda de tamanho.
+- **Passar no validador não é o mesmo que o slide estar bom.** Ele não vê fonte pequena demais para projetar, figura espremida, nem o slide com os `fragment` revelados, porque mede o estado inicial. Tire screenshot de todo slide que ganhar bloco novo, SVG, `iframe`, `fragment` ou posicionamento absoluto.
+- **Rode o `revisor-slides` antes de commitar qualquer deck.** Não é opcional e não precisa ser pedido: é parte do fluxo. A sobreposição do slide 3 da Aula 02 foi publicada porque o agente nunca rodou e o validador da época era cego para aquela classe de defeito.
 - **Todo deck carrega `fiap-quiz.js`, `fiap-zoom.js` e `fiap-print.js`, nessa ordem.** Ao criar um deck novo, repetir as três tags. O zoom responde a `+`/`-`/`0` e o print injeta um FAB que reabre o deck com `?print-pdf`. Em modo print o `fiap-print.js` **revela a resposta correta dos quizzes**: PDF exportado por ele não deve ser distribuído antes da aula.
 - **Bloco de código em slide que já tem `concept-cards` estoura os 720px.** Use `<pre class="code-compact">` nesse caso, e mantenha o trecho em até ~18 linhas.
 - **Maturidade desigual entre decks.** `aula01.html` e `aula02.html` (~1700 linhas cada) são o padrão-ouro, escritos à mão, com diagramas SVG inline. Os decks 03–08 (~140 linhas) são saída crua de scaffolder e ainda são rasos. 10–16 estão no meio do caminho.
@@ -81,7 +84,7 @@ Ordem canônica dos slides (ver `SKILL.md` §4): capa → título → agenda com
 - **`tools/check_slides.py`** — validador de layout via Playwright. Serve o repositório, abre cada deck em 1280x720 e reporta qualquer elemento que ultrapasse a área útil. Sai com código 1 se houver problema.
 - **Hook `PostToolUse`** (`.claude/settings.json`) — dispara o validador ao editar um deck. Roda em background e só interrompe se encontrar estouro.
 - **Agente `construtor-aulas`** (`.claude/agents/`) — constrói ou reformula uma aula inteira (deck + Lab Kit) seguindo a metodologia. Consolida a espiral, o case, a anatomia do deck, o markup de quiz que funciona, os padrões de figura e as convenções editoriais. **Ponto de partida para qualquer aula nova.**
-- **Agente `revisor-slides`** (`.claude/agents/`) — revisa um deck contra layout, convenções editoriais, profundidade pedagógica, links e numeração de rodapé. Rode depois do construtor.
+- **Agente `revisor-slides`** (`.claude/agents/`) — revisa um deck contra layout, convenções editoriais, profundidade pedagógica, links e numeração de rodapé. **Rode sempre antes de commitar um deck**, sem esperar que peçam: é a única etapa que olha o material como um todo, e é onde a renumeração de rodapé e os cortes de layout costumam deixar rastro.
 - **`tools/scaffold_labs.py`** — gera o esqueleto dos 13 repositórios de laboratório (devcontainer com Ollama, cliente de IA, README). Respeita `LABS_OUT`.
 
 ## Laboratórios

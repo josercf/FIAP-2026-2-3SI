@@ -41,7 +41,7 @@ O Bloco 2 vai de 21h20 a 22h50, 90 minutos, dos quais cerca de 15 são dos Quizz
 | 3. Servidor HTTP/SSE | 27 | 27 |
 | 4. Medições com cURL | 10 | 10 |
 | 5. Pull Request cruzado | 10 | 10 |
-| **Total** | **60** | **72** |
+| **Total** | **60** | **64** |
 
 Cabe nos 75 disponíveis. A escolha por "completar esqueleto" e não "escrever do
 zero" é o que faz caber: do zero custaria cerca de 25 minutos no Passo 2 e levaria
@@ -99,7 +99,7 @@ refeita.
 | 4, Resgate da Espiral | ganha nota de rodapé com o caminho exato do PRD e do SDD da dupla |
 | 5, Desafio do Mini Mundo | o quadro vermelho deixa de afirmar que existe processo rodando |
 | Passo 2 do lab | deixa de dizer "o coletor vem pronto" e passa a apresentar os TODO |
-| Divisão de tempo | de 60 para 72 minutos |
+| Divisão de tempo | de 60 para 64 minutos |
 
 ## Resgate do PRD e do SDD
 

@@ -72,14 +72,14 @@ Quizzes #2 e #3. Restam cerca de 75 minutos.
 | 3. Servidor HTTP/SSE | 27 | 27 |
 | 4. Medições com cURL | 10 | 10 |
 | 5. Pull Request cruzado | 10 | 10 |
-| **Total** | **60** | **72** |
+| **Total** | **60** | **64** |
 
 ## Riscos conhecidos
 
 | Risco | Mitigação |
 |---|---|
 | A dupla travar no TODO 1 e perder o Passo 3 inteiro | O TCP pronto é o modelo linha a linha, e a diferença é nomeada no comentário: `SOCK_DGRAM` no lugar de `SOCK_STREAM`, sem `listen`. O `verificar.py` diz qual critério falhou em vez de deixar a dupla adivinhando |
-| Os 72 minutos estourarem na prática | Sobram 3 minutos dos 75, o que é pouco. Se a turma atrasar, o corte previsto é a segunda metade do Passo 4, que são medições independentes entre si, e não o Passo 5 |
+| Os 64 minutos estourarem na prática | Sobram cerca de 11 minutos dos 75, que são a margem para as duplas que travarem no TODO 1. Se ainda assim faltar tempo, o corte previsto é a segunda metade do Passo 4, que são medições independentes entre si, e nunca o Passo 5 |
 | O aluno copiar o TCP sem entender e o UDP não funcionar | O `verificar.py` manda datagrama corrompido de propósito: quem só copiou o TCP não trata a exceção e reprova no CA-L4-04 e no CA-L4-05 |
 | O gabarito do coletor vazar para o aluno | `gabarito/` fica só na cópia do professor, em `aulas-1sem/labs/`, e não vai para o repositório que o aluno forka. Continua exposto a quem navegue pelo acervo, o que é a pendência já aberta sobre o gabarito |
 
@@ -92,8 +92,8 @@ Quizzes #2 e #3. Restam cerca de 75 minutos.
 - O Passo 2 ganha verificação objetiva, que antes não tinha.
 
 **Negativas**
-- O laboratório passa de 60 para 72 minutos, e a folga do Bloco 2 cai para 3
-  minutos.
+- O laboratório passa de 60 para 64 minutos, e a folga do Bloco 2 cai de cerca de
+  15 para cerca de 11 minutos.
 - O material da Aula 02 precisou ser retrabalhado depois de pronto e publicado.
 - O `gabarito/` cresce e passa a conter também o coletor, aumentando o que estaria
   exposto caso a pendência do gabarito não seja resolvida.
