@@ -31,7 +31,7 @@ Nenhum conteúdo original foi removido. Todos os tópicos técnicos foram integr
 | Conteúdo Técnico Original | Onde Está Alocado no Plano (1º Semestre) | Como se Conecta aos Novos Conceitos (POO/Patterns/Git) |
 | :--- | :--- | :--- |
 | **Modelo OSI & Sockets TCP/UDP** | **Aula 01** (04/08) | Base L4 do sistema. Conecta-se ao PRD/SDD e aos comandos Iniciais do Git. |
-| **HTTP/1.1, HTTP/2, HTTP/3, SSE, Wireshark** | **Aula 02** (11/08) | Evolução L7 do Socket da Aula 01. Prática com Git Branching e Pull Requests. |
+| **HTTP/1.1, HTTP/2, HTTP/3, SSE, Wireshark** | **Aula 02** (11/08) | Evolução L7 do Socket da Aula 01. Prática com Git Branching e Pull Requests. A inspeção de tráfego é feita com `cURL` no laboratório; o Wireshark fica como demonstração conduzida pelo professor (ADR-002). |
 | **Docker I (Images, Multi-Stage, Volumes)** | **Aula 03** (18/08) | Empacotamento dos serviços de Socket e HTTP desenvolvidos nas Aulas 01 e 02. |
 | **Java (Spring Boot) & C# (.NET Core)** | **Aula 05** (01/09) | Implementação dos serviços core aplicando **POO, SOLID, Factory & Singleton Patterns**. |
 | **Node.js (TypeScript) & Python (FastAPI)** | **Aula 06** (08/09) | Microsserviços de apoio aplicando **Adapter Pattern & Decorator Pattern**. |
@@ -120,8 +120,8 @@ graph TD
 - **Conteúdo Expositivo & Prático:**
   - *Protocolos:* HTTP/1.1 vs HTTP/2 (multiplexação) vs HTTP/3 (QUIC/UDP). Verbos HTTP, Status Codes, Headers e TLS/SSL Handshake.
   - *Git Workflows:* Trabalhando com Branches (`feature/telemetry-api`) e Pull Requests com Code Review.
-  - *Construção Guiada (Live Coding):* Servidor HTTP em Node.js consumindo os Sockets da Aula 01 e servindo eventos SSE. Inspeção de tráfego com `cURL` e `Wireshark`.
-- **Entregável:** Pull Request aprovado contendo o servidor HTTP/SSE + relatório de captura do Wireshark.
+  - *Construção Guiada (Live Coding):* Servidor HTTP em Node.js consumindo os Sockets da Aula 01 e servindo eventos SSE. Inspeção de tráfego com `cURL` (`curl -v` para headers e handshake, `curl -N` para o stream do SSE).
+- **Entregável:** Pull Request aprovado contendo o servidor HTTP/SSE + três medições numéricas de tráfego registradas em `docs/OBSERVACOES.md`.
 
 #### Aula 03 (18/08/2026) - Docker I: Engine, Imagens, Dockerfile Multi-Stage & Persistência
 - **Espiral & Conexão:** **Recupera Aulas 01 e 02** (Empacotando o projeto em containers seguindo a arquitetura descrita no SDD).

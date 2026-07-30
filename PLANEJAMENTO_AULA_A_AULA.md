@@ -55,8 +55,8 @@
 
 ---
 
-### Aula 02 (11/08/2026) - Protocolos de Aplicação: HTTP/1.1 a 3, SSE, Wireshark & Git Workflows
-- **Objetivos de Aprendizagem:** Subir do Socket L4 para a camada L7 (HTTP), comparar HTTP/1.1, HTTP/2 e HTTP/3, inspecionar tráfego com Wireshark/cURL e praticar Git Branching/Pull Requests.
+### Aula 02 (11/08/2026) - Protocolos de Aplicação: HTTP/1.1 a 3, SSE, cURL & Git Workflows
+- **Objetivos de Aprendizagem:** Subir do Socket L4 para a camada L7 (HTTP), comparar HTTP/1.1, HTTP/2 e HTTP/3, inspecionar tráfego com `cURL` e praticar Git Branching/Pull Requests.
 - **Espiral Pedagógica:** **Recupera Aula 01** (Subindo do Socket L4 TCP da Aula 01 para a API HTTP L7, seguindo a estrutura do PRD/SDD).
 - **Desafio do Mini Mundo:** Converter a telemetria capturada via Socket bruto em um serviço HTTP com streaming Server-Sent Events (SSE) para os operadores da *LogiTech*.
 - **Agenda em Minutos:**
@@ -66,8 +66,8 @@
   - `20h35 - 20h50`: **Pergunta de Verificação #1** + Tira-dúvidas.
   - `20h50 - 21h20`: ☕ **INTERVALO (30 min)**.
   - `21h20 - 21h35`: **Perguntas de Verificação #2 e #3**.
-  - `21h20 - 22h35`: **Atividade Prática em Dupla:** Criar uma branch `feature/http-telemetry`, desenvolver um servidor em Node.js exposto via HTTP/SSE e capturar o tráfego de requisições com Wireshark/cURL.
-  - `22h35 - 22h50`: Abrir e aprovar Pull Request no Git + Tira-dúvidas.
+  - `21h35 - 22h35`: **Atividade Prática em Dupla:** Criar uma branch `feature/http-telemetry`, desenvolver um servidor em Node.js exposto via HTTP/SSE sobre o coletor de sockets entregue pronto, e medir o tráfego com `cURL`.
+  - `22h35 - 22h50`: Abrir e aprovar Pull Request no Git com revisão cruzada entre duplas + Tira-dúvidas.
 - **Sessão de Perguntas de Verificação:**
   1. *Pergunta 1:* Como a multiplexação no HTTP/2 resolve o problema de Head-of-Line Blocking do HTTP/1.1?  
      *Resposta Esperada:* O HTTP/2 divide as mensagens em frames binários e permite enviar múltiplas requisições/respostas simultâneas sobre uma única conexão TCP, sem que uma requisição lenta bloqueie as demais.
@@ -75,7 +75,7 @@
      *Resposta Esperada:* O SSE opera sobre HTTP padrão com reconexão automática nativa do navegador e menor overhead, sendo ideal para cenários onde apenas o servidor envia atualizações contínuas ao cliente.
   3. *Pergunta 3:* Qual a diferença prática entre trabalhar direto na branch `main` e utilizar um fluxo de Git Branching com Pull Requests?  
      *Resposta Esperada:* Trabalhar em branches isoladas permite desenvolver sem quebrar o ambiente estável (`main`), possibilita a revisão de código por pares e testes automatizados de integração antes do merge.
-- **Entregável Prático:** Pull Request aprovado contendo o servidor HTTP/SSE em Node.js e relatório de captura do Wireshark.
+- **Entregável Prático:** Pull Request aprovado contendo o servidor HTTP/SSE em Node.js e três medições numéricas de tráfego em `docs/OBSERVACOES.md`. O escopo do laboratório está registrado na ADR-002.
 
 ---
 

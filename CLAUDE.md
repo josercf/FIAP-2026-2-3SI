@@ -71,10 +71,10 @@ Ordem canônica dos slides (ver `SKILL.md` §4): capa → título → agenda com
 ### Armadilhas conhecidas
 
 - **Slide que estoura os 720px não é detectável por `scrollHeight`.** A `section` tem altura fixa, então o valor vem sempre 720 mesmo com conteúdo vazando. Use `tools/check_slides.py`, que compara o retângulo de cada descendente com a área útil. Um hook `PostToolUse` roda isso automaticamente ao editar qualquer `aulas/aula*.html`.
-- **`fiap-zoom.js` e `fiap-print.js` não são carregados por nenhum deck.** Existem e funcionam (zoom por `+`/`-`/`0`, FAB de impressão), mas nenhum `<script src>` os referencia. A exportação de PDF hoje é feita pelo botão de cada card no portal, que abre o deck com `?print-pdf`.
-- **`generate_classes.py` é um scaffolder descartável, não um build.** Contém um `base_dir` absoluto hardcoded e **sobrescreve** `aulas/aulaXX.html` e `labs/aulaXX-lab/` das aulas 02, 03, 05, 06, 07 e 08. Rodá-lo hoje destrói qualquer refinamento feito nesses arquivos. Não executar sem intenção explícita.
-- **Maturidade desigual entre decks.** `aula01.html` (~1000 linhas) é o padrão-ouro, escrito à mão, com CSS inline próprio. Os decks 02–08 (~140 linhas) são saída crua do scaffolder e ainda são rasos. 10–16 estão no meio do caminho.
-- Vários labs (`aula02`, `aula03`, `aula05`, `aula06`, `aula07`, `aula08`, `aula10`, `aula11`, `aula12`) estão sem `README.md`, contrariando o padrão da `SKILL.md`, e alguns têm apenas stubs.
+- **Todo deck carrega `fiap-quiz.js`, `fiap-zoom.js` e `fiap-print.js`, nessa ordem.** Ao criar um deck novo, repetir as três tags. O zoom responde a `+`/`-`/`0` e o print injeta um FAB que reabre o deck com `?print-pdf`. Em modo print o `fiap-print.js` **revela a resposta correta dos quizzes**: PDF exportado por ele não deve ser distribuído antes da aula.
+- **Bloco de código em slide que já tem `concept-cards` estoura os 720px.** Use `<pre class="code-compact">` nesse caso, e mantenha o trecho em até ~18 linhas.
+- **Maturidade desigual entre decks.** `aula01.html` e `aula02.html` (~1700 linhas cada) são o padrão-ouro, escritos à mão, com diagramas SVG inline. Os decks 03–08 (~140 linhas) são saída crua de scaffolder e ainda são rasos. 10–16 estão no meio do caminho.
+- Vários labs (`aula03`, `aula05`, `aula06`, `aula07`, `aula08`, `aula10`, `aula11`, `aula12`) estão sem `README.md`, contrariando o padrão da `SKILL.md`, e alguns têm apenas stubs.
 
 ## Automação
 

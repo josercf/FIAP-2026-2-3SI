@@ -65,24 +65,42 @@ Verificado nesta sessão: o GitHub Models responde com o token do professor. Ate
 
 `docs/adrs/ADR-001-votacao-ao-vivo-nos-quizzes.md` — a votação ao vivo dos quizzes será um produto separado, fora do contexto FIAP, hospedado no `home01` sob `jrcf.dev`, atrás do nginx-proxy-manager e usando o PostgreSQL que já rodam lá. Sugestão de subdomínio: `vote.jrcf.dev`. Nada foi implementado ainda; o QR nos slides é placeholder tracejado escrito "em breve".
 
+`docs/adrs/ADR-002-escopo-do-laboratorio-da-aula-02.md` — o laboratório da Aula 02 entrega o coletor de sockets L4 pronto, tira o Wireshark e troca o relatório de captura por três medições numéricas com `cURL`. A comunicação entre o coletor e o gateway é por arquivo JSON Lines, simplificação declarada, a ser substituída na Aula 07. **Status: Proposta.** Marcar como Aceita quando o professor confirmar.
+
 ---
 
-## Em andamento
+### Aula 02 — pronta e commitada
 
-### Aula 02 — sendo construída por agente
+34 slides validados em 1280x720, com diagramas SVG inline para a evolução do HTTP,
+o handshake TLS e o fluxo do SSE. Lab Kit completo em `aulas-1sem/labs/aula02-lab/`.
 
-Um agente foi disparado para construir deck e Lab Kit da Aula 02 (HTTP/1.1 a 3, SSE, Git Workflows). **Se a sessão terminou antes de ele reportar, verifique `git status` e o conteúdo de `aulas-1sem/aulas/aula02.html`** para ver o que ficou.
+O escopo do laboratório está registrado na
+`docs/adrs/ADR-002-escopo-do-laboratorio-da-aula-02.md`: o coletor de sockets L4 é
+entregue pronto, o Wireshark sai do escopo e a inspeção de tráfego passa a ser
+feita com `cURL`, com três medições numéricas em `docs/OBSERVACOES.md`.
 
-O que foi instruído:
+Validado de ponta a ponta nesta sessão: subindo o coletor, a frota simulada e o
+gateway, o `http-l7/verificar.mjs` passa nos 7 critérios com o gabarito e passa em
+apenas 1 com o esqueleto entregue ao aluno, saindo com código 1. O verificador
+discrimina de verdade.
 
-- Refazer o deck do zero. O atual tem 137 linhas de saída de scaffolder, sem figura.
-- **Nunca rodar `aulas-1sem/generate_classes.py`**: ele sobrescreve decks e labs das aulas 02, 03, 05, 06, 07 e 08.
-- Amarrar a espiral: na Aula 01 as duplas entregaram só `docs/PRD.md` e `docs/SDD.md`, sem código. A Aula 02 implementa o que foi especificado.
-- **Wireshark foi removido do escopo** por decisão do professor: não gera valor suficiente para o tempo que consome. A inspeção de tráfego fica só com `cURL` (`curl -v` para headers e handshake, `curl -N` para o stream do SSE).
-- Reaproveitar o material existente em `aulas-1sem/labs/aula02-lab/`: `server.js` (15 linhas, SSE antigo) e `sockets-l4/` (66 linhas, vindas da Aula 01).
-- Não commitar nem dar push: o professor revisa antes.
+### Saneamento do acervo (30/07/2026)
 
-**Problema de escopo que o agente foi encarregado de resolver:** como os sockets saíram do lab da Aula 01, o lab da 02 acumulou implementar sockets a partir do SDD, subir para HTTP/SSE e abrir PR em 60 minutos. A remoção do Wireshark abriu folga. A decisão dele deve estar no relatório.
+- **Os 13 decks passam no `check_slides.py`.** Havia 5 slides de hands-on estourando
+  (aulas 03, 05, 06, 07 e 08), todos pelo mesmo motivo: bloco de código longo em um
+  slide que já trazia `concept-cards`. Resolvido com a classe `code-compact`.
+- **`fiap-zoom.js` e `fiap-print.js` foram ligados nos 13 decks.** Verificado em
+  navegador: FAB presente e zoom aplicando em todos. Atenção, o `fiap-print.js`
+  revela a resposta dos quizzes em modo print.
+- **`aulas-1sem/generate_classes.py` foi removido.** Era a armadilha que sobrescrevia
+  os decks 02, 03, 05, 06, 07 e 08. Recuperável pelo histórico do git; substituído
+  por `tools/scaffold_labs.py`.
+- **`PLANO_DE_ENSINO.md` e `PLANEJAMENTO_AULA_A_AULA.md` alinhados com a ADR-002.**
+  O Wireshark segue na ementa e na matriz de rastreabilidade, para não quebrar a
+  promessa de que nenhum conteúdo original foi removido, mas as partes operacionais
+  (live coding, agenda e entregável) passaram a citar `cURL`. Corrigida de passagem
+  a sobreposição de horário na agenda da Aula 02, que tinha dois blocos começando
+  às 21h20.
 
 ---
 
@@ -95,11 +113,10 @@ O que foi instruído:
 
 ### Técnicas
 
-- [ ] **Validar os 11 decks restantes.** Só a Aula 01 passou pelo `check_slides.py`. Os decks 02 a 16 são saída de scaffolder e provavelmente têm estouro. Rode `python3 tools/check_slides.py` sem argumento para o mapa completo.
-- [ ] **Aulas 03 a 16 ainda são rasas.** Decks de ~140 a ~370 linhas, sem figura, quizzes genéricos. Cada uma precisa passar pelo `construtor-aulas`.
+- [ ] **Aulas 03 a 16 ainda são rasas.** Decks de ~140 a ~370 linhas, sem figura, quizzes genéricos. Cada uma precisa passar pelo `construtor-aulas`. **A próxima é a Aula 03** (Docker I, 18/08), que empacota justamente o coletor Python e o gateway Node da Aula 02.
 - [ ] **Labs 03 a 16 têm só o esqueleto.** Devcontainer e README funcionam; falta o conteúdo de cada laboratório.
-- [ ] `fiap-zoom.js` e `fiap-print.js` existem e funcionam, mas nenhum deck os carrega. Decidir se entram ou se saem do repositório.
-- [ ] `aulas-1sem/generate_classes.py` é uma armadilha: caminho absoluto hardcoded e sobrescreve trabalho refinado. Considerar remover, já que `tools/scaffold_labs.py` o substituiu.
+- [ ] **Decidir o destino do `gabarito/server.js`.** Ele está commitado em `labs/aula02-lab/gabarito/`, e o workflow publica o repositório inteiro no GitHub Pages: um aluno que navegue pelo acervo acha a resposta. O repositório de lab que o aluno forka é outro (`josercf/mwe-2026-2-lab02-http-sse`) e não leva o gabarito, então o risco é de quem procura no acervo. Avaliar se o gabarito sai do repositório público ou se fica assumido.
+- [ ] **A passagem por arquivo entre o coletor e o gateway precisa ser desfeita na Aula 07.** Está declarada como simplificação deliberada na ADR-002, no README do lab e no slide do Passo 2, com a Aula 07 nomeada como ponto de substituição. Ao construir a Aula 07, cobrar essa dívida.
 - [ ] Duplicação no `home01`: `~/infra/docker-compose.yml` e `~/homelab/docker-compose.yml` **definem os dois o nginx-proxy-manager e o n8n**. Parece migração inacabada. Resolver antes de subir serviço novo, senão um `compose up` pode derrubar o proxy no meio de uma aula.
 
 ---
