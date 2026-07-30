@@ -72,7 +72,7 @@ JS_MEDIR = """
       const ecs = getComputedStyle(el);
       if (ecs.display === 'none' || ecs.visibility === 'hidden') continue;
       // Rodape e barras sao posicionados de proposito na borda
-      if (el.closest('.slide-footer, .top-bar, .fiap-logo-header')) continue;
+      if (el.closest('.slide-footer, .top-bar, [class*="logo-header"]')) continue;
       const r = el.getBoundingClientRect();
       if (r.width === 0 && r.height === 0) continue;
 
