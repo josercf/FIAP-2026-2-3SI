@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aula 03 – Docker I (Dockerfile Multi-Stage, Volumes & Networks) | FIAP</title>
+  <title>Aula 03 – Docker I: Engine, Imagens, Multi-Stage e Persistência | FIAP</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
@@ -11,126 +11,2211 @@
   <link rel="stylesheet" href="../assets/css/fiap-print.css">
   <script>if(/print-pdf/gi.test(window.location.search)){var link=document.createElement('link');link.rel='stylesheet';link.href='https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/css/print/pdf.css';document.head.appendChild(link);}</script>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* Tabelas compactas, mesmo padrao da Aula 02 */
+    .reveal table.compact-table { font-size: 0.62em; margin: 8px 0; }
+    .reveal table.compact-table th { padding: 7px 12px; }
+    .reveal table.compact-table td { padding: 7px 12px; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    /* Figuras com animacao SVG: altura controlada para nunca estourar os 720px */
+    .reveal .slide-figure { margin: 6px 0 0; }
+    .reveal .slide-figure svg { width: 100%; }
+    .reveal .slide-figure figcaption { font-size: 0.6em; line-height: 1.45; color: #6b6b6b; margin-top: 4px; }
+  </style>
 </head>
 <body>
   <div class="reveal">
     <div class="slides">
-      <section class="cover-slide"><img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" class="fiap-logo-full"></section>
-      <section class="title-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="title-card"><div class="accent-bar"></div><h1>Sistemas de Informação</h1><h2>Microservice and Web Engineering & IT Services</h2><h3>Prof. José Romualdo</h3></div>
-        <div class="lesson-bar">AULA 03 – Docker I (Dockerfile Multi-Stage, Volumes & Networks)</div>
+
+      <!-- ==================== 1: CAPA ==================== -->
+      <section class="cover-slide">
+        <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" class="fiap-logo-full">
       </section>
+
+      <!-- ==================== 2: TÍTULO ==================== -->
+      <section class="title-slide" data-background-image="../assets/img/microservices-bg.jpg" data-background-opacity="0.3">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="title-card">
+          <div class="accent-bar"></div>
+          <h1>Sistemas de Informação</h1>
+          <h2>Microservice and Web Engineering &amp; IT Services</h2>
+          <h3>Prof. José Romualdo</h3>
+        </div>
+        <div class="lesson-bar">AULA 03 – Docker I: Engine, Imagens, Multi-Stage e Persistência</div>
+      </section>
+
+      <!-- ==================== 3: AGENDA ==================== -->
       <section class="content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Agenda do Encontro</h2></div>
-        <table>
-          <thead><tr><th>Bloco</th><th>Horário</th><th>Conteúdo & Atividades</th></tr></thead>
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Agenda do Encontro de Hoje</h2>
+        </div>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>Início</th><th>Conteúdo</th></tr>
+          </thead>
           <tbody>
-            <tr><td><strong>Bloco 1</strong></td><td>19h20 – 20h50</td><td>Fundamentos Docker, Dockerfile Multi-Stage + Quiz #1</td></tr>
-            <tr><td><strong>Intervalo</strong></td><td>20h50 – 21h20</td><td>☕ Pausa para Café e Networking (30 min)</td></tr>
-            <tr><td><strong>Bloco 2</strong></td><td>21h20 – 22h50</td><td>Quizzes #2 e #3 + Volumes & Networks + Hands-on Lab</td></tr>
+            <tr><td>19h20</td><td>Resgate da espiral e Desafio do Mini Mundo</td></tr>
+            <tr><td>19h40</td><td><strong>Ciclo 1</strong> Isolamento de processos + Atividade 1 · <strong>Ciclo 2</strong> Imagem, camadas e efemeridade + Atividade 2 · <strong>Ciclo 3</strong> Dockerfile e build + Atividade 3</td></tr>
+            <tr><td>20h40</td><td>Quiz 1</td></tr>
+            <tr><td>20h50</td><td>Intervalo (30 minutos)</td></tr>
+            <tr><td>21h20</td><td>Quizzes 2 e 3</td></tr>
+            <tr><td>21h35</td><td><strong>Ciclo 4</strong> Multi-stage + Atividade 4 · <strong>Ciclo 5</strong> Volumes + Atividade 5 · <strong>Ciclo 6</strong> Network e observação + Atividade 6 · <strong>Ciclo 7</strong> Registry e Docker Hub + Atividade 7</td></tr>
+            <tr><td>22h35</td><td>Agent Skills: conceito e demonstração</td></tr>
+            <tr><td>22h42</td><td>Entrega no formulário</td></tr>
           </tbody>
         </table>
-        <div class="slide-footer"><div class="footer-bar">03 – Docker I</div><div class="footer-page">3</div></div>
-      </section>
-      <section class="content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Isolamento com Docker</h2></div>
-        <div class="concept-cards">
-          <div class="concept-card"><h4>Multi-Stage Builds</h4><p>Técnica para criar imagens Docker leves, separando o build da execução.</p></div>
-          <div class="concept-card"><h4>Volumes & Networks</h4><p>Persistência de dados (Volumes) e comunicação isolada entre containers (Networks).</p></div>
-        </div>
-        <div class="slide-footer"><div class="footer-bar">03 – Docker I</div><div class="footer-page">4</div></div>
-      </section>
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Quiz #1 (Fixação do Bloco 1)</h2></div>
-        <div class="quiz-container">
-          <div class="quiz-question">Qual a principal vantagem do Dockerfile Multi-Stage?</div>
-          <ul class="quiz-options">
-            <li data-correct="true"><span class="option-letter">A</span>Reduzir o tamanho da imagem final mantendo apenas os artefatos necessários.</li>
-            <li data-correct="false"><span class="option-letter">B</span>Permitir rodar múltiplos containers no mesmo Dockerfile.</li>
-            <li data-correct="false"><span class="option-letter">C</span>Forçar o uso de Kubernetes.</li>
-            <li data-correct="false"><span class="option-letter">D</span>Aumentar a segurança trocando a senha do root.</li>
-          </ul>
-          <div class="quiz-feedback" data-correct-msg="Exato! Descartamos as ferramentas de build e levamos só o executável/artefato." data-incorrect-msg="Errado. Multi-stage foca em diminuir a imagem final."></div>
-        </div>
-        <div class="slide-footer"><div class="footer-bar">03 – Docker I</div><div class="footer-page">5</div></div>
-      </section>
-      <section class="content-slide" style="text-align:center;">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div style="margin-top:100px;">
-          <h2 style="font-size:2.5em; color:var(--fiap-pink);">☕ Pausa para Café</h2>
-          <h3 style="font-size:1.5em; color:var(--fiap-gray-light); margin-top:20px;">20h50 – 21h20 (30 minutos)</h3>
-          <p style="margin-top:40px; font-size:1.1em;">Na volta: Quizzes #2 e #3 + Hands-on Lab!</p>
-        </div>
-        <div class="slide-footer"><div class="footer-page">6</div></div>
-      </section>
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Quiz #2 (Retorno do Intervalo)</h2></div>
-        <div class="quiz-container">
-          <div class="quiz-question">Como garantimos que os dados de um banco de dados não se percam ao remover o container?</div>
-          <ul class="quiz-options">
-            <li data-correct="false"><span class="option-letter">A</span>Usando docker commit a cada segundo.</li>
-            <li data-correct="false"><span class="option-letter">B</span>Escrevendo logs no stdout.</li>
-            <li data-correct="true"><span class="option-letter">C</span>Mapeando um Docker Volume ou Bind Mount para a pasta de dados.</li>
-            <li data-correct="false"><span class="option-letter">D</span>Não é possível, Docker é 100% efêmero.</li>
-          </ul>
-          <div class="quiz-feedback" data-correct-msg="Certo! Volumes mantêm o ciclo de vida dos dados independente do container." data-incorrect-msg="Cuidado, volumes e bind mounts são as estratégias corretas de persistência."></div>
-        </div>
-        <div class="slide-footer"><div class="footer-bar">03 – Docker I</div><div class="footer-page">7</div></div>
-      </section>
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Quiz #3</h2></div>
-        <div class="quiz-container">
-          <div class="quiz-question">Qual comando cria uma rede isolada para nossos microserviços?</div>
-          <ul class="quiz-options">
-            <li data-correct="true"><span class="option-letter">A</span>docker network create minha-rede</li>
-            <li data-correct="false"><span class="option-letter">B</span>docker build --network</li>
-            <li data-correct="false"><span class="option-letter">C</span>docker compose up</li>
-            <li data-correct="false"><span class="option-letter">D</span>ipconfig /all</li>
-          </ul>
-          <div class="quiz-feedback" data-correct-msg="Correto! Isso permite que containers se comuniquem via DNS interno." data-incorrect-msg="Incorreto. A criação manual usa `docker network create`."></div>
-        </div>
-        <div class="slide-footer"><div class="footer-bar">03 – Docker I</div><div class="footer-page">8</div></div>
-      </section>
-      <section class="content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Hands-on Lab: LogiTech Enterprise</h2></div>
-        <div class="concept-cards">
-          <div class="concept-card"><h4>Missão</h4><p>Criar um Dockerfile Multi-Stage para uma API Python (LogiTech).</p></div>
-          <div class="concept-card"><h4>Passo a Passo</h4><p>1. Analisar app.py<br>2. Construir Dockerfile com estágio de build e runtime<br>3. Rodar e testar.</p></div>
-        </div>
-        <pre class="code-compact"><code class="language-dockerfile"># Dockerfile
-FROM python:3.10-slim AS builder
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install --user -r requirements.txt
 
-FROM python:3.10-slim
-WORKDIR /app
-COPY --from=builder /root/.local /root/.local
-COPY . .
-ENV PATH=/root/.local/bin:$PATH
-CMD ["python", "app.py"]</code></pre>
-        <div class="slide-footer"><div class="footer-bar">03 – Docker I</div><div class="footer-page">9</div></div>
+        <div class="takeaway">
+          <span class="takeaway-label">Entregável de hoje</span>
+          <p>O seu fork do lab com um commit por etapa, o <span class="mono">verificar.py</span> imprimindo 7 de 7 e a imagem do coletor publicada no seu Docker Hub.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Agenda do Encontro</div>
+          <div class="footer-page">3</div>
+        </div>
       </section>
+
+      <!-- ==================== 4: COMO A AULA FUNCIONA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Como a aula de hoje funciona</h2>
+        </div>
+
+        <p style="font-size:0.72em; margin-bottom:0;">Hoje o formato muda: em vez de teoria de um lado e um laboratório longo do outro, são <strong>sete ciclos curtos</strong>. Cada ciclo tem um bloco de teoria e uma prática individual imediata, que fecha com um commit.</p>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:13px; margin-top:10px;">
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Ciclos curtos</h4>
+            <p style="font-size:0.68em;">Teoria de 8 a 12 minutos, prática de 6 a 10. O conceito é usado enquanto ainda está fresco, sete vezes na noite.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Individual, um commit por etapa</h4>
+            <p style="font-size:0.68em;">A atividade é sua, no seu fork. Cada etapa termina com <span class="mono">feat(etapa-N): ...</span>, e a progressão fica visível no histórico.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Rede de segurança</h4>
+            <p style="font-size:0.68em;">Travou numa etapa? O diretório <span class="mono">resgate/</span> tem o arquivo mínimo para seguir. Quem usa registra em <span class="mono">docs/EVIDENCIAS.md</span>, sem drama.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Autoavaliação contínua</span>
+          <p>O <span class="mono">python3 verificar.py</span> roda a qualquer momento e diz exatamente qual etapa está faltando e por quê. Ninguém descobre no fim da noite que errou a etapa 2.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Como a Aula Funciona</div>
+          <div class="footer-page">4</div>
+        </div>
+      </section>
+
+      <!-- ==================== 5: PRÉ-REQUISITOS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Antes de começar: dois pré-requisitos</h2>
+        </div>
+
+        <div class="concept-cards" style="grid-template-columns: 1fr 1fr; gap:16px; margin-top:8px;">
+          <div class="concept-card" style="padding:16px 20px;">
+            <h4>1. Conta no Docker Hub, verificada</h4>
+            <p style="font-size:0.68em;">A etapa 7 publica a sua imagem em <a href="https://hub.docker.com" target="_blank" style="color:var(--fiap-pink); font-weight:700;">hub.docker.com</a>. Criar a conta e confirmar o e-mail custa de 5 a 10 minutos: façam <strong>agora</strong>, não às 22h30.</p>
+          </div>
+          <div class="concept-card" style="padding:16px 20px;">
+            <h4>2. Fork do Lab Kit</h4>
+            <p style="font-size:0.68em;"><strong>Fork</strong>, nunca clone direto, de<br><a href="https://github.com/josercf/mwe-2026-2-lab03-docker" target="_blank" style="color:var(--fiap-pink); font-weight:700;">josercf/mwe-2026-2-lab03-docker</a><br>e Codespace criado no seu fork: <span class="mono">Code &gt; Codespaces &gt; Create codespace on main</span>.</p>
+          </div>
+        </div>
+
+        <pre style="font-size:0.55em; margin:10px 0 0;"><code class="language-bash"># com o Codespace aberto, confirme que o Docker responde
+docker version
+docker run --rm hello-world</code></pre>
+
+        <div class="callout" style="margin-top:9px; padding:11px 16px;">
+          <p style="font-size:0.68em; margin:0;">O <span class="mono">post-create.sh</span> do devcontainer sobe o Ollama, baixa o modelo local e instala o <span class="mono">docker-agent</span> da etapa bônus. Espere ele terminar antes do primeiro comando.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Pré-requisitos</div>
+          <div class="footer-page">5</div>
+        </div>
+      </section>
+
+      <!-- ==================== 6: RESGATE DA ESPIRAL ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Resgate da Espiral: o que já está de pé</h2>
+        </div>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:13px; margin-top:8px;">
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Aula 01: a especificação</h4>
+            <p style="font-size:0.68em;">PRD e SDD do serviço de telemetria da LogiTech: Bounded Contexts, linguagem ubíqua e a escolha TCP ou UDP amarrada a requisito com número.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Aula 02: o código</h4>
+            <p style="font-size:0.68em;">O <strong>coletor UDP</strong> em Python escutando na 8081 e o <strong>gateway HTTP/SSE</strong> em Node servindo o rastreamento na 3000. Os dois funcionam, cada um solto na sua máquina.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Hoje: o empacotamento</h4>
+            <p style="font-size:0.68em;">Esses dois serviços, congelados em <span class="mono">servicos/</span>, viram <strong>imagens Docker</strong>: reproduzíveis, mínimas e publicadas num registry.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A espiral em uma frase</span>
+          <p>Ninguém escreve serviço novo hoje. O código é o da Aula 02; o que muda é como ele passa a ser executado, em qualquer máquina, sempre do mesmo jeito.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Resgate da Espiral</div>
+          <div class="footer-page">6</div>
+        </div>
+      </section>
+
+      <!-- ==================== 7: DESAFIO DO MINI MUNDO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Desafio do Mini Mundo: "na minha máquina funciona"</h2>
+        </div>
+
+        <p style="font-size:0.72em; margin-bottom:0;">O coletor da LogiTech roda perfeito no notebook de quem o escreveu. No servidor de homologação, o Python é outro, falta dependência, o caminho do arquivo de dados não existe. Cada ambiente é uma máquina montada à mão, e <strong>nenhuma é igual à outra</strong>.</p>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:13px; margin-top:10px;">
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>O sintoma</h4>
+            <p style="font-size:0.66em;">Deploy que funciona às 15h e quebra às 15h40, porque a máquina de produção tinha outra versão de runtime.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>A causa</h4>
+            <p style="font-size:0.66em;">O artefato entregue era só o código. O <strong>ambiente</strong> (runtime, dependências, variáveis, caminhos) ficava por conta de cada máquina.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>A missão de hoje</h4>
+            <p style="font-size:0.66em;">Entregar o ambiente junto com o código: uma <strong>imagem</strong> que roda idêntica no seu notebook, no Codespace e no servidor.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Restrição de gente grande</span>
+          <p>Não basta funcionar: a imagem de produção precisa ser mínima. Imagem de 1,6 GB para um script é custo de rede, de disco e de superfície de ataque, e hoje vocês vão medir essa diferença.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Desafio do Mini Mundo</div>
+          <div class="footer-page">7</div>
+        </div>
+      </section>
+
+      <!-- ==================== 8: PROCESSO COMUM [ANIM 1] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Um processo Linux comum: tudo compartilhado <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 300" style="max-height:330px;" role="img" aria-label="Três processos compartilhando PIDs, rede e sistema de arquivos">
+            <rect x="10" y="10" width="880" height="280" rx="10" fill="none" stroke="#333" stroke-width="2"/>
+            <text x="450" y="34" text-anchor="middle" font-size="15" font-weight="700" fill="#333">o mesmo host Linux</text>
+
+            <rect x="70" y="60" width="180" height="46" rx="6" fill="#ED145B" opacity="0.9"/>
+            <text x="160" y="88" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">coletor (PID 4312)</text>
+            <rect x="360" y="60" width="180" height="46" rx="6" fill="#ED145B" opacity="0.75"/>
+            <text x="450" y="88" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">gateway (PID 4313)</text>
+            <rect x="650" y="60" width="180" height="46" rx="6" fill="#ED145B" opacity="0.6"/>
+            <text x="740" y="88" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">postgres (PID 902)</text>
+
+            <g font-size="13" fill="#555">
+              <rect x="70" y="160" width="760" height="38" rx="6" fill="#f2f2f2" stroke="#ccc"/>
+              <text x="450" y="184" text-anchor="middle">árvore de processos única: qualquer um enxerga o PID de todos</text>
+              <rect x="70" y="206" width="760" height="38" rx="6" fill="#f2f2f2" stroke="#ccc"/>
+              <text x="450" y="230" text-anchor="middle">a mesma pilha de rede: as portas 8081 e 3000 são disputadas por todos</text>
+              <rect x="70" y="252" width="760" height="30" rx="6" fill="#f2f2f2" stroke="#ccc"/>
+              <text x="450" y="272" text-anchor="middle">o mesmo sistema de arquivos: /etc, /usr/lib e /dados são de todo mundo</text>
+            </g>
+
+            <g stroke="#999" stroke-width="1.6" fill="none">
+              <line x1="160" y1="106" x2="160" y2="160">
+                <animate attributeName="stroke" values="#999;#ED145B;#999" dur="6s" repeatCount="indefinite"/>
+              </line>
+              <line x1="450" y1="106" x2="450" y2="160">
+                <animate attributeName="stroke" values="#999;#999;#ED145B;#999" dur="6s" repeatCount="indefinite"/>
+              </line>
+              <line x1="740" y1="106" x2="740" y2="160">
+                <animate attributeName="stroke" values="#999;#999;#999;#ED145B;#999" dur="6s" repeatCount="indefinite"/>
+              </line>
+            </g>
+          </svg>
+          <figcaption>
+            Três serviços no mesmo host: um processo comum enxerga a árvore de PIDs inteira, disputa as mesmas portas e escreve no mesmo sistema de arquivos. A animação destaca, um a um, cada processo tocando os três recursos compartilhados. Se o coletor apagar um arquivo do gateway, nada o impede.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Isolamento de Processos</div>
+          <div class="footer-page">8</div>
+        </div>
+      </section>
+
+      <!-- ==================== 9: CHROOT ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>chroot: o primeiro isolamento, e por que não basta <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <p style="font-size:0.72em; margin-bottom:0;">Desde 1979 o Unix sabe trocar a raiz do sistema de arquivos de um processo: depois de <span class="mono">chroot /jaula</span>, o processo enxerga <span class="mono">/jaula</span> como se fosse <span class="mono">/</span>. Parece um container, mas só resolve <strong>um</strong> dos recursos compartilhados.</p>
+
+        <div class="side-by-side" style="margin-top:10px;">
+          <div class="side">
+            <h4 style="color:var(--fiap-pink);">O que o chroot isola</h4>
+            <p style="font-size:0.68em; margin:0;">A visão do <strong>sistema de arquivos</strong>: o processo não alcança nada fora da nova raiz (com as ferramentas certas, até isso escapa).</p>
+          </div>
+          <div class="side">
+            <h4 style="color:var(--fiap-pink);">O que continua compartilhado</h4>
+            <p style="font-size:0.68em; margin:0;">A árvore de <strong>PIDs</strong>, a pilha de <strong>rede</strong> e as portas, o <strong>hostname</strong>, a memória e a CPU sem limite algum. O processo enjaulado ainda derruba o host inteiro.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A pergunta que o kernel respondeu</span>
+          <p>E se cada recurso do sistema (processos, rede, montagens, hostname) pudesse ter a sua própria "troca de raiz"? Essa generalização são os namespaces, o próximo slide.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Isolamento de Processos</div>
+          <div class="footer-page">9</div>
+        </div>
+      </section>
+
+      <!-- ==================== 10: NAMESPACES [ANIM 2] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Namespaces: seis paredes ao redor do processo <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 310" style="max-height:320px;" role="img" aria-label="Namespaces se fechando ao redor do processo">
+            <rect x="400" y="150" width="100" height="44" rx="6" fill="#ED145B" opacity="0.9"/>
+            <text x="450" y="177" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">processo</text>
+
+            <g fill="none" stroke="#333" stroke-width="2">
+              <rect x="352" y="122" width="196" height="100" rx="8" opacity="0">
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.1;0.2;1" dur="8s" repeatCount="indefinite"/>
+              </rect>
+              <rect x="316" y="98" width="268" height="148" rx="8" opacity="0">
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.25;0.35;1" dur="8s" repeatCount="indefinite"/>
+              </rect>
+              <rect x="280" y="74" width="340" height="196" rx="8" opacity="0">
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.4;0.5;1" dur="8s" repeatCount="indefinite"/>
+              </rect>
+              <rect x="244" y="50" width="412" height="244" rx="8" opacity="0">
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.55;0.65;1" dur="8s" repeatCount="indefinite"/>
+              </rect>
+            </g>
+
+            <g font-size="13" fill="#555">
+              <text x="560" y="140" opacity="0">pid: vira o PID 1 do seu próprio mundo
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.1;0.2;1" dur="8s" repeatCount="indefinite"/>
+              </text>
+              <text x="596" y="116" opacity="0">net: perde as interfaces do host, ganha pilha própria
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.25;0.35;1" dur="8s" repeatCount="indefinite"/>
+              </text>
+              <text x="632" y="92" opacity="0">mnt: enxerga só as suas montagens
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.4;0.5;1" dur="8s" repeatCount="indefinite"/>
+              </text>
+              <text x="668" y="68" opacity="0">uts + ipc + user: hostname, filas e UIDs próprios
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.55;0.65;1" dur="8s" repeatCount="indefinite"/>
+              </text>
+            </g>
+          </svg>
+          <figcaption>
+            As paredes se fecham uma a uma. Namespace de PID: o processo deixa de ver os processos do host e vira o PID 1 do próprio mundo. De rede: perde as interfaces e ganha uma pilha própria. De montagem: só vê o seu sistema de arquivos. UTS, IPC e user completam as seis paredes: hostname, comunicação entre processos e mapeamento de usuários próprios.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Isolamento de Processos</div>
+          <div class="footer-page">10</div>
+        </div>
+      </section>
+
+      <!-- ==================== 11: CGROUPS [ANIM 3] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>cgroups: namespaces escondem, cgroups limitam <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <p style="font-size:0.7em; margin-bottom:0;">Namespace controla o que o processo <strong>enxerga</strong>; cgroup controla o que ele <strong>consome</strong>. Sem cgroup, um coletor com vazamento de memória continua derrubando o host inteiro, por mais isolado que esteja.</p>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 240" style="max-height:260px;" role="img" aria-label="Memória do processo subindo até o teto do cgroup">
+            <text x="80" y="40" font-size="14" font-weight="700" fill="#333">memória usada pelo coletor</text>
+            <rect x="80" y="60" width="620" height="46" rx="6" fill="#f2f2f2" stroke="#ccc"/>
+            <rect x="80" y="60" width="0" height="46" rx="6" fill="#ED145B" opacity="0.85">
+              <animate attributeName="width" values="60;240;430;520;520;60" keyTimes="0;0.25;0.5;0.7;0.9;1" dur="7s" repeatCount="indefinite"/>
+            </rect>
+            <line x1="600" y1="46" x2="600" y2="120" stroke="#333" stroke-width="3" stroke-dasharray="7,5"/>
+            <text x="600" y="140" text-anchor="middle" font-size="13" font-weight="700" fill="#333">teto do cgroup: --memory 256m</text>
+
+            <text x="740" y="88" font-size="13" fill="#b00020" font-weight="700" opacity="0">
+              OOM: o kernel corta
+              <animate attributeName="opacity" values="0;0;0;1;1;0" keyTimes="0;0.6;0.7;0.75;0.9;1" dur="7s" repeatCount="indefinite"/>
+            </text>
+
+            <g font-size="13" fill="#555">
+              <text x="80" y="185">O mesmo vale para CPU (<tspan font-family="JetBrains Mono, monospace">--cpus 0.5</tspan>), I/O e número de processos.</text>
+              <text x="80" y="210">Quem mata o processo que estourou é o kernel, não o Docker: o Docker só escreve o limite no cgroup.</text>
+            </g>
+          </svg>
+          <figcaption>
+            A barra de memória sobe conforme o coletor trabalha, encosta no teto declarado no cgroup e é cortada: o kernel encerra o processo (OOM kill) em vez de deixar o host inteiro degradar. O ciclo recomeça com o container reiniciado.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Isolamento de Processos</div>
+          <div class="footer-page">11</div>
+        </div>
+      </section>
+
+      <!-- ==================== 12: A SÍNTESE ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Container = processo + namespaces + cgroups + rootfs <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(4, 1fr); gap:12px; margin-top:8px;">
+          <div class="concept-card" style="padding:13px 15px;">
+            <h4>Processo</h4>
+            <p style="font-size:0.64em;">Um processo Linux comum, visível no <span class="mono">ps</span> do host. Não existe "máquina" nenhuma.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 15px;">
+            <h4>+ Namespaces</h4>
+            <p style="font-size:0.64em;">As seis paredes: ele só enxerga o próprio mundo de PIDs, rede, montagens, hostname, IPC e usuários.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 15px;">
+            <h4>+ cgroups</h4>
+            <p style="font-size:0.64em;">Teto de memória, CPU e I/O. O vizinho barulhento não derruba mais o host.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 15px;">
+            <h4>+ rootfs</h4>
+            <p style="font-size:0.64em;">Um sistema de arquivos próprio, empacotado na <strong>imagem</strong>: runtime, dependências e código juntos.</p>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:11px; padding:12px 18px;">
+          <p style="font-size:0.7em; margin:0;"><strong>Definição para levar para a prova:</strong> container é um processo Linux comum, isolado por namespaces, limitado por cgroups e enxergando um sistema de arquivos que veio de uma imagem. Nada mais que isso.</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Consequência direta</span>
+          <p>Container sobe em milissegundos e não desperdiça memória com kernel próprio, porque é só um processo. Essa é a diferença estrutural para a máquina virtual do próximo slide.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Isolamento de Processos</div>
+          <div class="footer-page">12</div>
+        </div>
+      </section>
+
+      <!-- ==================== 13: CONTAINER X VM ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Container x máquina virtual <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <div class="figure-split" style="grid-template-columns: 1fr 1fr; gap:20px; margin-top:4px; align-items:start;">
+          <figure class="slide-figure" style="margin:0;">
+            <svg viewBox="0 0 420 250" style="max-height:250px;" role="img" aria-label="Pilha da máquina virtual">
+              <rect x="10" y="210" width="400" height="32" rx="4" fill="#333"/><text x="210" y="231" text-anchor="middle" fill="#fff" font-size="13">hardware + SO do host + hypervisor</text>
+              <rect x="20" y="130" width="185" height="72" rx="4" fill="#f2f2f2" stroke="#999"/>
+              <rect x="215" y="130" width="185" height="72" rx="4" fill="#f2f2f2" stroke="#999"/>
+              <text x="112" y="152" text-anchor="middle" font-size="12" fill="#555">kernel convidado 1</text>
+              <text x="307" y="152" text-anchor="middle" font-size="12" fill="#555">kernel convidado 2</text>
+              <text x="112" y="172" text-anchor="middle" font-size="12" fill="#555">SO inteiro, GBs</text>
+              <text x="307" y="172" text-anchor="middle" font-size="12" fill="#555">SO inteiro, GBs</text>
+              <rect x="20" y="92" width="185" height="30" rx="4" fill="#ED145B" opacity="0.85"/><text x="112" y="112" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">app</text>
+              <rect x="215" y="92" width="185" height="30" rx="4" fill="#ED145B" opacity="0.85"/><text x="307" y="112" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">app</text>
+              <text x="210" y="40" text-anchor="middle" font-size="14" font-weight="700" fill="#333">Máquina virtual</text>
+              <text x="210" y="62" text-anchor="middle" font-size="12" fill="#777">boot em minutos, um kernel por VM</text>
+            </svg>
+          </figure>
+          <figure class="slide-figure" style="margin:0;">
+            <svg viewBox="0 0 420 250" style="max-height:250px;" role="img" aria-label="Pilha do container">
+              <rect x="10" y="210" width="400" height="32" rx="4" fill="#333"/><text x="210" y="231" text-anchor="middle" fill="#fff" font-size="13">hardware + um único kernel Linux</text>
+              <rect x="10" y="172" width="400" height="30" rx="4" fill="#666"/><text x="210" y="192" text-anchor="middle" fill="#fff" font-size="12">Docker Engine</text>
+              <rect x="20" y="92" width="120" height="72" rx="4" fill="#ED145B" opacity="0.9"/>
+              <rect x="150" y="92" width="120" height="72" rx="4" fill="#ED145B" opacity="0.75"/>
+              <rect x="280" y="92" width="120" height="72" rx="4" fill="#ED145B" opacity="0.6"/>
+              <text x="80" y="132" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">coletor</text>
+              <text x="210" y="132" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">gateway</text>
+              <text x="340" y="132" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">postgres</text>
+              <text x="210" y="40" text-anchor="middle" font-size="14" font-weight="700" fill="#333">Container</text>
+              <text x="210" y="62" text-anchor="middle" font-size="12" fill="#777">sobe em milissegundos, MBs por serviço</text>
+            </svg>
+          </figure>
+        </div>
+
+        <div class="takeaway" style="margin-top:6px;">
+          <span class="takeaway-label">Quando cada um</span>
+          <p>VM isola com kernel próprio: fronteira mais dura, custo maior. Container compartilha o kernel do host: denso e rápido, ideal para empacotar serviços como os da LogiTech. Não são rivais: o seu Codespace é uma VM rodando containers.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Isolamento de Processos</div>
+          <div class="footer-page">13</div>
+        </div>
+      </section>
+
+      <!-- ==================== 14: ARQUITETURA [ANIM 4] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O que acontece num docker run <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 300" style="max-height:320px;" role="img" aria-label="Fluxo do docker run da CLI ao container de pé">
+            <g font-size="13" font-weight="700">
+              <rect x="30" y="60" width="150" height="46" rx="6" fill="#333"/><text x="105" y="88" text-anchor="middle" fill="#fff">docker CLI</text>
+              <rect x="240" y="60" width="150" height="46" rx="6" fill="#555"/><text x="315" y="88" text-anchor="middle" fill="#fff">dockerd</text>
+              <rect x="450" y="60" width="150" height="46" rx="6" fill="#777"/><text x="525" y="88" text-anchor="middle" fill="#fff">containerd</text>
+              <rect x="660" y="60" width="150" height="46" rx="6" fill="#999"/><text x="735" y="88" text-anchor="middle" fill="#fff">runc</text>
+            </g>
+            <g stroke="#ED145B" stroke-width="3" fill="none">
+              <line x1="180" y1="83" x2="240" y2="83" opacity="0"><animate attributeName="opacity" values="0;1;1" keyTimes="0;0.12;1" dur="8s" repeatCount="indefinite"/></line>
+              <line x1="390" y1="83" x2="450" y2="83" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.3;0.42;1" dur="8s" repeatCount="indefinite"/></line>
+              <line x1="600" y1="83" x2="660" y2="83" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.55;0.67;1" dur="8s" repeatCount="indefinite"/></line>
+            </g>
+            <g font-size="12" fill="#555">
+              <text x="105" y="130" text-anchor="middle" opacity="0">docker run logitech/coletor<animate attributeName="opacity" values="0;1;1" keyTimes="0;0.12;1" dur="8s" repeatCount="indefinite"/></text>
+              <text x="315" y="130" text-anchor="middle" opacity="0">imagem não está local: pull<animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.18;0.3;1" dur="8s" repeatCount="indefinite"/></text>
+              <text x="525" y="130" text-anchor="middle" opacity="0">gerencia camadas e o ciclo de vida<animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.42;0.55;1" dur="8s" repeatCount="indefinite"/></text>
+              <text x="735" y="130" text-anchor="middle" opacity="0">cria namespaces e cgroups<animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.67;0.78;1" dur="8s" repeatCount="indefinite"/></text>
+            </g>
+            <rect x="300" y="170" width="300" height="40" rx="6" fill="#f2f2f2" stroke="#999" opacity="0">
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.2;0.3;1" dur="8s" repeatCount="indefinite"/>
+            </rect>
+            <text x="450" y="196" text-anchor="middle" font-size="13" fill="#555" opacity="0">registry (Docker Hub): camadas da imagem
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.2;0.3;1" dur="8s" repeatCount="indefinite"/>
+            </text>
+            <rect x="640" y="230" width="190" height="52" rx="8" fill="#ED145B" opacity="0">
+              <animate attributeName="opacity" values="0;0;0.9;0.9" keyTimes="0;0.78;0.9;1" dur="8s" repeatCount="indefinite"/>
+            </rect>
+            <text x="735" y="262" text-anchor="middle" fill="#fff" font-size="14" font-weight="700" opacity="0">container de pé
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.78;0.9;1" dur="8s" repeatCount="indefinite"/>
+            </text>
+          </svg>
+          <figcaption>
+            O comando percorre quatro programas: a CLI só fala com a API do dockerd; o dockerd busca a imagem no registry se ela não está local; o containerd administra camadas e ciclo de vida; e o runc é quem de fato cria namespaces e cgroups e executa o processo. O "Docker" que você digita nunca toca o kernel diretamente.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Isolamento de Processos</div>
+          <div class="footer-page">14</div>
+        </div>
+      </section>
+
+      <!-- ==================== 15: ATIVIDADE 1 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Atividade 1 de 7: veja os namespaces na prática</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:18px 24px;">
+          <h3>O mesmo processo, dois PIDs ao mesmo tempo</h3>
+          <pre style="margin:0 0 10px; font-size:0.52em;"><code class="language-bash"># Terminal 1: suba um container que fica de pé e diga como ele se vê por dentro
+docker run --rm --name isolado alpine sh -c 'echo "PID_DENTRO=$$"; hostname; ls /proc | wc -l; sleep 300'
+
+# Terminal 2: o MESMO processo, agora visto do host
+docker inspect -f '{{.State.Pid}}' isolado</code></pre>
+          <p style="margin:0; font-size:0.66em;">Registre em <span class="mono">etapas/01-isolamento/RESPOSTAS.md</span>: <span class="mono">PID_DENTRO</span> (o número baixo do Terminal 1), <span class="mono">PID_FORA</span> (o número alto do Terminal 2), <span class="mono">HOSTNAME_DENTRO</span> e <span class="mono">MOUNTS_DENTRO</span> (a contagem de <span class="mono">/proc</span>). Depois: <span class="mono">python3 verificar.py --etapa 1</span> e o commit <span class="mono">feat(etapa-1): isolamento de processos</span>.</p>
+          <p style="margin:8px 0 0; font-size:0.62em; border-top:1px solid rgba(255,255,255,0.2); padding-top:8px;"><strong style="color:var(--fiap-pink);">O que você acabou de provar:</strong> O mesmo processo tem PID 1 dentro do container e um PID alto no host: o namespace de PID existindo diante dos seus olhos. Container é processo, não máquina.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Atividade 1</div>
+          <div class="footer-page">15</div>
+        </div>
+      </section>
+
+      <!-- ==================== 16: IMAGEM X CONTAINER ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Imagem x container: o molde e a instância <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <div class="side-by-side" style="margin-top:8px;">
+          <div class="side">
+            <h4 style="color:var(--fiap-pink);">Imagem</h4>
+            <p style="font-size:0.68em; margin:0;"><strong>Imutável e compartilhável.</strong> O rootfs empacotado em camadas: runtime, dependências, código e metadados (qual comando rodar, quais portas expor). É o que se versiona, se publica e se audita.</p>
+          </div>
+          <div class="side">
+            <h4 style="color:var(--fiap-pink);">Container</h4>
+            <p style="font-size:0.68em; margin:0;"><strong>Vivo e descartável.</strong> Um processo criado a partir da imagem, com uma camada gravável em cima. Da mesma imagem saem dez containers idênticos, e destruir um não afeta os outros.</p>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:10px; padding:12px 18px;">
+          <p style="font-size:0.7em; margin:0;">Analogia direta com a Aula 05 que vem aí: a imagem está para o container como a <strong>classe</strong> está para o <strong>objeto</strong>. Ninguém edita um objeto para mudar a classe; ninguém edita um container para mudar a imagem.</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Regra operacional</span>
+          <p>Mudou o código? Constrói-se uma imagem nova e sobe-se um container novo. Entrar num container em produção para "dar um jeitinho" destrói a reprodutibilidade que justificou o Docker.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Imagem e Camadas</div>
+          <div class="footer-page">16</div>
+        </div>
+      </section>
+
+      <!-- ==================== 17: CAMADAS [ANIM 5] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Camadas e union filesystem <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 290" style="max-height:310px;" role="img" aria-label="Camadas da imagem empilhando com a camada gravável no topo">
+            <g font-size="13">
+              <rect x="200" y="230" width="500" height="40" rx="6" fill="#333" opacity="0">
+                <animate attributeName="opacity" values="0;1;1" keyTimes="0;0.12;1" dur="7s" repeatCount="indefinite"/>
+              </rect>
+              <text x="450" y="255" text-anchor="middle" fill="#fff" opacity="0">camada 1: python:3.12-alpine (base, só leitura)
+                <animate attributeName="opacity" values="0;1;1" keyTimes="0;0.12;1" dur="7s" repeatCount="indefinite"/>
+              </text>
+              <rect x="200" y="182" width="500" height="40" rx="6" fill="#555" opacity="0">
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.22;0.34;1" dur="7s" repeatCount="indefinite"/>
+              </rect>
+              <text x="450" y="207" text-anchor="middle" fill="#fff" opacity="0">camada 2: ENV LOGITECH_DADOS=/dados/telemetria.jsonl
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.22;0.34;1" dur="7s" repeatCount="indefinite"/>
+              </text>
+              <rect x="200" y="134" width="500" height="40" rx="6" fill="#777" opacity="0">
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.44;0.56;1" dur="7s" repeatCount="indefinite"/>
+              </rect>
+              <text x="450" y="159" text-anchor="middle" fill="#fff" opacity="0">camada 3: COPY server_telemetry.py (só leitura)
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.44;0.56;1" dur="7s" repeatCount="indefinite"/>
+              </text>
+              <rect x="200" y="86" width="500" height="40" rx="6" fill="#ED145B" opacity="0">
+                <animate attributeName="opacity" values="0;0;0.9;0.9" keyTimes="0;0.66;0.78;1" dur="7s" repeatCount="indefinite"/>
+              </rect>
+              <text x="450" y="111" text-anchor="middle" fill="#fff" font-weight="700" opacity="0">camada gravável do CONTAINER: tudo que o processo escreve
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.66;0.78;1" dur="7s" repeatCount="indefinite"/>
+              </text>
+              <text x="450" y="50" text-anchor="middle" font-size="14" fill="#555" opacity="0">o processo enxerga a fusão de todas: um único sistema de arquivos
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.78;0.9;1" dur="7s" repeatCount="indefinite"/>
+              </text>
+            </g>
+          </svg>
+          <figcaption>
+            As camadas da imagem empilham de baixo para cima, todas só leitura: base, configuração, código. Ao subir o container, o Docker acrescenta no topo uma camada gravável exclusiva daquele container. O union filesystem funde a pilha numa visão única. Camada compartilhada é baixada e armazenada uma vez só, por isso dez containers da mesma imagem quase não custam disco.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Imagem e Camadas</div>
+          <div class="footer-page">17</div>
+        </div>
+      </section>
+
+      <!-- ==================== 18: EFEMERIDADE ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A camada gravável morre junto com o container <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <p style="font-size:0.72em; margin-bottom:0;">Tudo que o processo escreve (logs, uploads, o <span class="mono">telemetria.jsonl</span> do coletor) vai para a camada gravável. E a camada gravável pertence ao <strong>container</strong>, não à imagem.</p>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:13px; margin-top:10px;">
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>docker stop</h4>
+            <p style="font-size:0.66em;">O processo para, a camada gravável <strong>continua existindo</strong>. Um <span class="mono">docker start</span> devolve tudo como estava.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>docker rm</h4>
+            <p style="font-size:0.66em;">O container é destruído e a camada gravável <strong>vai junto, sem lixeira</strong>. O que não estava em volume deixou de existir.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>Por desenho, não por defeito</h4>
+            <p style="font-size:0.66em;">Efemeridade é o que permite tratar container como gado, não como bicho de estimação: destruir e recriar é a operação normal.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A pergunta que fica armada</span>
+          <p>Se a telemetria da LogiTech é receita rastreada e a camada gravável evapora no primeiro rm, onde esses dados deveriam morar? Segurem essa pergunta: ela é o Ciclo 5, depois do intervalo.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Imagem e Camadas</div>
+          <div class="footer-page">18</div>
+        </div>
+      </section>
+
+      <!-- ==================== 19: CICLO DE VIDA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O ciclo de vida do container <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 250" style="max-height:270px;" role="img" aria-label="Estados do container: created, running, stopped, removido">
+            <g font-size="14" font-weight="700">
+              <rect x="40" y="90" width="160" height="50" rx="8" fill="#f2f2f2" stroke="#999" stroke-width="2"/><text x="120" y="120" text-anchor="middle" fill="#555">created</text>
+              <rect x="290" y="90" width="160" height="50" rx="8" fill="#ED145B" opacity="0.9"/><text x="370" y="120" text-anchor="middle" fill="#fff">running</text>
+              <rect x="540" y="90" width="160" height="50" rx="8" fill="#f2f2f2" stroke="#999" stroke-width="2"/><text x="620" y="120" text-anchor="middle" fill="#555">stopped</text>
+              <rect x="760" y="90" width="110" height="50" rx="8" fill="#333"/><text x="815" y="120" text-anchor="middle" fill="#fff">fim</text>
+            </g>
+            <g stroke="#555" stroke-width="2" fill="none" marker-end="none">
+              <path d="M 200 105 L 290 105"/>
+              <path d="M 450 105 L 540 105"/>
+              <path d="M 540 125 C 500 165 420 165 450 130" />
+              <path d="M 700 105 L 760 105"/>
+            </g>
+            <g font-size="12" fill="#555">
+              <text x="245" y="95" text-anchor="middle">start</text>
+              <text x="495" y="95" text-anchor="middle">stop</text>
+              <text x="485" y="175" text-anchor="middle">start de novo: os dados da camada gravável ainda estão lá</text>
+              <text x="730" y="95" text-anchor="middle">rm</text>
+              <text x="120" y="70" text-anchor="middle">docker create / run</text>
+              <text x="815" y="70" text-anchor="middle">camada gravável destruída</text>
+            </g>
+          </svg>
+          <figcaption>
+            create prepara, start executa, stop encerra o processo preservando a camada gravável, start devolve o container parado à vida, e rm o remove em definitivo, levando a camada gravável junto. O docker run que vocês mais usam é o atalho create + start.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:4px;">
+          <span class="takeaway-label">O detalhe que a Atividade 2 explora</span>
+          <p>Entre stopped e rm existe uma diferença enorme: parada não perde dado, remoção perde. A prova prática é a próxima atividade.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Imagem e Camadas</div>
+          <div class="footer-page">19</div>
+        </div>
+      </section>
+
+      <!-- ==================== 20: COMANDOS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Os comandos que você vai usar a noite inteira <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>Comando</th><th>O que faz</th><th>O detalhe que evita susto</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="mono">docker run -d --name c1 img</span></td><td>Cria e inicia um container</td><td><span class="mono">-d</span> solta o terminal; <span class="mono">--rm</span> remove sozinho ao parar</td></tr>
+            <tr><td><span class="mono">docker ps -a</span></td><td>Lista containers</td><td>Sem <span class="mono">-a</span>, os parados ficam invisíveis</td></tr>
+            <tr><td><span class="mono">docker logs -f c1</span></td><td>Lê o stdout do processo</td><td>Container bem feito loga no stdout, não em arquivo</td></tr>
+            <tr><td><span class="mono">docker exec -it c1 sh</span></td><td>Abre um processo extra dentro</td><td>Para inspecionar; não é porta de entrada para "consertar"</td></tr>
+            <tr><td><span class="mono">docker stop c1</span></td><td>Encerra com SIGTERM</td><td>Dados da camada gravável sobrevivem</td></tr>
+            <tr><td><span class="mono">docker rm c1</span></td><td>Remove o container</td><td>A camada gravável morre aqui, sem volta</td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Fluxo mental</span>
+          <p>run para nascer, ps para enxergar, logs para entender, exec para investigar, stop para pausar, rm para encerrar de vez. As sete etapas de hoje usam exatamente esse vocabulário.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Imagem e Camadas</div>
+          <div class="footer-page">20</div>
+        </div>
+      </section>
+
+      <!-- ==================== 21: ATIVIDADE 2 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Atividade 2 de 7: o coletor sem Dockerfile, e a prova da efemeridade</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>Rode o coletor da Aula 02 dentro de um container, sem escrever Dockerfile</h3>
+          <pre style="margin:0 0 8px; font-size:0.5em;"><code class="language-bash"># o código entra por bind mount; a imagem é o python:3.12-alpine puro
+docker run -d --name coletor-cru -v "$PWD/servicos/coletor:/app" -w /app \
+  python:3.12-alpine python server_telemetry.py
+
+docker exec coletor-cru sh -c 'echo "evidencia" > /tmp/prova.txt && cat /tmp/prova.txt'
+docker ps                                  # anote o CONTAINER_ID
+docker stop coletor-cru && docker rm coletor-cru
+
+# suba OUTRO container da mesma imagem e procure o arquivo
+docker run --rm python:3.12-alpine cat /tmp/prova.txt   # No such file: sumiu</code></pre>
+          <p style="margin:0; font-size:0.64em;">Registre em <span class="mono">etapas/02-imagem/RESPOSTAS.md</span>: <span class="mono">CONTAINER_ID</span> e <span class="mono">ARQUIVO_APOS_RM: sumiu</span>. Depois <span class="mono">verificar.py --etapa 2</span> e o commit <span class="mono">feat(etapa-2)</span>.</p>
+          <p style="margin:8px 0 0; font-size:0.62em; border-top:1px solid rgba(255,255,255,0.2); padding-top:8px;"><strong style="color:var(--fiap-pink);">O que você acabou de provar:</strong> Dá para rodar qualquer código numa imagem pronta, e tudo que se escreve na camada gravável evapora no rm. Reprodutível ainda não é: o comando gigante do run é exatamente o que o Dockerfile vai eliminar.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Atividade 2</div>
+          <div class="footer-page">21</div>
+        </div>
+      </section>
+
+      <!-- ==================== 22: DOCKERFILE VIRA CAMADA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O Dockerfile: cada instrução vira uma camada <a href="#/ref-slide" class="ref-badge" title="Ver referências">[3]</a></h2>
+        </div>
+
+        <div class="figure-split" style="grid-template-columns: 1fr 1.1fr; gap:18px; margin-top:4px; align-items:center;">
+          <pre style="margin:0; font-size:0.55em;"><code class="language-dockerfile">FROM python:3.12-alpine
+WORKDIR /app
+ENV LOGITECH_DADOS=/dados/telemetria.jsonl
+COPY servicos/coletor/server_telemetry.py .
+EXPOSE 8081/udp
+CMD ["python", "server_telemetry.py"]</code></pre>
+          <figure class="slide-figure" style="margin:0;">
+            <svg viewBox="0 0 460 240" style="max-height:240px;" role="img" aria-label="Instruções do Dockerfile mapeadas em camadas">
+              <g font-size="12">
+                <rect x="30" y="190" width="400" height="34" rx="5" fill="#333"/><text x="230" y="212" text-anchor="middle" fill="#fff">FROM: todas as camadas da base</text>
+                <rect x="30" y="150" width="400" height="34" rx="5" fill="#555"/><text x="230" y="172" text-anchor="middle" fill="#fff">WORKDIR + ENV: metadados</text>
+                <rect x="30" y="110" width="400" height="34" rx="5" fill="#777"/><text x="230" y="132" text-anchor="middle" fill="#fff">COPY: camada com o código</text>
+                <rect x="30" y="70" width="400" height="34" rx="5" fill="#999"/><text x="230" y="92" text-anchor="middle" fill="#fff">EXPOSE + CMD: metadados de execução</text>
+                <text x="230" y="40" text-anchor="middle" font-size="13" fill="#555">docker build -t logitech/coletor . lê de cima para baixo</text>
+              </g>
+            </svg>
+          </figure>
+        </div>
+
+        <div class="takeaway" style="margin-top:6px;">
+          <span class="takeaway-label">O ganho sobre a Atividade 2</span>
+          <p>Aquele docker run quilométrico virou texto versionado no Git. Quem clona o repositório reconstrói o ambiente idêntico com um docker build: é a receita, não a torta.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Dockerfile e Build</div>
+          <div class="footer-page">22</div>
+        </div>
+      </section>
+
+      <!-- ==================== 23: INSTRUÇÕES QUE IMPORTAM ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>As instruções que importam <a href="#/ref-slide" class="ref-badge" title="Ver referências">[3]</a></h2>
+        </div>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>Instrução</th><th>Para que serve</th><th>Erro clássico</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="mono">FROM</span></td><td>Imagem base; com <span class="mono">AS nome</span> abre um estágio</td><td>Base gigante para rodar um script</td></tr>
+            <tr><td><span class="mono">WORKDIR</span></td><td>Diretório de trabalho das próximas instruções</td><td>Encadear <span class="mono">cd</span> dentro de RUN</td></tr>
+            <tr><td><span class="mono">COPY</span></td><td>Leva arquivos do contexto para a imagem</td><td><span class="mono">COPY . .</span> arrastando lixo e segredo</td></tr>
+            <tr><td><span class="mono">RUN</span></td><td>Executa comando no build, gera camada</td><td>Um RUN por comando, inflando camadas</td></tr>
+            <tr><td><span class="mono">ENV</span></td><td>Variável presente no build e na execução</td><td>Cravar segredo em ENV: fica na imagem</td></tr>
+            <tr><td><span class="mono">EXPOSE</span></td><td>Documenta a porta do serviço</td><td>Achar que EXPOSE publica a porta: quem publica é <span class="mono">-p</span></td></tr>
+            <tr><td><span class="mono">USER</span></td><td>Troca o usuário que executa o processo</td><td>Esquecer, e rodar tudo como root</td></tr>
+            <tr><td><span class="mono">CMD</span></td><td>Comando padrão do container</td><td>Confundir com ENTRYPOINT, próximo slide</td></tr>
+          </tbody>
+        </table>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Dockerfile e Build</div>
+          <div class="footer-page">23</div>
+        </div>
+      </section>
+
+      <!-- ==================== 24: CMD X ENTRYPOINT ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>CMD x ENTRYPOINT <a href="#/ref-slide" class="ref-badge" title="Ver referências">[3]</a></h2>
+        </div>
+
+        <div class="side-by-side" style="margin-top:8px;">
+          <div class="side">
+            <h4 style="color:var(--fiap-pink);">CMD: o padrão substituível</h4>
+            <p style="font-size:0.66em; margin:0 0 8px;">O que roda se ninguém pedir outra coisa. Qualquer argumento no <span class="mono">docker run</span> o substitui inteiro.</p>
+            <pre style="margin:0; font-size:0.52em;"><code class="language-dockerfile">CMD ["python", "server_telemetry.py"]
+# docker run img            -> roda o coletor
+# docker run img sh         -> abre o shell, CMD ignorado</code></pre>
+          </div>
+          <div class="side">
+            <h4 style="color:var(--fiap-pink);">ENTRYPOINT: o executável fixo</h4>
+            <p style="font-size:0.66em; margin:0 0 8px;">Sempre roda; os argumentos do <span class="mono">docker run</span> viram parâmetros dele. CMD, se existir, vira o parâmetro padrão.</p>
+            <pre style="margin:0; font-size:0.52em;"><code class="language-dockerfile">ENTRYPOINT ["python", "server_telemetry.py"]
+CMD ["--porta", "8081"]
+# docker run img --porta 9090 -> troca só o parâmetro</code></pre>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Regra prática</span>
+          <p>Serviço com um executável claro, como o coletor: ENTRYPOINT para o programa, CMD para os parâmetros padrão. Imagem de propósito geral, como a alpine: só CMD. Sempre na forma de lista JSON, que não abre shell intermediário.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Dockerfile e Build</div>
+          <div class="footer-page">24</div>
+        </div>
+      </section>
+
+      <!-- ==================== 25: CACHE [ANIM 6] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Cache de camadas: a ordem das linhas decide <a href="#/ref-slide" class="ref-badge" title="Ver referências">[3]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 280" style="max-height:300px;" role="img" aria-label="Segundo build reaproveitando cache até a camada que mudou">
+            <text x="235" y="35" text-anchor="middle" font-size="14" font-weight="700" fill="#333">1º build: tudo executa</text>
+            <text x="665" y="35" text-anchor="middle" font-size="14" font-weight="700" fill="#333">2º build: só o que mudou</text>
+            <g font-size="12">
+              <rect x="60" y="50" width="350" height="34" rx="5" fill="#ED145B" opacity="0.15">
+                <animate attributeName="opacity" values="0.15;0.9;0.9;0.15" keyTimes="0;0.1;0.9;1" dur="7s" repeatCount="indefinite"/>
+              </rect><text x="235" y="72" text-anchor="middle" fill="#333">FROM node:22-alpine</text>
+              <rect x="60" y="92" width="350" height="34" rx="5" fill="#ED145B" opacity="0.15">
+                <animate attributeName="opacity" values="0.15;0.15;0.9;0.9;0.15" keyTimes="0;0.15;0.25;0.9;1" dur="7s" repeatCount="indefinite"/>
+              </rect><text x="235" y="114" text-anchor="middle" fill="#333">COPY package.json .</text>
+              <rect x="60" y="134" width="350" height="34" rx="5" fill="#ED145B" opacity="0.15">
+                <animate attributeName="opacity" values="0.15;0.15;0.9;0.9;0.15" keyTimes="0;0.3;0.4;0.9;1" dur="7s" repeatCount="indefinite"/>
+              </rect><text x="235" y="156" text-anchor="middle" fill="#333">RUN npm install  (2 min)</text>
+              <rect x="60" y="176" width="350" height="34" rx="5" fill="#ED145B" opacity="0.15">
+                <animate attributeName="opacity" values="0.15;0.15;0.9;0.9;0.15" keyTimes="0;0.45;0.55;0.9;1" dur="7s" repeatCount="indefinite"/>
+              </rect><text x="235" y="198" text-anchor="middle" fill="#333">COPY server.js .</text>
+
+              <rect x="490" y="50" width="350" height="34" rx="5" fill="#4a4"  opacity="0.25"/><text x="665" y="72" text-anchor="middle" fill="#333">CACHED</text>
+              <rect x="490" y="92" width="350" height="34" rx="5" fill="#4a4" opacity="0.25"/><text x="665" y="114" text-anchor="middle" fill="#333">CACHED (package.json não mudou)</text>
+              <rect x="490" y="134" width="350" height="34" rx="5" fill="#4a4" opacity="0.25"/><text x="665" y="156" text-anchor="middle" fill="#333">CACHED (npm install pulado)</text>
+              <rect x="490" y="176" width="350" height="34" rx="5" fill="#ED145B" opacity="0.2">
+                <animate attributeName="opacity" values="0.2;0.2;0.9;0.9;0.2" keyTimes="0;0.6;0.7;0.9;1" dur="7s" repeatCount="indefinite"/>
+              </rect><text x="665" y="198" text-anchor="middle" fill="#333">só o server.js que mudou executa</text>
+            </g>
+            <text x="450" y="250" text-anchor="middle" font-size="13" fill="#555">a primeira camada diferente invalida TODAS as seguintes: dependência vem antes de código</text>
+          </svg>
+          <figcaption>
+            No primeiro build todas as camadas executam e o npm install custa minutos. No segundo, com só o server.js alterado, as três primeiras vêm do cache e apenas a cópia do código roda. Se o COPY do código viesse antes do npm install, qualquer mudança de uma linha pagaria a instalação inteira de novo.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Dockerfile e Build</div>
+          <div class="footer-page">25</div>
+        </div>
+      </section>
+
+      <!-- ==================== 26: DOCKERIGNORE ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>.dockerignore e o contexto de build <a href="#/ref-slide" class="ref-badge" title="Ver referências">[3]</a></h2>
+        </div>
+
+        <p style="font-size:0.7em; margin-bottom:0;">O <span class="mono">.</span> no fim do <span class="mono">docker build -t img .</span> é o <strong>contexto</strong>: tudo daquele diretório é enviado ao daemon antes do build começar. Sem filtro, vão junto o <span class="mono">.git</span>, o <span class="mono">node_modules</span>, os dados de teste e qualquer segredo esquecido.</p>
+
+        <div class="figure-split" style="grid-template-columns: 1fr 1fr; gap:18px; margin-top:8px; align-items:start;">
+          <div>
+            <h4 style="color:var(--fiap-pink); font-size:0.72em; margin:0 0 6px;">.dockerignore do lab de hoje</h4>
+            <pre style="margin:0; font-size:0.55em;"><code>.git
+node_modules
+__pycache__
+dados/
+etapas/
+docs/
+baseline/
+resgate/</code></pre>
+          </div>
+          <div class="concept-cards" style="grid-template-columns:1fr; gap:9px; margin-top:0;">
+            <div class="concept-card" style="padding:11px 15px;">
+              <h4>Build mais rápido</h4>
+              <p style="font-size:0.64em;">Contexto pequeno viaja em milissegundos. Um <span class="mono">node_modules</span> de 300 MB no contexto atrasa todo build.</p>
+            </div>
+            <div class="concept-card" style="padding:11px 15px;">
+              <h4>Cache mais estável</h4>
+              <p style="font-size:0.64em;">Arquivo irrelevante que muda (um log, um dado de teste) invalida o cache do <span class="mono">COPY</span> sem necessidade.</p>
+            </div>
+            <div class="concept-card" style="padding:11px 15px;">
+              <h4>Segredo fora da imagem</h4>
+              <p style="font-size:0.64em;">O que não entra no contexto não tem como vazar para dentro de uma camada.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Dockerfile e Build</div>
+          <div class="footer-page">26</div>
+        </div>
+      </section>
+
+      <!-- ==================== 27: ATIVIDADE 3 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Atividade 3 de 7: escreva o Dockerfile.coletor do zero</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>O esqueleto tem lacunas de propósito: preencha as quatro</h3>
+          <pre style="margin:0 0 8px; font-size:0.52em;"><code class="language-dockerfile"># Dockerfile.coletor, na RAIZ do laboratório
+FROM ________________                      # a base do Ciclo 2, a mesma da Atividade 2
+WORKDIR /app
+ENV LOGITECH_DADOS=______________________  # o caminho absoluto do arquivo de telemetria
+COPY ____________________________ .        # só o arquivo do coletor, nada de COPY . .
+EXPOSE ________                            # a porta e o protocolo do coletor
+CMD ["python", "server_telemetry.py"]</code></pre>
+          <pre style="margin:0 0 8px; font-size:0.52em;"><code class="language-bash">docker build -f Dockerfile.coletor -t verificar-coletor:etapa3 .
+python3 verificar.py --etapa 3</code></pre>
+          <p style="margin:0; font-size:0.64em;">Sem marcador numérico nesta etapa: o critério é o build passar de verdade. Commit <span class="mono">feat(etapa-3): primeiro Dockerfile do coletor</span>.</p>
+          <p style="margin:8px 0 0; font-size:0.62em; border-top:1px solid rgba(255,255,255,0.2); padding-top:8px;"><strong style="color:var(--fiap-pink);">Travou?:</strong> O roteiro completo está em etapas/03-dockerfile/RESPOSTAS.md, e o resgate/ existe. Registre o uso em docs/EVIDENCIAS.md e siga em frente: a etapa 4 depende desta.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Atividade 3</div>
+          <div class="footer-page">27</div>
+        </div>
+      </section>
+
+      <!-- ==================== 28: QUIZ 1 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container" data-quiz-key="aula03-quiz1">
+          <div class="quiz-question">Qual a principal vantagem do build multi-stage no Dockerfile para ambientes corporativos?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> Executar o build em paralelo usando todos os núcleos da máquina, encurtando o tempo de compilação.</li>
+            <li data-correct="true"><span class="option-letter">B</span> Separar o ambiente de compilação do ambiente de execução final: a imagem de produção sai sem compilador, sem gerenciador de pacotes e sem código-fonte desnecessário, mais leve e mais segura.</li>
+            <li data-correct="false"><span class="option-letter">C</span> Permitir que vários processos rodem dentro do mesmo container, um por estágio.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Dispensar o registry, porque cada estágio já embute a imagem final no host.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. O estágio builder compila e resolve dependências; o runtime leva só o artefato pronto. É assim que a imagem do coletor deixa de carregar 1,6 GB de ferramental."
+               data-incorrect-msg="Incorreto. Multi-stage não é sobre paralelismo nem sobre processos: é sobre o que entra na imagem final. Build separado da execução, imagem leve, superfície de ataque menor.">
+          </div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz1Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz1Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Verificação de Aprendizado</div>
+          <div class="footer-page">28</div>
+        </div>
+      </section>
+
+      <!-- ==================== 29: INTERVALO ==================== -->
+      <section class="content-slide" style="text-align:center; background:transparent;"
+               data-background-image="../assets/img/coffee-relax.jpg"
+               data-background-size="cover"
+               data-background-opacity="0.45">
+        <div style="margin-top:150px;">
+          <h2 style="font-size:4em; color:var(--fiap-pink); margin-bottom:10px; text-shadow:0 2px 12px rgba(255,255,255,0.9);">Intervalo</h2>
+          <h3 style="font-size:2.2em; color:var(--fiap-dark); text-shadow:0 2px 10px rgba(255,255,255,0.9);">30 minutos</h3>
+
+          <div class="quiz-timer-box" style="margin:40px auto 0 auto; padding:15px 30px; font-size:1.3em;">
+            <button class="quiz-timer-btn" style="width:40px; height:40px; font-size:1.2em;" onclick="startTimer('breakTimer', 1800)" aria-label="Iniciar cronômetro do intervalo">&#9654;</button>
+            <span id="breakTimer">30:00</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 30: QUIZ 2 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container" data-quiz-key="aula03-quiz2">
+          <div class="quiz-question">Qual a diferença entre um volume Docker e um bind mount, e quando usar cada um?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> O bind mount é mais rápido porque copia os arquivos para dentro da imagem no momento do build.</li>
+            <li data-correct="false"><span class="option-letter">B</span> Não há diferença prática: são dois nomes para o mesmo mecanismo de persistência.</li>
+            <li data-correct="true"><span class="option-letter">C</span> O volume é criado e gerenciado pelo Docker dentro do host, ideal para dados de produção; o bind mount mapeia uma pasta escolhida por você, ideal para o ciclo de desenvolvimento local.</li>
+            <li data-correct="false"><span class="option-letter">D</span> O volume só funciona em Linux, enquanto o bind mount funciona em qualquer sistema operacional.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. Volume: o Docker administra o ciclo de vida, como o logitech-telemetria da Atividade 5. Bind mount: você aponta a pasta, como o código-fonte na Atividade 2."
+               data-incorrect-msg="Incorreto. Nenhum dos dois copia para a imagem, e eles não são equivalentes: volume é gerenciado pelo Docker para dados; bind mount espelha uma pasta sua para desenvolvimento.">
+          </div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz2Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz2Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Verificação de Aprendizado</div>
+          <div class="footer-page">30</div>
+        </div>
+      </section>
+
+      <!-- ==================== 31: QUIZ 3 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container" data-quiz-key="aula03-quiz3">
+          <div class="quiz-question">O que acontece com os dados salvos dentro do sistema de arquivos de um container quando ele é destruído sem o uso de volumes?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> O Docker move os dados automaticamente para uma área de backup no host antes de remover o container.</li>
+            <li data-correct="false"><span class="option-letter">B</span> Os dados são gravados de volta na imagem e reaparecem no próximo docker run.</li>
+            <li data-correct="false"><span class="option-letter">C</span> Nada acontece: o sistema de arquivos do container mora no host e sobrevive à remoção.</li>
+            <li data-correct="true"><span class="option-letter">D</span> Todos os dados da camada gravável são perdidos permanentemente, porque o container é efêmero por natureza.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. Foi a prova da Atividade 2: o arquivo escrito na camada gravável não existia mais depois do docker rm. Dado que importa mora em volume."
+               data-incorrect-msg="Incorreto. Não existe backup automático e a imagem nunca é alterada por um container. A camada gravável morre com o rm, como a Atividade 2 mostrou.">
+          </div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz3Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz3Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Verificação de Aprendizado</div>
+          <div class="footer-page">31</div>
+        </div>
+      </section>
+
+      <!-- ==================== 32: O PROBLEMA DO TAMANHO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O problema: 1,6 GB para rodar um script <a href="#/ref-slide" class="ref-badge" title="Ver referências">[4]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 240" style="max-height:250px;" role="img" aria-label="Comparação de tamanho entre imagem ingênua e multi-stage">
+            <g font-size="13">
+              <text x="60" y="45" font-weight="700" fill="#333">coletor Python</text>
+              <rect x="60" y="55" width="700" height="30" rx="5" fill="#b0b0b0"/>
+              <text x="770" y="76" font-size="12" fill="#333">1638,4 MB (python:3.12 completa)</text>
+              <rect x="60" y="92" width="34" height="30" rx="5" fill="#ED145B"/>
+              <text x="104" y="113" font-size="12" fill="#ED145B" font-weight="700">78,9 MB multi-stage alpine: redução de 95,2%</text>
+
+              <text x="60" y="160" font-weight="700" fill="#333">gateway Node</text>
+              <rect x="60" y="170" width="709" height="30" rx="5" fill="#b0b0b0"/>
+              <text x="778" y="191" font-size="12" fill="#333">1658,9 MB</text>
+              <rect x="60" y="207" width="98" height="30" rx="5" fill="#ED145B"/>
+              <text x="168" y="228" font-size="12" fill="#ED145B" font-weight="700">229,0 MB: redução de 86,2%</text>
+            </g>
+          </svg>
+          <figcaption>
+            Números medidos nos serviços reais deste laboratório, em arm64: a mesma aplicação, o mesmo comportamento, e uma diferença de vinte vezes no tamanho. A imagem ingênua carrega compilador, gerenciador de pacotes e ferramental de build que o processo em produção nunca usa. Em amd64 os valores absolutos variam um pouco; a proporção, não.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:4px;">
+          <span class="takeaway-label">Por que a LogiTech se importa</span>
+          <p>Tamanho é custo de registry, tempo de deploy em cada nó da frota e superfície de ataque para o time de segurança auditar. O critério de hoje: redução mínima de 80% nos dois serviços, e coletor final abaixo de 100 MB.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Multi-Stage</div>
+          <div class="footer-page">32</div>
+        </div>
+      </section>
+
+      <!-- ==================== 33: MULTI-STAGE [ANIM 7] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Multi-stage: builder constrói, runtime executa <a href="#/ref-slide" class="ref-badge" title="Ver referências">[4]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 280" style="max-height:290px;" role="img" aria-label="Artefato saltando do estágio builder para o runtime">
+            <rect x="60" y="60" width="330" height="170" rx="10" fill="#f2f2f2" stroke="#999" stroke-width="2">
+              <animate attributeName="opacity" values="1;1;0.25;0.25;1" keyTimes="0;0.55;0.7;0.9;1" dur="8s" repeatCount="indefinite"/>
+            </rect>
+            <text x="225" y="88" text-anchor="middle" font-size="14" font-weight="700" fill="#333">FROM node:22-alpine AS builder
+              <animate attributeName="opacity" values="1;1;0.25;0.25;1" keyTimes="0;0.55;0.7;0.9;1" dur="8s" repeatCount="indefinite"/>
+            </text>
+            <g font-size="12" fill="#555">
+              <text x="225" y="120" text-anchor="middle">package.json + npm install</text>
+              <text x="225" y="145" text-anchor="middle">compilador, cache do npm, devDependencies</text>
+              <text x="225" y="200" text-anchor="middle" font-style="italic">tudo isso fica para trás</text>
+            </g>
+            <rect x="150" y="158" width="150" height="30" rx="5" fill="#ED145B" opacity="0.9"/>
+            <text x="225" y="178" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">node_modules prontos</text>
+
+            <rect x="510" y="60" width="330" height="170" rx="10" fill="#fff" stroke="#ED145B" stroke-width="3"/>
+            <text x="675" y="88" text-anchor="middle" font-size="14" font-weight="700" fill="#333">FROM node:22-alpine AS runtime</text>
+            <g font-size="12" fill="#555">
+              <text x="675" y="120" text-anchor="middle">COPY --from=builder /build/node_modules</text>
+              <text x="675" y="145" text-anchor="middle">server.js + public/ + USER logitech</text>
+              <text x="675" y="205" text-anchor="middle" font-weight="700" fill="#ED145B">só o necessário para executar</text>
+            </g>
+            <rect x="600" y="158" width="150" height="30" rx="5" fill="#ED145B" opacity="0">
+              <animate attributeName="opacity" values="0;0;0.9;0.9" keyTimes="0;0.35;0.5;1" dur="8s" repeatCount="indefinite"/>
+            </rect>
+            <text x="675" y="178" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" opacity="0">node_modules prontos
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.35;0.5;1" dur="8s" repeatCount="indefinite"/>
+            </text>
+            <line x1="300" y1="173" x2="600" y2="173" stroke="#ED145B" stroke-width="3" stroke-dasharray="8,6" opacity="0">
+              <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.2;0.45;0.55" dur="8s" repeatCount="indefinite"/>
+            </line>
+            <text x="450" y="255" text-anchor="middle" font-size="13" fill="#555">a imagem final é SÓ o último estágio: o builder é descartado depois do COPY --from</text>
+          </svg>
+          <figcaption>
+            O artefato pronto (as dependências instaladas) salta do estágio builder para o runtime pelo COPY --from, e em seguida o builder inteiro esmaece: compilador, cache e devDependencies não entram na imagem final. Publicado mesmo, só o último estágio.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Multi-Stage</div>
+          <div class="footer-page">33</div>
+        </div>
+      </section>
+
+      <!-- ==================== 34: A BASE IMPORTA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A base importa: full, slim, alpine, distroless <a href="#/ref-slide" class="ref-badge" title="Ver referências">[4]</a></h2>
+        </div>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>Base</th><th>Ordem de grandeza</th><th>O que traz</th><th>Quando usar</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="mono">python:3.12</span></td><td>~1 GB</td><td>Debian inteiro, compiladores, headers</td><td>Build de dependência nativa complicada</td></tr>
+            <tr><td><span class="mono">python:3.12-slim</span></td><td>~150 MB</td><td>Debian enxuto, sem toolchain</td><td>Compatibilidade glibc com tamanho razoável</td></tr>
+            <tr><td><span class="mono">python:3.12-alpine</span></td><td>~50 MB</td><td>Alpine com musl, quase nada além do runtime</td><td>O padrão do lab de hoje: serviço pequeno e simples</td></tr>
+            <tr><td><span class="mono">distroless</span></td><td>~30 MB</td><td>Nem shell tem: runtime e mais nada</td><td>Produção endurecida; sem exec para depurar</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout" style="margin-top:8px; padding:11px 16px;">
+          <p style="font-size:0.66em; margin:0;">Alpine usa <strong>musl</strong> em vez de glibc: pacote Python com binário nativo pode precisar compilar. Para o coletor, que é biblioteca padrão pura, é indiferente; num projeto com NumPy a conta muda, e a slim pode sair mais barata que a alpine compilando.</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Decisão de engenharia, não de moda</span>
+          <p>A escolha da base é um trade-off entre tamanho, compatibilidade e capacidade de depuração. O que não se defende em revisão de código é a full em produção sem justificativa.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Multi-Stage</div>
+          <div class="footer-page">34</div>
+        </div>
+      </section>
+
+      <!-- ==================== 35: NÃO-ROOT ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Usuário não-root, e o que nunca entra na imagem <a href="#/ref-slide" class="ref-badge" title="Ver referências">[4]</a></h2>
+        </div>
+
+        <div class="figure-split" style="grid-template-columns: 1fr 1fr; gap:18px; margin-top:4px; align-items:start;">
+          <div>
+            <h4 style="color:var(--fiap-pink); font-size:0.72em; margin:0 0 6px;">Por padrão, o processo roda como root</h4>
+            <pre style="margin:0; font-size:0.52em;"><code class="language-dockerfile">FROM python:3.12-alpine AS runtime
+RUN adduser -D -u 10001 logitech
+WORKDIR /app
+COPY --from=builder /build/server_telemetry.py .
+USER logitech
+EXPOSE 8081/udp
+CMD ["python", "server_telemetry.py"]</code></pre>
+            <p style="font-size:0.62em; margin:6px 0 0; color:#555;">Escapou uma falha no processo? Como root do container, o estrago possível é muito maior. <span class="mono">USER</span> custa duas linhas.</p>
+          </div>
+          <div class="concept-cards" style="grid-template-columns:1fr; gap:9px; margin-top:0;">
+            <div class="concept-card" style="padding:11px 15px;">
+              <h4>Nunca entra na imagem final</h4>
+              <p style="font-size:0.64em;">Compilador, gerenciador de pacotes, testes, <span class="mono">.git</span>, <span class="mono">node_modules</span> de desenvolvimento e o próprio Dockerfile.</p>
+            </div>
+            <div class="concept-card" style="padding:11px 15px;">
+              <h4>Segredo, jamais</h4>
+              <p style="font-size:0.64em;">ENV e camada são permanentes: um <span class="mono">docker history</span> revela tudo. Segredo entra em execução, por variável ou secret manager.</p>
+            </div>
+            <div class="concept-card" style="padding:11px 15px;">
+              <h4>A skill da etapa 8 sabe disso</h4>
+              <p style="font-size:0.64em;">As regras deste slide são exatamente as da <span class="mono">logitech-dockerfile/SKILL.md</span> que vocês vão dar ao agente.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Multi-Stage</div>
+          <div class="footer-page">35</div>
+        </div>
+      </section>
+
+      <!-- ==================== 36: ATIVIDADE 4 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Atividade 4 de 7: multi-stage nos dois serviços, com medição</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>Meça a baseline, escreva o multi-stage, meça de novo</h3>
+          <pre style="margin:0 0 8px; font-size:0.5em;"><code class="language-bash"># 1. baseline ingênua, que o repositório entrega pronta
+docker build -f baseline/Dockerfile.coletor.ingenuo -t coletor:ingenuo .
+docker build -f baseline/Dockerfile.gateway.ingenuo -t gateway:ingenuo .
+
+# 2. escreva Dockerfile.coletor e Dockerfile.gateway multi-stage na raiz
+#    (mínimo 2 estágios FROM ... AS, USER não-root nos dois)
+docker build -f Dockerfile.coletor -t coletor:final .
+docker build -f Dockerfile.gateway -t gateway:final .
+
+# 3. meça os quatro tamanhos e calcule as duas reduções
+docker image ls --format '{{.Repository}}:{{.Tag}}  {{.Size}}' | grep -E 'coletor|gateway'</code></pre>
+          <p style="margin:0; font-size:0.62em;">Registre em <span class="mono">docs/EVIDENCIAS.md</span> os seis valores: <span class="mono">TAMANHO_*_INGENUO_MB</span>, <span class="mono">TAMANHO_*_FINAL_MB</span>, <span class="mono">REDUCAO_COLETOR</span> e <span class="mono">REDUCAO_GATEWAY</span> (mínimo 80% cada). <span class="mono">verificar.py --etapa 4</span> e commit <span class="mono">feat(etapa-4)</span>.</p>
+          <p style="margin:8px 0 0; font-size:0.62em; border-top:1px solid rgba(255,255,255,0.2); padding-top:8px;"><strong style="color:var(--fiap-pink);">Referência do professor:</strong> Na medição de referência o coletor caiu de 1638 MB para 79 MB e o gateway de 1659 MB para 229 MB. Os seus números não precisam bater com esses, precisam passar dos 80% contra a SUA baseline.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Atividade 4</div>
+          <div class="footer-page">36</div>
+        </div>
+      </section>
+
+      <!-- ==================== 37: ONDE OS DADOS MORREM ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Onde os dados da LogiTech estão morrendo <a href="#/ref-slide" class="ref-badge" title="Ver referências">[5]</a></h2>
+        </div>
+
+        <p style="font-size:0.72em; margin-bottom:0;">O coletor conteinerizado grava cada posição de caminhão em <span class="mono">/dados/telemetria.jsonl</span>. Esse caminho, hoje, mora na <strong>camada gravável</strong>. A frota reporta a noite inteira e, no primeiro <span class="mono">docker rm</span> (um deploy, um crash, um nó que recicla), o histórico completo evapora.</p>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:13px; margin-top:10px;">
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>Não é bug do Docker</h4>
+            <p style="font-size:0.66em;">É o comportamento de projeto que a Atividade 2 provou e o Quiz 3 acabou de revisar. Efemeridade é o padrão.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>É decisão de arquitetura</h4>
+            <p style="font-size:0.66em;">Estado precisa ser declarado e movido para fora do container: o serviço continua descartável, o dado não.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>O contrato já existe</h4>
+            <p style="font-size:0.66em;">O caminho vem da variável <span class="mono">LOGITECH_DADOS</span>, declarada no Dockerfile. Falta apontar esse caminho para um lugar que sobreviva.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">O que resolve</span>
+          <p>Montar um volume no /dados: o container escreve no mesmo caminho de sempre, mas os bytes passam a viver no host, administrados pelo Docker, indiferentes ao rm.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Volumes</div>
+          <div class="footer-page">37</div>
+        </div>
+      </section>
+
+      <!-- ==================== 38: TRÊS MONTAGENS [SVG 3 COLUNAS] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Volume nomeado, bind mount e tmpfs <a href="#/ref-slide" class="ref-badge" title="Ver referências">[5]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 260" style="max-height:280px;" role="img" aria-label="Três tipos de montagem lado a lado">
+            <g font-size="12">
+              <rect x="30" y="30" width="260" height="200" rx="10" fill="#fff" stroke="#ED145B" stroke-width="2.5"/>
+              <text x="160" y="58" text-anchor="middle" font-size="14" font-weight="700" fill="#ED145B">volume nomeado</text>
+              <text x="160" y="82" text-anchor="middle" fill="#555">-v logitech-telemetria:/dados</text>
+              <rect x="60" y="100" width="200" height="34" rx="5" fill="#ED145B" opacity="0.85"/>
+              <text x="160" y="122" text-anchor="middle" fill="#fff">gerenciado pelo Docker</text>
+              <text x="160" y="160" text-anchor="middle" fill="#555">sobrevive ao rm, aparece</text>
+              <text x="160" y="178" text-anchor="middle" fill="#555">no docker volume ls</text>
+              <text x="160" y="210" text-anchor="middle" font-weight="700" fill="#333">dados de produção</text>
+
+              <rect x="320" y="30" width="260" height="200" rx="10" fill="#fff" stroke="#999" stroke-width="2"/>
+              <text x="450" y="58" text-anchor="middle" font-size="14" font-weight="700" fill="#333">bind mount</text>
+              <text x="450" y="82" text-anchor="middle" fill="#555">-v "$PWD/servicos:/app"</text>
+              <rect x="350" y="100" width="200" height="34" rx="5" fill="#777"/>
+              <text x="450" y="122" text-anchor="middle" fill="#fff">pasta escolhida por você</text>
+              <text x="450" y="160" text-anchor="middle" fill="#555">espelho em tempo real:</text>
+              <text x="450" y="178" text-anchor="middle" fill="#555">editou fora, mudou dentro</text>
+              <text x="450" y="210" text-anchor="middle" font-weight="700" fill="#333">desenvolvimento local</text>
+
+              <rect x="610" y="30" width="260" height="200" rx="10" fill="#fff" stroke="#999" stroke-width="2"/>
+              <text x="740" y="58" text-anchor="middle" font-size="14" font-weight="700" fill="#333">tmpfs</text>
+              <text x="740" y="82" text-anchor="middle" fill="#555">--tmpfs /cache</text>
+              <rect x="640" y="100" width="200" height="34" rx="5" fill="#bbb"/>
+              <text x="740" y="122" text-anchor="middle" fill="#333">só memória RAM</text>
+              <text x="740" y="160" text-anchor="middle" fill="#555">rápido, nunca toca disco,</text>
+              <text x="740" y="178" text-anchor="middle" fill="#555">morre com o container</text>
+              <text x="740" y="210" text-anchor="middle" font-weight="700" fill="#333">cache e segredo efêmero</text>
+            </g>
+          </svg>
+          <figcaption>
+            Três destinos possíveis para o mesmo caminho dentro do container. Volume nomeado: o Docker administra, o dado sobrevive; é o caso do telemetria.jsonl. Bind mount: uma pasta sua espelhada, ideal para editar código com o container rodando, como na Atividade 2. tmpfs: RAM pura para o que não deve tocar disco.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Volumes</div>
+          <div class="footer-page">38</div>
+        </div>
+      </section>
+
+      <!-- ==================== 39: COMANDOS DE VOLUME ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Os comandos de volume <a href="#/ref-slide" class="ref-badge" title="Ver referências">[5]</a></h2>
+        </div>
+
+        <pre class="code-compact" style="font-size:0.55em;"><code class="language-bash">docker volume create logitech-telemetria          # cria (ou o -v cria sozinho no 1º uso)
+docker volume ls                                  # lista os volumes do host
+docker volume inspect logitech-telemetria         # onde os bytes moram, quem usa
+
+docker run -d --name coletor \
+  -v logitech-telemetria:/dados \
+  coletor:final                                   # monta o volume no /dados do container
+
+docker volume rm logitech-telemetria              # remove (recusa se um container usa)
+docker volume prune                               # remove os órfãos, com confirmação</code></pre>
+
+        <div class="callout" style="margin-top:8px; padding:11px 16px;">
+          <p style="font-size:0.66em; margin:0;">O <span class="mono">rm</span> do <strong>container</strong> nunca remove o volume: são ciclos de vida separados, e é exatamente esse o objetivo. Volume só morre por <span class="mono">docker volume rm</span> explícito.</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Leitura do inspect</span>
+          <p>O Mountpoint mostra o diretório real no host onde o Docker guarda os bytes. O container não sabe e não precisa saber: ele só enxerga o /dados de sempre.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Volumes</div>
+          <div class="footer-page">39</div>
+        </div>
+      </section>
+
+      <!-- ==================== 40: ATIVIDADE 5 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Atividade 5 de 7: o log sobrevive ao docker rm</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>Repita o teste da Atividade 2, agora com volume, e veja o final mudar</h3>
+          <pre style="margin:0 0 8px; font-size:0.5em;"><code class="language-bash">docker volume create logitech-telemetria
+docker run -d --name coletor -p 8081:8081/udp \
+  -v logitech-telemetria:/dados coletor:final
+
+# mande telemetria de verdade e confirme que gravou
+python3 -c "import socket; s=socket.socket(socket.AF_INET,socket.SOCK_DGRAM); \
+  s.sendto(b'{\"placa\":\"ABC1D23\",\"lat\":-23.5}', ('127.0.0.1', 8081))"
+docker exec coletor wc -l /dados/telemetria.jsonl
+
+docker rm -f coletor                              # o container morre...
+docker run --rm -v logitech-telemetria:/dados alpine \
+  wc -l /dados/telemetria.jsonl                   # ...as linhas continuam lá</code></pre>
+          <p style="margin:0; font-size:0.62em;">Registre <span class="mono">LINHAS_APOS_RM</span> em <span class="mono">docs/EVIDENCIAS.md</span>. <span class="mono">verificar.py --etapa 5</span> e commit <span class="mono">feat(etapa-5)</span>.</p>
+          <p style="margin:8px 0 0; font-size:0.62em; border-top:1px solid rgba(255,255,255,0.2); padding-top:8px;"><strong style="color:var(--fiap-pink);">O contraste que importa:</strong> Mesmo fluxo da Atividade 2, um único acréscimo (-v), e o desfecho se inverte: o container continua descartável e o dado da LogiTech parou de morrer junto.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Atividade 5</div>
+          <div class="footer-page">40</div>
+        </div>
+      </section>
+
+      <!-- ==================== 41: REDES ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>As redes do Docker: bridge, host e none <a href="#/ref-slide" class="ref-badge" title="Ver referências">[6]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 250" style="max-height:260px;" role="img" aria-label="Três modos de rede lado a lado">
+            <g font-size="12">
+              <rect x="30" y="30" width="260" height="190" rx="10" fill="#fff" stroke="#ED145B" stroke-width="2.5"/>
+              <text x="160" y="58" text-anchor="middle" font-size="14" font-weight="700" fill="#ED145B">bridge</text>
+              <rect x="60" y="75" width="90" height="30" rx="5" fill="#ED145B" opacity="0.85"/><text x="105" y="95" text-anchor="middle" fill="#fff">coletor</text>
+              <rect x="170" y="75" width="90" height="30" rx="5" fill="#ED145B" opacity="0.65"/><text x="215" y="95" text-anchor="middle" fill="#fff">gateway</text>
+              <line x1="105" y1="105" x2="105" y2="135" stroke="#555" stroke-width="2"/>
+              <line x1="215" y1="105" x2="215" y2="135" stroke="#555" stroke-width="2"/>
+              <rect x="60" y="135" width="200" height="26" rx="5" fill="#555"/><text x="160" y="152" text-anchor="middle" fill="#fff">rede virtual isolada</text>
+              <text x="160" y="185" text-anchor="middle" fill="#555">pilha própria por container,</text>
+              <text x="160" y="203" text-anchor="middle" fill="#555">porta só sai com -p: o padrão</text>
+
+              <rect x="320" y="30" width="260" height="190" rx="10" fill="#fff" stroke="#999" stroke-width="2"/>
+              <text x="450" y="58" text-anchor="middle" font-size="14" font-weight="700" fill="#333">host</text>
+              <rect x="350" y="75" width="200" height="30" rx="5" fill="#777"/><text x="450" y="95" text-anchor="middle" fill="#fff">container</text>
+              <rect x="350" y="135" width="200" height="26" rx="5" fill="#333"/><text x="450" y="152" text-anchor="middle" fill="#fff">a rede do próprio host</text>
+              <text x="450" y="185" text-anchor="middle" fill="#555">sem isolamento de rede:</text>
+              <text x="450" y="203" text-anchor="middle" fill="#555">a porta 8081 dele é a do host</text>
+
+              <rect x="610" y="30" width="260" height="190" rx="10" fill="#fff" stroke="#999" stroke-width="2"/>
+              <text x="740" y="58" text-anchor="middle" font-size="14" font-weight="700" fill="#333">none</text>
+              <rect x="640" y="75" width="200" height="30" rx="5" fill="#bbb"/><text x="740" y="95" text-anchor="middle" fill="#333">container</text>
+              <text x="740" y="150" text-anchor="middle" fill="#555">nenhuma interface além do loopback</text>
+              <text x="740" y="185" text-anchor="middle" fill="#555">processamento em lote,</text>
+              <text x="740" y="203" text-anchor="middle" fill="#555">isolamento máximo</text>
+            </g>
+          </svg>
+          <figcaption>
+            Bridge é o padrão e o que usaremos: cada container ganha pilha própria numa rede virtual, e só alcança o mundo externo pela publicação explícita de porta. Host abre mão do isolamento em troca de performance de rede crua. None deixa o container sem rede nenhuma.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:4px;">
+          <span class="takeaway-label">Por que criar uma rede própria</span>
+          <p>Na bridge padrão os containers só se falam por IP. Numa rede criada por você, como a logitech-net de daqui a pouco, o Docker liga um DNS interno e o nome do container vira endereço.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Network e Observação</div>
+          <div class="footer-page">41</div>
+        </div>
+      </section>
+
+      <!-- ==================== 42: DNS POR NOME [ANIM 8] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>DNS por nome de container <a href="#/ref-slide" class="ref-badge" title="Ver referências">[6]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 260" style="max-height:280px;" role="img" aria-label="Gateway resolvendo o coletor pelo nome e trocando mensagem">
+            <rect x="40" y="40" width="820" height="180" rx="12" fill="none" stroke="#999" stroke-width="2" stroke-dasharray="8,6"/>
+            <text x="450" y="30" text-anchor="middle" font-size="13" fill="#555">rede logitech-net (criada por você: DNS interno ligado)</text>
+
+            <rect x="100" y="100" width="180" height="60" rx="8" fill="#ED145B" opacity="0.75"/>
+            <text x="190" y="128" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">gateway</text>
+            <text x="190" y="148" text-anchor="middle" fill="#fff" font-size="11">precisa ler a telemetria</text>
+
+            <rect x="620" y="100" width="180" height="60" rx="8" fill="#ED145B" opacity="0.9"/>
+            <text x="710" y="128" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">coletor</text>
+            <text x="710" y="148" text-anchor="middle" fill="#fff" font-size="11">8081/udp</text>
+
+            <rect x="380" y="60" width="140" height="34" rx="6" fill="#555" opacity="0">
+              <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.45;0.55" dur="7s" repeatCount="indefinite"/>
+            </rect>
+            <text x="450" y="82" text-anchor="middle" fill="#fff" font-size="12" opacity="0">DNS interno
+              <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.45;0.55" dur="7s" repeatCount="indefinite"/>
+            </text>
+            <text x="345" y="115" text-anchor="middle" font-size="12" fill="#555" opacity="0">quem é "coletor"?
+              <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.35;0.45" dur="7s" repeatCount="indefinite"/>
+            </text>
+            <text x="555" y="115" text-anchor="middle" font-size="12" fill="#555" opacity="0">172.18.0.2
+              <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.3;0.4;0.5;0.6" dur="7s" repeatCount="indefinite"/>
+            </text>
+            <line x1="280" y1="130" x2="620" y2="130" stroke="#ED145B" stroke-width="3" opacity="0">
+              <animate attributeName="opacity" values="0;0;0;1;1" keyTimes="0;0.5;0.6;0.7;1" dur="7s" repeatCount="indefinite"/>
+            </line>
+            <text x="450" y="175" text-anchor="middle" font-size="12" fill="#ED145B" font-weight="700" opacity="0">mensagem entregue pelo nome, sem IP cravado em configuração
+              <animate attributeName="opacity" values="0;0;0;1;1" keyTimes="0;0.5;0.6;0.7;1" dur="7s" repeatCount="indefinite"/>
+            </text>
+          </svg>
+          <figcaption>
+            O gateway pergunta ao DNS interno da rede quem é "coletor", recebe o IP atual e entrega a mensagem. Se o coletor for recriado e trocar de IP, o nome continua resolvendo: nenhuma configuração aponta para endereço fixo. É o mesmo princípio de service discovery que vocês reverão no Compose e em Kubernetes.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Network e Observação</div>
+          <div class="footer-page">42</div>
+        </div>
+      </section>
+
+      <!-- ==================== 43: PORTA E OBSERVAÇÃO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Publicar porta, observar e limitar <a href="#/ref-slide" class="ref-badge" title="Ver referências">[6]</a></h2>
+        </div>
+
+        <pre class="code-compact" style="font-size:0.55em;"><code class="language-bash">docker run -d --name gateway --network logitech-net \
+  -p 3000:3000 gateway:final        # host:container; só o que tem -p sai da rede
+
+docker stats --no-stream           # CPU, memória e I/O de cada container, ao vivo
+docker inspect coletor             # o JSON completo: IP na rede, mounts, limites
+
+docker run -d --memory 256m --cpus 0.5 coletor:final   # o teto vira cgroup</code></pre>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:12px; margin-top:8px;">
+          <div class="concept-card" style="padding:12px 15px;">
+            <h4>-p publica, EXPOSE documenta</h4>
+            <p style="font-size:0.64em;">Sem <span class="mono">-p</span>, o serviço só existe dentro da rede. O gateway precisa de <span class="mono">-p 3000:3000</span>; o coletor, acessado só pelo gateway, não precisa expor nada ao host.</p>
+          </div>
+          <div class="concept-card" style="padding:12px 15px;">
+            <h4>stats fecha o ciclo</h4>
+            <p style="font-size:0.64em;">O mesmo cgroup do Ciclo 1, agora visto de cima: o <span class="mono">docker stats</span> mostra o consumo real contra o limite declarado.</p>
+          </div>
+          <div class="concept-card" style="padding:12px 15px;">
+            <h4>Limite é contrato</h4>
+            <p style="font-size:0.64em;"><span class="mono">--memory</span> e <span class="mono">--cpus</span> transformam capacidade em número auditável, por serviço, antes de existir orquestrador.</p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Network e Observação</div>
+          <div class="footer-page">43</div>
+        </div>
+      </section>
+
+      <!-- ==================== 44: ATIVIDADE 6 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Atividade 6 de 7: a plataforma conversa pela logitech-net</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>Suba os dois serviços na mesma rede e observe</h3>
+          <pre style="margin:0 0 8px; font-size:0.5em;"><code class="language-bash">docker network create logitech-net
+
+docker run -d --name coletor --network logitech-net \
+  -v logitech-telemetria:/dados coletor:final
+docker run -d --name gateway --network logitech-net \
+  -p 3000:3000 -v logitech-telemetria:/dados gateway:final
+
+# o gateway resolve o coletor pelo NOME
+docker exec gateway ping -c 2 coletor
+
+docker stats --no-stream          # anote a memória do coletor em MB</code></pre>
+          <p style="margin:0; font-size:0.62em;">Registre <span class="mono">MEMORIA_COLETOR_MB</span> em <span class="mono">docs/EVIDENCIAS.md</span>. <span class="mono">verificar.py --etapa 6</span> e commit <span class="mono">feat(etapa-6)</span>.</p>
+          <p style="margin:8px 0 0; font-size:0.62em; border-top:1px solid rgba(255,255,255,0.2); padding-top:8px;"><strong style="color:var(--fiap-pink);">Repare no que não existe:</strong> Nenhum IP em lugar nenhum. O gateway achou o coletor pelo nome, e os dois compartilham a telemetria pelo volume. É a plataforma da LogiTech de pé, container a container.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Atividade 6</div>
+          <div class="footer-page">44</div>
+        </div>
+      </section>
+
+      <!-- ==================== 45: REGISTRY ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Registry, repositório, tag e digest <a href="#/ref-slide" class="ref-badge" title="Ver referências">[7]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 210" style="max-height:220px;" role="img" aria-label="Anatomia do nome completo de uma imagem">
+            <g font-family="JetBrains Mono, monospace" font-size="20" font-weight="700">
+              <text x="120" y="80" fill="#555">docker.io</text>
+              <text x="255" y="80" fill="#333">/</text>
+              <text x="280" y="80" fill="#ED145B">mariasilva</text>
+              <text x="425" y="80" fill="#333">/</text>
+              <text x="450" y="80" fill="#333">logitech-coletor</text>
+              <text x="680" y="80" fill="#333">:</text>
+              <text x="700" y="80" fill="#ED145B">1.0</text>
+            </g>
+            <g font-size="12" fill="#555">
+              <text x="165" y="115" text-anchor="middle">registry: o servidor</text>
+              <text x="165" y="132" text-anchor="middle">(Docker Hub é o padrão)</text>
+              <text x="350" y="115" text-anchor="middle">namespace: a sua conta</text>
+              <text x="560" y="115" text-anchor="middle">repositório: a imagem</text>
+              <text x="717" y="115" text-anchor="middle">tag: apelido móvel</text>
+            </g>
+            <text x="450" y="175" text-anchor="middle" font-size="13" fill="#555">digest <tspan font-family="JetBrains Mono, monospace">sha256:9f2a...</tspan> : a identidade imutável do conteúdo, o que a tag aponta hoje</text>
+          </svg>
+          <figcaption>
+            O nome completo tem quatro partes: registry, namespace, repositório e tag. A tag é um apelido que pode ser movido para outra imagem amanhã; o digest sha256 identifica o conteúdo exato para sempre. Deploy sério em produção referencia digest, não latest.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:4px;">
+          <span class="takeaway-label">latest é armadilha</span>
+          <p>latest é só a tag padrão quando nenhuma é dita: não significa "mais recente" nem "estável". A imagem de vocês hoje sai versionada: usuario/logitech-coletor:1.0.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Registry e Docker Hub</div>
+          <div class="footer-page">45</div>
+        </div>
+      </section>
+
+      <!-- ==================== 46: DOCKER HUB [ANIM 9] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Docker Hub: login, tag, push <a href="#/ref-slide" class="ref-badge" title="Ver referências">[7]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 270" style="max-height:290px;" role="img" aria-label="Camadas subindo para o registry com a tag aplicada">
+            <rect x="60" y="60" width="300" height="170" rx="10" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+            <text x="210" y="88" text-anchor="middle" font-size="14" font-weight="700" fill="#333">sua máquina</text>
+            <g font-size="12">
+              <rect x="100" y="105" width="220" height="28" rx="4" fill="#999"/><text x="210" y="124" text-anchor="middle" fill="#fff">camada: base alpine</text>
+              <rect x="100" y="140" width="220" height="28" rx="4" fill="#777"/><text x="210" y="159" text-anchor="middle" fill="#fff">camada: código do coletor</text>
+              <rect x="100" y="175" width="220" height="28" rx="4" fill="#ED145B" opacity="0.85"/><text x="210" y="194" text-anchor="middle" fill="#fff">tag: mariasilva/logitech-coletor:1.0</text>
+            </g>
+
+            <rect x="540" y="60" width="300" height="170" rx="10" fill="#fff" stroke="#ED145B" stroke-width="2.5"/>
+            <text x="690" y="88" text-anchor="middle" font-size="14" font-weight="700" fill="#ED145B">Docker Hub</text>
+            <g font-size="12">
+              <rect x="580" y="105" width="220" height="28" rx="4" fill="#999" opacity="0">
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.25;0.4;1" dur="7s" repeatCount="indefinite"/>
+              </rect>
+              <text x="690" y="124" text-anchor="middle" fill="#fff" opacity="0">base já existia: Layer exists
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.25;0.4;1" dur="7s" repeatCount="indefinite"/>
+              </text>
+              <rect x="580" y="140" width="220" height="28" rx="4" fill="#777" opacity="0">
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.45;0.6;1" dur="7s" repeatCount="indefinite"/>
+              </rect>
+              <text x="690" y="159" text-anchor="middle" fill="#fff" opacity="0">só a camada nova sobe
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.45;0.6;1" dur="7s" repeatCount="indefinite"/>
+              </text>
+              <rect x="580" y="175" width="220" height="28" rx="4" fill="#ED145B" opacity="0">
+                <animate attributeName="opacity" values="0;0;0.85;0.85" keyTimes="0;0.65;0.8;1" dur="7s" repeatCount="indefinite"/>
+              </rect>
+              <text x="690" y="194" text-anchor="middle" fill="#fff" opacity="0">tag 1.0 publicada
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.65;0.8;1" dur="7s" repeatCount="indefinite"/>
+              </text>
+            </g>
+            <line x1="360" y1="145" x2="540" y2="145" stroke="#ED145B" stroke-width="3" stroke-dasharray="8,6" opacity="0">
+              <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.7;0.85" dur="7s" repeatCount="indefinite"/>
+            </line>
+            <text x="450" y="255" text-anchor="middle" font-size="13" fill="#555">docker login  →  docker tag coletor:final mariasilva/logitech-coletor:1.0  →  docker push</text>
+          </svg>
+          <figcaption>
+            O push envia camada por camada, e só as que o registry ainda não tem: a base alpine responde Layer exists e não trafega de novo. Ao final a tag 1.0 aparece pública, e qualquer máquina do mundo reproduz o serviço com um docker run.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Registry e Docker Hub</div>
+          <div class="footer-page">46</div>
+        </div>
+      </section>
+
+      <!-- ==================== 47: ATIVIDADE 7 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Atividade 7 de 7: publique a sua imagem</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>A conta do Docker Hub criada no começo da noite entra em cena</h3>
+          <pre style="margin:0 0 8px; font-size:0.52em;"><code class="language-bash">docker login                      # o usuário e a senha do Docker Hub
+
+docker tag coletor:final SEU_USUARIO/logitech-coletor:1.0
+docker push SEU_USUARIO/logitech-coletor:1.0
+
+# prova real, sem sessão: o manifesto responde publicamente?
+docker manifest inspect SEU_USUARIO/logitech-coletor:1.0
+
+# troque de imagem com quem está do lado: rode a do colega
+docker run -d -p 8082:8081/udp COLEGA/logitech-coletor:1.0</code></pre>
+          <p style="margin:0; font-size:0.62em;">Confirme no site que o repositório está <strong>público</strong>. Registre <span class="mono">IMAGEM_PUBLICA</span> em <span class="mono">docs/EVIDENCIAS.md</span> no formato <span class="mono">usuario/logitech-coletor:1.0</span>. <span class="mono">verificar.py --etapa 7</span> e commit <span class="mono">feat(etapa-7)</span>.</p>
+          <p style="margin:8px 0 0; font-size:0.62em; border-top:1px solid rgba(255,255,255,0.2); padding-top:8px;"><strong style="color:var(--fiap-pink);">O ciclo fechou:</strong> Rodar a imagem do colega sem pedir arquivo nenhum a ele é a prova final: o ambiente inteiro virou um artefato versionado, publicado e reproduzível. Era exatamente a dor do Mini Mundo.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Atividade 7</div>
+          <div class="footer-page">47</div>
+        </div>
+      </section>
+
+      <!-- ==================== 48: AGENT SKILL: CONCEITO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>IA que constrói container: o que é uma Agent Skill <a href="#/ref-slide" class="ref-badge" title="Ver referências">[8]</a></h2>
+        </div>
+
+        <div class="side-by-side" style="margin-top:8px;">
+          <div class="side">
+            <h4 style="color:var(--fiap-pink);">Pedir no chat, toda vez</h4>
+            <p style="font-size:0.66em; margin:0;">"Escreva um Dockerfile multi-stage, base alpine, usuário não-root, sem COPY . . ..." O conhecimento mora na sua memória e se perde a cada conversa. Cada colega pede de um jeito, sai um padrão diferente por dia.</p>
+          </div>
+          <div class="side">
+            <h4 style="color:var(--fiap-pink);">Skill: o padrão versionado</h4>
+            <p style="font-size:0.66em; margin:0;">As regras moram num arquivo <span class="mono">SKILL.md</span> dentro do repositório. O agente carrega a skill <strong>sob demanda</strong>, quando a descrição dela casa com a tarefa, e o padrão passa pelo mesmo Git, revisão e evolução que o código.</p>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:10px; padding:12px 18px;">
+          <p style="font-size:0.68em; margin:0;"><strong>Sob demanda é o ponto central:</strong> a skill não é colada no prompt. O agente enxerga só o nome e a descrição de cada skill disponível; o corpo com as regras só é lido quando a tarefa pede. Dez skills no repositório não custam contexto até serem necessárias.</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Por que isso importa para a LogiTech</span>
+          <p>O padrão de Dockerfile que vocês consolidaram hoje vira ativo da empresa: um arquivo que qualquer agente de IA do time lê, aplica e mantém consistente, em vez de tradição oral de prompt.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Agent Skills</div>
+          <div class="footer-page">48</div>
+        </div>
+      </section>
+
+      <!-- ==================== 49: ANATOMIA DO SKILL.MD ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Anatomia do SKILL.md <a href="#/ref-slide" class="ref-badge" title="Ver referências">[8]</a></h2>
+        </div>
+
+        <div class="figure-split" style="grid-template-columns: 1.15fr 1fr; gap:16px; margin-top:2px; align-items:start;">
+          <pre class="code-compact" style="margin:0; font-size:0.5em;"><code class="language-markdown">---
+name: logitech-dockerfile
+description: Escreve Dockerfiles multi-stage para os
+  servicos da plataforma LogiTech, em Python e Node
+---
+
+# Dockerfile da LogiTech
+
+## Regras que não se negociam
+
+1. Sempre dois estágios nomeados, builder e runtime.
+2. Base alpine no estágio final. Nunca base full.
+3. Usuário não-root, com UID acima de 10000.
+4. Nunca COPY . . : nomear cada arquivo que entra.
+5. EXPOSE com a porta real: 8081/udp ou 3000.
+6. Caminho de dados vem de LOGITECH_DADOS.</code></pre>
+          <div class="concept-cards" style="grid-template-columns:1fr; gap:9px; margin-top:0;">
+            <div class="concept-card" style="padding:11px 15px;">
+              <h4>Frontmatter: a vitrine</h4>
+              <p style="font-size:0.64em;"><span class="mono">name</span> e <span class="mono">description</span> são o que o agente enxerga o tempo todo. É pela descrição que ele decide acionar a skill.</p>
+            </div>
+            <div class="concept-card" style="padding:11px 15px;">
+              <h4>Corpo: as regras</h4>
+              <p style="font-size:0.64em;">Lido só quando a skill é acionada. Imperativo, curto e verificável: são as mesmas regras do slide de não-root, palavra por palavra.</p>
+            </div>
+            <div class="concept-card" style="padding:11px 15px;">
+              <h4>Este arquivo existe no lab</h4>
+              <p style="font-size:0.64em;">É a <span class="mono">.agents/skills/logitech-dockerfile/SKILL.md</span> do repositório que vocês forkaram, a mesma da demonstração a seguir.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Agent Skills</div>
+          <div class="footer-page">49</div>
+        </div>
+      </section>
+
+      <!-- ==================== 50: UM ARQUIVO, TRÊS AGENTES ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Um arquivo, três agentes <a href="#/ref-slide" class="ref-badge" title="Ver referências">[8]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 200" style="max-height:210px;" role="img" aria-label="Um SKILL.md alimentando três agentes diferentes">
+            <rect x="330" y="20" width="240" height="52" rx="8" fill="#ED145B" opacity="0.9"/>
+            <text x="450" y="42" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">SKILL.md</text>
+            <text x="450" y="60" text-anchor="middle" fill="#fff" font-size="11">o mesmo padrão, versionado no Git</text>
+            <g stroke="#999" stroke-width="2" fill="none">
+              <line x1="380" y1="72" x2="180" y2="120"/>
+              <line x1="450" y1="72" x2="450" y2="120"/>
+              <line x1="520" y1="72" x2="720" y2="120"/>
+            </g>
+            <g font-size="12">
+              <rect x="70" y="120" width="220" height="56" rx="8" fill="#f2f2f2" stroke="#999"/>
+              <text x="180" y="142" text-anchor="middle" font-weight="700" fill="#333">Claude Code</text>
+              <text x="180" y="162" text-anchor="middle" fill="#555">.claude/skills/</text>
+              <rect x="340" y="120" width="220" height="56" rx="8" fill="#f2f2f2" stroke="#999"/>
+              <text x="450" y="142" text-anchor="middle" font-weight="700" fill="#333">GitHub Copilot</text>
+              <text x="450" y="162" text-anchor="middle" fill="#555">.github/skills/</text>
+              <rect x="610" y="120" width="220" height="56" rx="8" fill="#f2f2f2" stroke="#999"/>
+              <text x="720" y="142" text-anchor="middle" font-weight="700" fill="#333">docker-agent</text>
+              <text x="720" y="162" text-anchor="middle" fill="#555">.agents/skills/</text>
+            </g>
+          </svg>
+          <figcaption>
+            O formato é o mesmo nos três mundos, muda o diretório onde cada agente procura. A skill de code review da Aula 02 mora no josercf/skill-library e segue esse mesmo padrão; a de hoje acompanha o lab e é lida pelo docker-agent com docker-agent run agente.yaml.
+          </figcaption>
+        </figure>
+
+        <div class="callout" style="margin-top:4px; padding:11px 16px;">
+          <p style="font-size:0.66em; margin:0;"><strong>Aviso honesto antes da demonstração:</strong> aqui na sala o agente roda com um modelo grande. No Codespace de vocês o modelo local é o <span class="mono">qwen3.5:2b</span>, bem menor: no nosso ensaio ele acertou o Dockerfile completo em 1 de 3 execuções. A saída do modelo é <strong>rascunho a conferir contra a skill</strong>, nunca resposta pronta, e isso vale para o modelo grande também. Reconhecer o erro do agente é exatamente a etapa 8.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Agent Skills</div>
+          <div class="footer-page">50</div>
+        </div>
+      </section>
+
+      <!-- ==================== 51: CHECKLIST DA ENTREGA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O que vai no seu repositório: checklist da entrega</h2>
+        </div>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>#</th><th>Evidência</th><th>Confirmado por</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td><span class="mono">etapas/01</span> e <span class="mono">02</span> com os marcadores preenchidos</td><td><span class="mono">verificar.py</span>, etapas 1 e 2</td></tr>
+            <tr><td>2</td><td><span class="mono">Dockerfile.coletor</span> e <span class="mono">Dockerfile.gateway</span> multi-stage, com <span class="mono">USER</span> não-root, buildando</td><td>etapas 3 e 4</td></tr>
+            <tr><td>3</td><td><span class="mono">docs/EVIDENCIAS.md</span> com os 7 valores numéricos (4 tamanhos, 2 reduções de no mínimo 80%, memória)</td><td>etapas 4 a 6</td></tr>
+            <tr><td>4</td><td>Volume <span class="mono">logitech-telemetria</span> e rede <span class="mono">logitech-net</span> existindo</td><td>etapas 5 e 6</td></tr>
+            <tr><td>5</td><td>Imagem pública <span class="mono">usuario/logitech-coletor:1.0</span> respondendo</td><td>etapa 7</td></tr>
+            <tr><td>6</td><td>Um commit por etapa, <span class="mono">feat(etapa-N)</span>, visível no histórico</td><td>correção do professor</td></tr>
+            <tr><td>7</td><td>Usou o resgate? <span class="mono">USEI_O_RESGATE</span> preenchido, sem penalidade automática</td><td>correção do professor</td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A régua é pública</span>
+          <p>python3 verificar.py imprimindo 7 de 7 é a mesma régua que o professor roda na correção. Sem surpresa: se passou aí, passou lá.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Entrega</div>
+          <div class="footer-page">51</div>
+        </div>
+      </section>
+
+      <!-- ==================== 52: FORMULÁRIO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Formulário de Entrega</h2>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 620px 1fr; gap:26px; align-items:start; margin-top:4px;">
+          <iframe src="https://forms.cloud.microsoft/r/LnU2cEXXHQ?embed=true"
+                  width="620" height="400"
+                  style="border:1px solid #ddd; border-radius:8px; max-width:100%;"
+                  title="Formulário de entrega da Atividade da Aula 03"
+                  allowfullscreen></iframe>
+
+          <div>
+            <div class="concept-cards" style="grid-template-columns:1fr; gap:10px; margin-top:0;">
+              <div class="concept-card" style="padding:11px 16px;">
+                <h4>O que enviar</h4>
+                <p style="font-size:0.66em;">A URL do <strong>seu fork</strong>, no formato<br><span class="mono">github.com/usuario/mwe-2026-2-lab03-docker</span></p>
+              </div>
+              <div class="concept-card" style="padding:11px 16px;">
+                <h4>Quem envia</h4>
+                <p style="font-size:0.66em;">Um envio por aluno: a atividade de hoje é individual.</p>
+              </div>
+              <div class="concept-card" style="padding:11px 16px;">
+                <h4>Até quando</h4>
+                <p style="font-size:0.66em;">Até 22h50, com os commits das etapas no fork. A etapa 8 bônus pode chegar depois, sem prazo de aula.</p>
+              </div>
+            </div>
+
+            <div class="callout" style="margin-top:9px; padding:11px 15px;">
+              <p style="font-size:0.64em; margin:0; line-height:1.5;">Se o formulário não abrir aqui:
+                <a href="https://forms.cloud.microsoft/r/LnU2cEXXHQ" target="_blank" style="color:var(--fiap-pink); font-weight:700;">forms.cloud.microsoft/r/LnU2cEXXHQ</a><br>
+                Critérios de aceitação completos no
+                <a href="https://github.com/josercf/mwe-2026-2-lab03-docker" target="_blank" style="color:var(--fiap-pink); font-weight:700;">README do Lab Kit</a></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Entrega da Atividade</div>
+          <div class="footer-page">52</div>
+        </div>
+      </section>
+
+      <!-- ==================== 53: O QUE VEM ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O que vem: CP1 na semana que vem, Compose na Aula 07</h2>
+        </div>
+
+        <div class="concept-cards" style="grid-template-columns: 1fr 1fr; gap:16px; margin-top:8px;">
+          <div class="concept-card" style="padding:16px 20px;">
+            <h4>25/08: Checkpoint 1, prova prática individual</h4>
+            <p style="font-size:0.68em;">Escopo integrado das Aulas 01 a 03: especificação, Git, sockets TCP/UDP, HTTP/SSE e <strong>conteinerização multi-stage</strong>. O entregável é um repositório com a solução conteinerizada funcionando. Quem fechou as sete etapas hoje já treinou exatamente o que o CP1 cobra.</p>
+          </div>
+          <div class="concept-card" style="padding:16px 20px;">
+            <h4>Aula 07: Docker Compose e a dívida declarada</h4>
+            <p style="font-size:0.68em;">Hoje coletor e gateway conversam por um <strong>arquivo compartilhado</strong> num volume: simplificação deliberada, registrada em ADR. Na Aula 07 o Compose orquestra a plataforma inteira e essa passagem por arquivo começa a ser substituída por comunicação de verdade entre serviços.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A espiral continua</span>
+          <p>Os Dockerfiles de hoje não são exercício descartável: são os mesmos que o Compose vai orquestrar na Aula 07 e que a Global Solution herda. Guardem o fork.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Próximos Passos</div>
+          <div class="footer-page">53</div>
+        </div>
+      </section>
+
+      <!-- ==================== 54: REFERÊNCIAS ==================== -->
+      <section id="ref-slide" class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Referências Bibliográficas e Documentação</h2>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px 28px; font-size:0.62em; line-height:1.55; color:var(--fiap-gray);">
+          <div>
+            <p style="margin:0 0 10px;"><strong style="color:var(--fiap-pink);">[1] Isolamento no kernel: namespaces e cgroups</strong><br>
+            MAN7: <a href="https://man7.org/linux/man-pages/man7/namespaces.7.html" target="_blank" style="color:var(--fiap-pink);">namespaces(7)</a> | <a href="https://man7.org/linux/man-pages/man7/cgroups.7.html" target="_blank" style="color:var(--fiap-pink);">cgroups(7)</a><br>
+            KERNEL: <a href="https://docs.kernel.org/admin-guide/cgroup-v2.html" target="_blank" style="color:var(--fiap-pink);">Control Group v2</a></p>
+
+            <p style="margin:0 0 10px;"><strong style="color:var(--fiap-pink);">[2] Docker Engine, arquitetura e ciclo de vida</strong><br>
+            DOCKER: <a href="https://docs.docker.com/get-started/docker-overview/" target="_blank" style="color:var(--fiap-pink);">Docker overview</a> | <a href="https://docs.docker.com/engine/" target="_blank" style="color:var(--fiap-pink);">Engine</a><br>
+            CONTAINERD: <a href="https://containerd.io/" target="_blank" style="color:var(--fiap-pink);">containerd.io</a> | OCI: <a href="https://github.com/opencontainers/runc" target="_blank" style="color:var(--fiap-pink);">runc</a></p>
+
+            <p style="margin:0 0 10px;"><strong style="color:var(--fiap-pink);">[3] Dockerfile e build</strong><br>
+            DOCKER: <a href="https://docs.docker.com/reference/dockerfile/" target="_blank" style="color:var(--fiap-pink);">Dockerfile reference</a><br>
+            DOCKER: <a href="https://docs.docker.com/build/building/best-practices/" target="_blank" style="color:var(--fiap-pink);">Building best practices</a></p>
+
+            <p style="margin:0;"><strong style="color:var(--fiap-pink);">[4] Multi-stage e imagens mínimas</strong><br>
+            DOCKER: <a href="https://docs.docker.com/build/building/multi-stage/" target="_blank" style="color:var(--fiap-pink);">Multi-stage builds</a><br>
+            GOOGLE: <a href="https://github.com/GoogleContainerTools/distroless" target="_blank" style="color:var(--fiap-pink);">Distroless images</a></p>
+          </div>
+
+          <div>
+            <p style="margin:0 0 10px;"><strong style="color:var(--fiap-pink);">[5] Persistência: volumes, bind mounts e tmpfs</strong><br>
+            DOCKER: <a href="https://docs.docker.com/engine/storage/" target="_blank" style="color:var(--fiap-pink);">Storage overview</a> | <a href="https://docs.docker.com/engine/storage/volumes/" target="_blank" style="color:var(--fiap-pink);">Volumes</a></p>
+
+            <p style="margin:0 0 10px;"><strong style="color:var(--fiap-pink);">[6] Rede e observação</strong><br>
+            DOCKER: <a href="https://docs.docker.com/engine/network/" target="_blank" style="color:var(--fiap-pink);">Networking overview</a><br>
+            DOCKER: <a href="https://docs.docker.com/engine/containers/resource_constraints/" target="_blank" style="color:var(--fiap-pink);">Resource constraints</a></p>
+
+            <p style="margin:0 0 10px;"><strong style="color:var(--fiap-pink);">[7] Registry e Docker Hub</strong><br>
+            DOCKER: <a href="https://docs.docker.com/docker-hub/" target="_blank" style="color:var(--fiap-pink);">Docker Hub</a><br>
+            OCI: <a href="https://github.com/opencontainers/distribution-spec" target="_blank" style="color:var(--fiap-pink);">Distribution specification</a></p>
+
+            <p style="margin:0;"><strong style="color:var(--fiap-pink);">[8] Agent Skills e docker-agent</strong><br>
+            DOCKER: <a href="https://github.com/docker/docker-agent" target="_blank" style="color:var(--fiap-pink);">docker/docker-agent</a><br>
+            BIBLIOTECA: <a href="https://github.com/josercf/skill-library" target="_blank" style="color:var(--fiap-pink);">josercf/skill-library</a><br>
+            LAB KIT: <a href="https://github.com/josercf/mwe-2026-2-lab03-docker" target="_blank" style="color:var(--fiap-pink);">mwe-2026-2-lab03-docker</a></p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Bibliografia da Aula</div>
+          <div class="footer-page">54</div>
+        </div>
+      </section>
+
+      <!-- ==================== 55: ENCERRAMENTO ==================== -->
       <section class="end-slide">
         <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" style="max-width:350px;">
-        <div class="copyright">Copyright &copy; 2026<br>Prof.º José Romualdo da Costa Filho<br><br>Todos direitos reservados.</div>
+        <div class="copyright">
+          Copyright &copy; 2026<br>
+          Prof. José Romualdo da Costa Filho<br><br>
+          Todos os direitos reservados. É expressamente proibida a reprodução, divulgação<br>
+          total ou parcial, deste material acadêmico sem autorização formal,<br>
+          por escrito, do Professor autor da ementa.
+        </div>
       </section>
+
     </div>
   </div>
+
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
   <script src="../assets/js/fiap-quiz.js"></script>
   <script src="../assets/js/fiap-zoom.js"></script>
   <script src="../assets/js/fiap-print.js"></script>
   <script>
-    Reveal.initialize({ hash: true, slideNumber: false, width: 1280, height: 720, margin: 0, minScale: 0.2, maxScale: 2.0, center: false, pdfMaxPagesPerSlide: 1, pdfSeparateFragments: false, transition: 'slide', transitionSpeed: 'default', plugins: [RevealHighlight] });
+    Reveal.initialize({
+      hash: true,
+      slideNumber: false,
+      width: 1280,
+      height: 720,
+      margin: 0,
+      minScale: 0.2,
+      maxScale: 2.0,
+      center: false,
+      pdfMaxPagesPerSlide: 1,
+      pdfSeparateFragments: false,
+      transition: 'slide',
+      transitionSpeed: 'default',
+      plugins: [RevealHighlight]
+    });
+    // startTimer(elementId, segundos) vem de ../assets/js/fiap-quiz.js
   </script>
+  <!-- Cliente do serviço Pulso: liga os quizzes com data-quiz-key à votação ao vivo.
+       Carregamento assíncrono (defer) e opcional: se o host estiver fora do ar
+       ou o script falhar, o quiz continua funcionando no modo local de sempre. -->
+  <script defer src="https://vote.jrcf.dev/client.js"></script>
 </body>
 </html>
