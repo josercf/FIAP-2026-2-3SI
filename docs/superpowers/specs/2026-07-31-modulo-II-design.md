@@ -14,8 +14,22 @@ o resto.
 - **Enunciados dos três quizzes vêm prontos** do `PLANEJAMENTO_AULA_A_AULA.md`.
   Não reescreva o sentido; escreva as quatro alternativas e as duas mensagens de
   feedback. Cada quiz precisa vir **depois** do conteúdo que cobra.
-- **Deck entre 40 e 50 slides.** Um conceito por slide, conceito visual com
-  figura, mínimo de cinco animações SVG por deck.
+- **Deck entre 50 e 55 slides, com no mínimo 8 animações SVG inline.** A régua é
+  a Aula 03, e ela é explícita: profundidade equivalente, não aproximada.
+  Um conceito por slide. **Todo conceito espacial, temporal, comparativo ou
+  sequencial vira figura**, nunca dois cards de texto: essa substituição já
+  recebeu o veredito "profundidade de um pires" em revisão anterior. Cada
+  animação leva `<figcaption>` descrevendo a sequência completa, porque no PDF
+  ela congela num quadro qualquer.
+- **Número afirmado é número medido.** Se o deck ou o README citar tamanho,
+  tempo, consumo de memória ou taxa de acerto, meça antes e registre o valor
+  real. A Aula 03 mediu os quatro tamanhos de imagem antes de escrever o slide
+  que os cita, e declarou a arquitetura em que mediu.
+- **Validado é validado de verdade.** Rodar o serviço, subir o container,
+  executar o teste, ver a falha acontecer antes da correção. Onde não for
+  possível validar no ambiente, dizer isso no relatório em vez de afirmar que
+  validou. A Aula 03 registrou em ADR até o que o verificador **não** consegue
+  provar por máquina, e a régua é essa.
 - **Votação ao vivo:** `data-quiz-key="aulaNN-quizN"` em cada quiz e
   `<script defer src="https://vote.jrcf.dev/client.js"></script>` antes de
   `</body>`.
