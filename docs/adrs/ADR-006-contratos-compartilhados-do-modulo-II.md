@@ -98,10 +98,16 @@ Prefixo `LOGITECH_`, seguindo o `LOGITECH_DADOS` da Aula 03:
 
 ```
 LOGITECH_DB_URL, LOGITECH_DB_USER, LOGITECH_DB_PASSWORD
-LOGITECH_PEDIDOS_URL, LOGITECH_FRETE_URL, LOGITECH_NOTIFICACOES_URL
+LOGITECH_PEDIDOS_URL, LOGITECH_FATURAMENTO_URL
+LOGITECH_FRETE_URL, LOGITECH_NOTIFICACOES_URL
 LOGITECH_AI_GATEWAY_URL
 LOGITECH_TELEMETRIA_URL
 ```
+
+A `LOGITECH_FATURAMENTO_URL` entrou depois, em 31/07/2026: a construção da
+Aula 05 mostrou que Pedidos chama Faturamento para emitir a fatura, e essa
+aresta tinha ficado de fora da primeira versão desta ADR. Quem consome:
+o serviço `pedidos` na Aula 05 e o Compose da Aula 07.
 
 Endereço de serviço **nunca** aparece cravado no código: vem de variável, com
 padrão de desenvolvimento local. É o que permite o mesmo código rodar solto na
