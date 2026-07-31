@@ -2,7 +2,7 @@
 
 Estado do trabalho para retomar em uma sessão nova. Atualize este arquivo ao fim de cada sessão.
 
-**Última atualização:** 31/07/2026 (Módulo II construído)
+**Última atualização:** 31/07/2026 (Módulo III construído)
 
 ---
 
@@ -64,6 +64,8 @@ Gerados por `tools/scaffold_labs.py` (respeita `LABS_OUT`).
 ### Decisões registradas
 
 `docs/adrs/ADR-001-votacao-ao-vivo-nos-quizzes.md` — **Aceita e publicada.** A votação ao vivo (serviço Pulso, repositório `josercf/pulso`) está no ar em `vote.jrcf.dev` desde 31/07/2026. As aulas 01, 02 e 03 carregam o `client.js` com `defer` e ligam os quizzes por `data-quiz-key="aulaNN-quizN"`; o QR placeholder permanece no markup como fallback. Aulas novas devem repetir esse padrão.
+
+`docs/adrs/ADR-008-contratos-compartilhados-do-modulo-III.md`, contrato do Módulo III: os quatro serviços novos, **CORS no contrato de todo backend chamado por navegador**, PostgreSQL virando `pgvector/pgvector:pg16`, embeddings em 768 dimensões, e a decisão de que **SQL relacional é conteúdo da Aula 12**, não pré-requisito dela. Emendada no mesmo dia, por medição, trocando o modelo de embedding padrão.
 
 `docs/adrs/ADR-004-formato-progressivo-da-aula-03.md` — a Aula 03 abandona o formato teoria + laboratório único e adota sete ciclos de teoria + prática individual, com verificador progressivo e diretório de resgate.
 
@@ -197,9 +199,82 @@ minutos. O kit traz um caminho de troca testado, com Dockerfiles multi-stage
 para os serviços reais, para quem completou as Aulas 05 e 06 subir a própria
 implementação.
 
+### Módulo III completo: Aulas 10, 11 e 12 (31/07/2026)
+
+Construídas em paralelo, na mesma sessão, com o contrato escrito antes na
+`ADR-008`. A interdependência é a mesma do Módulo II, e uma novidade: **a partir
+da Aula 10 o consumidor das APIs é o navegador**, que aplica a política de mesma
+origem. Nenhum serviço das Aulas 02, 05 e 06 tinha sido escrito com isso em
+mente, então CORS entrou no contrato antes de virar aula de conserto.
+
+| Aula | Deck | Laboratório |
+|---|---|---|
+| 10, TDD e React | 53 slides, 13 figuras (6 animadas) | Suíte de unidade sobre o frete com Stub, Mock e Spy, mais o Portal do Cliente em React 19, seis lacunas, 8 critérios |
+| 11, Angular e RxJS | 52 slides, 17 figuras, 82 animações | Painel administrativo com frota em tempo real e faturamento, seis lacunas, 8 critérios, 31 testes |
+| 12, do relacional ao vetorial | 57 slides, 9 figuras (4 animadas) | SQL à mão, `pgvector`, RAG com citação da fonte e servidor MCP, seis lacunas, 7 critérios, 23 testes |
+
+**A Aula 12 mudou de escopo, e é a decisão pedagógica do módulo.** O levantamento
+feito ao escrever a `ADR-008` mostrou que **não existia um único arquivo `.sql`
+no acervo**: o schema nascia do `ddl-auto` do Hibernate e do `ModelBuilder` do EF
+Core, e o aluno chegava a outubro tendo persistido em PostgreSQL o semestre
+inteiro sem escrever SQL. A aula virou "PostgreSQL: do relacional ao vetorial",
+com a busca semântica entrando como **mais um `ORDER BY`**, sobre distância. O
+servidor MCP encolheu para o último terço do bloco prático, e a Pergunta de
+Verificação 3 deixou de cobrar a lista de conceitos do MCP para cobrar índice,
+`EXPLAIN` e a natureza **aproximada** do HNSW.
+
+**Números medidos, não estimados.** `EXPLAIN` com 50.000 vetores: `Seq Scan` em
+389,933 ms contra `Index Scan` em 1,005 ms, com o índice ocupando 161 MB contra
+2944 kB da tabela. Cancelamento do `switchMap` na Aula 11, observado nos dois
+lados: 4 requisições recebidas e 4 concluídas com `mergeMap`, contra 4 recebidas,
+1 concluída e 3 canceladas com `switchMap`. Aula 10: `verificar.py` 0 de 8 no
+esqueleto e 8 de 8 no resgate, com sete mutantes discriminando critério a
+critério.
+
+**Uma decisão minha foi derrubada por medição.** A `ADR-008` fixava
+`nomic-embed-text` para os embeddings. A construção mediu `recall@3` em treze
+perguntas de resposta conhecida: 9 de 13 para o `nomic`, **13 de 13** para o
+`paraphrase-multilingual`, que tem as mesmas 768 dimensões. O modelo é treinado
+predominantemente em inglês e o acervo é contrato de transporte em português
+jurídico. Mais instrutivo ainda: seguir a recomendação do próprio fornecedor,
+prefixando a consulta com `search_query:`, **piorou** para 7 de 13, em silêncio.
+A ADR foi emendada e isso virou conteúdo do slide 22.
+
+**Defeitos reais encontrados durante a construção**, todos corrigidos: teste do
+resgate **tautológico** na Aula 10, que calculava o esperado importando a
+constante do código sob teste e deixava o mutante sobreviver; lacuna que **não
+discriminava** na Aula 11, porque o Angular 22 resolve o `HttpClient` sem
+`provideHttpClient()` e o critério passaria intocado; `verificar.py` da Aula 11
+reprovando código correto por ancorar na chamada em vez da declaração do método;
+e o `EXPLAIN` da Aula 12 que **nunca usaria o índice**, porque a consulta tirava
+o vetor de comparação de uma subconsulta.
+
+**O que a revisão independente pegou.** Ligadura da JetBrains Mono comendo o
+`=>` na Aula 10, que **não tinha regra nenhuma** de bloqueio, nem para código nem
+para SVG, numa aula de React; a mesma ligadura escapando dentro de `<text>` de
+SVG na Aula 12, onde o operador `<=>` virava glifo de seta dupla, porque a regra
+do tema alcança `pre`, `code` e `.mono` mas não SVG; dois links da MDN em pt-BR
+com 404 de verdade na Aula 11 e o blog da Nomic morto na Aula 12; e os Quizzes 2
+e 3 da Aula 12 fora de sincronia com o planejamento, que **eu** havia emendado
+depois que o deck ficou pronto.
+
+### O validador ganhou uma terceira checagem (31/07/2026)
+
+`tools/check_slides.py` passou a detectar **TITULO NO LOGO**: título longo que
+quebra a segunda linha por baixo do logo da FIAP. Isso cabia nos 720px e não
+sobrepunha filho direto da `section`, então passava pelas duas checagens
+anteriores. O logo fica fora da checagem de sobreposição de propósito, senão todo
+slide daria falso positivo, e esse era o ponto cego.
+
+Apareceu em dois dos três decks novos e só foi visto porque um revisor abriu o
+slide no navegador. A checagem compara as caixas de **linha** do título, não a
+caixa do `h2`, que costuma ser larga e vazia à direita.
+
 ### Saneamento do acervo (30/07/2026)
 
-- **Os 13 decks passam no `check_slides.py`.** Havia 5 slides de hands-on estourando
+- **Os 13 decks passavam no `check_slides.py` nesta data.** Em 31/07/2026 isso
+  deixou de ser verdade para as Aulas 05 e 06, ver as pendências técnicas.
+  Havia 5 slides de hands-on estourando
   (aulas 03, 05, 06, 07 e 08), todos pelo mesmo motivo: bloco de código longo em um
   slide que já trazia `concept-cards`. Resolvido com a classe `code-compact`.
 - **`fiap-zoom.js` e `fiap-print.js` foram ligados nos 13 decks.** Verificado em
@@ -228,8 +303,15 @@ implementação.
 
 ### Técnicas
 
-- [ ] **Aulas 10 a 16 ainda são rasas.** Decks de ~140 a ~370 linhas, sem figura, quizzes genéricos. Cada uma precisa passar pelo `construtor-aulas`. **A próxima é a Aula 10** (testes e React, 06/10).
-- [ ] **Labs 10 a 16 têm só o esqueleto.** Devcontainer e README funcionam; falta o conteúdo de cada laboratório.
+- [ ] **REGRESSÃO NAS AULAS 05 E 06.** O validador acusa, de forma reprodutível, 4 estouros e 4 colisões de título com o logo, uma delas com 18px de sobreposição real (Aula 05, slide 14). Os arquivos estão intocados desde o commit: ninguém rodou o validador depois das últimas edições daquelas aulas. Detalhe: `aula05` slides 14, 25 e 37; `aula06` slides 14, 23, 26, 41 e 47. **As Aulas 10, 11 e 12 passam nas três checagens.** Corrigir antes de 01/09, que é quando a Aula 05 é dada.
+- [ ] **Aulas 14, 15 e 16 ainda são rasas.** Decks de ~345 a ~370 linhas, sem figura, quizzes genéricos. Cada uma precisa passar pelo `construtor-aulas`. **A próxima é a Aula 14** (segurança, OAuth 2.0 e JWT, 03/11).
+- [ ] **Labs 14, 15 e 16 têm só o esqueleto.** Devcontainer e README funcionam; falta o conteúdo de cada laboratório.
+- [ ] **Sincronizar os três repositórios do Módulo III.** `josercf/mwe-2026-2-lab10-testes-react`, `lab11-angular-rxjs` e `lab12-rag-mcp` **existem** e respondem, mas ainda têm só o esqueleto do scaffolder. O aluno que forkar hoje abre um kit que não bate com o slide. Vale o mesmo aviso da Aula 02: copiar o conteúdo sem o `resgate/`, preservar `.devcontainer/` e `ai/ask.py`.
+- [ ] **Promover ao `construtor-aulas` as três armadilhas que custaram retrabalho hoje:** regra de ligadura precisa cobrir `svg text, svg tspan` além de `pre`, `code` e `.mono`; o texto do `takeaway` cabe em até duas linhas, senão o bloco dobra de altura e estoura; e título de `h2` acima de ~65 caracteres colide com o logo. As duas primeiras já estão resolvidas localmente nos decks novos; falta o padrão nascer certo.
+- [ ] **Criar os três formulários de entrega do Módulo III** no Microsoft Forms. Os slides das Aulas 10, 11 e 12 estão com marcador visível no lugar do iframe.
+- [ ] **Cadastrar as nove perguntas do Módulo III no Pulso** (`aula10-quiz1|2|3`, `aula11-...`, `aula12-...`). O placeholder de QR continua no markup como fallback.
+- [ ] **Cronometrar os três laboratórios do Módulo III na primeira aplicação.** Nenhum foi medido com turma. A ordem de corte de cada um está declarada no README, e a da Aula 12 é a mais apertada, porque são seis passos em 53 minutos.
+- [ ] Cosmético, mas rastro de manutenção: os comentários HTML de navegação interna do `aula12.html` ficaram fora de sincronia com a posição real a partir do slide 12, resultado da inserção do slide 22 em duas etapas. Não afeta nada renderizado.
 - [ ] **Criar os quatro formulários de entrega do Módulo II** no Microsoft Forms. Os slides das Aulas 05 a 08 estão com marcador visível no lugar do iframe, à espera da URL.
 - [ ] **Promover ao `fiap-theme.css`** as regras que hoje vivem locais nos decks 06 e 08: desligar as ligaduras da JetBrains Mono e impedir que o `text-transform` do tema suba caminho de arquivo para maiúscula. Vale para os treze decks; revalidar todos depois.
 - [ ] **Cronometrar os laboratórios do Módulo II na primeira aplicação.** Nenhum foi medido com turma; a ordem de corte de cada um está declarada no README.
