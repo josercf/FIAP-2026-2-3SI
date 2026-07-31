@@ -1,0 +1,14 @@
+{
+  "name": "logitech-painel",
+  "version": "3.0.0",
+  "description": "Painel de rastreamento da LogiTech Enterprise, alimentado pela API do coletor",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "license": "UNLICENSED"
+}
