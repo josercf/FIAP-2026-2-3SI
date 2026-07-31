@@ -277,6 +277,15 @@ def _repo_com_worktrees(tmp_path, criar_worktrees):
     return str(repo)
 
 
+# O critério 7 exerce `git worktree`. Em ambiente sem git instalado (um
+# contêiner cru, por exemplo) o teste pularia com erro de arquivo não
+# encontrado; pular explicitamente deixa a suíte verde onde quer que ela rode,
+# sem esconder falha de verdade.
+sem_git = pytest.mark.skipif(shutil.which("git") is None,
+                             reason="git não está instalado neste ambiente")
+
+
+@sem_git
 def test_criterio_7_reprova_sem_worktrees(monkeypatch, tmp_path):
     monkeypatch.setattr(verificar, "RAIZ",
                         _repo_com_worktrees(tmp_path, criar_worktrees=False))
@@ -285,6 +294,7 @@ def test_criterio_7_reprova_sem_worktrees(monkeypatch, tmp_path):
     assert "wt-agente-pedidos" in motivo
 
 
+@sem_git
 def test_criterio_7_aprova_com_as_duas_worktrees(monkeypatch, tmp_path):
     monkeypatch.setattr(verificar, "RAIZ",
                         _repo_com_worktrees(tmp_path, criar_worktrees=True))
@@ -292,6 +302,7 @@ def test_criterio_7_aprova_com_as_duas_worktrees(monkeypatch, tmp_path):
     assert passou, motivo
 
 
+@sem_git
 def test_criterio_7_reprova_fora_de_repositorio_git(monkeypatch, tmp_path):
     monkeypatch.setattr(verificar, "RAIZ", str(tmp_path))
     passou, motivo = verificar.criterio_7()
