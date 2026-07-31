@@ -58,7 +58,7 @@ LABS = [
     },
     {
         "n": "03", "slug": "docker", "img": "python", "docker": True,
-        "modelo": "qwen3.5:2b",
+        "modelo": "qwen3.5:2b", "extras": ["node"],
         "titulo": "Docker I: Dockerfile Multi-Stage, Volumes e Networks",
         "aula": "Aula 03 - Docker I: Engine, Imagens, Multi-Stage e Persistencia",
         "data": "18/08/2026",
@@ -67,40 +67,44 @@ LABS = [
         "ports": [3000, 8081],
     },
     {
-        "n": "05", "slug": "solid-patterns", "img": "java", "docker": False,
+        "n": "05", "slug": "solid-patterns", "img": "java", "docker": True,
+        "extras": ["dotnet"],
         "titulo": "POO, SOLID e Design Patterns em Java e C#",
         "aula": "Aula 05 - POO, Principios SOLID e Design Patterns",
         "data": "01/09/2026",
-        "missao": "Implementar o calculo de frete da LogiTech com Strategy e injecao de dependencia, em Java (Spring Boot) e C# (.NET), aplicando SOLID.",
-        "entrega": ["java/", "csharp/"],
-        "ports": [8080],
+        "missao": "Implementar os contextos de Pedidos (Java, Spring Boot 3) e Faturamento (C#, .NET 8) da LogiTech aplicando SOLID, Repository, Factory Method e Singleton thread-safe.",
+        "entrega": ["servicos/pedidos/", "servicos/faturamento/", "docs/EVIDENCIAS.md"],
+        "ports": [8080, 5080, 5432],
     },
     {
         "n": "06", "slug": "apis-patterns", "img": "python", "docker": False,
+        "extras": ["node"],
         "titulo": "Adapter, Decorator e Strategy em APIs Node.js e Python",
         "aula": "Aula 06 - Design Patterns Estruturais e Comportamentais",
         "data": "08/09/2026",
-        "missao": "Integrar a LogiTech a uma API legada de rastreamento usando Adapter, expondo uma API moderna em FastAPI e em Express/TypeScript.",
-        "entrega": ["python-fastapi/", "node-ts/"],
-        "ports": [8000, 3000],
+        "missao": "Construir o motor de frete (Python, FastAPI) com Strategy e o servico de notificacoes (Node, TypeScript) com Decorator e Adapter para a API legada de rastreamento.",
+        "entrega": ["servicos/frete/", "servicos/notificacoes/", "docs/EVIDENCIAS.md"],
+        "ports": [8000, 3001],
     },
     {
         "n": "07", "slug": "compose-gateway", "img": "python", "docker": True,
+        "extras": ["node"],
         "titulo": "Docker Compose Multi-Servico e AI Gateway",
         "aula": "Aula 07 - Docker Compose e AI Gateways (Strategy e Facade)",
         "data": "15/09/2026",
-        "missao": "Subir a stack da LogiTech com Docker Compose e construir um AI Gateway (Facade) que roteia para multiplos modelos por tras de uma unica interface.",
-        "entrega": ["docker-compose.yml", "gateway/"],
-        "ports": [8000, 6379],
+        "missao": "Orquestrar os oito servicos da plataforma LogiTech com Docker Compose e construir um AI Gateway (Facade e Strategy) com fallback real entre provedor remoto e modelo local.",
+        "entrega": ["docker-compose.yml", "servicos/ai-gateway/", "docs/EVIDENCIAS.md"],
+        "ports": [3000, 3001, 4000, 5080, 8000, 8080, 5432],
     },
     {
-        "n": "08", "slug": "agentes-worktrees", "img": "python", "docker": False,
+        "n": "08", "slug": "agentes-worktrees", "img": "python", "docker": True,
+        "modelo": "qwen3.5:2b",
         "titulo": "Function Calling, Command Pattern e Git Worktrees",
         "aula": "Aula 08 - Orquestracao de Agentes e Git Worktrees I",
         "data": "22/09/2026",
-        "missao": "Construir um agente de logistica que expoe ferramentas via Function Calling, modeladas com Command Pattern, e paralelizar o trabalho com Git Worktrees.",
-        "entrega": ["agent.py", "tools/"],
-        "ports": [],
+        "missao": "Construir um agente de logistica que executa acoes reais na API de Pedidos via Function Calling, com cada acao modelada como Command validado por JSON Schema, e paralelizar o trabalho com Git Worktrees.",
+        "entrega": ["agente/", "docs/AUDITORIA.md", "docs/EVIDENCIAS.md"],
+        "ports": [8080],
     },
     {
         "n": "10", "slug": "testes-react", "img": "node", "docker": False,
@@ -256,6 +260,20 @@ if __name__ == "__main__":
 '''
 
 
+# Stacks que um lab pode pedir além da imagem base, via a chave "extras".
+# A imagem base já traz a stack principal; isto é para os labs poliglotas.
+EXTRAS = {
+    "node": ("ghcr.io/devcontainers/features/node:1",
+             ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]),
+    "dotnet": ("ghcr.io/devcontainers/features/dotnet:2",
+               ["ms-dotnettools.csharp"]),
+    "java": ("ghcr.io/devcontainers/features/java:1",
+             ["vscjava.vscode-java-pack"]),
+    "python": ("ghcr.io/devcontainers/features/python:1",
+               ["ms-python.python"]),
+}
+
+
 def devcontainer(lab):
     """devcontainer.json autocontido para o lab."""
     features = {
@@ -263,8 +281,6 @@ def devcontainer(lab):
     }
     if lab["docker"]:
         features["ghcr.io/devcontainers/features/docker-in-docker:2"] = {}
-    if lab["img"] == "python" and lab["n"] in ("02", "03"):
-        features["ghcr.io/devcontainers/features/node:1"] = {}
 
     extensions = ["GitHub.copilot", "GitHub.vscode-pull-request-github", "eamodio.gitlens"]
     if lab["img"] in ("python", "universal"):
@@ -275,6 +291,11 @@ def devcontainer(lab):
         extensions += ["vscjava.vscode-java-pack"]
     if lab["docker"]:
         extensions += ["ms-azuretools.vscode-docker"]
+
+    for extra in lab.get("extras", []):
+        feature, exts = EXTRAS[extra]
+        features[feature] = {}
+        extensions += [e for e in exts if e not in extensions]
 
     cfg = {
         "name": "{}-lab{}-{}".format(PREFIX, lab["n"], lab["slug"]),
