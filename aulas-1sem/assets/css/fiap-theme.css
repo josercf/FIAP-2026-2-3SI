@@ -1083,10 +1083,14 @@
   padding: 5px;
 }
 
+/* Branco, e não cinza: este texto cai dentro da .quiz-toolbar, cujo fundo é
+   var(--fiap-dark). O mesmo texto no marcador que o Pulso substitui já usava
+   var(--fiap-white), pela regra .quiz-toolbar .quiz-vote-text. Cinza sobre o
+   fundo escuro fica ilegível projetado no fundo da sala. */
 .pulso-texto {
   font-size: 15px;
   font-weight: 600;
-  color: #444;
+  color: var(--fiap-white, #ffffff);
 }
 
 .pulso-contador {
