@@ -1074,8 +1074,8 @@
 }
 
 .pulso-qr {
-  /* Mesma area ocupada por .quiz-qr-code (90px + padding de 5px = 100x100),
-     para o swap com o placeholder nao alterar a altura do slide. */
+  /* Mesma área ocupada por .quiz-qr-code (90px + padding de 5px = 100x100),
+     para o swap com o placeholder não alterar a altura do slide. */
   width: 90px;
   height: 90px;
   border-radius: 8px;
