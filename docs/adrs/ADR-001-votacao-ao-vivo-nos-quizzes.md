@@ -71,13 +71,22 @@ Hospedagem no `home01` (Ubuntu 24.04, 4 vCPU, 7,7 GB RAM), aproveitando o que j�
 **Negativas**
 - Dois repositórios para manter e uma integração para versionar entre eles.
 - O contrato da API vira uma dependência externa dos decks; mudança quebrando exige tocar nos 13.
-- Enquanto o serviço não existir, os slides exibem um QR placeholder, que precisa ser claramente identificado como tal para não frustrar a turma.
+- Enquanto o serviço não estiver publicado em `vote.jrcf.dev`, os slides exibem um QR placeholder, que precisa ser claramente identificado como tal para não frustrar a turma.
 
 ## Estado da implementação
 
-O serviço foi implementado no repositório <https://github.com/josercf/pulso> e roda em
-`vote.jrcf.dev`. A aula 01 já consome a votação ao vivo; as demais recebem o
-`data-quiz-key` e o script conforme forem revisadas.
+O serviço está implementado e testado no repositório próprio
+<https://github.com/josercf/pulso>. O deck da aula 01 já está com o
+`data-quiz-key` nos três quizzes e com o script do cliente, e a integração foi
+verificada de ponta a ponta contra uma instância local do serviço (contador ao
+vivo sem revelar distribuição, revelação com as barras percentuais, e
+degradação limpa com o serviço fora do ar).
+
+O que falta é a publicação: o subdomínio `vote.jrcf.dev` ainda não está no ar
+no `home01`. Até essa publicação acontecer, a aula 01 roda em produção no modo
+local de sempre, com o QR placeholder, exatamente como qualquer outra aula sem
+o `data-quiz-key`. As demais aulas recebem o `data-quiz-key` e o script
+conforme forem revisadas.
 
 No acervo, o que sustenta o modo local continua valendo:
 
