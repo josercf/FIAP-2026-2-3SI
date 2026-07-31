@@ -2,7 +2,7 @@
 
 Estado do trabalho para retomar em uma sessão nova. Atualize este arquivo ao fim de cada sessão.
 
-**Última atualização:** 30/07/2026
+**Última atualização:** 31/07/2026
 
 ---
 
@@ -52,7 +52,7 @@ Foi refeita a partir do feedback do professor: foto real de família no slide de
 
 Gerados por `tools/scaffold_labs.py` (respeita `LABS_OUT`).
 
-Verificado nesta sessão: o GitHub Models responde com o token do professor. Atenção, os limites medidos (20k req / 2M tokens) são da conta dele, que tem Copilot. Conta de aluno no free tier tem cota bem menor, e é por isso que o fallback local existe.
+**Registro histórico:** em sessão de 30/07/2026 (manhã) o GitHub Models respondia com o token do professor. No mesmo dia o serviço entrou em brownout de aposentadoria (HTTP 410) e deixou de ser opção: o Ollama local virou o único backend de IA dos 13 laboratórios, decisão registrada na `ADR-005-fim-do-github-models-e-ollama-como-unico-backend.md`. O scaffolder e o `ai/ask.py` gerados já não mencionam o serviço.
 
 ### Automação
 
@@ -63,7 +63,11 @@ Verificado nesta sessão: o GitHub Models responde com o token do professor. Ate
 
 ### Decisões registradas
 
-`docs/adrs/ADR-001-votacao-ao-vivo-nos-quizzes.md` — a votação ao vivo dos quizzes será um produto separado, fora do contexto FIAP, hospedado no `home01` sob `jrcf.dev`, atrás do nginx-proxy-manager e usando o PostgreSQL que já rodam lá. Sugestão de subdomínio: `vote.jrcf.dev`. Nada foi implementado ainda; o QR nos slides é placeholder tracejado escrito "em breve".
+`docs/adrs/ADR-001-votacao-ao-vivo-nos-quizzes.md` — **Aceita e publicada.** A votação ao vivo (serviço Pulso, repositório `josercf/pulso`) está no ar em `vote.jrcf.dev` desde 31/07/2026. As aulas 01, 02 e 03 carregam o `client.js` com `defer` e ligam os quizzes por `data-quiz-key="aulaNN-quizN"`; o QR placeholder permanece no markup como fallback. Aulas novas devem repetir esse padrão.
+
+`docs/adrs/ADR-004-formato-progressivo-da-aula-03.md` — a Aula 03 abandona o formato teoria + laboratório único e adota sete ciclos de teoria + prática individual, com verificador progressivo e diretório de resgate.
+
+`docs/adrs/ADR-005-fim-do-github-models-e-ollama-como-unico-backend.md` — o GitHub Models foi retirado em 30/07/2026; o Ollama local é o único backend de IA dos laboratórios, com modelo por lab (`qwen2.5:1.5b` no geral, `qwen3.5:2b` no lab03).
 
 `docs/adrs/ADR-002-escopo-do-laboratorio-da-aula-02.md` — **Aceita.** O laboratório da Aula 02 entrega o coletor de sockets L4 pronto e troca o relatório de captura por três medições numéricas com `cURL`. O **Wireshark saiu do programa da disciplina**, não só do laboratório, por decisão do professor em 30/07/2026. A comunicação entre o coletor e o gateway é por arquivo JSON Lines, simplificação declarada, a ser substituída na Aula 07.
 
@@ -127,6 +131,29 @@ o README real, **sem o `gabarito/`**.
 > copiar o conteúdo (nunca o `gabarito/`), preservar `.devcontainer/` e `ai/ask.py`,
 > e dar push. Foi assim que a Aula 02 foi sincronizada.
 
+### Aula 03 — pronta, validada e revisada (31/07/2026)
+
+Deck de 55 slides em sete ciclos progressivos (ADR-004), com nove animações
+SVG, três quizzes ligados ao Pulso e sete slides de atividade espelhando o
+`verificar.py`. Validado em 1280x720 e revisado pelo `revisor-slides`; a
+revisão moveu os quizzes de multi-stage e volumes para depois dos ciclos que
+os ensinam e renomeou o marcador `MOUNTS_DENTRO` para `ENTRADAS_PROC_DENTRO`.
+
+Lab kit completo em `aulas-1sem/labs/aula03-lab/`: serviços congelados da
+Aula 02, baseline de medição, `resgate/`, verificador com sete critérios
+(0 de 7 no esqueleto, suíte com 24 testes), skill `logitech-dockerfile`,
+`agente.yaml` (Ollama, `qwen3.5:2b`) e devcontainer testado de ponta a ponta
+na imagem oficial (222 s, incluindo o download do modelo e do `docker-agent`).
+
+Números medidos (arm64): coletor 1638,4 MB -> 78,9 MB (95,2%); gateway
+1658,9 MB -> 229,0 MB (86,2%). Critérios do entregável: redução mínima de
+80% nos dois, absoluto de 100 MB só no coletor.
+
+Armadilhas fechadas nesta construção: o instalador do Ollama passou a exigir
+`zstd`, que a imagem do devcontainer não traz (o post-create gerado instala
+antes); e os curls de download ganharam `--connect-timeout`/`--max-time`,
+porque execuções anteriores travaram em curl sem timeout contra o GitHub.
+
 ### Saneamento do acervo (30/07/2026)
 
 - **Os 13 decks passam no `check_slides.py`.** Havia 5 slides de hands-on estourando
@@ -158,8 +185,11 @@ o README real, **sem o `gabarito/`**.
 
 ### Técnicas
 
-- [ ] **Aulas 03 a 16 ainda são rasas.** Decks de ~140 a ~370 linhas, sem figura, quizzes genéricos. Cada uma precisa passar pelo `construtor-aulas`. **A próxima é a Aula 03** (Docker I, 18/08), que empacota justamente o coletor Python e o gateway Node da Aula 02.
-- [ ] **Labs 03 a 16 têm só o esqueleto.** Devcontainer e README funcionam; falta o conteúdo de cada laboratório.
+- [ ] **Aulas 05 a 16 ainda são rasas.** Decks de ~140 a ~370 linhas, sem figura, quizzes genéricos. Cada uma precisa passar pelo `construtor-aulas`. **A próxima é a Aula 05** (POO e SOLID, 01/09).
+- [ ] **Labs 05 a 16 têm só o esqueleto.** Devcontainer e README funcionam; falta o conteúdo de cada laboratório.
+- [ ] **Validar com o professor a minutagem nova da Aula 03.** A revisão moveu os Quizzes 2 e 3 para depois dos Ciclos 4 e 5 (o planejamento antigo dava toda a teoria antes do Quiz 1). Deck, planejamento e plano de ensino já estão alinhados entre si; falta o aceite explícito.
+- [ ] **Avisar a turma antes de 18/08:** conta no Docker Hub criada e verificada por e-mail é pré-requisito da Aula 03 (a etapa 7 publica imagem, e a verificação custa 5 a 10 minutos).
+- [ ] **Cronometrar os sete ciclos da Aula 03 na primeira aplicação.** Ordem de corte registrada no spec: primeiro o Ciclo 6 vira demonstração, depois a segunda metade do Ciclo 5; o Ciclo 7 e as Agent Skills nunca saem.
 - [ ] **Decidir o destino do `gabarito/`.** Agora são dois arquivos, `server.js` e `server_telemetry.py`, commitados em `labs/aula02-lab/gabarito/`, e o workflow publica o repositório inteiro no GitHub Pages: um aluno que navegue pelo acervo acha as duas respostas. Confirmado que o repositório que o aluno forka **não** leva o gabarito, então o risco é só de quem procura no acervo. Avaliar se o gabarito sai do repositório público ou se fica assumido. A ADR-003 lista isto como risco aberto.
 - [ ] **Cronometrar o lab da Aula 02 na primeira aplicação.** São 64 minutos previstos para os ~75 do Bloco 2, ou seja cerca de 11 de margem. Se faltar, o corte previsto na ADR-003 é a segunda metade do Passo 4, que são medições independentes, e nunca o Passo 5.
 - [ ] **Os outros 12 repositórios de lab provavelmente estão como o da Aula 02 estava:** só o esqueleto do scaffolder, com README genérico. Ao construir cada aula, sincronizar o repositório correspondente junto, senão o aluno abre um kit que não bate com o slide.

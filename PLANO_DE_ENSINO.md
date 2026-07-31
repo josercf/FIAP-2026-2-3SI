@@ -127,9 +127,9 @@ graph TD
 - **Espiral & Conexão:** **Recupera Aulas 01 e 02** (Empacotando o projeto em containers seguindo a arquitetura descrita no SDD).
 - **Desafio do Mini Mundo:** Padronizar a execução dos serviços de telemetria (Python) e API HTTP (Node.js) para evitar falhas de ambiente.
 - **Conteúdo Expositivo & Prático:**
-  - *Docker:* Daemon, Imagens, `Dockerfile` Multi-Stage para builds limpos de produção, Volumes e Networks.
-  - *Construção Guiada (Live Coding):* Criação de `Dockerfile` multi-stage otimizado (<100MB) para os serviços de Python e Node.js.
-- **Entregável:** Imagens Docker compiladas e rodando em containers isolados.
+  - *Docker:* Daemon, Imagens, `Dockerfile` Multi-Stage para builds limpos de produção, Volumes, Networks e Agent Skills (`SKILL.md`).
+  - *Prática progressiva em sete ciclos:* `Dockerfile` multi-stage para os serviços de Python e Node.js, com redução mínima de 80% sobre a baseline ingênua e imagem final do coletor abaixo de 100 MB.
+- **Entregável:** Fork individual com um commit por etapa, os sete critérios do `verificar.py` atendidos e a imagem do coletor pública no Docker Hub.
 
 #### Aula 04 (25/08/2026) - CHECKPOINT 1 (CP1)
 - **Escopo:** Avaliação prática individual (PRD/SDD, Git Workflow, Sockets TCP/UDP, HTTP e Docker).

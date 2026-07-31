@@ -83,23 +83,27 @@
 - **Objetivos de Aprendizagem:** Conteinerizar os serviços de Sockets e HTTP desenvolvidos nas aulas anteriores usando Dockerfiles Multi-Stage otimizados e gerenciamento de volumes.
 - **Espiral Pedagógica:** **Recupera Aulas 01 e 02** (Empacotando os serviços Python e Node.js das Aulas 01 e 02 dentro de containers Docker).
 - **Desafio do Mini Mundo:** Padronizar a execução dos serviços de telemetria da *LogiTech* para evitar inconsistências de ambiente entre desenvolvimento e produção.
-- **Agenda em Minutos:**
-  - `19h20 - 19h35`: **Resgate da Espiral:** O problema de dependências dos scripts das Aulas 01 e 02 e a solução por containers.
-  - `19h35 - 19h55`: Desafio: Conteinerizar a infraestrutura da *LogiTech* garantindo imagens minimalistas de produção.
-  - `19h55 - 20h35`: Teoria: Containers vs VMs, Docker Daemon, anatomia de imagens, camadas, boas práticas de `Dockerfile` e Builds Multi-Stage. Volumes vs Bind Mounts.
-  - `20h35 - 20h50`: **Pergunta de Verificação #1** + Tira-dúvidas.
+- **Agenda em Minutos** (formato progressivo: sete ciclos de teoria + prática individual, um commit por etapa):
+  - `19h20 - 19h40`: **Resgate da Espiral** (os serviços das Aulas 01 e 02) e **Desafio do Mini Mundo** ("na minha máquina funciona").
+  - `19h40 - 20h00`: **Ciclo 1, Isolamento de processos:** chroot, namespaces, cgroups + Atividade 1.
+  - `20h00 - 20h20`: **Ciclo 2, Imagem, camadas e efemeridade** + Atividade 2.
+  - `20h20 - 20h40`: **Ciclo 3, Dockerfile e build** + Atividade 3.
+  - `20h40 - 20h50`: **Pergunta de Verificação #1** (efemeridade) + Tira-dúvidas do Bloco 1.
   - `20h50 - 21h20`: ☕ **INTERVALO (30 min)**.
-  - `21h20 - 21h35`: **Perguntas de Verificação #2 e #3**.
-  - `21h35 - 22h35`: **Atividade Prática Individual:** Criar `Dockerfiles` multi-stage para os serviços de Python e Node.js, gerando imagens com menos de 100MB e montando volume para persistência de logs.
-  - `22h35 - 22h50`: Execução e verificação dos containers em sala + Tira-dúvidas.
-- **Sessão de Perguntas de Verificação:**
-  1. *Pergunta 1:* Qual a principal vantagem do Build Multi-Stage no Dockerfile para ambientes corporativos?  
-     *Resposta Esperada:* Permite separar o ambiente de compilação/build do ambiente de execução final, resultando em imagens de produção extremamente leves, sem compiladores ou código-fonte desnecessário, aumentando a segurança e velocidade de deploy.
-  2. *Pergunta 2:* Qual a diferença entre um Volume Docker e um Bind Mount, e quando usar cada um?  
-     *Resposta Esperada:* Volumes são gerenciados totalmente pelo Docker dentro do host (ideais para bancos e persistência de dados em produção). Bind Mounts mapeiam uma pasta física da máquina host para o container (ideais para ambiente de desenvolvimento local).
-  3. *Pergunta 3:* O que acontece com os dados salvos dentro do sistema de arquivos de um container quando ele é destruído sem o uso de volumes?  
+  - `21h20 - 21h55`: **Ciclo 4, Multi-stage** + Atividade 4 + **Pergunta de Verificação #2** (multi-stage).
+  - `21h55 - 22h13`: **Ciclo 5, Volumes** + Atividade 5 + **Pergunta de Verificação #3** (volume x bind mount).
+  - `22h13 - 22h27`: **Ciclo 6, Network e observação** + Atividade 6.
+  - `22h27 - 22h35`: **Ciclo 7, Registry e Docker Hub** + Atividade 7.
+  - `22h35 - 22h42`: **Agent Skills:** conceito, anatomia do `SKILL.md` e demonstração com o `docker-agent`.
+  - `22h42 - 22h50`: Entrega no formulário.
+- **Sessão de Perguntas de Verificação** (cada pergunta é feita logo depois do ciclo que a ensina):
+  1. *Pergunta 1:* O que acontece com os dados salvos dentro do sistema de arquivos de um container quando ele é destruído sem o uso de volumes?  
      *Resposta Esperada:* Todos os dados salvos na camada gravável do container são perdidos permanentemente, pois o container é efêmero por natureza.
-- **Entregável Prático:** `Dockerfiles` multi-stage commitados no Git com imagens geradas e testadas localmente.
+  2. *Pergunta 2:* Qual a principal vantagem do Build Multi-Stage no Dockerfile para ambientes corporativos?  
+     *Resposta Esperada:* Permite separar o ambiente de compilação/build do ambiente de execução final, resultando em imagens de produção extremamente leves, sem compiladores ou código-fonte desnecessário, aumentando a segurança e velocidade de deploy.
+  3. *Pergunta 3:* Qual a diferença entre um Volume Docker e um Bind Mount, e quando usar cada um?  
+     *Resposta Esperada:* Volumes são gerenciados totalmente pelo Docker dentro do host (ideais para bancos e persistência de dados em produção). Bind Mounts mapeiam uma pasta física da máquina host para o container (ideais para ambiente de desenvolvimento local).
+- **Entregável Prático:** Fork individual com um commit por etapa (`feat(etapa-N)`), os sete critérios do `verificar.py` atendidos e a imagem do coletor publicada no Docker Hub, com redução mínima de 80% sobre a baseline e o coletor final abaixo de 100 MB.
 
 ---
 
