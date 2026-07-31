@@ -46,7 +46,7 @@ Foi refeita a partir do feedback do professor: foto real de família no slide de
 13 repositórios públicos criados, um por aula com lab, autocontidos:
 
 - devcontainer sobre a imagem oficial da stack, com **Ollama e `qwen2.5:1.5b` já baixados** na criação
-- `ai/ask.py` sem dependências: usa **GitHub Models** com o `GITHUB_TOKEN` que o Codespaces injeta, e cai para o Ollama local quando a cota acaba
+- `ai/ask.py` sem dependências: fala só com o **Ollama local** do devcontainer (o GitHub Models foi retirado em 30/07/2026, ver ADR-005 e o registro histórico abaixo)
 - README com missão no case LogiTech, passo a passo e entregáveis com valor numérico
 - fluxo por **fork**, não clone
 

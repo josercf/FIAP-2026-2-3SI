@@ -91,8 +91,8 @@ Ordem canônica dos slides (ver `SKILL.md` §4): capa → título → agenda com
 
 Cada aula com lab tem um repositório público próprio em `josercf/mwe-2026-2-labNN-tema`, autocontido e independente dos demais. O aluno faz **fork**, não clone. Cada um traz:
 
-- devcontainer sobre a imagem oficial da stack, com Ollama e `qwen2.5:1.5b` já baixados
-- `ai/ask.py`, cliente sem dependências que usa GitHub Models (o `GITHUB_TOKEN` vem injetado no Codespaces) e cai para o Ollama local quando a cota acaba
+- devcontainer sobre a imagem oficial da stack, com Ollama e o modelo do lab já baixados (`qwen2.5:1.5b` no geral, `qwen3.5:2b` no lab03)
+- `ai/ask.py`, cliente sem dependências que fala só com o Ollama local (o GitHub Models foi retirado em 30/07/2026, ver `docs/adrs/ADR-005`)
 - README com missão ancorada no case, passo a passo e entregáveis específicos
 
 Os arquivos em `aulas-1sem/labs/` são a referência do professor; o que o aluno abre é o repositório.
