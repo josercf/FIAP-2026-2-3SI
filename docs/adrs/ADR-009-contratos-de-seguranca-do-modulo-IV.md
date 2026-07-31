@@ -96,7 +96,7 @@ frete        GET   /health                          aberta
 
 notificacoes POST  /api/v1/notificacoes             ADMIN
 
-rag          POST  /api/v1/rag/perguntar            qualquer papel autenticado
+rag          POST  /api/v1/perguntar            qualquer papel autenticado
 
 ai-gateway   POST  /v1/chat/completions             qualquer papel autenticado
              GET   /v1/metricas                     ADMIN
@@ -150,6 +150,35 @@ a defesa vira ritual.
 Aceitar HIGH com justificativa escrita é o que times reais fazem; exigir zero
 HIGH faria o aluno inventar número para fechar a conta.
 
+### 6.1 Propagação de credencial entre serviços
+
+Decisão que faltava e que a construção da Aula 16 expôs: como os backends **não
+são clients** (seção 2), quando um serviço chama outro ele **propaga o token do
+usuário**, em vez de usar credencial própria de serviço.
+
+A consequência é boa de ensinar: o `pedidos` chama o `faturamento` carregando o
+token de quem pediu, então um usuário `CLIENTE` que cria pedido recebe
+`faturamento: "recusado: HTTP 403"`, porque emitir fatura exige `ADMIN`. O papel
+do usuário atravessa a cadeia inteira, e a autorização não se perde no meio.
+
+A alternativa, que **não** adotamos, seria dar credencial de serviço ao
+`pedidos`: resolveria o 403, e ao custo de o `faturamento` deixar de saber em
+nome de quem age. Para uma disciplina que acabou de ensinar RBAC, o primeiro
+comportamento vale mais.
+
+### 6.2 Direct access grant: desligado na Aula 14, ligado na Aula 16
+
+Os dois realms divergem **de propósito**, e cada um está certo no seu contexto:
+
+- **Aula 14** entrega o realm com `directAccessGrantsEnabled: false`. A aula é
+  sobre o fluxo PKCE, e desligar o atalho de pegar token por usuário e senha
+  impede estruturalmente o aluno de pular justamente o que está sendo ensinado.
+- **Aula 16** liga. Ali o token é obtido por script, pelo `verificar.py` e pelo
+  cliente MCP, sem navegador no meio, e a aula não é mais sobre o fluxo.
+
+Cada kit declara a escolha no README e no slide. Divergir sem declarar seria
+defeito; divergir por motivo explícito é ensino.
+
 ### 7.1 Serviços congelados continuam mínimos
 
 Vale para este módulo o mesmo que a `ADR-007` estabeleceu na Aula 07: o que cada
@@ -164,16 +193,34 @@ Cada kit declara isso em `servicos/LEIA-ME.md` e no slide correspondente.
 
 ```
 LOGITECH_AUTH_ATIVA          <- padrão false; a Aula 14 liga
-LOGITECH_OIDC_ISSUER         <- http://keycloak:8090/realms/logitech
-LOGITECH_OIDC_JWKS_URL       <- .../protocol/openid-connect/certs
+LOGITECH_OIDC_ISSUER         <- http://localhost:8090/realms/logitech
+LOGITECH_OIDC_JWKS_URL       <- http://keycloak:8090/realms/logitech/protocol/openid-connect/certs
 LOGITECH_OIDC_CLIENT_ID      <- por frontend
 LOGITECH_GUARDRAILS_ATIVOS   <- padrão true a partir da Aula 15
 ```
 
-O `issuer` dentro da rede e no navegador **não coincidem** (`keycloak:8090`
-contra `localhost:8090`), e isso derruba a validação de token com uma mensagem
-péssima. O realm é importado com os dois endereços aceitos, e o problema vira
-conteúdo em vez de armadilha.
+**Emenda de 31/07/2026, e ela corrige um erro desta ADR.** A primeira versão
+mandava esperar `http://keycloak:8090/realms/logitech` no `LOGITECH_OIDC_ISSUER`.
+Isso **derruba toda validação de token**, e as construções das Aulas 14 e 16
+descobriram executando. O motivo: o `iss` que o Keycloak grava dentro do token é
+o endereço pelo qual o **navegador** falou com ele, ou seja `localhost:8090`. O
+backend precisa esperar exatamente esse valor.
+
+Os dois endereços continuam existindo, com papéis distintos:
+
+- `LOGITECH_OIDC_ISSUER` usa o endereço **do navegador**, porque é o que está
+  gravado no token.
+- `LOGITECH_OIDC_JWKS_URL` usa o endereço **da rede interna**, porque quem baixa
+  a chave é o serviço, de dentro do Compose.
+
+A Aula 14 adota a variante tolerante, aceitando os dois `issuer` numa lista
+separada por vírgula, para o serviço funcionar tanto rodando solto quanto dentro
+do Compose. A Aula 16 espera só o do navegador. As duas formas são válidas, e a
+divergência entre elas é conteúdo: é o slide que explica por que um mesmo
+Keycloak tem dois nomes.
+
+Essa divergência derruba a validação com uma mensagem péssima, e por isso o
+tratamento dela é conteúdo de aula, não nota de rodapé.
 
 ## Motivações
 

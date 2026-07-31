@@ -1,0 +1,14 @@
+{
+  "name": "mcp-logitech",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Servidor Model Context Protocol da plataforma LogiTech, transporte stdio.",
+  "engines": {
+    "node": ">=22.6"
+  },
+  "scripts": {
+    "start": "node --experimental-strip-types src/servidor.ts",
+    "test": "node --experimental-strip-types src/cliente-teste.ts"
+  }
+}

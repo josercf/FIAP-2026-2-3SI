@@ -1,40 +1,41 @@
 # =============================================================================
-# LogiTech Enterprise AI Platform - a plataforma inteira, treze serviços.
-# Aula 16, 17/11/2026. Hackathon de integração e simulado da banca.
+# RESGATE: a plataforma LogiTech inteira, com as seis falhas já corrigidas.
 # =============================================================================
 #
-# ESTE ARQUIVO SOBE **QUEBRADO**, E ISSO É DE PROPÓSITO.
+#     cp resgate/docker-compose.yml docker-compose.yml
 #
-# Ele tem **seis falhas plantadas**, e todas as seis aconteceram de verdade
-# durante a construção deste acervo, entre março e julho de 2026. Nenhuma é
-# invenção didática: cada uma custou tempo de alguém, e por isso está aqui.
+# Rede de segurança, não atalho. Se você copiar isto sem ter diagnosticado as
+# falhas, a Frente 1 fica verde e a banca continua sendo uma incógnita: o que a
+# banca pergunta é "por que o serviço X ficou unhealthy", e essa resposta não
+# está aqui, está no caminho até aqui.
 #
-# O seu trabalho na Frente 1 não é copiar a correção. É **diagnosticar**: subir,
-# ler o que o Compose e os logs dizem, e descobrir qual serviço está mentindo
-# sobre a própria saúde. A banca vai perguntar "por que o serviço X ficou
-# unhealthy", e essa resposta não está no arquivo corrigido: está no caminho.
+# O que muda em relação ao arquivo com as falhas, uma por uma:
 #
-# O runbook de diagnóstico está no README, na seção "Quando algo não sobe".
-# Os quatro comandos que resolvem quase tudo:
+#   FALHA-1  healthcheck de `frete` e de `notificacoes` usava `localhost`.
+#            Dentro do Alpine o `localhost` resolve primeiro para ::1 (IPv6). O
+#            uvicorn do `frete` escuta só em 0.0.0.0, e o healthcheck falhava
+#            com "Connection refused" com o serviço no ar. No `notificacoes` a
+#            mesma linha passava, porque o servidor do Node escuta em `::`.
+#            Medido em 31/07/2026. Trocado por 127.0.0.1 nos dois.
 #
-#     docker compose ps -a               quem subiu, quem está healthy
-#     docker compose logs <servico>      o que o processo disse antes de morrer
-#     docker inspect --format '{{json .State.Health}}' <container> | python3 -m json.tool
-#     docker compose exec <a> wget -qO- http://<b>:<porta>/health
+#   FALHA-2  LOGITECH_OIDC_ISSUER apontava para http://keycloak:8090, o
+#            endereço da rede interna. O `iss` que o Keycloak grava no token é
+#            o endereço pelo qual o NAVEGADOR chegou, http://localhost:8090.
+#            O issuer é o do navegador; o JWKS é buscado pela rede interna.
 #
-# Cada falha tem um rótulo `FALHA-N` no lugar onde ela mora. Os rótulos existem
-# para você registrar a correção em docs/EVIDENCIAS.md, e não para dispensar o
-# diagnóstico: leia o sintoma antes de ler o rótulo.
+#   FALHA-3  `keycloak` publicava 8080 no host, a porta do `pedidos`. A ADR-009
+#            fixa 8090 justamente por isso. Corrigido para 8090:8090.
 #
-# Os nomes de serviço, portas, rotas e variáveis são o contrato da plataforma
-# (ADR-006, ADR-008 e ADR-009). Trocar um nome aqui quebra outro serviço.
+#   FALHA-4  `rag` dependia do `postgres` pela forma curta de `depends_on`, que
+#            espera o container existir, não o banco aceitar conexão. Trocado
+#            pela forma longa com condition: service_healthy.
 #
-# ANTES DE COMEÇAR:
+#   FALHA-5  `mcp-logitech` não tinha `stdin_open: true`. O transporte do MCP é
+#            stdio: sem entrada padrão aberta o processo recebe EOF e sai, e o
+#            container entra em laço de reinício.
 #
-#     cp .env.exemplo .env
-#     docker network create logitech-net        # se ainda não existir
-#     docker volume  create logitech-telemetria
-#
+#   FALHA-6  LOGITECH_AUTH_ATIVA não estava declarada, e o padrão dela é false
+#            (ADR-009). A plataforma subia inteira e sem autenticação nenhuma.
 # =============================================================================
 
 name: logitech
@@ -50,27 +51,8 @@ x-saude: &saude
 # doze vezes é como o erro de issuer nasce: um serviço fica para trás numa
 # correção e passa a recusar o token que os outros aceitam.
 x-identidade: &identidade
-  # FALHA-6: falta aqui a variável que liga a autenticação.
-  #
-  # A ADR-009 criou `LOGITECH_AUTH_ATIVA` com padrão **false**, para que os
-  # laboratórios das Aulas 05 a 12 continuassem passando depois que a Aula 14
-  # pôs segurança na plataforma. Sem declará-la aqui, os treze serviços sobem,
-  # ficam healthy, e não protegem absolutamente nada.
-  #
-  # Sintoma: `curl http://localhost:8080/api/v1/pedidos` **sem token** devolve
-  # 200. O `GET /health` de cada serviço anuncia `auth_ativa`, e é por ele que
-  # se confirma.
-  #
-  # FALHA-2: o issuer abaixo está errado, e o erro é sutil.
-  #
-  # `http://keycloak:8090` é o endereço da rede interna, que é por onde o
-  # backend busca o JWKS. Mas o `iss` que o Keycloak grava dentro do token é o
-  # endereço pelo qual o **navegador** chegou, `http://localhost:8090`. São
-  # dois valores diferentes, e é por isso que existem duas variáveis.
-  #
-  # Sintoma: o login funciona, o token chega, e toda rota protegida devolve
-  # 401. O motivo aparece no corpo da resposta e no log do serviço.
-  LOGITECH_OIDC_ISSUER: http://keycloak:8090/realms/logitech
+  LOGITECH_AUTH_ATIVA: "true"
+  LOGITECH_OIDC_ISSUER: http://localhost:8090/realms/logitech
   LOGITECH_OIDC_JWKS_URL: http://keycloak:8090/realms/logitech/protocol/openid-connect/certs
   LOGITECH_CORS_ORIGINS: http://localhost:5173,http://localhost:4200
 
@@ -118,16 +100,8 @@ services:
     volumes:
       - ./keycloak:/opt/keycloak/data/import:ro
     ports:
-      # FALHA-3: esta publicação colide com outro serviço da plataforma.
-      #
-      # Sintoma: o `docker compose up` morre com "Bind for 0.0.0.0:8080 failed:
-      # port is already allocated", e o serviço que aparece na mensagem pode
-      # não ser o que está errado: quem chegou primeiro ganha a porta.
-      #
-      # A ADR-009 fixou a 8090 para o Keycloak justamente para não brigar com a
-      # 8080. Repare que o `--http-port` do `command` já diz 8090: quem está
-      # fora do lugar é o mapeamento do host.
-      - "8080:8090"
+      # 8090, e não 8080: a 8080 é do `pedidos` desde a ADR-006.
+      - "8090:8090"
     networks:
       - logitech-net
     mem_limit: 768m
@@ -242,18 +216,8 @@ services:
         condition: service_healthy
     healthcheck:
       <<: *saude
-      # FALHA-1: este healthcheck usa um nome que resolve para o lugar errado.
-      #
-      # Sintoma: o serviço responde normalmente pelo host
-      # (`curl localhost:8000/health` devolve 200) e mesmo assim o container
-      # fica `unhealthy` para sempre, e tudo que depende dele nunca começa.
-      #
-      # Dica de diagnóstico: leia a saída do próprio healthcheck com
-      #     docker inspect --format '{{json .State.Health}}' <container>
-      # Ela diz "Connection refused", com o serviço no ar.
-      #
-      # A mesma linha errada está no `notificacoes`, logo abaixo.
-      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:8000/health"]
+      # 127.0.0.1, e não localhost. FALHA-1 estava aqui.
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8000/health"]
 
   notificacoes:
     build: ./servicos/notificacoes
@@ -269,18 +233,12 @@ services:
         condition: service_healthy
     healthcheck:
       <<: *saude
-      # FALHA-1, a segunda ocorrência da MESMA linha errada, e ela ensina mais
-      # que a primeira: aqui o healthcheck **passa**.
-      #
-      # O `notificacoes` roda em Node, e o servidor HTTP do Node escuta em `::`,
-      # que aceita conexão IPv4 mapeada. O `frete` roda em uvicorn, que escuta
-      # em `0.0.0.0`, só IPv4. A mesma linha errada, dois desfechos, e o que
-      # decide é o que a stack faz por baixo.
-      #
-      # Corrija esta também. Defeito que só não aparece porque a stack ao lado
-      # é tolerante não é defeito corrigido: é defeito esperando outra imagem
-      # base, outra versão do Node ou outro sistema operacional.
-      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:3001/health"]
+      # 127.0.0.1, e não localhost. FALHA-1 também estava aqui, e aqui ela
+      # PASSAVA: o servidor HTTP do Node escuta em `::` e aceita IPv4 mapeado,
+      # enquanto o uvicorn do `frete` escuta só em `0.0.0.0`. Corrigir os dois
+      # é a decisão certa mesmo assim: defeito que só não aparece porque a
+      # stack é tolerante volta na próxima imagem base.
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:3001/health"]
 
   # =====================================================================
   # Inteligência: gateway, RAG e o servidor MCP
@@ -329,21 +287,13 @@ services:
     networks:
       - logitech-net
     mem_limit: 320m
-    # FALHA-4: esta forma de `depends_on` não espera o que você acha que espera.
-    #
-    # A forma curta, em lista, espera o **container existir**. Ela não espera o
-    # PostgreSQL aceitar conexão. Numa máquina rápida às vezes passa, e é o que
-    # torna esta falha traiçoeira: ela aparece na máquina de outra pessoa.
-    #
-    # Sintoma: o `rag` sobe, fica unhealthy e o log mostra falha de conexão com
-    # o banco. Subir de novo "resolve", o que é a assinatura de uma corrida.
-    #
-    # A forma longa, com `condition: service_healthy`, é a que espera o
-    # healthcheck do outro serviço passar. Ela já está usada no `pedidos`:
-    # compare os dois.
     depends_on:
-      - postgres
-      - keycloak
+      # Forma longa, com condição. A curta espera o container existir, não o
+      # banco aceitar conexão, e o `rag` morre na primeira consulta. FALHA-4.
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
     healthcheck:
       <<: *saude
       # A imagem é `slim` por causa do psycopg, e slim não traz o wget do
@@ -363,19 +313,10 @@ services:
       LOGITECH_OIDC_CLIENT_ID: logitech-portal
       LOGITECH_MCP_USUARIO: ${LOGITECH_MCP_USUARIO:-carla.admin}
       LOGITECH_MCP_SENHA: ${LOGITECH_MCP_SENHA:-logitech}
-    # FALHA-5: falta uma linha aqui, e é a que mantém este serviço vivo.
-    #
-    # Este é o décimo terceiro serviço da plataforma e o único **sem porta**: o
-    # transporte padrão do MCP é stdio, e ele conversa por entrada e saída
-    # padrão, não por HTTP.
-    #
-    # Sintoma: o container sobe e sai imediatamente, sem erro nenhum no log. O
-    # `docker compose ps -a` mostra `Exited (0)`. Saiu com sucesso, porque do
-    # ponto de vista do processo terminar de ler a entrada padrão é o fim
-    # normal do trabalho.
-    #
-    # Procure, na referência do Compose, a opção equivalente ao `-i` do
-    # `docker run`.
+    # O décimo terceiro serviço, e o único SEM porta: o transporte do MCP é
+    # stdio. `stdin_open` mantém a entrada padrão aberta; sem ele o processo
+    # recebe EOF e sai na hora. FALHA-5.
+    stdin_open: true
     networks:
       - logitech-net
     mem_limit: 160m

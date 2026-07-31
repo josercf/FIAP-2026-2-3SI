@@ -1,0 +1,11 @@
+# Dependências do serviço `rag`. Três, e cada uma tem um motivo.
+#
+# Repare no que NÃO está aqui: nenhuma biblioteca de vetores, nenhum framework
+# de RAG, nenhum SDK de MCP. O vetor viaja para o banco como texto e o
+# PostgreSQL o converte com `%s::vector`; o protocolo MCP é JSON-RPC 2.0 escrito
+# à mão em Node. Menos dependência é menos coisa para quebrar em sala, e o que
+# você aprende passa a ser transferível.
+
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+psycopg[binary]==3.2.3

@@ -1,0 +1,143 @@
+/* Painel administrativo da LogiTech Enterprise.
+   Estilo enxuto de propósito: o assunto da aula é RxJS, não CSS. */
+
+:root {
+  --rosa: #ed145b;
+  --escuro: #1c1c1c;
+  --cinza: #6b6b6b;
+  --borda: #e2e2e2;
+  --fundo: #f5f5f7;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--fundo);
+  color: var(--escuro);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 15px;
+}
+
+.mono { font-family: ui-monospace, 'JetBrains Mono', 'SFMono-Regular', Menlo, monospace; }
+
+.topo {
+  background: var(--escuro);
+  color: #fff;
+  padding: 18px 26px;
+}
+.topo h1 { margin: 0; font-size: 1.25rem; font-weight: 700; }
+.topo h1 span { color: var(--rosa); font-weight: 500; }
+.topo p { margin: 6px 0 0; color: #bdbdbd; font-size: 0.85rem; }
+.topo code { color: #fff; }
+
+main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  padding: 18px 26px 40px;
+  align-items: start;
+}
+.coluna { display: flex; flex-direction: column; gap: 18px; }
+
+.cartao {
+  background: #fff;
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+.cartao header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.cartao h2 {
+  margin: 0;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--cinza);
+}
+
+.filtros { display: flex; gap: 6px; }
+.filtros button {
+  border: 1px solid var(--borda);
+  background: #fff;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+.filtros button.ativo { background: var(--rosa); border-color: var(--rosa); color: #fff; }
+
+table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+th {
+  text-align: left;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--cinza);
+  border-bottom: 2px solid var(--borda);
+  padding: 6px 8px;
+}
+td { padding: 6px 8px; border-bottom: 1px solid var(--borda); }
+td.direita { text-align: right; }
+tr.acelerado td { background: #fff2f6; color: #b4114a; font-weight: 600; }
+
+.vazio { color: var(--cinza); font-size: 0.85rem; margin: 4px 0; }
+.rodape { color: var(--cinza); font-size: 0.76rem; margin: 10px 0 0; }
+
+.alertas { list-style: none; margin: 0; padding: 0; font-size: 0.84rem; }
+.alertas li {
+  display: grid;
+  grid-template-columns: 90px 40px 90px 1fr;
+  gap: 8px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--borda);
+}
+.grave { color: #b4114a; font-weight: 700; }
+.quando { color: var(--cinza); font-size: 0.76rem; }
+
+.busca { display: block; margin-bottom: 12px; }
+.busca span {
+  display: block;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--cinza);
+  margin-bottom: 4px;
+}
+.busca input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: ui-monospace, Menlo, monospace;
+}
+
+.fatura { display: grid; grid-template-columns: 130px 1fr; gap: 4px 12px; margin: 0; font-size: 0.87rem; }
+.fatura dt { color: var(--cinza); font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.fatura dd { margin: 0; }
+
+.contadores { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px; }
+.contadores div {
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+}
+.contadores .destaque { border-color: var(--rosa); background: #fff7fa; }
+.contadores .numero { display: block; font-size: 1.5rem; font-weight: 800; }
+.contadores span:last-child {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--cinza);
+}
+
+.linha-do-tempo { list-style: none; margin: 0; padding: 0; font-size: 0.74rem; }
+.linha-do-tempo li { padding: 2px 0; border-bottom: 1px solid var(--borda); color: var(--cinza); }
