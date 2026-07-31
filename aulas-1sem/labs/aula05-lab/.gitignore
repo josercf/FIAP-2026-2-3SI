@@ -1,0 +1,17 @@
+# Java / Maven
+target/
+*.class
+
+# .NET
+bin/
+obj/
+*.user
+
+# Python
+__pycache__/
+*.pyc
+
+# Editores e sistema
+.vscode/
+.idea/
+.DS_Store

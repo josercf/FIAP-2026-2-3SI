@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aula 05 – POO, SOLID & Design Patterns em Java (Spring Boot) & C# (.NET Core) | FIAP</title>
+  <title>Aula 05 – POO, SOLID e Design Patterns em Java e C# | FIAP</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
@@ -11,133 +11,2463 @@
   <link rel="stylesheet" href="../assets/css/fiap-print.css">
   <script>if(/print-pdf/gi.test(window.location.search)){var link=document.createElement('link');link.rel='stylesheet';link.href='https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/css/print/pdf.css';document.head.appendChild(link);}</script>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* Tabelas compactas, mesmo padrao das Aulas 02 e 03 */
+    .reveal table.compact-table { font-size: 0.62em; margin: 8px 0; }
+    .reveal table.compact-table th { padding: 7px 12px; }
+    .reveal table.compact-table td { padding: 7px 12px; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    /* Figuras com animacao SVG: altura controlada para nunca estourar os 720px */
+    .reveal .slide-figure { margin: 6px 0 0; }
+    .reveal .slide-figure svg { width: 100%; }
+    .reveal .slide-figure figcaption { font-size: 0.6em; line-height: 1.45; color: #6b6b6b; margin-top: 4px; }
+    /* Par de blocos de codigo: o cheiro de um lado, a correcao do outro */
+    .reveal .par-codigo { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 6px; }
+    .reveal .par-codigo pre { margin: 0; font-size: 0.42em; padding: 11px 13px; }
+    .reveal .par-codigo pre code { line-height: 1.38; }
+    .reveal .rotulo { font-size: 0.58em; font-weight: 800; letter-spacing: 0.6px; text-transform: uppercase; margin: 0 0 4px; }
+    .reveal .rotulo-mau { color: #c0392b; }
+    .reveal .rotulo-bom { color: #1e8449; }
+  </style>
 </head>
 <body>
   <div class="reveal">
     <div class="slides">
-      <section class="cover-slide"><img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" class="fiap-logo-full"></section>
-      <section class="title-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="title-card"><div class="accent-bar"></div><h1>Sistemas de Informação</h1><h2>Microservice and Web Engineering & IT Services</h2><h3>Prof. José Romualdo</h3></div>
-        <div class="lesson-bar">AULA 05 – POO, SOLID & Design Patterns em Java (Spring Boot) & C# (.NET Core)</div>
+
+      <!-- ==================== 1: CAPA ==================== -->
+      <section class="cover-slide">
+        <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" class="fiap-logo-full">
       </section>
+
+      <!-- ==================== 2: TÍTULO ==================== -->
+      <section class="title-slide" data-background-image="../assets/img/microservices-bg.jpg" data-background-opacity="0.3">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="title-card">
+          <div class="accent-bar"></div>
+          <h1>Sistemas de Informação</h1>
+          <h2>Microservice and Web Engineering &amp; IT Services</h2>
+          <h3>Prof. José Romualdo</h3>
+        </div>
+        <div class="lesson-bar">AULA 05 – POO, SOLID e Design Patterns em Java e C#</div>
+      </section>
+
+      <!-- ==================== 3: AGENDA ==================== -->
       <section class="content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Agenda do Encontro</h2></div>
-        <table>
-          <thead><tr><th>Bloco</th><th>Horário</th><th>Conteúdo & Atividades</th></tr></thead>
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Agenda do Encontro de Hoje</h2>
+        </div>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>Início</th><th>Conteúdo</th></tr>
+          </thead>
           <tbody>
-            <tr><td><strong>Bloco 1</strong></td><td>19h20 – 20h50</td><td>Princípios SOLID + Quiz #1</td></tr>
-            <tr><td><strong>Intervalo</strong></td><td>20h50 – 21h20</td><td>☕ Pausa para Café e Networking (30 min)</td></tr>
-            <tr><td><strong>Bloco 2</strong></td><td>21h20 – 22h50</td><td>Quizzes #2 e #3 + Design Patterns Factory & Strategy + Lab</td></tr>
+            <tr><td>19h20</td><td>Resgate da espiral: de scripts soltos para serviços com projeto</td></tr>
+            <tr><td>19h35</td><td>Desafio do Mini Mundo: cobrar pelo frete sem prender a regra ao banco</td></tr>
+            <tr><td>19h55</td><td>Teoria: os quatro pilares de POO, os cinco princípios SOLID, Factory Method, Repository e Singleton</td></tr>
+            <tr><td>20h35</td><td>Quiz 1 e tira-dúvidas</td></tr>
+            <tr><td>20h50</td><td>Intervalo (30 minutos)</td></tr>
+            <tr><td>21h20</td><td>Quizzes 2 e 3</td></tr>
+            <tr><td>21h35</td><td>Atividade prática em dupla: as seis lacunas do laboratório</td></tr>
+            <tr><td>22h35</td><td>Validação dos endpoints, evidências e commit</td></tr>
           </tbody>
         </table>
-        <div class="slide-footer"><div class="footer-bar">05 – SOLID & Patterns</div><div class="footer-page">3</div></div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Entregável de hoje</span>
+          <p>O fork da dupla com as seis lacunas fechadas, <span class="mono">mvn test</span> e <span class="mono">dotnet test</span> verdes, e o <span class="mono">verificar.py</span> imprimindo 11 de 11.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Agenda do Encontro</div>
+          <div class="footer-page">3</div>
+        </div>
       </section>
+
+      <!-- ==================== 4: RESGATE DA ESPIRAL ==================== -->
       <section class="content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Código Limpo e Escalável</h2></div>
-        <div class="concept-cards">
-          <div class="concept-card"><h4>SOLID</h4><p>SRP, OCP, LSP, ISP e DIP. Pilares da POO moderna.</p></div>
-          <div class="concept-card"><h4>Strategy Pattern</h4><p>Encapsula algoritmos (ex: cálculo de frete) tornando-os intercambiáveis.</p></div>
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Resgate da Espiral: de script solto a serviço de negócio</h2>
         </div>
-        <div class="slide-footer"><div class="footer-bar">05 – SOLID & Patterns</div><div class="footer-page">4</div></div>
-      </section>
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Quiz #1 (Fixação do Bloco 1)</h2></div>
-        <div class="quiz-container">
-          <div class="quiz-question">O Princípio do Aberto/Fechado (OCP) diz que uma entidade de software deve estar:</div>
-          <ul class="quiz-options">
-            <li data-correct="false"><span class="option-letter">A</span>Aberta para modificação, mas fechada para extensão.</li>
-            <li data-correct="true"><span class="option-letter">B</span>Aberta para extensão, mas fechada para modificação.</li>
-            <li data-correct="false"><span class="option-letter">C</span>Fechada para testes, aberta para deploy.</li>
-            <li data-correct="false"><span class="option-letter">D</span>Aberta para uso público, fechada para privado.</li>
-          </ul>
-          <div class="quiz-feedback" data-correct-msg="Perfeito! Você adiciona novos comportamentos (extensão) sem alterar código existente (modificação)." data-incorrect-msg="Reveja o OCP. O foco é estender sem quebrar o que já existe."></div>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:13px; margin-top:8px;">
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Aula 02: os dois serviços</h4>
+            <p style="font-size:0.68em;">O <strong>coletor UDP</strong> em Python e o <strong>painel HTTP/SSE</strong> em Node. Cada um é um arquivo, uma função por comportamento, sem camada nenhuma. Funciona, e é o certo para o problema daquele dia.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Aula 03: o empacotamento</h4>
+            <p style="font-size:0.68em;">Os dois viraram <strong>imagem Docker</strong> multi-stage, com volume, rede <span class="mono">logitech-net</span> e registry. O ambiente parou de ser um problema. O <strong>projeto do código</strong> ainda não tinha sido tocado.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Hoje: o projeto</h4>
+            <p style="font-size:0.68em;">Dois serviços novos, em <strong>Java 21</strong> e <strong>C# .NET 8</strong>, com regra de negócio que muda toda semana. Aqui um arquivo só não sustenta: é o momento em que projeto de classes deixa de ser luxo.</p>
+          </div>
         </div>
-        <div class="slide-footer"><div class="footer-bar">05 – SOLID & Patterns</div><div class="footer-page">5</div></div>
-      </section>
-      <section class="content-slide" style="text-align:center;">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div style="margin-top:100px;">
-          <h2 style="font-size:2.5em; color:var(--fiap-pink);">☕ Pausa para Café</h2>
-          <h3 style="font-size:1.5em; color:var(--fiap-gray-light); margin-top:20px;">20h50 – 21h20 (30 minutos)</h3>
-          <p style="margin-top:40px; font-size:1.1em;">Na volta: Quizzes #2 e #3 + Hands-on Lab!</p>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A espiral em uma frase</span>
+          <p>Nas Aulas 02 e 03 o inimigo era o ambiente. Hoje o inimigo é a mudança: o mesmo código precisa aceitar um contrato comercial novo sem que ninguém reescreva o serviço.</p>
         </div>
-        <div class="slide-footer"><div class="footer-page">6</div></div>
-      </section>
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Quiz #2 (Retorno do Intervalo)</h2></div>
-        <div class="quiz-container">
-          <div class="quiz-question">Qual a principal vantagem do padrão Strategy?</div>
-          <ul class="quiz-options">
-            <li data-correct="true"><span class="option-letter">A</span>Eliminar grandes blocos de if/else delegando o comportamento para classes específicas.</li>
-            <li data-correct="false"><span class="option-letter">B</span>Garantir que apenas uma instância da classe exista (Singleton).</li>
-            <li data-correct="false"><span class="option-letter">C</span>Adaptar uma interface velha para uma nova.</li>
-            <li data-correct="false"><span class="option-letter">D</span>Aumentar a performance de processamento do banco de dados.</li>
-          </ul>
-          <div class="quiz-feedback" data-correct-msg="Exato! Strategy favorece a composição e o Open/Closed Principle." data-incorrect-msg="Errado. Strategy é comportamental e substitui condicionais complexas."></div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Resgate da Espiral</div>
+          <div class="footer-page">4</div>
         </div>
-        <div class="slide-footer"><div class="footer-bar">05 – SOLID & Patterns</div><div class="footer-page">7</div></div>
       </section>
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Quiz #3</h2></div>
-        <div class="quiz-container">
-          <div class="quiz-question">Em Spring Boot ou .NET Core, como aplicamos a Inversão de Dependência (DIP)?</div>
-          <ul class="quiz-options">
-            <li data-correct="true"><span class="option-letter">A</span>Injetando dependências via construtor (Injeção de Dependência).</li>
-            <li data-correct="false"><span class="option-letter">B</span>Herdando de classes base abstratas infinitamente.</li>
-            <li data-correct="false"><span class="option-letter">C</span>Usando 'new' dentro de todos os métodos.</li>
-            <li data-correct="false"><span class="option-letter">D</span>Criando variáveis globais estáticas.</li>
-          </ul>
-          <div class="quiz-feedback" data-correct-msg="Isso aí! O framework gerencia o ciclo de vida (IoC Container)." data-incorrect-msg="O DIP é implementado através da Injeção de Dependência nos frameworks modernos."></div>
-        </div>
-        <div class="slide-footer"><div class="footer-bar">05 – SOLID & Patterns</div><div class="footer-page">8</div></div>
-      </section>
+
+      <!-- ==================== 5: A PLATAFORMA HOJE (ANIMAÇÃO 1) ==================== -->
       <section class="content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Hands-on Lab: LogiTech Enterprise</h2></div>
-        <div class="concept-cards">
-          <div class="concept-card"><h4>Missão</h4><p>Implementar Strategy para Cálculo de Frete (LogiTech) em Java ou C#.</p></div>
-          <div class="concept-card"><h4>Passo a Passo</h4><p>1. Criar interface `FreightStrategy`<br>2. Implementar `Sedex` e `PAC`<br>3. Usar Injeção de Dependência.</p></div>
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A plataforma LogiTech ganha dois contextos <a href="#/ref-slide" class="ref-badge" title="Ver referências">[7]</a></h2>
         </div>
-        <pre class="code-compact"><code class="language-java">// Java (Spring) Example
-public interface FreightStrategy {
-    double calculate(double distance);
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 300" style="max-height:400px;" role="img" aria-label="Mapa dos serviços da plataforma LogiTech com Pedidos e Faturamento entrando">
+            <text x="150" y="24" text-anchor="middle" font-size="13" font-weight="700" fill="#888">JÁ DE PÉ (AULAS 02 e 03)</text>
+            <rect x="40" y="44" width="220" height="46" rx="7" fill="#bbb"/>
+            <text x="150" y="72" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">coletor · Python · 8081/udp</text>
+            <rect x="40" y="104" width="220" height="46" rx="7" fill="#bbb"/>
+            <text x="150" y="132" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">painel · Node · 3000</text>
+
+            <text x="620" y="24" text-anchor="middle" font-size="13" font-weight="700" fill="#ED145B">ENTRA HOJE</text>
+            <rect x="470" y="44" width="300" height="46" rx="7" fill="#ED145B" opacity="0">
+              <animate attributeName="opacity" values="0;0;0.95;0.95" keyTimes="0;0.12;0.28;1" dur="8s" repeatCount="indefinite"/>
+            </rect>
+            <text x="620" y="72" text-anchor="middle" fill="#fff" font-size="13" font-weight="700" opacity="0">pedidos · Java 21 · Spring Boot 3 · 8080
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.12;0.28;1" dur="8s" repeatCount="indefinite"/>
+            </text>
+            <rect x="470" y="104" width="300" height="46" rx="7" fill="#ED145B" opacity="0">
+              <animate attributeName="opacity" values="0;0;0.8;0.8" keyTimes="0;0.3;0.46;1" dur="8s" repeatCount="indefinite"/>
+            </rect>
+            <text x="620" y="132" text-anchor="middle" fill="#fff" font-size="13" font-weight="700" opacity="0">faturamento · C# · .NET 8 · 5080
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.3;0.46;1" dur="8s" repeatCount="indefinite"/>
+            </text>
+
+            <path d="M 620 90 L 620 104" stroke="#ED145B" stroke-width="3" fill="none" opacity="0">
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.46;0.56;1" dur="8s" repeatCount="indefinite"/>
+            </path>
+            <text x="700" y="101" font-size="11" fill="#777" opacity="0">POST /api/v1/faturas
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.46;0.56;1" dur="8s" repeatCount="indefinite"/>
+            </text>
+
+            <rect x="470" y="180" width="300" height="44" rx="7" fill="#333" opacity="0">
+              <animate attributeName="opacity" values="0;0;0.9;0.9" keyTimes="0;0.56;0.7;1" dur="8s" repeatCount="indefinite"/>
+            </rect>
+            <text x="620" y="207" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" opacity="0">postgres 16 · schemas pedidos e faturamento
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.56;0.7;1" dur="8s" repeatCount="indefinite"/>
+            </text>
+
+            <rect x="30" y="248" width="840" height="38" rx="7" fill="none" stroke="#999" stroke-dasharray="6,5"/>
+            <text x="450" y="272" text-anchor="middle" font-size="13" fill="#666">rede logitech-net, a mesma que vocês criaram à mão na Aula 03</text>
+          </svg>
+          <figcaption>
+            A animação acrescenta, em ordem, o serviço de Pedidos em Java, o de Faturamento em C#, a chamada HTTP de um para o outro e o PostgreSQL com um schema por Bounded Context. Tudo dentro da rede criada na Aula 03. Na Aula 07 esses quatro serviços mais o frete, as notificações e o AI Gateway sobem juntos com um único comando.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – A Plataforma Hoje</div>
+          <div class="footer-page">5</div>
+        </div>
+      </section>
+
+      <!-- ==================== 6: DESAFIO DO MINI MUNDO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Desafio do Mini Mundo: cobrar sem prender a regra</h2>
+        </div>
+
+        <p style="font-size:0.72em; margin-bottom:0;">A LogiTech vai faturar os fretes que já sabe fazer. E a área comercial fecha contrato diferente com cada cliente: boleto para o cliente comum, cartão corporativo com desconto para o cliente ouro, e agora fatura mensal para quem assina contrato.</p>
+
+        <div class="side-by-side" style="margin-top:11px;">
+          <div class="side" style="padding:15px 19px;">
+            <h4>O que o negócio pede</h4>
+            <p style="font-size:0.7em; margin:0;">Um contrato comercial novo entra em produção em dias, não em meses. Ninguém aceita ouvir que mudar a forma de cobrança exige reescrever o serviço de pedidos.</p>
+          </div>
+          <div class="side" style="padding:15px 19px;">
+            <h4>O que o código costuma virar</h4>
+            <p style="font-size:0.7em; margin:0;">Um <span class="mono">if</span> a mais por contrato, dentro do mesmo método, num arquivo que também sabe salvar no banco e montar a resposta HTTP. Em seis meses ninguém encosta nele.</p>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:11px; padding:12px 17px;">
+          <p style="font-size:0.7em; margin:0;">A pergunta de projeto da noite: <strong>onde essa decisão deveria morar</strong> para que o serviço de Pedidos não precise mudar quando o comercial fechar o próximo contrato?</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">O alvo</span>
+          <p>Gravar pedido e emitir fatura sem que a regra de negócio conheça o banco de dados nem o meio de pagamento de cada cliente.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Desafio do Mini Mundo</div>
+          <div class="footer-page">6</div>
+        </div>
+      </section>
+
+      <!-- ==================== 7: O CUSTO DA MUDANÇA (ANIMAÇÃO 2) ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O custo de mudar: o mesmo requisito, dois projetos <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 290" style="max-height:400px;" role="img" aria-label="Comparação do custo de acrescentar contratos comerciais em código acoplado e em código com abstração">
+            <line x1="70" y1="240" x2="850" y2="240" stroke="#999" stroke-width="2"/>
+            <line x1="70" y1="240" x2="70" y2="40" stroke="#999" stroke-width="2"/>
+            <text x="60" y="44" text-anchor="end" font-size="12" fill="#777">custo</text>
+            <text x="850" y="284" text-anchor="end" font-size="12" fill="#777">contratos comerciais acrescentados</text>
+
+            <g font-size="12" fill="#777">
+              <text x="200" y="262" text-anchor="middle">1º</text>
+              <text x="360" y="262" text-anchor="middle">2º</text>
+              <text x="520" y="262" text-anchor="middle">3º</text>
+              <text x="680" y="262" text-anchor="middle">4º</text>
+              <text x="820" y="262" text-anchor="middle">5º</text>
+            </g>
+
+            <path d="M 70 232 L 200 226 L 360 200 L 520 150 L 680 90 L 820 52" fill="none"
+                  stroke="#c0392b" stroke-width="4" stroke-dasharray="900" stroke-dashoffset="900">
+              <animate attributeName="stroke-dashoffset" values="900;900;0;0" keyTimes="0;0.1;0.55;1" dur="8s" repeatCount="indefinite"/>
+            </path>
+            <text x="828" y="44" text-anchor="end" font-size="13" font-weight="700" fill="#c0392b" opacity="0">cadeia de if dentro do serviço
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.5;0.6;1" dur="8s" repeatCount="indefinite"/>
+            </text>
+
+            <path d="M 70 232 L 200 228 L 360 226 L 520 224 L 680 222 L 820 220" fill="none"
+                  stroke="#1e8449" stroke-width="4" stroke-dasharray="900" stroke-dashoffset="900">
+              <animate attributeName="stroke-dashoffset" values="900;900;0;0" keyTimes="0;0.55;0.9;1" dur="8s" repeatCount="indefinite"/>
+            </path>
+            <text x="828" y="212" text-anchor="end" font-size="13" font-weight="700" fill="#1e8449" opacity="0">uma classe nova por contrato
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.85;0.93;1" dur="8s" repeatCount="indefinite"/>
+            </text>
+
+            <rect x="300" y="60" width="290" height="52" rx="7" fill="#fff" stroke="#c0392b" opacity="0">
+              <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.6;0.68;0.82;0.86" dur="8s" repeatCount="indefinite"/>
+            </rect>
+            <text x="445" y="81" text-anchor="middle" font-size="12" fill="#c0392b" opacity="0">cada mudança reabre o mesmo arquivo,
+              <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.6;0.68;0.82;0.86" dur="8s" repeatCount="indefinite"/>
+            </text>
+            <text x="445" y="99" text-anchor="middle" font-size="12" fill="#c0392b" opacity="0">e cada reabertura arrisca o que já funcionava
+              <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.6;0.68;0.82;0.86" dur="8s" repeatCount="indefinite"/>
+            </text>
+          </svg>
+          <figcaption>
+            A animação desenha primeiro a curva vermelha, do serviço que decide a forma de cobrança dentro de si: cada contrato novo custa mais que o anterior, porque o arquivo cresce e o risco de quebrar o que já existia cresce junto. Depois desenha a curva verde, do serviço que delega a decisão: acrescentar contrato passa a ser criar uma classe, e o custo fica praticamente plano. Os dois entregam o mesmo requisito.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway">
+          <span class="takeaway-label">O que está em jogo</span>
+          <p>Projeto não é sobre o código de hoje estar bonito: é sobre quanto vai custar o quinto pedido de mudança. As duas curvas atendem o mesmo requisito na primeira entrega.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Por que Projeto Importa</div>
+          <div class="footer-page">7</div>
+        </div>
+      </section>
+
+      <!-- ==================== 8: O CONTRATO DA PLATAFORMA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O contrato da plataforma: o que não é negociável <a href="#/ref-slide" class="ref-badge" title="Ver referências">[7]</a></h2>
+        </div>
+
+        <p style="font-size:0.7em; margin-bottom:0;">Nome de serviço, porta, rota e variável de ambiente estão fixados antes de a primeira linha ser escrita. Não é burocracia: é o que permite a Aula 07 orquestrar isto e a Aula 08 chamar a API de Pedidos a partir de um agente de IA.</p>
+
+        <table class="compact-table" style="font-size:0.55em; margin-top:9px;">
+          <thead>
+            <tr><th>Serviço</th><th>Stack</th><th>Porta</th><th>Rotas que outro serviço consome</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono">pedidos</td><td>Java 21, Spring Boot 3</td><td>8080</td><td class="mono">GET /health · GET e POST /api/v1/pedidos · GET /api/v1/pedidos/{id} · GET /api/v1/pedidos/{id}/status · PATCH /api/v1/pedidos/{id}/endereco</td></tr>
+            <tr><td class="mono">faturamento</td><td>C#, .NET 8</td><td>5080</td><td class="mono">GET /health · POST /api/v1/faturas · GET /api/v1/faturas/{pedidoId}</td></tr>
+            <tr><td class="mono">postgres</td><td>PostgreSQL 16</td><td>5432</td><td>banco <span class="mono">logitech</span>, um schema por Bounded Context</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout" style="margin-top:8px; padding:11px 16px;">
+          <p style="font-size:0.66em; margin:0;">Endereço de serviço <strong>nunca</strong> aparece cravado no código: vem de <span class="mono">LOGITECH_DB_URL</span>, <span class="mono">LOGITECH_FATURAMENTO_URL</span> e companhia, com padrão de desenvolvimento local. É o que faz o mesmo binário rodar solto na sua máquina hoje e dentro do Compose na Aula 07.</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Por que isso aparece na aula de SOLID</span>
+          <p>Contrato estável entre serviços é a mesma ideia de abstração estável entre classes, uma escala acima. Quem consome depende do contrato, não de quem o implementa.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Contrato da Plataforma</div>
+          <div class="footer-page">8</div>
+        </div>
+      </section>
+
+      <!-- ==================== 9: OS QUATRO PILARES DE POO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Os quatro pilares de POO, no case <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 295" style="max-height:400px;" role="img" aria-label="Os quatro pilares de POO aplicados ao serviço de Pedidos da LogiTech">
+            <rect x="20" y="18" width="205" height="198" rx="9" fill="#f4f4f4" stroke="#ddd"/>
+            <rect x="20" y="18" width="205" height="34" rx="9" fill="#ED145B"/>
+            <text x="122" y="41" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">Abstração</text>
+            <text x="122" y="80" text-anchor="middle" font-size="12" fill="#555">o que o objeto faz,</text>
+            <text x="122" y="98" text-anchor="middle" font-size="12" fill="#555">sem dizer como</text>
+            <text x="122" y="136" text-anchor="middle" font-size="12" font-weight="700" fill="#333">ClienteFaturamento</text>
+            <text x="122" y="156" text-anchor="middle" font-size="11" fill="#777">emitir(solicitacao)</text>
+            <text x="122" y="188" text-anchor="middle" font-size="11" fill="#777">quem chama não sabe</text>
+            <text x="122" y="204" text-anchor="middle" font-size="11" fill="#777">que existe HTTP</text>
+
+            <rect x="243" y="18" width="205" height="198" rx="9" fill="#f4f4f4" stroke="#ddd"/>
+            <rect x="243" y="18" width="205" height="34" rx="9" fill="#ED145B" opacity="0.85"/>
+            <text x="345" y="41" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">Encapsulamento</text>
+            <text x="345" y="80" text-anchor="middle" font-size="12" fill="#555">o estado só muda</text>
+            <text x="345" y="98" text-anchor="middle" font-size="12" fill="#555">por regra de negócio</text>
+            <text x="345" y="136" text-anchor="middle" font-size="12" font-weight="700" fill="#333">Pedido</text>
+            <text x="345" y="156" text-anchor="middle" font-size="11" fill="#777">faturar() e alterarEndereco()</text>
+            <text x="345" y="188" text-anchor="middle" font-size="11" fill="#777">nenhum setter público</text>
+            <text x="345" y="204" text-anchor="middle" font-size="11" fill="#777">para status ou valor</text>
+
+            <rect x="466" y="18" width="205" height="198" rx="9" fill="#f4f4f4" stroke="#ddd"/>
+            <rect x="466" y="18" width="205" height="34" rx="9" fill="#ED145B" opacity="0.7"/>
+            <text x="568" y="41" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">Herança</text>
+            <text x="568" y="80" text-anchor="middle" font-size="12" fill="#555">reaproveitar contrato,</text>
+            <text x="568" y="98" text-anchor="middle" font-size="12" fill="#555">não código por preguiça</text>
+            <text x="568" y="136" text-anchor="middle" font-size="12" font-weight="700" fill="#333">ConectorFaturamento</text>
+            <text x="568" y="156" text-anchor="middle" font-size="11" fill="#777">implementada por Boleto e Cartão,</text>
+            <text x="568" y="172" text-anchor="middle" font-size="11" fill="#777">e pelo conector que entra hoje</text>
+            <text x="568" y="204" text-anchor="middle" font-size="11" fill="#777">herda-se o contrato</text>
+
+            <rect x="689" y="18" width="191" height="198" rx="9" fill="#f4f4f4" stroke="#ddd"/>
+            <rect x="689" y="18" width="191" height="34" rx="9" fill="#ED145B" opacity="0.55"/>
+            <text x="784" y="41" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">Polimorfismo</text>
+            <text x="784" y="80" text-anchor="middle" font-size="12" fill="#555">uma chamada,</text>
+            <text x="784" y="98" text-anchor="middle" font-size="12" fill="#555">vários comportamentos</text>
+            <text x="784" y="136" text-anchor="middle" font-size="12" font-weight="700" fill="#333">conector.montar(p)</text>
+            <text x="784" y="164" text-anchor="middle" font-size="11" fill="#777">a mesma linha vale</text>
+            <text x="784" y="180" text-anchor="middle" font-size="11" fill="#777">para os três tipos</text>
+            <text x="784" y="204" text-anchor="middle" font-size="11" fill="#777">de cliente</text>
+
+            <rect x="20" y="236" width="860" height="42" rx="7" fill="#333"/>
+            <text x="450" y="262" text-anchor="middle" fill="#fff" font-size="13">os pilares são a gramática; SOLID é o bom uso dela; os padrões são frases que já funcionaram antes</text>
+          </svg>
+          <figcaption>
+            Cada pilar aparece com o exemplo exato do laboratório de hoje, e não com a definição de livro. Abstração é a interface que esconde o HTTP; encapsulamento é a entidade sem setter; herança aqui é de contrato, não de implementação; polimorfismo é a linha única que atende três tipos de cliente.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Pilares de POO</div>
+          <div class="footer-page">9</div>
+        </div>
+      </section>
+
+      <!-- ==================== 10: ENCAPSULAMENTO EM CÓDIGO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Encapsulamento: a entidade que recusa estado inválido</h2>
+        </div>
+
+        <div class="par-codigo">
+          <div>
+            <p class="rotulo rotulo-mau">O cheiro: saco de campos</p>
+            <pre><code class="language-java">public class Pedido {
+    public String status;
+    public BigDecimal valor;
+    public String enderecoEntrega;
+    // getter e setter para tudo
 }
 
-@Service
-public class SedexStrategy implements FreightStrategy {
-    public double calculate(double distance) {
-        return distance * 1.5;
+// em qualquer ponto do sistema:
+pedido.setStatus("ENTREGUE");
+pedido.setValor(new BigDecimal("-1"));
+pedido.setEnderecoEntrega("");</code></pre>
+          </div>
+          <div>
+            <p class="rotulo rotulo-bom">A correção: métodos de negócio</p>
+            <pre><code class="language-java">public class Pedido {
+    private StatusPedido status;
+    private BigDecimal valor;
+
+    public void faturar(String nf) {
+        exigirTexto(nf, "numeroNotaFiscal");
+        this.numeroNotaFiscal = nf;
+        this.status = StatusPedido.FATURADO;
     }
-}
 
-@Service
-public class FreightService {
-    private final Map<String, FreightStrategy> strategies;
-    public FreightService(Map<String, FreightStrategy> strategies) {
-        this.strategies = strategies;
+    public void alterarEndereco(String novo) {
+        exigirTexto(novo, "novoEndereco");
+        if (status == StatusPedido.ENTREGUE)
+            throw new IllegalStateException(
+                "pedido já entregue");
+        this.enderecoEntrega = novo;
     }
 }</code></pre>
-        <div class="slide-footer"><div class="footer-bar">05 – SOLID & Patterns</div><div class="footer-page">9</div></div>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Takeaway</span>
+          <p>Setter público para todo campo não encapsula nada. A regra "pedido entregue não muda de endereço" precisa morar no objeto: na Aula 08 quem vai pedir essa alteração é um agente de IA, e a regra tem que valer para ele também.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Encapsulamento</div>
+          <div class="footer-page">10</div>
+        </div>
       </section>
+
+      <!-- ==================== 11: ABSTRAÇÃO (ANIMAÇÃO 3) ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Abstração: o que a regra de negócio pode saber <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 280" style="max-height:400px;" role="img" aria-label="A regra de negócio conversa com uma interface e a implementação fica do outro lado da fronteira">
+            <rect x="30" y="58" width="230" height="90" rx="9" fill="#ED145B"/>
+            <text x="145" y="93" text-anchor="middle" fill="#fff" font-size="15" font-weight="700">PedidoService</text>
+            <text x="145" y="116" text-anchor="middle" fill="#fff" font-size="12" opacity="0.9">regra de negócio</text>
+            <text x="145" y="134" text-anchor="middle" fill="#fff" font-size="12" opacity="0.9">de Pedidos</text>
+
+            <line x1="450" y1="22" x2="450" y2="196" stroke="#999" stroke-width="2" stroke-dasharray="7,6"/>
+            <text x="450" y="16" text-anchor="middle" font-size="12" fill="#888">fronteira do domínio</text>
+
+            <rect x="320" y="76" width="260" height="54" rx="27" fill="#fff" stroke="#333" stroke-width="2.5"/>
+            <text x="450" y="100" text-anchor="middle" font-size="14" font-weight="700" fill="#333">ClienteFaturamento</text>
+            <text x="450" y="119" text-anchor="middle" font-size="11" fill="#777">String emitir(SolicitacaoFatura)</text>
+
+            <rect x="640" y="38" width="235" height="58" rx="9" fill="#666" opacity="0">
+              <animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.2;0.32;0.62;1" dur="8s" repeatCount="indefinite"/>
+            </rect>
+            <text x="757" y="63" text-anchor="middle" fill="#fff" font-size="13" font-weight="700" opacity="0">ClienteFaturamentoHttp
+              <animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.2;0.32;0.62;1" dur="8s" repeatCount="indefinite"/>
+            </text>
+            <text x="757" y="82" text-anchor="middle" fill="#fff" font-size="11" opacity="0">POST http://faturamento:5080
+              <animate attributeName="opacity" values="0;0;0.9;0.9;0.9" keyTimes="0;0.2;0.32;0.62;1" dur="8s" repeatCount="indefinite"/>
+            </text>
+
+            <rect x="640" y="112" width="235" height="58" rx="9" fill="#1e8449" opacity="0">
+              <animate attributeName="opacity" values="0;0;0;1;1" keyTimes="0;0.55;0.62;0.74;1" dur="8s" repeatCount="indefinite"/>
+            </rect>
+            <text x="757" y="137" text-anchor="middle" fill="#fff" font-size="13" font-weight="700" opacity="0">FaturamentoFalso
+              <animate attributeName="opacity" values="0;0;0;1;1" keyTimes="0;0.55;0.62;0.74;1" dur="8s" repeatCount="indefinite"/>
+            </text>
+            <text x="757" y="156" text-anchor="middle" fill="#fff" font-size="11" opacity="0">dublê de teste, sem rede
+              <animate attributeName="opacity" values="0;0;0;0.9;0.9" keyTimes="0;0.55;0.62;0.74;1" dur="8s" repeatCount="indefinite"/>
+            </text>
+
+            <line x1="260" y1="103" x2="320" y2="103" stroke="#333" stroke-width="3"/>
+            <path d="M 580 103 L 640 67" stroke="#666" stroke-width="3" fill="none" opacity="0">
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.2;0.32;1" dur="8s" repeatCount="indefinite"/>
+            </path>
+            <path d="M 580 103 L 640 141" stroke="#1e8449" stroke-width="3" fill="none" opacity="0">
+              <animate attributeName="opacity" values="0;0;0;1;1" keyTimes="0;0.55;0.62;0.74;1" dur="8s" repeatCount="indefinite"/>
+            </path>
+
+            <rect x="30" y="212" width="840" height="54" rx="7" fill="#f4f4f4" stroke="#ddd"/>
+            <text x="450" y="236" text-anchor="middle" font-size="13" fill="#555">a regra de negócio compila e roda sem saber que existe HTTP, JSON, timeout ou um serviço em C#</text>
+            <text x="450" y="256" text-anchor="middle" font-size="13" fill="#555">trocar o outro lado da fronteira não pede uma linha de mudança do lado esquerdo</text>
+          </svg>
+          <figcaption>
+            A animação mostra a mesma interface sendo satisfeita por dois implementadores diferentes: primeiro o cliente HTTP de verdade, que fala com o serviço em C#, e depois o dublê de teste, que responde na memória. O lado esquerdo, onde mora a regra de negócio, é idêntico nos dois casos.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Abstração</div>
+          <div class="footer-page">11</div>
+        </div>
+      </section>
+
+      <!-- ==================== 12: HERANÇA X COMPOSIÇÃO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Herança de implementação x implementar a abstração <a href="#/ref-slide" class="ref-badge" title="Ver referências">[3]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 250" style="max-height:400px;" role="img" aria-label="Comparação entre herdar de uma classe concreta e implementar uma interface">
+            <text x="225" y="20" text-anchor="middle" font-size="14" font-weight="700" fill="#c0392b">herdar da classe concreta</text>
+            <rect x="120" y="34" width="210" height="44" rx="7" fill="#999"/>
+            <text x="225" y="61" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">JpaPedidoRepository</text>
+            <line x1="225" y1="78" x2="225" y2="112" stroke="#c0392b" stroke-width="3"/>
+            <polygon points="225,112 218,100 232,100" fill="#c0392b"/>
+            <rect x="105" y="112" width="240" height="46" rx="7" fill="#fff" stroke="#c0392b" stroke-width="2"/>
+            <text x="225" y="133" text-anchor="middle" font-size="12" font-weight="700" fill="#c0392b">RepositorioEmMemoria</text>
+            <text x="225" y="150" text-anchor="middle" font-size="11" fill="#c0392b">extends ... super(null)</text>
+            <text x="225" y="184" text-anchor="middle" font-size="12" fill="#777">o dublê arrasta o JPA inteiro</text>
+            <text x="225" y="202" text-anchor="middle" font-size="12" fill="#777">para dentro do teste, e ainda</text>
+            <text x="225" y="220" text-anchor="middle" font-size="12" fill="#777">precisa passar um nulo ao pai</text>
+
+            <line x1="450" y1="12" x2="450" y2="238" stroke="#ddd" stroke-width="2"/>
+
+            <text x="675" y="20" text-anchor="middle" font-size="14" font-weight="700" fill="#1e8449">implementar a abstração</text>
+            <rect x="570" y="34" width="210" height="44" rx="22" fill="#fff" stroke="#333" stroke-width="2.5"/>
+            <text x="675" y="61" text-anchor="middle" font-size="13" font-weight="700" fill="#333">PedidoRepository</text>
+            <line x1="620" y1="78" x2="620" y2="112" stroke="#1e8449" stroke-width="3" stroke-dasharray="5,4"/>
+            <line x1="740" y1="78" x2="740" y2="112" stroke="#1e8449" stroke-width="3" stroke-dasharray="5,4"/>
+            <rect x="520" y="112" width="185" height="46" rx="7" fill="#1e8449" opacity="0.85"/>
+            <text x="612" y="140" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">JpaPedidoRepository</text>
+            <rect x="715" y="112" width="165" height="46" rx="7" fill="#1e8449" opacity="0.6"/>
+            <text x="797" y="133" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">EmMemoria</text>
+            <text x="797" y="150" text-anchor="middle" fill="#fff" font-size="11">dublê de teste</text>
+            <text x="675" y="184" text-anchor="middle" font-size="12" fill="#777">os dois são irmãos, não pai e filho</text>
+            <text x="675" y="202" text-anchor="middle" font-size="12" fill="#777">o teste não conhece o ORM, e</text>
+            <text x="675" y="220" text-anchor="middle" font-size="12" fill="#777">nenhum dos dois depende do outro</text>
+          </svg>
+          <figcaption>
+            À esquerda, o que o esqueleto do laboratório entrega hoje: para testar sem banco, o dublê é obrigado a herdar da classe concreta de JPA e chamar super(null). À direita, o mesmo dublê depois do TODO-1: os dois passam a implementar a mesma interface, e a hierarquia forçada desaparece.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Herança x Composição</div>
+          <div class="footer-page">12</div>
+        </div>
+      </section>
+
+      <!-- ==================== 13: POLIMORFISMO (ANIMAÇÃO 4) ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Polimorfismo: uma linha, três cobranças</h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 268" style="max-height:400px;" role="img" aria-label="A mesma chamada produz três solicitações de fatura diferentes">
+            <rect x="290" y="20" width="320" height="52" rx="8" fill="#333"/>
+            <text x="450" y="42" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">conector.montar(pedido)</text>
+            <text x="450" y="61" text-anchor="middle" fill="#bbb" font-size="11">a única linha que PedidoService escreve</text>
+
+            <path d="M 400 72 L 155 114" stroke="#ED145B" stroke-width="2.5" fill="none" opacity="0.25"/>
+            <path d="M 450 72 L 450 114" stroke="#ED145B" stroke-width="2.5" fill="none" opacity="0.25"/>
+            <path d="M 500 72 L 745 114" stroke="#ED145B" stroke-width="2.5" fill="none" opacity="0.25"/>
+
+            <rect x="30" y="114" width="250" height="42" rx="7" fill="#ED145B" opacity="0.25">
+              <animate attributeName="opacity" values="0.25;0.9;0.9;0.25;0.25" keyTimes="0;0.08;0.3;0.36;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <text x="155" y="141" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">ConectorBoleto</text>
+            <text x="155" y="182" text-anchor="middle" font-size="12" fill="#555" opacity="0">BOLETO · R$ 1.000,00 · 3 dias
+              <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.12;0.3;0.36;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+
+            <rect x="325" y="114" width="250" height="42" rx="7" fill="#ED145B" opacity="0.25">
+              <animate attributeName="opacity" values="0.25;0.25;0.9;0.9;0.25;0.25" keyTimes="0;0.36;0.42;0.63;0.69;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <text x="450" y="141" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">ConectorCartaoCorporativo</text>
+            <text x="450" y="182" text-anchor="middle" font-size="12" fill="#555" opacity="0">CARTAO_CORPORATIVO · R$ 950,00 · à vista
+              <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.38;0.46;0.63;0.69;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+
+            <rect x="620" y="114" width="250" height="42" rx="7" fill="#ED145B" opacity="0.25">
+              <animate attributeName="opacity" values="0.25;0.25;0.9;0.9" keyTimes="0;0.69;0.76;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <text x="745" y="141" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">ConectorFaturaMensal</text>
+            <text x="745" y="182" text-anchor="middle" font-size="12" fill="#555" opacity="0">FATURA_MENSAL · R$ 1.000,00 · 30 dias
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.72;0.8;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+
+            <rect x="30" y="208" width="840" height="46" rx="7" fill="#f4f4f4" stroke="#ddd"/>
+            <text x="450" y="228" text-anchor="middle" font-size="13" fill="#555">o terceiro conector é o que vocês escrevem no TODO-3, e ele entra sem que a linha do topo mude</text>
+            <text x="450" y="247" text-anchor="middle" font-size="13" fill="#777">polimorfismo não é sobre herança: é sobre a chamada não precisar saber quem vai responder</text>
+          </svg>
+          <figcaption>
+            A animação acende os três conectores, um de cada vez, mostrando a solicitação de fatura que cada um produz para o mesmo pedido de mil reais: boleto em três dias, cartão corporativo com cinco por cento de desconto à vista, e fatura mensal em trinta dias. A chamada no topo é sempre a mesma.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Polimorfismo</div>
+          <div class="footer-page">13</div>
+        </div>
+      </section>
+
+      <!-- ==================== 14: SOLID É O PORQUÊ ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>SOLID é o porquê; os padrões são o como <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 275" style="max-height:400px;" role="img" aria-label="Cada princípio SOLID ligado ao padrão de projeto que o realiza no laboratório">
+            <text x="180" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#333">O PRINCÍPIO (por que)</text>
+            <text x="700" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#333">O PADRÃO (como)</text>
+
+            <rect x="40" y="38" width="285" height="38" rx="6" fill="#ED145B" opacity="0.95"/>
+            <text x="182" y="62" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">S · Responsabilidade Única</text>
+            <rect x="40" y="84" width="285" height="38" rx="6" fill="#ED145B" opacity="0.85"/>
+            <text x="182" y="108" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">O · Aberto/Fechado</text>
+            <rect x="40" y="130" width="285" height="38" rx="6" fill="#ED145B" opacity="0.75"/>
+            <text x="182" y="154" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">L · Substituição de Liskov</text>
+            <rect x="40" y="176" width="285" height="38" rx="6" fill="#ED145B" opacity="0.65"/>
+            <text x="182" y="200" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">I · Segregação de Interface</text>
+            <rect x="40" y="222" width="285" height="38" rx="6" fill="#ED145B" opacity="0.55"/>
+            <text x="182" y="246" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">D · Inversão de Dependência</text>
+
+            <rect x="575" y="84" width="285" height="38" rx="6" fill="#333"/>
+            <text x="717" y="108" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Factory Method</text>
+            <rect x="575" y="153" width="285" height="38" rx="6" fill="#666"/>
+            <text x="717" y="177" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Singleton</text>
+            <rect x="575" y="222" width="285" height="38" rx="6" fill="#333"/>
+            <text x="717" y="246" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Repository</text>
+
+            <path d="M 325 103 L 575 103" stroke="#ED145B" stroke-width="3" fill="none"/>
+            <polygon points="575,103 563,97 563,109" fill="#ED145B"/>
+            <path d="M 325 241 L 575 241" stroke="#ED145B" stroke-width="3" fill="none"/>
+            <polygon points="575,241 563,235 563,247" fill="#ED145B"/>
+            <path d="M 325 195 L 450 195 L 450 172 L 575 172" stroke="#999" stroke-width="2.5" fill="none" stroke-dasharray="5,4"/>
+
+            <text x="450" y="96" text-anchor="middle" font-size="11" fill="#777">acrescentar sem editar</text>
+            <text x="450" y="211" text-anchor="middle" font-size="11" fill="#777">estado global compartilhado</text>
+            <text x="450" y="234" text-anchor="middle" font-size="11" fill="#777">depender da abstração</text>
+          </svg>
+          <figcaption>
+            Padrão de projeto não é enfeite de currículo: cada um existe porque resolve a tensão que um princípio aponta. O Aberto/Fechado explica por que a Factory existe; a Inversão de Dependência explica por que o Repository existe; o Singleton é o único da lista que resolve um problema e cria outro, e é por isso que ele merece um cuidado que os demais não pedem.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – SOLID e os Padrões</div>
+          <div class="footer-page">14</div>
+        </div>
+      </section>
+
+      <!-- ==================== 15: SRP, FIGURA (ANIMAÇÃO 5) ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>S · Responsabilidade Única: quantas pessoas mandam nesta classe? <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 265" style="max-height:400px;" role="img" aria-label="Uma classe com três motivos de mudança sendo separada em três classes">
+            <rect x="300" y="26" width="300" height="86" rx="8" fill="#c0392b" opacity="0.9">
+              <animate attributeName="opacity" values="0.9;0.9;0.15;0.15" keyTimes="0;0.42;0.55;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <text x="450" y="56" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">RelatorioDePedidos</text>
+            <text x="450" y="78" text-anchor="middle" fill="#fff" font-size="11">calcula o total, formata o PDF</text>
+            <text x="450" y="95" text-anchor="middle" fill="#fff" font-size="11">e envia o e-mail ao cliente</text>
+
+            <g font-size="12" fill="#c0392b" text-anchor="middle">
+              <text x="140" y="142" opacity="0">o financeiro muda a regra do total
+                <animate attributeName="opacity" values="0;1;1;0.35;0.35" keyTimes="0;0.1;0.42;0.55;1" dur="9s" repeatCount="indefinite"/>
+              </text>
+              <text x="450" y="142" opacity="0">o marketing muda o layout
+                <animate attributeName="opacity" values="0;0;1;1;0.35;0.35" keyTimes="0;0.16;0.24;0.42;0.55;1" dur="9s" repeatCount="indefinite"/>
+              </text>
+              <text x="745" y="142" opacity="0">a TI troca o servidor de e-mail
+                <animate attributeName="opacity" values="0;0;1;1;0.35;0.35" keyTimes="0;0.28;0.36;0.42;0.55;1" dur="9s" repeatCount="indefinite"/>
+              </text>
+            </g>
+
+            <rect x="40" y="168" width="250" height="60" rx="8" fill="#1e8449" opacity="0">
+              <animate attributeName="opacity" values="0;0;0.9;0.9" keyTimes="0;0.55;0.66;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <text x="165" y="193" text-anchor="middle" fill="#fff" font-size="13" font-weight="700" opacity="0">CalculadoraDeTotais
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.55;0.66;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+            <text x="165" y="213" text-anchor="middle" fill="#fff" font-size="11" opacity="0">responde ao financeiro
+              <animate attributeName="opacity" values="0;0;0.9;0.9" keyTimes="0;0.55;0.66;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+
+            <rect x="325" y="168" width="250" height="60" rx="8" fill="#1e8449" opacity="0">
+              <animate attributeName="opacity" values="0;0;0.9;0.9" keyTimes="0;0.66;0.77;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <text x="450" y="193" text-anchor="middle" fill="#fff" font-size="13" font-weight="700" opacity="0">FormatadorDeRelatorio
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.66;0.77;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+            <text x="450" y="213" text-anchor="middle" fill="#fff" font-size="11" opacity="0">responde ao marketing
+              <animate attributeName="opacity" values="0;0;0.9;0.9" keyTimes="0;0.66;0.77;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+
+            <rect x="610" y="168" width="250" height="60" rx="8" fill="#1e8449" opacity="0">
+              <animate attributeName="opacity" values="0;0;0.9;0.9" keyTimes="0;0.77;0.88;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <text x="735" y="193" text-anchor="middle" fill="#fff" font-size="13" font-weight="700" opacity="0">EnviadorDeRelatorio
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.77;0.88;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+            <text x="735" y="213" text-anchor="middle" fill="#fff" font-size="11" opacity="0">responde à TI
+              <animate attributeName="opacity" values="0;0;0.9;0.9" keyTimes="0;0.77;0.88;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+
+            <text x="450" y="252" text-anchor="middle" font-size="13" fill="#555">uma classe, um motivo para mudar, uma área do negócio pedindo a mudança</text>
+          </svg>
+          <figcaption>
+            A animação acende, um a um, os três motivos pelos quais a mesma classe seria alterada, cada um vindo de uma área diferente da LogiTech. Depois ela se apaga e dá lugar a três classes, cada uma respondendo a um único interlocutor. Responsabilidade única é sobre gente, não sobre contagem de métodos.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – SOLID: SRP</div>
+          <div class="footer-page">15</div>
+        </div>
+      </section>
+
+      <!-- ==================== 16: SRP EM CÓDIGO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>S · o cheiro e a correção, no serviço de Pedidos</h2>
+        </div>
+
+        <div class="par-codigo">
+          <div>
+            <p class="rotulo rotulo-mau">O cheiro</p>
+            <pre><code class="language-java">@Service
+public class PedidoService {
+
+  public Pedido criar(NovoPedido novo) {
+    // 1. regra de negócio
+    Pedido p = new Pedido(...);
+    // 2. montagem de JSON na mão
+    String corpo = "{\"pedidoId\":\"" + p.getId()
+        + "\",\"valor\":" + p.getValor() + "}";
+    // 3. detalhe de rede
+    HttpRequest r = HttpRequest.newBuilder()
+        .uri(URI.create("http://localhost:5080"
+             + "/api/v1/faturas"))
+        .POST(ofString(corpo)).build();
+    // 4. persistência
+    entityManager.persist(p);
+    return p;
+  }
+}</code></pre>
+          </div>
+          <div>
+            <p class="rotulo rotulo-bom">A correção</p>
+            <pre><code class="language-java">@Service
+public class PedidoService {
+
+  private final PedidoRepository repositorio;
+  private final ClienteFaturamento faturamento;
+  private final ConectorFaturamentoFactory conectores;
+
+  public Pedido criar(NovoPedido novo) {
+    Pedido pedido = new Pedido(...);
+    SolicitacaoFatura solicitacao =
+        conectores.para(novo.tipoCliente())
+                  .montar(pedido);
+    try {
+      pedido.faturar(faturamento.emitir(solicitacao));
+    } catch (FaturamentoIndisponivelException e) {
+      pedido.aguardarFaturamento();
+    }
+    return repositorio.salvar(pedido);
+  }
+}
+// JSON, timeout e SQL moram na infraestrutura</code></pre>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Como reconhecer</span>
+          <p>Se você consegue contar, dentro de um método, quantas áreas diferentes da empresa poderiam pedir uma alteração nele, cada uma delas é uma responsabilidade que deveria estar em outro lugar.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – SOLID: SRP</div>
+          <div class="footer-page">16</div>
+        </div>
+      </section>
+
+      <!-- ==================== 17: OCP, FIGURA (ANIMAÇÃO 6) ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O · Aberto/Fechado: acrescentar sem reabrir <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 262" style="max-height:400px;" role="img" aria-label="A cadeia de if crescendo dentro do método contra o registro de conectores">
+            <text x="215" y="18" text-anchor="middle" font-size="12" font-weight="700" fill="#c0392b">FECHADO PARA EXTENSÃO, ABERTO PARA EDIÇÃO</text>
+            <rect x="35" y="30" width="360" height="150" rx="8" fill="#fff" stroke="#c0392b" stroke-width="2"/>
+            <text x="55" y="54" font-size="12" font-family="monospace" fill="#333">escolherConector(tipo) {</text>
+            <text x="70" y="76" font-size="12" font-family="monospace" fill="#555">if (tipo == PADRAO) ...</text>
+            <text x="70" y="98" font-size="12" font-family="monospace" fill="#555">if (tipo == OURO) ...</text>
+            <text x="70" y="120" font-size="12" font-family="monospace" fill="#c0392b" opacity="0">if (tipo == CONTRATO) ...
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.18;0.28;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+            <text x="70" y="142" font-size="12" font-family="monospace" fill="#c0392b" opacity="0">if (tipo == INTERNACIONAL) ...
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.32;0.42;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+            <text x="55" y="166" font-size="12" font-family="monospace" fill="#333">}</text>
+            <text x="215" y="203" text-anchor="middle" font-size="12" fill="#c0392b">o arquivo da regra de negócio é editado</text>
+            <text x="215" y="221" text-anchor="middle" font-size="12" fill="#c0392b">toda vez que o comercial fecha um contrato</text>
+            <text x="215" y="239" text-anchor="middle" font-size="12" fill="#777">e cada edição pede regressão do que já existia</text>
+
+            <line x1="450" y1="12" x2="450" y2="250" stroke="#ddd" stroke-width="2"/>
+
+            <text x="682" y="18" text-anchor="middle" font-size="12" font-weight="700" fill="#1e8449">ABERTO PARA EXTENSÃO, FECHADO PARA EDIÇÃO</text>
+            <rect x="505" y="30" width="360" height="58" rx="8" fill="#fff" stroke="#1e8449" stroke-width="2"/>
+            <text x="522" y="54" font-size="12" font-family="monospace" fill="#333">conectores.para(tipo).montar(pedido)</text>
+            <text x="522" y="76" font-size="11" fill="#777">esta linha nunca mais muda</text>
+
+            <rect x="505" y="100" width="112" height="38" rx="6" fill="#1e8449" opacity="0.85"/>
+            <text x="561" y="124" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">Boleto</text>
+            <rect x="629" y="100" width="112" height="38" rx="6" fill="#1e8449" opacity="0.7"/>
+            <text x="685" y="124" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">Cartão</text>
+            <rect x="753" y="100" width="112" height="38" rx="6" fill="#1e8449" opacity="0">
+              <animate attributeName="opacity" values="0;0;0.55;0.55" keyTimes="0;0.18;0.28;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <text x="809" y="124" text-anchor="middle" fill="#fff" font-size="11" font-weight="700" opacity="0">Mensal
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.18;0.28;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+            <rect x="629" y="148" width="112" height="38" rx="6" fill="#1e8449" opacity="0">
+              <animate attributeName="opacity" values="0;0;0.4;0.4" keyTimes="0;0.32;0.42;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <text x="685" y="172" text-anchor="middle" fill="#fff" font-size="11" font-weight="700" opacity="0">Internacional
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.32;0.42;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+
+            <text x="682" y="215" text-anchor="middle" font-size="12" fill="#1e8449">contrato novo é arquivo novo, anotado com @Component</text>
+            <text x="682" y="233" text-anchor="middle" font-size="12" fill="#777">o que já estava em produção não é sequer recompilado por causa dele</text>
+          </svg>
+          <figcaption>
+            A animação acrescenta dois contratos comerciais aos dois lados ao mesmo tempo. À esquerda, cada contrato vira mais uma linha dentro do método que a regra de negócio já usava. À direita, cada contrato vira uma classe nova ao lado das existentes, e a linha que escolhe o conector continua idêntica.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – SOLID: OCP</div>
+          <div class="footer-page">17</div>
+        </div>
+      </section>
+
+      <!-- ==================== 18: OCP EM CÓDIGO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O · o cheiro e a correção, na escolha do conector</h2>
+        </div>
+
+        <div class="par-codigo">
+          <div>
+            <p class="rotulo rotulo-mau">O cheiro</p>
+            <pre><code class="language-java">private ConectorFaturamento escolherConector(
+        String tipoCliente) {
+
+  if ("PADRAO".equals(tipoCliente)) {
+      return new ConectorBoleto();
+  }
+  if ("OURO".equals(tipoCliente)) {
+      return new ConectorCartaoCorporativo();
+  }
+  throw new ConectorNaoEncontradoException(
+      tipoCliente);
+}
+// para atender CONTRATO é preciso editar
+// PedidoService, recompilar e testar de novo
+// tudo o que já funcionava</code></pre>
+          </div>
+          <div>
+            <p class="rotulo rotulo-bom">A correção</p>
+            <pre><code class="language-java">@Component
+public class ConectorFaturaMensal
+        implements ConectorFaturamento {
+
+  public String tipoClienteAtendido() {
+      return "CONTRATO";
+  }
+
+  public SolicitacaoFatura montar(Pedido pedido) {
+      return new SolicitacaoFatura(pedido.getId(),
+          pedido.getCliente(), pedido.getValor(),
+          "FATURA_MENSAL", 30);
+  }
+}
+// nenhuma linha de PedidoService foi tocada:
+// git diff prova, e é o critério do TODO-3</code></pre>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">O critério de verdade</span>
+          <p>O Aberto/Fechado não se demonstra com o teste passando: demonstra-se com o <span class="mono">git diff</span> mostrando que o arquivo da regra de negócio não aparece no commit que acrescentou o comportamento.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – SOLID: OCP</div>
+          <div class="footer-page">18</div>
+        </div>
+      </section>
+
+      <!-- ==================== 19: LSP, FIGURA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>L · Substituição de Liskov: o subtipo que quebra a promessa <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 250" style="max-height:400px;" role="img" aria-label="Um conector que devolve valor zero quebra quem confiava no contrato">
+            <rect x="270" y="14" width="360" height="52" rx="26" fill="#fff" stroke="#333" stroke-width="2.5"/>
+            <text x="450" y="36" text-anchor="middle" font-size="13" font-weight="700" fill="#333">ConectorFaturamento</text>
+            <text x="450" y="55" text-anchor="middle" font-size="11" fill="#777">promessa: devolve solicitação faturável, valor maior que zero</text>
+
+            <line x1="200" y1="66" x2="200" y2="100" stroke="#999" stroke-width="2.5" stroke-dasharray="5,4"/>
+            <line x1="450" y1="66" x2="450" y2="100" stroke="#999" stroke-width="2.5" stroke-dasharray="5,4"/>
+            <line x1="720" y1="66" x2="720" y2="100" stroke="#c0392b" stroke-width="2.5" stroke-dasharray="5,4"/>
+
+            <rect x="95" y="100" width="210" height="44" rx="7" fill="#1e8449" opacity="0.85"/>
+            <text x="200" y="121" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">ConectorBoleto</text>
+            <text x="200" y="137" text-anchor="middle" fill="#fff" font-size="11">R$ 1.000,00</text>
+
+            <rect x="345" y="100" width="210" height="44" rx="7" fill="#1e8449" opacity="0.7"/>
+            <text x="450" y="121" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">ConectorCartaoCorporativo</text>
+            <text x="450" y="137" text-anchor="middle" fill="#fff" font-size="11">R$ 950,00</text>
+
+            <rect x="615" y="100" width="210" height="44" rx="7" fill="#c0392b"/>
+            <text x="720" y="121" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">ConectorCortesia</text>
+            <text x="720" y="137" text-anchor="middle" fill="#fff" font-size="11">R$ 0,00 e meio ISENTO</text>
+
+            <path d="M 720 144 L 720 172" stroke="#c0392b" stroke-width="3" fill="none"/>
+            <polygon points="720,180 712,166 728,166" fill="#c0392b"/>
+            <rect x="500" y="184" width="380" height="52" rx="7" fill="#fff" stroke="#c0392b" stroke-width="2"/>
+            <text x="690" y="205" text-anchor="middle" font-size="11" fill="#c0392b" font-family="monospace">ArgumentException: valor precisa ser maior que zero</text>
+            <text x="690" y="224" text-anchor="middle" font-size="11" fill="#777">o serviço de Faturamento recusa em tempo de execução</text>
+
+            <rect x="30" y="184" width="440" height="52" rx="7" fill="#f4f4f4" stroke="#ddd"/>
+            <text x="250" y="205" text-anchor="middle" font-size="12" fill="#555">compilou, implementou a interface inteira,</text>
+            <text x="250" y="224" text-anchor="middle" font-size="12" fill="#555">e mesmo assim não pode substituir os irmãos</text>
+          </svg>
+          <figcaption>
+            Frete de cortesia parece só mais um tipo de cliente, e o compilador concorda. Mas quem chama o conector confia em uma promessa que não está escrita no tipo: a de que dá para emitir fatura com o resultado. O subtipo que devolve zero satisfaz a assinatura e quebra o contrato, e o erro só aparece com o pedido já em produção.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Como reconhecer</span>
+          <p>Substituibilidade não é conferida pelo compilador: ela vive nas promessas que o tipo não escreve. Se o subtipo entrega menos do que a interface promete, quem chama vai quebrar, e vai quebrar em produção.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – SOLID: LSP</div>
+          <div class="footer-page">19</div>
+        </div>
+      </section>
+
+      <!-- ==================== 20: LSP EM CÓDIGO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>L · o cheiro e a correção, no frete de cortesia</h2>
+        </div>
+
+        <div class="par-codigo">
+          <div>
+            <p class="rotulo rotulo-mau">O cheiro</p>
+            <pre><code class="language-java">@Component
+public class ConectorCortesia
+        implements ConectorFaturamento {
+
+  public String tipoClienteAtendido() {
+      return "CORTESIA";
+  }
+
+  public SolicitacaoFatura montar(Pedido pedido) {
+      // frete de cortesia não cobra nada
+      return new SolicitacaoFatura(pedido.getId(),
+          pedido.getCliente(), BigDecimal.ZERO,
+          "ISENTO", 0);
+  }
+}
+// quem chamar montar() e mandar faturar
+// recebe exceção em tempo de execução</code></pre>
+          </div>
+          <div>
+            <p class="rotulo rotulo-bom">A correção</p>
+            <pre><code class="language-java">/**
+ * Contrato explícito, não subentendido:
+ * montar() devolve sempre uma solicitação
+ * FATURÁVEL, com valor maior que zero.
+ */
+public interface ConectorFaturamento { ... }
+
+// cortesia não é uma forma de cobrar:
+// é a ausência de cobrança, e por isso
+// não é um ConectorFaturamento
+@Transactional
+public Pedido criar(NovoPedido novo) {
+  Pedido pedido = new Pedido(...);
+  if (politicaDeCortesia.isenta(pedido)) {
+      pedido.dispensarFaturamento();
+      return repositorio.salvar(pedido);
+  }
+  ...
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Como reconhecer</span>
+          <p>Quando um subtipo precisa de aviso na documentação, do tipo "cuidado, este aqui devolve zero", ou de um <span class="mono">instanceof</span> em quem o consome, ele não é substituível: o que parecia um irmão é outro conceito.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – SOLID: LSP</div>
+          <div class="footer-page">20</div>
+        </div>
+      </section>
+
+      <!-- ==================== 21: ISP, FIGURA (ANIMAÇÃO 7) ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>I · Segregação de Interface: ninguém depende do que não usa <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 260" style="max-height:400px;" role="img" aria-label="Uma interface com cinco métodos sendo dividida conforme quem realmente usa cada um">
+            <rect x="310" y="14" width="280" height="152" rx="8" fill="#fff" stroke="#c0392b" stroke-width="2"/>
+            <text x="450" y="36" text-anchor="middle" font-size="13" font-weight="700" fill="#333">RepositorioLogitech</text>
+            <g font-size="12" font-family="monospace" fill="#555">
+              <text x="330" y="62">salvar(pedido)</text>
+              <text x="330" y="83">porId(id)</text>
+              <text x="330" y="104">todos()</text>
+              <text x="330" y="125">relatorioMensal()</text>
+              <text x="330" y="146">exportarCsv()</text>
+            </g>
+            <rect x="323" y="48" width="200" height="62" rx="5" fill="none" stroke="#1e8449" stroke-width="2.5" opacity="0">
+              <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.14;0.36;0.42;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <text x="610" y="80" font-size="12" fill="#1e8449" opacity="0">o que PedidoService usa
+              <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.14;0.36;0.42;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+            <rect x="323" y="111" width="200" height="43" rx="5" fill="none" stroke="#e67e22" stroke-width="2.5" opacity="0">
+              <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.4;0.46;0.6;0.66;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <text x="610" y="138" font-size="12" fill="#e67e22" opacity="0">o que só o time de BI usa
+              <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.4;0.46;0.6;0.66;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+
+            <rect x="60" y="184" width="360" height="58" rx="8" fill="#1e8449" opacity="0">
+              <animate attributeName="opacity" values="0;0;0.9;0.9" keyTimes="0;0.68;0.78;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <text x="240" y="207" text-anchor="middle" fill="#fff" font-size="13" font-weight="700" opacity="0">PedidoRepository
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.68;0.78;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+            <text x="240" y="228" text-anchor="middle" fill="#fff" font-size="11" opacity="0">salvar · porId · todos
+              <animate attributeName="opacity" values="0;0;0.9;0.9" keyTimes="0;0.68;0.78;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+
+            <rect x="480" y="184" width="360" height="58" rx="8" fill="#e67e22" opacity="0">
+              <animate attributeName="opacity" values="0;0;0.85;0.85" keyTimes="0;0.78;0.88;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <text x="660" y="207" text-anchor="middle" fill="#fff" font-size="13" font-weight="700" opacity="0">RelatorioDePedidos
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.78;0.88;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+            <text x="660" y="228" text-anchor="middle" fill="#fff" font-size="11" opacity="0">relatorioMensal · exportarCsv
+              <animate attributeName="opacity" values="0;0;0.9;0.9" keyTimes="0;0.78;0.88;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+          </svg>
+          <figcaption>
+            Cenário hipotético, e não o código do laboratório: se o repositório da LogiTech tivesse crescido para atender também o time de BI, o dublê de teste seria obrigado a implementar exportação de CSV só para conseguir gravar um pedido. A animação marca primeiro os três métodos que a regra de pedidos realmente chama, depois os dois que só o BI usa, e por fim divide a interface gorda em duas enxutas.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – SOLID: ISP</div>
+          <div class="footer-page">21</div>
+        </div>
+      </section>
+
+      <!-- ==================== 22: ISP EM CÓDIGO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>I · o cheiro e a correção, na interface do repositório</h2>
+        </div>
+
+        <div class="par-codigo">
+          <div>
+            <p class="rotulo rotulo-mau">O cheiro</p>
+            <pre><code class="language-java">public interface RepositorioLogitech {
+    Pedido salvar(Pedido pedido);
+    Optional&lt;Pedido&gt; porId(String id);
+    List&lt;Pedido&gt; todos();
+    Relatorio relatorioMensal(YearMonth mes);
+    byte[] exportarCsv();
+}
+
+// hipótese: se a interface crescesse assim, o
+// dublê teria de implementar os cinco métodos,
+// e dois deles nunca seriam chamados:
+class RepositorioEmMemoria
+        implements RepositorioLogitech {
+    public byte[] exportarCsv() {
+        throw new UnsupportedOperationException();
+    }
+}</code></pre>
+          </div>
+          <div>
+            <p class="rotulo rotulo-bom">A correção</p>
+            <pre><code class="language-java">// o que a regra de negócio de Pedidos usa
+public interface PedidoRepository {
+    Pedido salvar(Pedido pedido);
+    Optional&lt;Pedido&gt; porId(String id);
+    List&lt;Pedido&gt; todos();
+}
+
+// o que o time de BI usa, em outro contrato
+public interface RelatorioDePedidos {
+    Relatorio relatorioMensal(YearMonth mes);
+    byte[] exportarCsv();
+}
+
+// nenhum UnsupportedOperationException
+// sobra no dublê de teste</code></pre>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Como reconhecer</span>
+          <p>Todo <span class="mono">UnsupportedOperationException</span> em uma implementação é a interface avisando que pediu demais. Se um implementador precisa recusar um método, aquele método é de outro contrato.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – SOLID: ISP</div>
+          <div class="footer-page">22</div>
+        </div>
+      </section>
+
+      <!-- ==================== 23: DIP, FIGURA (ANIMAÇÃO 8) ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>D · Inversão de Dependência: a seta que muda de sentido <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 258" style="max-height:400px;" role="img" aria-label="A seta de dependência apontando da regra de negócio para o ORM e depois se invertendo">
+            <text x="215" y="18" text-anchor="middle" font-size="13" font-weight="700" fill="#c0392b">ANTES: o negócio depende do ORM</text>
+            <rect x="90" y="32" width="250" height="48" rx="8" fill="#ED145B"/>
+            <text x="215" y="61" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">PedidoService</text>
+            <path d="M 215 80 L 215 122" stroke="#c0392b" stroke-width="4" fill="none"/>
+            <polygon points="215,130 206,114 224,114" fill="#c0392b"/>
+            <rect x="90" y="130" width="250" height="48" rx="8" fill="#999"/>
+            <text x="215" y="152" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">JpaPedidoRepository</text>
+            <text x="215" y="169" text-anchor="middle" fill="#fff" font-size="11">Hibernate, PostgreSQL, SQL</text>
+            <text x="215" y="202" text-anchor="middle" font-size="12" fill="#777">trocar de banco, trocar de ORM ou</text>
+            <text x="215" y="220" text-anchor="middle" font-size="12" fill="#777">testar sem banco: tudo passa por</text>
+            <text x="215" y="238" text-anchor="middle" font-size="12" fill="#777">editar a classe de regra de negócio</text>
+
+            <line x1="450" y1="12" x2="450" y2="248" stroke="#ddd" stroke-width="2"/>
+
+            <text x="682" y="18" text-anchor="middle" font-size="13" font-weight="700" fill="#1e8449">DEPOIS: os dois dependem da abstração</text>
+            <rect x="557" y="32" width="250" height="46" rx="8" fill="#ED145B"/>
+            <text x="682" y="60" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">PedidoService</text>
+            <path d="M 682 78 L 682 96" stroke="#1e8449" stroke-width="4" fill="none"/>
+            <polygon points="682,104 673,88 691,88" fill="#1e8449"/>
+            <rect x="557" y="104" width="250" height="40" rx="20" fill="#fff" stroke="#333" stroke-width="2.5"/>
+            <text x="682" y="129" text-anchor="middle" font-size="13" font-weight="700" fill="#333">PedidoRepository</text>
+            <path d="M 682 186 L 682 152" stroke="#1e8449" stroke-width="4" fill="none" stroke-dasharray="60" stroke-dashoffset="60">
+              <animate attributeName="stroke-dashoffset" values="60;60;0;0" keyTimes="0;0.25;0.5;1" dur="8s" repeatCount="indefinite"/>
+            </path>
+            <polygon points="682,146 673,162 691,162" fill="#1e8449" opacity="0">
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.45;0.55;1" dur="8s" repeatCount="indefinite"/>
+            </polygon>
+            <rect x="557" y="186" width="250" height="44" rx="8" fill="#999"/>
+            <text x="682" y="206" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">JpaPedidoRepository</text>
+            <text x="682" y="223" text-anchor="middle" fill="#fff" font-size="11">a implementação passa a servir ao contrato</text>
+            <text x="682" y="248" text-anchor="middle" font-size="12" fill="#1e8449">a seta de baixo aponta para o contrato, e não o contrário</text>
+          </svg>
+          <figcaption>
+            A animação desenha a seta que faltava: a implementação de JPA passa a apontar para cima, na direção da interface que o domínio declarou. Antes, o módulo de alto nível dependia do de baixo. Depois, os dois dependem da mesma abstração, e ela pertence ao lado do negócio.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – SOLID: DIP</div>
+          <div class="footer-page">23</div>
+        </div>
+      </section>
+
+      <!-- ==================== 24: DIP EM CÓDIGO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>D · o cheiro, a correção, e o preço que o teste pagava</h2>
+        </div>
+
+        <div class="par-codigo">
+          <div>
+            <p class="rotulo rotulo-mau">O cheiro</p>
+            <pre><code class="language-java">@Service
+public class PedidoService {
+  // tipo concreto, cheio de JPA
+  private final JpaPedidoRepository repositorio;
+
+  public PedidoService(JpaPedidoRepository r) {
+      this.repositorio = r;
+  }
+}
+
+// e o dublê de teste paga a conta:
+static class RepositorioEmMemoria
+        extends JpaPedidoRepository {
+    RepositorioEmMemoria() {
+        super(null);   // um PedidoJpa nulo
+    }
+}</code></pre>
+          </div>
+          <div>
+            <p class="rotulo rotulo-bom">A correção</p>
+            <pre><code class="language-java">public interface PedidoRepository {
+    Pedido salvar(Pedido pedido);
+    Optional&lt;Pedido&gt; porId(String id);
+    List&lt;Pedido&gt; todos();
+}
+
+@Service
+public class PedidoService {
+  private final PedidoRepository repositorio;
+
+  public PedidoService(PedidoRepository r) {
+      this.repositorio = r;
+  }
+}
+
+static class RepositorioEmMemoria
+        implements PedidoRepository { ... }</code></pre>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">É o TODO-1 do laboratório</span>
+          <p>A interface pertence ao pacote <span class="mono">dominio</span>, não ao <span class="mono">infra</span>: quem declara o contrato é quem precisa dele. Depois do TODO-1, o import de <span class="mono">infra</span> some do serviço e o teste deixa de saber que existe um ORM no projeto.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – SOLID: DIP</div>
+          <div class="footer-page">24</div>
+        </div>
+      </section>
+
+      <!-- ==================== 25: FACTORY METHOD, FIGURA (ANIMAÇÃO 9) ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Factory Method: quem decide qual objeto criar <a href="#/ref-slide" class="ref-badge" title="Ver referências">[3]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 285" style="max-height:400px;" role="img" aria-label="A fábrica recebendo a lista de conectores e devolvendo o certo para cada tipo de cliente">
+            <rect x="30" y="60" width="180" height="52" rx="8" fill="#ED145B"/>
+            <text x="120" y="83" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">PedidoService</text>
+            <text x="120" y="101" text-anchor="middle" fill="#fff" font-size="11" opacity="0.9">tipoCliente = CONTRATO</text>
+
+            <path d="M 210 86 L 300 86" stroke="#333" stroke-width="3" fill="none"/>
+            <polygon points="306,86 292,79 292,93" fill="#333"/>
+            <text x="256" y="76" text-anchor="middle" font-size="11" fill="#777">para(tipo)</text>
+
+            <rect x="310" y="48" width="230" height="76" rx="8" fill="#333"/>
+            <text x="425" y="74" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">ConectorFaturamentoFactory</text>
+            <text x="425" y="94" text-anchor="middle" fill="#bbb" font-size="11">índice tipoCliente para conector,</text>
+            <text x="425" y="111" text-anchor="middle" fill="#bbb" font-size="11">montado uma vez, na subida</text>
+
+            <g font-size="11" fill="#777">
+              <text x="425" y="222" text-anchor="middle">o Spring entrega a List&lt;ConectorFaturamento&gt; com tudo que tem @Component</text>
+            </g>
+            <rect x="250" y="166" width="150" height="34" rx="6" fill="#bbb"/>
+            <text x="325" y="188" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">ConectorBoleto</text>
+            <rect x="410" y="166" width="180" height="34" rx="6" fill="#bbb"/>
+            <text x="500" y="188" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">ConectorCartaoCorporativo</text>
+            <rect x="600" y="166" width="160" height="34" rx="6" fill="#bbb"/>
+            <text x="680" y="188" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">ConectorFaturaMensal</text>
+            <path d="M 325 166 L 380 128" stroke="#ccc" stroke-width="2" fill="none"/>
+            <path d="M 500 166 L 460 128" stroke="#ccc" stroke-width="2" fill="none"/>
+            <path d="M 680 166 L 520 128" stroke="#ccc" stroke-width="2" fill="none"/>
+
+            <rect x="600" y="166" width="160" height="34" rx="6" fill="#ED145B" opacity="0">
+              <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.25;0.35;0.72;0.8;1" dur="8s" repeatCount="indefinite"/>
+            </rect>
+            <text x="680" y="188" text-anchor="middle" fill="#fff" font-size="11" font-weight="700" opacity="0">ConectorFaturaMensal
+              <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.25;0.35;0.72;0.8;1" dur="8s" repeatCount="indefinite"/>
+            </text>
+
+            <path d="M 600 183 L 560 86 L 545 86" stroke="#ED145B" stroke-width="3" fill="none" opacity="0">
+              <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.4;0.5;0.72;0.8;1" dur="8s" repeatCount="indefinite"/>
+            </path>
+            <rect x="620" y="52" width="250" height="66" rx="8" fill="#fff" stroke="#ED145B" stroke-width="2" opacity="0">
+              <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.45;0.55;0.72;0.8;1" dur="8s" repeatCount="indefinite"/>
+            </rect>
+            <text x="745" y="76" text-anchor="middle" font-size="12" font-weight="700" fill="#ED145B" opacity="0">devolvido ao serviço
+              <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.45;0.55;0.72;0.8;1" dur="8s" repeatCount="indefinite"/>
+            </text>
+            <text x="745" y="98" text-anchor="middle" font-size="11" fill="#777" opacity="0">o serviço nunca escreveu new
+              <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.45;0.55;0.72;0.8;1" dur="8s" repeatCount="indefinite"/>
+            </text>
+
+            <rect x="30" y="238" width="840" height="40" rx="7" fill="#f4f4f4" stroke="#ddd"/>
+            <text x="450" y="263" text-anchor="middle" font-size="13" fill="#555">a fábrica é o único lugar do sistema que sabe a lista completa de formas de cobrança</text>
+          </svg>
+          <figcaption>
+            A animação segue um pedido de cliente CONTRATO: o serviço pede o conector à fábrica, a fábrica localiza no índice o conector de fatura mensal e o devolve, e o serviço usa o objeto sem nunca ter escrito a palavra new. Registrar um conector novo é anotá-lo com @Component: o Spring o coloca na lista que a fábrica recebe.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Factory Method</div>
+          <div class="footer-page">25</div>
+        </div>
+      </section>
+
+      <!-- ==================== 26: FACTORY METHOD EM CÓDIGO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Factory Method: o código que vocês vão escrever no TODO-2</h2>
+        </div>
+
+        <pre class="code-compact" style="font-size:0.46em; margin-top:6px;"><code class="language-java">@Component
+public class ConectorFaturamentoFactory {
+
+    private final Map&lt;String, ConectorFaturamento&gt; porTipoDeCliente;
+
+    // O Spring injeta AQUI todos os beans que implementam ConectorFaturamento.
+    // Nenhum registro à mão, nenhuma lista para manter em outro arquivo.
+    public ConectorFaturamentoFactory(List&lt;ConectorFaturamento&gt; conectores) {
+        this.porTipoDeCliente = conectores.stream().collect(
+                Collectors.toMap(ConectorFaturamento::tipoClienteAtendido, Function.identity()));
+    }
+
+    public ConectorFaturamento para(String tipoCliente) {
+        ConectorFaturamento conector = porTipoDeCliente.get(tipoCliente);
+        if (conector == null) {
+            throw new ConectorNaoEncontradoException(tipoCliente);
+        }
+        return conector;
+    }
+}</code></pre>
+
+        <div class="callout" style="margin-top:7px; padding:9px 15px;">
+          <p style="font-size:0.62em; margin:0;">Repare no que a fábrica <strong>não</strong> tem: nenhum <span class="mono">if</span>, nenhum nome de tipo de cliente escrito no código dela. Quem sabe qual tipo atende é cada conector, no seu próprio arquivo.</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Takeaway</span>
+          <p>Factory Method resolve uma pergunta só: quem tem o direito de decidir qual implementação usar. Tirar essa decisão da regra de negócio é o que a torna fechada para modificação.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Factory Method</div>
+          <div class="footer-page">26</div>
+        </div>
+      </section>
+
+      <!-- ==================== 27: REPOSITORY, FIGURA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Repository: uma coleção de objetos, não uma tabela <a href="#/ref-slide" class="ref-badge" title="Ver referências">[3]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 250" style="max-height:400px;" role="img" aria-label="A camada de domínio falando com um repositório e as três implementações possíveis">
+            <rect x="290" y="16" width="320" height="46" rx="8" fill="#ED145B"/>
+            <text x="450" y="45" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">domínio: salvar(pedido), porId(id)</text>
+
+            <line x1="450" y1="62" x2="450" y2="86" stroke="#333" stroke-width="3"/>
+            <rect x="300" y="86" width="300" height="44" rx="22" fill="#fff" stroke="#333" stroke-width="2.5"/>
+            <text x="450" y="113" text-anchor="middle" font-size="13" font-weight="700" fill="#333">PedidoRepository · IFaturaRepository</text>
+
+            <line x1="200" y1="130" x2="200" y2="158" stroke="#999" stroke-width="2.5" stroke-dasharray="5,4"/>
+            <line x1="450" y1="130" x2="450" y2="158" stroke="#999" stroke-width="2.5" stroke-dasharray="5,4"/>
+            <line x1="700" y1="130" x2="700" y2="158" stroke="#999" stroke-width="2.5" stroke-dasharray="5,4"/>
+            <path d="M 300 108 L 200 130" stroke="#999" stroke-width="2" fill="none" stroke-dasharray="5,4"/>
+            <path d="M 600 108 L 700 130" stroke="#999" stroke-width="2" fill="none" stroke-dasharray="5,4"/>
+
+            <rect x="80" y="158" width="240" height="52" rx="8" fill="#666"/>
+            <text x="200" y="180" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">JPA / Hibernate</text>
+            <text x="200" y="198" text-anchor="middle" fill="#fff" font-size="11">PostgreSQL, schema pedidos</text>
+
+            <rect x="330" y="158" width="240" height="52" rx="8" fill="#666"/>
+            <text x="450" y="180" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">EF Core</text>
+            <text x="450" y="198" text-anchor="middle" fill="#fff" font-size="11">PostgreSQL, schema faturamento</text>
+
+            <rect x="580" y="158" width="240" height="52" rx="8" fill="#1e8449"/>
+            <text x="700" y="180" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">em memória</text>
+            <text x="700" y="198" text-anchor="middle" fill="#fff" font-size="11">dublê usado pelos testes</text>
+
+            <text x="450" y="238" text-anchor="middle" font-size="13" fill="#555">a mesma abstração, dois ORMs diferentes, duas linguagens diferentes e um dublê sem banco nenhum</text>
+          </svg>
+          <figcaption>
+            O domínio pede objetos, não linhas: salvar um pedido, buscar por identificador. Quem traduz isso para SQL é a infraestrutura, e ela pode ser JPA no serviço Java, EF Core no serviço C# ou um dicionário em memória no teste. Repository é o Princípio da Inversão de Dependência aplicado à persistência.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Takeaway</span>
+          <p>Repository não é uma classe com métodos de banco: é a promessa de que a regra de negócio nunca vai saber onde os dados moram. É o TODO-1 do lado Java e o TODO-4 do lado C#.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Repository</div>
+          <div class="footer-page">27</div>
+        </div>
+      </section>
+
+      <!-- ==================== 28: REPOSITORY NAS DUAS LINGUAGENS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O mesmo desenho, duas sintaxes <a href="#/ref-slide" class="ref-badge" title="Ver referências">[4]</a> <a href="#/ref-slide" class="ref-badge" title="Ver referências">[5]</a></h2>
+        </div>
+
+        <div class="par-codigo">
+          <div>
+            <p class="rotulo" style="color:#555;">Java 21, Spring Boot, TODO-1</p>
+            <pre><code class="language-java">public interface PedidoRepository {
+    Pedido salvar(Pedido pedido);
+    Optional&lt;Pedido&gt; porId(String id);
+    List&lt;Pedido&gt; todos();
+}
+
+@Repository
+public class JpaPedidoRepository
+        implements PedidoRepository {
+    private final PedidoJpa jpa;
+    ...
+}
+
+// injeção por construtor: o Spring resolve
+// sozinho, sem anotação nenhuma no serviço
+public PedidoService(PedidoRepository r) { }</code></pre>
+          </div>
+          <div>
+            <p class="rotulo" style="color:#555;">C# .NET 8, EF Core, TODO-4</p>
+            <pre><code class="language-csharp">public interface IFaturaRepository {
+    Fatura Salvar(Fatura fatura);
+    Fatura? PorPedido(string pedidoId);
+    IReadOnlyList&lt;Fatura&gt; Todas();
+}
+
+public class EfFaturaRepository
+        : IFaturaRepository {
+    private readonly FaturamentoDbContext _banco;
+    ...
+}
+
+// aqui o registro é explícito, em Program.cs
+builder.Services.AddScoped
+    &lt;IFaturaRepository, EfFaturaRepository&gt;();
+public FaturaService(IFaturaRepository r) { }</code></pre>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Poliglota de verdade</span>
+          <p>A diferença entre as duas colunas é sintaxe e a forma de registrar no contêiner de injeção. O desenho é idêntico, e é ele que vocês estão aprendendo: linguagem se troca, projeto fica.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Repository nas Duas Stacks</div>
+          <div class="footer-page">28</div>
+        </div>
+      </section>
+
+      <!-- ==================== 29: SINGLETON, O QUE RESOLVE ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Singleton: o padrão que resolve um problema e cria outro <a href="#/ref-slide" class="ref-badge" title="Ver referências">[3]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 240" style="max-height:400px;" role="img" aria-label="Requisições concorrentes compartilhando a mesma instância do numerador de nota fiscal">
+            <g font-size="12" fill="#555">
+              <rect x="30" y="34" width="150" height="34" rx="6" fill="#ED145B" opacity="0.9"/>
+              <text x="105" y="56" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">requisição 1</text>
+              <rect x="30" y="80" width="150" height="34" rx="6" fill="#ED145B" opacity="0.75"/>
+              <text x="105" y="102" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">requisição 2</text>
+              <rect x="30" y="126" width="150" height="34" rx="6" fill="#ED145B" opacity="0.6"/>
+              <text x="105" y="148" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">requisição 3</text>
+              <rect x="30" y="172" width="150" height="34" rx="6" fill="#ED145B" opacity="0.45"/>
+              <text x="105" y="194" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">requisição 100</text>
+            </g>
+
+            <path d="M 180 51 L 350 110" stroke="#999" stroke-width="2" fill="none"/>
+            <path d="M 180 97 L 350 112" stroke="#999" stroke-width="2" fill="none"/>
+            <path d="M 180 143 L 350 118" stroke="#999" stroke-width="2" fill="none"/>
+            <path d="M 180 189 L 350 122" stroke="#999" stroke-width="2" fill="none"/>
+
+            <rect x="350" y="88" width="250" height="60" rx="9" fill="#333"/>
+            <text x="475" y="113" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">NumeradorNotaFiscal</text>
+            <text x="475" y="133" text-anchor="middle" fill="#bbb" font-size="11">instância única, contador mutável</text>
+
+            <path d="M 600 118 L 690 118" stroke="#333" stroke-width="3" fill="none"/>
+            <polygon points="696,118 682,111 682,125" fill="#333"/>
+            <rect x="700" y="94" width="170" height="48" rx="8" fill="#fff" stroke="#333" stroke-width="2"/>
+            <text x="785" y="115" text-anchor="middle" font-size="12" font-weight="700" fill="#333">NF-000042</text>
+            <text x="785" y="132" text-anchor="middle" font-size="11" fill="#777">sequencial e único</text>
+
+            <text x="30" y="228" font-size="12" fill="#1e8449">POR QUE UM SÓ: numeração fiscal é sequencial por lei, não por gosto</text>
+            <text x="470" y="228" font-size="12" fill="#c0392b">O PREÇO: estado mutável compartilhado por todas as threads</text>
+          </svg>
+          <figcaption>
+            Todas as requisições que chegam ao serviço de Faturamento passam pela mesma instância do numerador, porque o número da nota é sequencial e único por natureza. Essa é a razão do Singleton e, ao mesmo tempo, o problema dele: uma variável mutável tocada por todas as threads ao mesmo tempo.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Takeaway</span>
+          <p>Singleton é o único padrão da noite que resolve um problema criando outro. Toda vez que ele aparecer num projeto, a pergunta seguinte é: esta instância guarda estado mutável? Se guarda, quem protege esse estado?</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Singleton</div>
+          <div class="footer-page">29</div>
+        </div>
+      </section>
+
+      <!-- ==================== 30: A CORRIDA (ANIMAÇÃO 10) ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A corrida acontece entre ler e gravar <a href="#/ref-slide" class="ref-badge" title="Ver referências">[6]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 262" style="max-height:400px;" role="img" aria-label="Duas threads lendo o mesmo contador e produzindo o mesmo número de nota fiscal">
+            <text x="30" y="24" font-size="12" font-weight="700" fill="#777">tempo</text>
+            <line x1="30" y1="34" x2="870" y2="34" stroke="#ddd" stroke-width="2"/>
+
+            <text x="30" y="76" font-size="13" font-weight="700" fill="#ED145B">thread A</text>
+            <text x="30" y="146" font-size="13" font-weight="700" fill="#333">thread B</text>
+            <text x="30" y="216" font-size="13" font-weight="700" fill="#777">_ultimo</text>
+
+            <rect x="130" y="54" width="150" height="34" rx="6" fill="#ED145B" opacity="0">
+              <animate attributeName="opacity" values="0;0.9;0.9" keyTimes="0;0.12;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <text x="205" y="76" text-anchor="middle" fill="#fff" font-size="12" opacity="0">lê 41
+              <animate attributeName="opacity" values="0;1;1" keyTimes="0;0.12;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+
+            <rect x="300" y="124" width="150" height="34" rx="6" fill="#333" opacity="0">
+              <animate attributeName="opacity" values="0;0;0.9;0.9" keyTimes="0;0.2;0.3;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <text x="375" y="146" text-anchor="middle" fill="#fff" font-size="12" opacity="0">lê 41
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.2;0.3;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+
+            <rect x="470" y="54" width="170" height="34" rx="6" fill="#ED145B" opacity="0">
+              <animate attributeName="opacity" values="0;0;0.9;0.9" keyTimes="0;0.38;0.48;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <text x="555" y="76" text-anchor="middle" fill="#fff" font-size="12" opacity="0">grava 42, devolve NF-000042
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.38;0.48;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+
+            <rect x="660" y="124" width="200" height="34" rx="6" fill="#c0392b" opacity="0">
+              <animate attributeName="opacity" values="0;0;0.95;0.95" keyTimes="0;0.56;0.66;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <text x="760" y="146" text-anchor="middle" fill="#fff" font-size="12" opacity="0">grava 42, devolve NF-000042
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.56;0.66;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+
+            <g font-family="monospace" font-size="13" fill="#555">
+              <text x="150" y="216">41</text>
+              <text x="380" y="216">41</text>
+              <text x="555" y="216" opacity="0">42
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.38;0.48;1" dur="9s" repeatCount="indefinite"/>
+              </text>
+              <text x="760" y="216" fill="#c0392b" opacity="0">42
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.56;0.66;1" dur="9s" repeatCount="indefinite"/>
+              </text>
+            </g>
+
+            <rect x="470" y="230" width="400" height="28" rx="6" fill="#c0392b" opacity="0">
+              <animate attributeName="opacity" values="0;0;0.95;0.95" keyTimes="0;0.68;0.78;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <text x="670" y="249" text-anchor="middle" fill="#fff" font-size="12" font-weight="700" opacity="0">duas notas fiscais com o mesmo número
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.68;0.78;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+          </svg>
+          <figcaption>
+            A animação segue duas threads no tempo. A thread A lê o contador em 41; antes de gravar, a thread B lê o mesmo 41. As duas somam um, as duas gravam 42, e as duas devolvem NF-000042. O contador nem sequer perdeu a conta: o problema é que duas notas fiscais diferentes saíram com o mesmo número, e isso é problema fiscal, não bug de tela.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Por que o teste de vocês vai falhar</span>
+          <p>Ler, somar e gravar são três passos, e nada impede outra thread de entrar no meio. No laboratório vocês vão disparar 100 emissões concorrentes e ver o número de notas repetidas com os próprios olhos, antes de corrigir.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Singleton e Concorrência</div>
+          <div class="footer-page">30</div>
+        </div>
+      </section>
+
+      <!-- ==================== 31: SINGLETON THREAD-SAFE EM CÓDIGO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Singleton: o cheiro e as duas correções em C# <a href="#/ref-slide" class="ref-badge" title="Ver referências">[6]</a></h2>
+        </div>
+
+        <div class="par-codigo">
+          <div>
+            <p class="rotulo rotulo-mau">O que o esqueleto entrega</p>
+            <pre><code class="language-csharp">public sealed class NumeradorNotaFiscal
+{
+    private static NumeradorNotaFiscal? _instancia;
+    private int _ultimo;
+
+    // criação sem sincronização: duas threads
+    // na primeira chamada criam dois numeradores
+    public static NumeradorNotaFiscal Instancia
+        =&gt; _instancia ??= new NumeradorNotaFiscal();
+
+    public string Proximo()
+    {
+        int atual = _ultimo;   // lê
+        atual = atual + 1;     // soma
+        _ultimo = atual;       // grava
+        return $"NF-{atual:D6}";
+    }
+}</code></pre>
+          </div>
+          <div>
+            <p class="rotulo rotulo-bom">O que vocês entregam no TODO-5</p>
+            <pre><code class="language-csharp">public sealed class NumeradorNotaFiscal
+{
+    private static readonly Lazy&lt;NumeradorNotaFiscal&gt;
+        _instancia = new(() =&gt; new NumeradorNotaFiscal(),
+            LazyThreadSafetyMode.ExecutionAndPublication);
+
+    private readonly object _trava = new();
+    private int _ultimo;
+
+    public static NumeradorNotaFiscal Instancia
+        =&gt; _instancia.Value;
+
+    public string Proximo()
+    {
+        lock (_trava) { _ultimo = _ultimo + 1;
+                        return $"NF-{_ultimo:D6}"; }
+    }
+    // alternativa sem lock:
+    // Interlocked.Increment(ref _ultimo)
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">São dois defeitos, não um</span>
+          <p>A criação da instância e o incremento do contador são corridas diferentes, e cada uma pede a sua correção. Consertar só uma delas deixa o teste do TODO-6 falhando de vez em quando, que é o pior dos mundos.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Singleton Thread-Safe</div>
+          <div class="footer-page">31</div>
+        </div>
+      </section>
+
+      <!-- ==================== 32: PIRÂMIDE DE TESTES ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O teste que só existe porque a abstração existe <a href="#/ref-slide" class="ref-badge" title="Ver referências">[8]</a></h2>
+        </div>
+
+        <div class="figure-split" style="grid-template-columns:1.15fr 1fr; gap:22px; margin-top:6px;">
+          <figure class="slide-figure" style="margin:0;">
+            <svg viewBox="0 0 460 250" style="max-height:250px;" role="img" aria-label="Pirâmide de testes com a base de testes de unidade">
+              <polygon points="230,14 300,84 160,84" fill="#c0392b" opacity="0.85"/>
+              <text x="230" y="62" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">ponta a ponta</text>
+              <polygon points="155,90 305,90 355,160 105,160" fill="#e67e22" opacity="0.85"/>
+              <text x="230" y="132" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">integração</text>
+              <polygon points="100,166 360,166 410,236 50,236" fill="#1e8449" opacity="0.9"/>
+              <text x="230" y="200" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">unidade</text>
+              <text x="230" y="222" text-anchor="middle" fill="#fff" font-size="14">rodam em milissegundos, sem banco e sem rede</text>
+              <text x="378" y="58" font-size="14" fill="#777">poucos</text>
+              <text x="378" y="132" font-size="14" fill="#777">alguns</text>
+              <text x="430" y="200" text-anchor="end" font-size="14" fill="#777">muitos</text>
+            </svg>
+            <figcaption style="text-align:left;">A base larga só é possível quando a regra de negócio depende de abstrações: é o dublê em memória que faz o teste rodar sem PostgreSQL e sem o serviço em C# no ar.</figcaption>
+          </figure>
+
+          <div>
+            <div class="concept-cards" style="grid-template-columns:1fr; gap:10px; margin-top:0;">
+              <div class="concept-card" style="padding:12px 16px;">
+                <h4>O que o laboratório já traz verde</h4>
+                <p style="font-size:0.66em;"><strong>13 testes</strong> JUnit no serviço de Pedidos e <strong>9 testes</strong> xUnit no de Faturamento, medidos no esqueleto entregue.</p>
+              </div>
+              <div class="concept-card" style="padding:12px 16px;">
+                <h4>O que vocês acrescentam</h4>
+                <p style="font-size:0.66em;">Os testes do cliente CONTRATO no TODO-3 e o de concorrência no TODO-6. O verificador cobra no mínimo <strong>15</strong> testes Java e <strong>10</strong> C# verdes.</p>
+              </div>
+              <div class="concept-card" style="padding:12px 16px;">
+                <h4>Regra que não muda</h4>
+                <p style="font-size:0.66em;">Refatoração que quebra teste existente não é refatoração: é mudança de comportamento disfarçada. Os testes que já estão verdes precisam continuar verdes depois das seis lacunas.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Pirâmide de Testes</div>
+          <div class="footer-page">32</div>
+        </div>
+      </section>
+
+      <!-- ==================== 33: QUIZ 1 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container" data-quiz-key="aula05-quiz1">
+          <div class="quiz-question">Como o Princípio da Inversão de Dependência (DIP) reduz o acoplamento entre a camada de negócio e o banco de dados?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> Removendo o ORM do projeto e fazendo a camada de negócio escrever o SQL diretamente.</li>
+            <li data-correct="true"><span class="option-letter">B</span> Fazendo a regra de negócio depender de uma interface que ela mesma declara, e a implementação de persistência passar a servir a essa interface.</li>
+            <li data-correct="false"><span class="option-letter">C</span> Criando uma classe utilitária estática de acesso a dados, chamada de qualquer ponto do sistema.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Guardando a string de conexão em variável de ambiente em vez de deixá-la no código.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. A abstração pertence ao domínio, e a implementação de JPA ou de EF Core passa a implementá-la. Trocar de banco, ou testar sem banco, deixa de tocar a regra de negócio: é exatamente o TODO-1 e o TODO-4 do laboratório de hoje."
+               data-incorrect-msg="Incorreto. Não é sobre tirar o ORM, nem sobre classe estática, nem sobre configuração: é sobre quem declara o contrato. Reveja o slide da seta que muda de sentido."></div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz1Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz1Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Verificação de Aprendizado</div>
+          <div class="footer-page">33</div>
+        </div>
+      </section>
+
+      <!-- ==================== 34: INTERVALO ==================== -->
+      <section class="content-slide" style="text-align:center; background:transparent;"
+               data-background-image="../assets/img/coffee-relax.jpg"
+               data-background-size="cover"
+               data-background-opacity="0.45">
+        <div style="margin-top:150px;">
+          <h2 style="font-size:4em; color:var(--fiap-pink); margin-bottom:10px; text-shadow:0 2px 12px rgba(255,255,255,0.9);">Intervalo</h2>
+          <h3 style="font-size:2.2em; color:var(--fiap-dark); text-shadow:0 2px 10px rgba(255,255,255,0.9);">30 minutos</h3>
+
+          <div class="quiz-timer-box" style="margin:40px auto 0 auto; padding:15px 30px; font-size:1.3em;">
+            <button class="quiz-timer-btn" style="width:40px; height:40px; font-size:1.2em;" onclick="startTimer('breakTimer', 1800)" aria-label="Iniciar cronômetro do intervalo">&#9654;</button>
+            <span id="breakTimer">30:00</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 35: QUIZ 2 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container" data-quiz-key="aula05-quiz2">
+          <div class="quiz-question">Para que serve o padrão Factory Method e em qual situação do nosso Mini Mundo ele é aplicado?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> Serve para garantir uma instância única de um objeto no processo, e é aplicado ao numerador de nota fiscal.</li>
+            <li data-correct="true"><span class="option-letter">B</span> Serve para tirar de quem usa o objeto a decisão de qual implementação instanciar, e é aplicado à escolha do conector de faturamento por tipo de cliente.</li>
+            <li data-correct="false"><span class="option-letter">C</span> Serve para traduzir a interface de uma API externa para a do nosso sistema, e é aplicado à integração com o serviço de Faturamento.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Serve para separar a leitura da escrita no banco, e é aplicado ao repositório de pedidos.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. A fábrica concentra a decisão que estava espalhada numa cadeia de if dentro de PedidoService. Um contrato comercial novo passa a ser uma classe nova, e é o que o TODO-2 e o TODO-3 vão exercitar."
+               data-incorrect-msg="Incorreto. Instância única é Singleton, tradução de interface alheia é Adapter (Aula 06) e abstração da persistência é Repository. Factory Method é sobre quem decide o que instanciar."></div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz2Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz2Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Verificação de Aprendizado</div>
+          <div class="footer-page">35</div>
+        </div>
+      </section>
+
+      <!-- ==================== 36: QUIZ 3 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container" data-quiz-key="aula05-quiz3">
+          <div class="quiz-question">Qual o risco de utilizar o padrão Singleton incorretamente em ambientes multithreaded?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> Nenhum: por existir uma instância só, o Singleton é naturalmente seguro entre threads.</li>
+            <li data-correct="false"><span class="option-letter">B</span> O risco é de consumo de memória, porque a instância nunca é liberada pelo coletor de lixo.</li>
+            <li data-correct="true"><span class="option-letter">C</span> Se a instância guarda estado mutável sem sincronização, duas threads podem ler o mesmo valor e produzir resultados repetidos ou perdidos, e a própria trava vira gargalo se for larga demais.</li>
+            <li data-correct="false"><span class="option-letter">D</span> O risco é de compilação: o compilador recusa campo estático mutável acessado por mais de uma thread.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. Instância única não é sinônimo de acesso seguro. No laboratório de hoje vocês vão ver isso acontecer: 100 emissões concorrentes com o Singleton do esqueleto produzem dezenas de números de nota fiscal repetidos."
+               data-incorrect-msg="Incorreto. O compilador não reclama, o coletor de lixo não é o problema, e uma instância só não protege nada: o perigo é o estado mutável compartilhado sem sincronização."></div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz3Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz3Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Verificação de Aprendizado</div>
+          <div class="footer-page">36</div>
+        </div>
+      </section>
+
+      <!-- ==================== 37: ATIVIDADE, ABERTURA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Atividade prática: seis lacunas, dois serviços, uma dupla</h2>
+        </div>
+
+        <p style="font-size:0.7em; margin-bottom:0;">Os dois serviços chegam <strong>compilando, rodando e com teste verde</strong>. Ninguém escreve serviço do zero hoje: vocês preenchem lacunas nomeadas, cada uma correspondendo a uma decisão de projeto que acabamos de ver.</p>
+
+        <table class="compact-table" style="font-size:0.55em; margin-top:8px;">
+          <thead>
+            <tr><th>Lacuna</th><th>Serviço</th><th>O que exercita</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono">TODO-1</td><td>pedidos (Java)</td><td>Extrair <span class="mono">PedidoRepository</span> e fazer o serviço depender dela, não do JPA (DIP)</td></tr>
+            <tr><td class="mono">TODO-2</td><td>pedidos (Java)</td><td><span class="mono">ConectorFaturamentoFactory</span> escolhendo o conector por tipo de cliente</td></tr>
+            <tr><td class="mono">TODO-3</td><td>pedidos (Java)</td><td>Atender o cliente CONTRATO sem tocar em <span class="mono">PedidoService</span> (OCP)</td></tr>
+            <tr><td class="mono">TODO-4</td><td>faturamento (C#)</td><td><span class="mono">IFaturaRepository</span> com EF Core e injeção por construtor</td></tr>
+            <tr><td class="mono">TODO-5</td><td>faturamento (C#)</td><td><span class="mono">NumeradorNotaFiscal</span> como Singleton thread-safe</td></tr>
+            <tr><td class="mono">TODO-6</td><td>faturamento (C#)</td><td>Teste xUnit com 100 emissões concorrentes provando que não há número duplicado</td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Lab Kit</span>
+          <p><a href="https://github.com/josercf/mwe-2026-2-lab05-solid-patterns" target="_blank" style="color:#fff; font-weight:700;">github.com/josercf/mwe-2026-2-lab05-solid-patterns</a> · façam <strong>fork</strong>, nunca clone direto. O <span class="mono">verificar.py</span> tem onze critérios e diz exatamente qual está faltando e por quê.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Atividade Prática</div>
+          <div class="footer-page">37</div>
+        </div>
+      </section>
+
+      <!-- ==================== 38: PASSO 1 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 1 de 8: banco de pé e os dois serviços respondendo</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>O PostgreSQL sobe do jeito que vocês aprenderam na Aula 03</h3>
+          <pre style="margin:0 0 9px; font-size:0.46em;"><code class="language-bash">docker network create logitech-net 2>/dev/null || true
+
+docker run -d --name logitech-postgres --network logitech-net \
+  -e POSTGRES_DB=logitech -e POSTGRES_USER=logitech -e POSTGRES_PASSWORD=logitech \
+  -p 5432:5432 postgres:16-alpine
+
+# um schema por Bounded Context: nenhum serviço lê a tabela do outro
+docker exec logitech-postgres psql -U logitech -d logitech \
+  -c "CREATE SCHEMA IF NOT EXISTS pedidos; CREATE SCHEMA IF NOT EXISTS faturamento;"
+
+cd faturamento && dotnet run --project src/Faturamento.Api   # terminal 1, porta 5080
+cd pedidos     && mvn spring-boot:run                        # terminal 2, porta 8080
+
+# terminal 3
+curl -s localhost:8080/health && echo    # {"status":"ok","servico":"pedidos"}
+curl -s localhost:5080/health && echo    # {"status":"ok","servico":"faturamento"}
+python3 verificar.py --criterio 7</code></pre>
+          <p style="margin:0; font-size:0.62em;">Guardem esse <span class="mono">docker run</span>: na Aula 07 ele vira três linhas de YAML dentro do <span class="mono">docker-compose.yml</span>, com <span class="mono">healthcheck</span> batendo justamente no <span class="mono">/health</span> que vocês acabaram de conferir.</p>
+          <p style="margin:7px 0 0; font-size:0.6em; border-top:1px solid rgba(255,255,255,0.2); padding-top:7px;"><strong style="color:var(--fiap-pink);">O que vocês acabaram de provar:</strong> dois serviços em linguagens diferentes, no mesmo banco, cada um no seu schema, os dois respondendo o mesmo contrato de saúde.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Passo 1</div>
+          <div class="footer-page">38</div>
+        </div>
+      </section>
+
+      <!-- ==================== 39: PASSO 2 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 2 de 8: TODO-1, inverter a dependência do repositório</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>A regra de negócio deixa de conhecer o ORM</h3>
+          <p style="margin:0 0 8px; font-size:0.64em;">Criem <span class="mono">PedidoRepository</span> no pacote <span class="mono">dominio</span>, com <span class="mono">salvar</span>, <span class="mono">porId</span> e <span class="mono">todos</span>. Façam <span class="mono">JpaPedidoRepository</span> implementá-la, sem mudar o corpo de nenhum método, e troquem o tipo do campo em <span class="mono">PedidoService</span>. O import de <span class="mono">infra</span> tem que sumir do serviço.</p>
+          <pre style="margin:0 0 8px; font-size:0.46em;"><code class="language-bash">cd pedidos && mvn test          # os 13 testes continuam verdes
+python3 ../verificar.py --criterio 1
+git commit -am "feat(todo-1): inverte a dependência do repositório de pedidos"</code></pre>
+          <p style="margin:0; font-size:0.62em;">Não esqueçam do dublê em <span class="mono">PedidoServiceTest</span>: hoje ele herda do repositório JPA e chama <span class="mono">super(null)</span>. Depois do DIP ele passa a implementar a interface, e essa mudança faz parte da lacuna.</p>
+          <p style="margin:7px 0 0; font-size:0.6em; border-top:1px solid rgba(255,255,255,0.2); padding-top:7px;"><strong style="color:var(--fiap-pink);">O que vocês acabaram de provar:</strong> o teste que antes precisava do ORM para existir agora não sabe que ele existe. O acoplamento cobrava esse preço todo dia.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Passo 2</div>
+          <div class="footer-page">39</div>
+        </div>
+      </section>
+
+      <!-- ==================== 40: PASSO 3 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 3 de 8: TODO-2, a fábrica de conectores</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>A decisão sai da regra de negócio</h3>
+          <p style="margin:0 0 8px; font-size:0.64em;">Implementem <span class="mono">ConectorFaturamentoFactory</span>: construtor recebendo <span class="mono">List&lt;ConectorFaturamento&gt;</span>, índice por <span class="mono">tipoClienteAtendido()</span> e o método <span class="mono">para(tipoCliente)</span> lançando <span class="mono">ConectorNaoEncontradoException</span> quando não houver conector. Depois apaguem o <span class="mono">escolherConector</span> de <span class="mono">PedidoService</span> e passem a fábrica pelo construtor.</p>
+          <pre style="margin:0 0 8px; font-size:0.46em;"><code class="language-bash">cd pedidos && mvn test
+python3 ../verificar.py --criterio 2
+git commit -am "feat(todo-2): factory method dos conectores de faturamento"</code></pre>
+          <p style="margin:0; font-size:0.62em;">O teste também muda de uma linha: em <span class="mono">@BeforeEach</span>, construam a fábrica com os conectores e passem ao serviço. O comentário do TODO-2 no próprio arquivo mostra a forma exata.</p>
+          <p style="margin:7px 0 0; font-size:0.6em; border-top:1px solid rgba(255,255,255,0.2); padding-top:7px;"><strong style="color:var(--fiap-pink);">O que vocês acabaram de provar:</strong> a fábrica não tem um único <span class="mono">if</span> e não escreve o nome de nenhum tipo de cliente. Quem sabe qual tipo atende é cada conector.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Passo 3</div>
+          <div class="footer-page">40</div>
+        </div>
+      </section>
+
+      <!-- ==================== 41: PASSO 4 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 4 de 8: TODO-3, o contrato novo sem tocar no serviço</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>O comercial fechou contrato mensal com uma rede de distribuidoras</h3>
+          <p style="margin:0 0 8px; font-size:0.64em;">Tipo de cliente <span class="mono">CONTRATO</span>, meio de pagamento <span class="mono">FATURA_MENSAL</span>, valor cheio, prazo de <strong>30 dias</strong>. Escrevam o conector, anotem com <span class="mono">@Component</span> e acrescentem dois testes: um em <span class="mono">ConectorFaturamentoTest</span> e outro em <span class="mono">PedidoServiceTest</span>.</p>
+          <pre style="margin:0 0 8px; font-size:0.46em;"><code class="language-bash">cd pedidos && mvn test           # agora 15 testes verdes
+git diff --stat src/main/java/br/com/fiap/logitech/pedidos/aplicacao/PedidoService.java
+# a saída precisa ser VAZIA: nenhuma linha do serviço mudou
+python3 ../verificar.py --criterio 3</code></pre>
+          <p style="margin:0; font-size:0.62em;">O critério do Aberto/Fechado não é o teste passar: é o <span class="mono">git diff</span> vazio no arquivo da regra de negócio.</p>
+          <p style="margin:7px 0 0; font-size:0.6em; border-top:1px solid rgba(255,255,255,0.2); padding-top:7px;"><strong style="color:var(--fiap-pink);">O que vocês acabaram de provar:</strong> um requisito de negócio novo entrou em produção sem que uma linha do código que já funcionava fosse reaberta.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Passo 4</div>
+          <div class="footer-page">41</div>
+        </div>
+      </section>
+
+      <!-- ==================== 42: PASSO 5 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 5 de 8: TODO-4, o mesmo desenho agora em C#</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>Repository e injeção por construtor no serviço de Faturamento</h3>
+          <p style="margin:0 0 8px; font-size:0.64em;">Criem <span class="mono">IFaturaRepository</span> em <span class="mono">Dominio/</span>, façam <span class="mono">EfFaturaRepository</span> implementá-la, mudem o construtor de <span class="mono">FaturaService</span> e registrem no contêiner de injeção de dependência:</p>
+          <pre style="margin:0 0 8px; font-size:0.46em;"><code class="language-csharp">// Program.cs
+builder.Services.AddScoped&lt;IFaturaRepository, EfFaturaRepository&gt;();</code></pre>
+          <pre style="margin:0 0 8px; font-size:0.46em;"><code class="language-bash">cd faturamento && dotnet test    # os 9 testes continuam verdes
+python3 ../verificar.py --criterio 4
+git commit -am "feat(todo-4): repository e injeção por construtor no faturamento"</code></pre>
+          <p style="margin:0 0 7px; font-size:0.62em;">Ajustem também o dublê em <span class="mono">FaturaServiceTests</span>: hoje ele herda de <span class="mono">EfFaturaRepository</span> e chama <span class="mono">base(null!)</span>. Depois do TODO-4 ele implementa a interface, como no TODO-1.</p>
+          <p style="margin:0; font-size:0.6em; border-top:1px solid rgba(255,255,255,0.2); padding-top:7px;"><strong style="color:var(--fiap-pink);">O que vocês acabaram de provar:</strong> o mesmo defeito de projeto, nas duas linguagens, tem a mesma correção. O que muda é a sintaxe e a forma de registrar a implementação.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Passo 5</div>
+          <div class="footer-page">42</div>
+        </div>
+      </section>
+
+      <!-- ==================== 43: PASSO 6 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 6 de 8: TODO-6, fazer a corrida aparecer</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>O teste vem antes da correção, e precisa falhar de verdade</h3>
+          <p style="margin:0 0 8px; font-size:0.64em;">Em <span class="mono">NumeradorNotaFiscalTests</span>, escrevam o teste que dispara <strong>100 emissões concorrentes</strong>, guarda os números em uma <span class="mono">ConcurrentBag</span>, conta as repetições com <span class="mono">Distinct</span> e termina em <span class="mono">Assert.Equal(0, duplicadas)</span>. Rodem com o Singleton ainda quebrado.</p>
+          <pre style="margin:0 0 8px; font-size:0.46em;"><code class="language-bash">cd faturamento && dotnet test
+# Assert.Equal() Failure: Values differ
+# Expected: 0
+# Actual:   44        <- este número vai para NOTAS_DUPLICADAS_ANTES</code></pre>
+          <p style="margin:0; font-size:0.6em;">Na preparação desta aula, três execuções seguidas deram <strong>35, 41 e 44</strong> notas duplicadas num Mac de 10 núcleos, e <strong>19</strong> num contêiner Linux limitado a 2 núcleos. O número de vocês vai ser outro: é isso que a corrida tem de característico.</p>
+          <p style="margin:7px 0 0; font-size:0.6em; border-top:1px solid rgba(255,255,255,0.2); padding-top:7px;"><strong style="color:var(--fiap-pink);">O que vocês acabaram de provar:</strong> a race condition existe, e vocês a viram acontecer. Um teste sequencial passaria feliz por cima desse mesmo defeito.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Passo 6</div>
+          <div class="footer-page">43</div>
+        </div>
+      </section>
+
+      <!-- ==================== 44: PASSO 7 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 7 de 8: TODO-5, tornar o Singleton thread-safe</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>Dois defeitos, duas correções</h3>
+          <p style="margin:0 0 8px; font-size:0.64em;">A criação da instância vira <span class="mono">Lazy&lt;NumeradorNotaFiscal&gt;</span> ou campo <span class="mono">static readonly</span>. O incremento do contador entra em <span class="mono">lock</span> ou vira <span class="mono">Interlocked.Increment</span>. O formato <span class="mono">NF-000001</span> não muda: o serviço de Pedidos e o verificador leem esse formato.</p>
+          <pre style="margin:0 0 8px; font-size:0.46em;"><code class="language-bash">cd faturamento && dotnet test    # agora 10 testes verdes, zero duplicadas
+python3 ../verificar.py --criterio 5
+python3 ../verificar.py --criterio 6
+
+# a ordem dos commits conta a história:
+git commit -am "test(todo-6): 100 emissões concorrentes expõem a corrida"
+git commit -am "fix(todo-5): singleton thread-safe do numerador de nota fiscal"</code></pre>
+          <p style="margin:0; font-size:0.62em;">Registrem <span class="mono">NOTAS_DUPLICADAS_ANTES</span> e <span class="mono">NOTAS_DUPLICADAS_DEPOIS</span> em <span class="mono">docs/EVIDENCIAS.md</span>. O verificador exige o primeiro maior que zero e o segundo igual a zero.</p>
+          <p style="margin:7px 0 0; font-size:0.6em; border-top:1px solid rgba(255,255,255,0.2); padding-top:7px;"><strong style="color:var(--fiap-pink);">O que vocês acabaram de provar:</strong> o mesmo teste, o mesmo hardware, o mesmo número de threads. A única coisa que mudou foi a sincronização.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Passo 7</div>
+          <div class="footer-page">44</div>
+        </div>
+      </section>
+
+      <!-- ==================== 45: PASSO 8 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 8 de 8: o pedido atravessando as duas linguagens</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>Um POST em Java, uma fatura em C#</h3>
+          <pre style="margin:0 0 8px; font-size:0.44em;"><code class="language-bash">curl -s -X POST http://localhost:8080/api/v1/pedidos \
+  -H 'Content-Type: application/json' \
+  -d '{"cliente":"Distribuidora Sul","tipoCliente":"CONTRATO",
+       "origem":"São Paulo/SP","destino":"Curitiba/PR",
+       "enderecoEntrega":"Rua das Araucárias, 480","pesoKg":120.0,"valor":1000.00}'
+# {"id":"d8f97212-...","status":"FATURADO","numeroNotaFiscal":"NF-000001"}
+
+curl -s http://localhost:5080/api/v1/faturas/d8f97212-...
+# {"numeroNotaFiscal":"NF-000001","meioPagamento":"FATURA_MENSAL","prazoDias":30}
+
+python3 verificar.py             # os onze critérios</code></pre>
+          <p style="margin:0; font-size:0.62em;">Registrem <span class="mono">PEDIDO_ID</span>, <span class="mono">NUMERO_NOTA_FISCAL</span>, <span class="mono">TESTES_JAVA</span>, <span class="mono">TESTES_CSHARP</span> e <span class="mono">AMBIENTE</span> em <span class="mono">docs/EVIDENCIAS.md</span>, e façam o <span class="mono">push</span> do fork.</p>
+          <p style="margin:7px 0 0; font-size:0.6em; border-top:1px solid rgba(255,255,255,0.2); padding-top:7px;"><strong style="color:var(--fiap-pink);">O que vocês acabaram de provar:</strong> um tipo de cliente que não existia no começo da noite atravessou dois serviços, duas linguagens e dois schemas, sem que a regra de negócio de Pedidos fosse alterada por causa dele.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Passo 8</div>
+          <div class="footer-page">45</div>
+        </div>
+      </section>
+
+      <!-- ==================== 46: CRITÉRIOS E ORDEM DE CORTE ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Os onze critérios, e o que cortar se o tempo apertar</h2>
+        </div>
+
+        <div class="side-by-side" style="margin-top:6px; gap:18px;">
+          <div class="side" style="padding:14px 18px;">
+            <h4>O que o verificador confere</h4>
+            <p style="font-size:0.63em; margin:0; line-height:1.65;">
+              <span class="mono">CA-01</span> a <span class="mono">CA-06</span>: as seis lacunas, por leitura da estrutura do código<br>
+              <span class="mono">CA-07</span>: <span class="mono">/health</span> nos dois serviços<br>
+              <span class="mono">CA-08</span>: o pedido virando fatura, ponta a ponta<br>
+              <span class="mono">CA-09</span>: <span class="mono">mvn test</span> verde, mínimo de 15 testes<br>
+              <span class="mono">CA-10</span>: <span class="mono">dotnet test</span> verde, mínimo de 10 testes<br>
+              <span class="mono">CA-11</span>: as evidências, com duplicadas maior que zero antes e igual a zero depois
+            </p>
+          </div>
+          <div class="side" style="padding:14px 18px;">
+            <h4>A ordem de corte é declarada</h4>
+            <p style="font-size:0.63em; margin:0; line-height:1.65;">
+              <strong>1.</strong> Nunca cortem os passos 6 e 7: são o núcleo da aula.<br>
+              <strong>2.</strong> O primeiro a cair, se precisar, é o passo 4 (TODO-3).<br>
+              <strong>3.</strong> Depois dele, o passo 5 (TODO-4).<br>
+              <strong>4.</strong> Os passos 2 e 3 andam juntos: a fábrica vive melhor num serviço que já inverteu a dependência.<br><br>
+              Quatro lacunas fechadas com os números do Singleton medidos valem mais do que seis pela metade.
+            </p>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:10px; padding:11px 16px;">
+          <p style="font-size:0.66em; margin:0;"><span class="mono">mvn test</span> e <span class="mono">dotnet test</span> reconstroem os binários por baixo dos processos em execução. Por isso o verificador roda os critérios que chamam os serviços <strong>antes</strong> dos que rodam as suítes. Se o <span class="mono">CA-08</span> falhar logo depois de uma bateria de testes, reiniciem os serviços e rodem <span class="mono">--criterio 8</span> de novo.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Critérios de Aceitação</div>
+          <div class="footer-page">46</div>
+        </div>
+      </section>
+
+      <!-- ==================== 47: ARMADILHAS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quatro armadilhas que custam tempo hoje</h2>
+        </div>
+
+        <div class="concept-cards" style="grid-template-columns: 1fr 1fr; gap:13px; margin-top:8px;">
+          <div class="concept-card" style="padding:13px 17px;">
+            <h4>Corrigir o Singleton antes de escrever o teste</h4>
+            <p style="font-size:0.66em;">Aí não sobra corrida para observar, e <span class="mono">NOTAS_DUPLICADAS_ANTES</span> fica sem valor real. O commit do TODO-6 vem antes do commit do TODO-5, e o histórico do fork mostra isso.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 17px;">
+            <h4>Esquecer o <span class="mono">@Component</span> no conector novo</h4>
+            <p style="font-size:0.66em;">Sem a anotação, o Spring não coloca o conector na lista que a fábrica recebe, e o tipo CONTRATO responde com erro de conector não encontrado. O teste de unidade passa, porque nele vocês montam a lista à mão.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 17px;">
+            <h4>Criar a interface no pacote errado</h4>
+            <p style="font-size:0.66em;"><span class="mono">PedidoRepository</span> mora em <span class="mono">dominio</span>, não em <span class="mono">infra</span>. Quem declara o contrato é quem precisa dele: com a interface em <span class="mono">infra</span>, o serviço continua importando infraestrutura e o critério CA-01 reprova.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 17px;">
+            <h4>Pedido com status <span class="mono">AGUARDANDO_FATURAMENTO</span></h4>
+            <p style="font-size:0.66em;">Significa que o serviço de Faturamento não foi alcançado. Confiram <span class="mono">LOGITECH_FATURAMENTO_URL</span> e se o serviço em C# está de pé. O pedido não é perdido de propósito: a queda de um contexto não pode derrubar o outro.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Antes de pedir ajuda</span>
+          <p>Rodem <span class="mono">python3 verificar.py --criterio N</span> do critério que está vermelho: a mensagem diz o que falta, com o nome do arquivo e o que procurar nele.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Armadilhas Conhecidas</div>
+          <div class="footer-page">47</div>
+        </div>
+      </section>
+
+      <!-- ==================== 48: ENTREGA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Formulário de Entrega</h2>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 620px 1fr; gap:26px; align-items:start; margin-top:4px;">
+          <div style="border:2px dashed var(--fiap-pink); border-radius:8px; height:360px; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#fff5f8; padding:22px; text-align:center;">
+            <div style="font-size:0.95em; font-weight:800; color:var(--fiap-pink); letter-spacing:0.5px;">FORMULÁRIO AINDA NÃO PUBLICADO</div>
+            <p style="font-size:0.68em; color:#555; margin:14px 0 0; line-height:1.6;">A URL do formulário de entrega desta aula será publicada no portal da disciplina <strong>antes do encontro de 01/09</strong>.</p>
+            <p style="font-size:0.64em; color:#777; margin:12px 0 0; line-height:1.6;">Até lá, mantenham o fork atualizado com os commits das lacunas: é o fork que vai ser submetido.</p>
+          </div>
+
+          <div>
+            <div class="concept-cards" style="grid-template-columns:1fr; gap:10px; margin-top:0;">
+              <div class="concept-card" style="padding:11px 16px;">
+                <h4>O que enviar</h4>
+                <p style="font-size:0.66em;">A URL do <strong>fork da dupla</strong>, no formato<br><span class="mono">github.com/usuario/mwe-2026-2-lab05-solid-patterns</span></p>
+              </div>
+              <div class="concept-card" style="padding:11px 16px;">
+                <h4>Quem envia</h4>
+                <p style="font-size:0.66em;">Um envio por dupla, com os dois nomes no formulário.</p>
+              </div>
+              <div class="concept-card" style="padding:11px 16px;">
+                <h4>Até quando</h4>
+                <p style="font-size:0.66em;">Até 22h50, com um commit por lacuna fechada e <span class="mono">docs/EVIDENCIAS.md</span> preenchido.</p>
+              </div>
+            </div>
+
+            <div class="callout" style="margin-top:9px; padding:11px 15px;">
+              <p style="font-size:0.64em; margin:0; line-height:1.5;">Critérios de aceitação completos no
+                <a href="https://github.com/josercf/mwe-2026-2-lab05-solid-patterns" target="_blank" style="color:var(--fiap-pink); font-weight:700;">README do Lab Kit</a></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Entrega da Atividade</div>
+          <div class="footer-page">48</div>
+        </div>
+      </section>
+
+      <!-- ==================== 49: O QUE VEM ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O que vem: mais padrões na 06, orquestração na 07</h2>
+        </div>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:13px; margin-top:8px;">
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>08/09, Aula 06</h4>
+            <p style="font-size:0.68em;">Motor de cálculo de frete em <strong>Python/FastAPI</strong> e notificações em <strong>Node/TypeScript</strong>, com <strong>Strategy, Adapter e Decorator</strong>. O mesmo raciocínio de hoje, em linguagens dinâmicas e assíncronas.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>15/09, Aula 07</h4>
+            <p style="font-size:0.68em;">O <span class="mono">docker run</span> do PostgreSQL do passo 1 vira serviço do <strong>Docker Compose</strong>, e o <span class="mono">/health</span> que vocês conferiram vira <span class="mono">healthcheck</span>. Oito serviços de pé com um comando.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>22/09, Aula 08</h4>
+            <p style="font-size:0.68em;">Um <strong>agente de IA</strong> chamando <span class="mono">GET /api/v1/pedidos/{id}/status</span> e <span class="mono">PATCH .../endereco</span> por Function Calling. As rotas que vocês subiram hoje são as que o agente vai consumir.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A espiral continua</span>
+          <p>O serviço de Pedidos de hoje não é exercício descartável: ele é chamado por outro serviço na Aula 07 e por um agente autônomo na Aula 08, e chega inteiro na Global Solution. Guardem o fork.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Próximos Passos</div>
+          <div class="footer-page">49</div>
+        </div>
+      </section>
+
+      <!-- ==================== 50: REFERÊNCIAS ==================== -->
+      <section id="ref-slide" class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Referências Bibliográficas e Documentação</h2>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px 28px; font-size:0.6em; line-height:1.5; color:var(--fiap-gray);">
+          <div>
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[1] POO e projeto orientado a objetos</strong><br>
+            MARTIN, R. C. <em>Clean Architecture</em>. Prentice Hall, 2017.<br>
+            ORACLE: <a href="https://docs.oracle.com/javase/tutorial/java/concepts/" target="_blank" style="color:var(--fiap-pink);">Object-Oriented Programming Concepts</a></p>
+
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[2] Os cinco princípios SOLID</strong><br>
+            MARTIN, R. C. <em>Agile Software Development: Principles, Patterns and Practices</em>. Prentice Hall, 2002.<br>
+            LISKOV, B.; WING, J. <a href="https://dl.acm.org/doi/10.1145/197320.197383" target="_blank" style="color:var(--fiap-pink);">A Behavioral Notion of Subtyping</a>. ACM TOPLAS, 1994.</p>
+
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[3] Padrões de projeto (GoF)</strong><br>
+            GAMMA, E. et al. <em>Design Patterns: Elements of Reusable Object-Oriented Software</em>. Addison-Wesley, 1994.<br>
+            FOWLER, M. <em>Patterns of Enterprise Application Architecture</em>. Addison-Wesley, 2002 (Repository).<br>
+            REFACTORING GURU: <a href="https://refactoring.guru/design-patterns/factory-method" target="_blank" style="color:var(--fiap-pink);">Factory Method</a> | <a href="https://refactoring.guru/design-patterns/singleton" target="_blank" style="color:var(--fiap-pink);">Singleton</a></p>
+
+            <p style="margin:0;"><strong style="color:var(--fiap-pink);">[4] Java 21 e Spring Boot 3</strong><br>
+            SPRING: <a href="https://docs.spring.io/spring-boot/index.html" target="_blank" style="color:var(--fiap-pink);">Spring Boot Reference</a> | <a href="https://docs.spring.io/spring-data/jpa/reference/" target="_blank" style="color:var(--fiap-pink);">Spring Data JPA</a></p>
+          </div>
+
+          <div>
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[5] .NET 8, EF Core e injeção de dependência</strong><br>
+            MICROSOFT: <a href="https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection" target="_blank" style="color:var(--fiap-pink);">Dependency injection in ASP.NET Core</a><br>
+            MICROSOFT: <a href="https://learn.microsoft.com/ef/core/" target="_blank" style="color:var(--fiap-pink);">Entity Framework Core</a></p>
+
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[6] Concorrência e sincronização em C#</strong><br>
+            MICROSOFT: <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/statements/lock" target="_blank" style="color:var(--fiap-pink);">lock statement</a> | <a href="https://learn.microsoft.com/dotnet/api/system.threading.interlocked" target="_blank" style="color:var(--fiap-pink);">Interlocked</a><br>
+            MICROSOFT: <a href="https://learn.microsoft.com/dotnet/framework/performance/lazy-initialization" target="_blank" style="color:var(--fiap-pink);">Lazy initialization</a></p>
+
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[7] Contrato da plataforma LogiTech</strong><br>
+            ADR-006, contratos compartilhados do Módulo II (acervo da disciplina).<br>
+            LAB KIT: <a href="https://github.com/josercf/mwe-2026-2-lab05-solid-patterns" target="_blank" style="color:var(--fiap-pink);">mwe-2026-2-lab05-solid-patterns</a></p>
+
+            <p style="margin:0;"><strong style="color:var(--fiap-pink);">[8] Testes de unidade e pirâmide de testes</strong><br>
+            JUNIT: <a href="https://junit.org/junit5/docs/current/user-guide/" target="_blank" style="color:var(--fiap-pink);">JUnit 5 User Guide</a><br>
+            XUNIT: <a href="https://xunit.net/docs/getting-started/v3/cmdline" target="_blank" style="color:var(--fiap-pink);">xUnit.net</a><br>
+            FOWLER, M. <a href="https://martinfowler.com/articles/practical-test-pyramid.html" target="_blank" style="color:var(--fiap-pink);">The Practical Test Pyramid</a></p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Bibliografia da Aula</div>
+          <div class="footer-page">50</div>
+        </div>
+      </section>
+
+      <!-- ==================== 51: ENCERRAMENTO ==================== -->
       <section class="end-slide">
         <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" style="max-width:350px;">
-        <div class="copyright">Copyright &copy; 2026<br>Prof.º José Romualdo da Costa Filho<br><br>Todos direitos reservados.</div>
+        <div class="copyright">
+          Copyright &copy; 2026<br>
+          Prof. José Romualdo da Costa Filho<br><br>
+          Todos os direitos reservados. É expressamente proibida a reprodução, divulgação<br>
+          total ou parcial, deste material acadêmico sem autorização formal,<br>
+          por escrito, do Professor autor da ementa.
+        </div>
       </section>
+
     </div>
   </div>
+
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
   <script src="../assets/js/fiap-quiz.js"></script>
   <script src="../assets/js/fiap-zoom.js"></script>
   <script src="../assets/js/fiap-print.js"></script>
   <script>
-    Reveal.initialize({ hash: true, slideNumber: false, width: 1280, height: 720, margin: 0, minScale: 0.2, maxScale: 2.0, center: false, pdfMaxPagesPerSlide: 1, pdfSeparateFragments: false, transition: 'slide', transitionSpeed: 'default', plugins: [RevealHighlight] });
+    Reveal.initialize({
+      hash: true,
+      slideNumber: false,
+      width: 1280,
+      height: 720,
+      margin: 0,
+      minScale: 0.2,
+      maxScale: 2.0,
+      center: false,
+      pdfMaxPagesPerSlide: 1,
+      pdfSeparateFragments: false,
+      transition: 'slide',
+      transitionSpeed: 'default',
+      plugins: [RevealHighlight]
+    });
+    // startTimer(elementId, segundos) vem de ../assets/js/fiap-quiz.js
   </script>
+  <!-- Cliente do serviço Pulso: liga os quizzes com data-quiz-key à votação ao vivo.
+       Carregamento assíncrono (defer) e opcional: se o host estiver fora do ar
+       ou o script falhar, o quiz continua funcionando no modo local de sempre. -->
+  <script defer src="https://vote.jrcf.dev/client.js"></script>
 </body>
 </html>
