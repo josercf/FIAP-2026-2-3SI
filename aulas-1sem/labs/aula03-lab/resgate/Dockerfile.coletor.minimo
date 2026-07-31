@@ -1,0 +1,20 @@
+# ATENÇÃO
+# Este arquivo existe para quem travou e precisa seguir para a próxima etapa.
+# Se você usar, copie para a raiz com o nome final e registre em
+# docs/EVIDENCIAS.md que usou o resgate, e em qual etapa.
+
+FROM python:3.12-alpine AS builder
+WORKDIR /build
+COPY servicos/coletor/server_telemetry.py servicos/coletor/server_telemetry.py
+RUN python -m compileall -q servicos/coletor/server_telemetry.py
+
+FROM python:3.12-alpine AS runtime
+RUN adduser -D -u 10001 logitech
+WORKDIR /app
+ENV PYTHONUNBUFFERED=1
+ENV LOGITECH_DADOS=/dados/telemetria.jsonl
+COPY --from=builder /build/servicos/coletor/server_telemetry.py servicos/coletor/server_telemetry.py
+RUN mkdir -p /dados && chown logitech:logitech /dados
+USER logitech
+EXPOSE 8081/udp
+CMD ["python", "servicos/coletor/server_telemetry.py"]

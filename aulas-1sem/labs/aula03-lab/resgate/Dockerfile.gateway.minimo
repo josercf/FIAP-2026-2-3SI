@@ -1,0 +1,20 @@
+# ATENÇÃO
+# Este arquivo existe para quem travou e precisa seguir para a próxima etapa.
+# Se você usar, copie para a raiz com o nome final e registre em
+# docs/EVIDENCIAS.md que usou o resgate, e em qual etapa.
+
+FROM node:22-alpine AS builder
+WORKDIR /build
+COPY servicos/gateway/package.json .
+RUN npm install --omit=dev
+
+FROM node:22-alpine AS runtime
+RUN addgroup -S logitech && adduser -S -G logitech logitech
+WORKDIR /app
+ENV LOGITECH_DADOS=/dados/telemetria.jsonl
+COPY --from=builder /build/. .
+COPY servicos/gateway/server.js .
+COPY servicos/gateway/public ./public
+USER logitech
+EXPOSE 3000
+CMD ["node", "server.js"]

@@ -1,0 +1,7 @@
+FROM python:3.12
+WORKDIR /app
+ENV PYTHONUNBUFFERED=1
+ENV LOGITECH_DADOS=/dados/telemetria.jsonl
+COPY servicos/coletor ./servicos/coletor
+EXPOSE 8081/udp
+CMD ["python", "servicos/coletor/server_telemetry.py"]
