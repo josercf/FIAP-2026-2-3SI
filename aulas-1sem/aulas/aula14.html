@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aula 14 – Segurança Web Enterprise (OAuth 2.0, OIDC, JWT, RBAC) & Git Worktrees II | FIAP</title>
+  <title>Aula 14 – Segurança Web Enterprise: OAuth 2.0, OIDC, JWT e RBAC | FIAP</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
@@ -11,335 +11,2144 @@
   <link rel="stylesheet" href="../assets/css/fiap-print.css">
   <script>if(/print-pdf/gi.test(window.location.search)){var link=document.createElement('link');link.rel='stylesheet';link.href='https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/css/print/pdf.css';document.head.appendChild(link);}</script>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* Tabelas compactas, mesmo padrao das Aulas 02, 03, 07 e 12 */
+    .reveal table.compact-table { font-size: 0.62em; margin: 8px 0; }
+    .reveal table.compact-table th { padding: 7px 12px; }
+    .reveal table.compact-table td { padding: 7px 12px; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    /* A JetBrains Mono desenha ligaduras. Esta aula mostra cabecalhos HTTP e
+       trechos de JWT, onde `->` e `!=` precisam ser lidos caractere a
+       caractere. Desligado aqui, no deck, e nao no tema compartilhado. */
+    .reveal pre code, .reveal code, .reveal .mono,
+    .reveal svg text, .reveal svg tspan {
+      font-variant-ligatures: none;
+      font-feature-settings: "liga" 0, "clig" 0, "calt" 0;
+    }
+    .reveal .exercise-container h3 .caminho { text-transform: none; }
+    /* Figuras com animacao SVG: altura controlada para nunca estourar 720px */
+    .reveal .slide-figure { margin: 6px 0 0; }
+    .reveal .slide-figure svg { width: 100%; }
+    .reveal .slide-figure figcaption { font-size: 0.55em; line-height: 1.4; color: #6b6b6b; margin-top: 4px; }
+    /* Os slides de passo carregam bloco de comando mais alto que o de uma
+       linha das outras aulas. O ajuste tira altura de ESTRUTURA, e nao de
+       conteudo: padding do container e entrelinha, sem encolher a fonte do
+       codigo. Escopado a este deck. */
+    .reveal .exercise-slide .exercise-container { padding: 14px 22px; margin-top: 6px; }
+    .reveal .exercise-slide .exercise-container h3 { margin-bottom: 7px; }
+    .reveal .exercise-slide .exercise-container pre { line-height: 1.34; }
+    .reveal .exercise-slide .exercise-container p { line-height: 1.4; }
+    .reveal .marcador-pendente {
+      border: 2px dashed var(--fiap-pink); border-radius: 8px;
+      padding: 26px 24px; text-align: center; background: #fff5f8;
+    }
+    /* Caixa de status HTTP, usada nos slides de 200/401/403 */
+    .reveal .codigo-http {
+      display:inline-block; font-family:'JetBrains Mono', monospace;
+      font-weight:700; border-radius:6px; padding:3px 10px; color:#fff;
+    }
+    .reveal .http-200 { background:#2d7a2d; }
+    .reveal .http-401 { background:#c07000; }
+    .reveal .http-403 { background:#c0392b; }
+  </style>
 </head>
 <body>
   <div class="reveal">
     <div class="slides">
 
-      <!-- ==================== SLIDE: CAPA FIAP ==================== -->
+      <!-- ==================== 1: CAPA ==================== -->
       <section class="cover-slide">
         <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" class="fiap-logo-full">
       </section>
 
-      <!-- ==================== SLIDE: TÍTULO DA AULA ==================== -->
-      <section class="title-slide">
+      <!-- ==================== 2: TÍTULO ==================== -->
+      <section class="title-slide" data-background-image="../assets/img/microservices-bg.jpg" data-background-opacity="0.3">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="title-card">
           <div class="accent-bar"></div>
           <h1>Sistemas de Informação</h1>
-          <h2>Microservice and Web Engineering & IT Services</h2>
+          <h2>Microservice and Web Engineering &amp; IT Services</h2>
           <h3>Prof. José Romualdo</h3>
         </div>
-        <div class="lesson-bar">AULA 14 – Segurança Web Enterprise (OAuth 2.0, OIDC, JWT, RBAC) & Git Worktrees II</div>
+        <div class="lesson-bar">AULA 14 – Segurança Web Enterprise: OAuth 2.0, OIDC, JWT e RBAC</div>
       </section>
 
-      <!-- ==================== SLIDE: AGENDA ==================== -->
+      <!-- ==================== 3: AGENDA ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Agenda do Encontro (03/11/2026)</h2>
+          <h2>Agenda do Encontro de Hoje</h2>
         </div>
 
-        <table>
+        <table class="compact-table">
           <thead>
-            <tr><th>Bloco</th><th>Horário</th><th>Conteúdo & Atividades</th></tr>
+            <tr><th>Início</th><th>Conteúdo</th></tr>
           </thead>
           <tbody>
-            <tr><td><strong>Bloco 1</strong></td><td>19h20 – 20h50</td><td>Segurança Web Enterprise (OAuth 2.0, OIDC, JWT, RBAC) + Git Worktrees II + Quiz #1</td></tr>
-            <tr><td><strong>Intervalo</strong></td><td>20h50 – 21h20</td><td>☕ Pausa para Café e Networking (30 min)</td></tr>
-            <tr><td><strong>Bloco 2</strong></td><td>21h20 – 22h50</td><td>Quizzes #2 e #3 + Hands-on Lab (Implementação JWT/RBAC no Mini Mundo) + Dúvidas</td></tr>
+            <tr><td>19h20</td><td>Resgate da espiral: as rotas que vocês expuseram desde a Aula 05</td></tr>
+            <tr><td>19h35</td><td>Desafio do Mini Mundo: o <span class="mono">PATCH</span> que não pergunta quem está chamando</td></tr>
+            <tr><td>19h55</td><td>Teoria: OAuth 2.0, Authorization Code com PKCE, OpenID Connect, anatomia do JWT, JWKS, RBAC, 401 contra 403 e Git Worktrees II</td></tr>
+            <tr><td>20h35</td><td>Quiz 1 e tira-dúvidas</td></tr>
+            <tr><td>20h50</td><td>Intervalo (30 minutos)</td></tr>
+            <tr><td>21h20</td><td>Quizzes 2 e 3</td></tr>
+            <tr><td>21h35</td><td>Atividade prática em dupla: os oito passos, do Keycloak às worktrees</td></tr>
+            <tr><td>22h35</td><td>Verificação, evidências medidas e commit</td></tr>
           </tbody>
         </table>
 
+        <div class="takeaway">
+          <span class="takeaway-label">Entregável de hoje</span>
+          <p>O seu fork com o Keycloak no Compose, dois serviços em stacks diferentes validando o mesmo token, o Portal fazendo login por PKCE, duas worktrees e o <span class="mono">verificar.py</span> imprimindo 6 de 6.</p>
+        </div>
+
         <div class="slide-footer">
-          <div class="footer-bar">14 – Segurança Web Enterprise & Git Worktrees II</div>
+          <div class="footer-bar">14 – Agenda do Encontro</div>
           <div class="footer-page">3</div>
         </div>
       </section>
 
-      <!-- ==================== SLIDE: CONCEITOS ==================== -->
-      <section class="section-slide">
-        <div class="top-bar"></div>
-        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="accent-bar"></div>
-        <h2>Autenticação vs Autorização<br>& Padrões Web</h2>
-        <div class="slide-footer"><div class="footer-page">4</div></div>
-      </section>
-
+      <!-- ==================== 4: RESGATE DA ESPIRAL ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>OAuth 2.0, OIDC e JWT</h2>
+          <h2>Onde paramos: uma plataforma inteira, e nenhuma porta</h2>
         </div>
 
-        <div class="concept-cards">
-          <div class="concept-card">
-            <h4>OAuth 2.0</h4>
-            <p>Framework de Autorização. Permite que um aplicativo acesse recursos de um usuário sem expor sua senha.</p>
-          </div>
-          <div class="concept-card">
-            <h4>OpenID Connect (OIDC)</h4>
-            <p>Camada de Identidade sobre OAuth 2.0. Foca na Autenticação (Quem é o usuário?).</p>
-          </div>
-          <div class="concept-card">
-            <h4>JWT (JSON Web Token)</h4>
-            <p>Padrão aberto (RFC 7519) para transmitir dados de forma compacta e segura (Header, Payload, Signature).</p>
-          </div>
-          <div class="concept-card">
-            <h4>RBAC</h4>
-            <p>Role-Based Access Control. Controle de acesso baseado em papéis (Admin, User, Manager).</p>
-          </div>
-        </div>
+        <p style="font-size:0.72em; margin:2px 0 8px;">Em nove aulas vocês construíram doze serviços. Nenhum deles pergunta quem está do outro lado.</p>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 300" style="max-height:300px;" role="img" aria-label="Linha do tempo dos serviços construídos, todos sem autenticação">
+            <g font-family="Montserrat, sans-serif">
+              <line x1="40" y1="150" x2="1140" y2="150" stroke="#ccc" stroke-width="3"/>
+
+              <g text-anchor="middle">
+                <circle cx="150" cy="150" r="10" fill="#ED145B"/>
+                <text x="150" y="120" font-size="16" font-weight="700" fill="#333">Aula 05</text>
+                <text x="150" y="185" font-size="14" fill="#666">Pedidos (Java)</text>
+                <text x="150" y="204" font-size="14" fill="#666">Faturamento (C#)</text>
+
+                <circle cx="390" cy="150" r="10" fill="#ED145B"/>
+                <text x="390" y="120" font-size="16" font-weight="700" fill="#333">Aula 06</text>
+                <text x="390" y="185" font-size="14" fill="#666">Frete (Python)</text>
+                <text x="390" y="204" font-size="14" fill="#666">Notificações (Node)</text>
+
+                <circle cx="630" cy="150" r="10" fill="#ED145B"/>
+                <text x="630" y="120" font-size="16" font-weight="700" fill="#333">Aula 08</text>
+                <text x="630" y="185" font-size="14" fill="#666">Agente de IA chamando</text>
+                <text x="630" y="204" font-size="14" fill="#666">a API de Pedidos</text>
+
+                <circle cx="870" cy="150" r="10" fill="#ED145B"/>
+                <text x="870" y="120" font-size="16" font-weight="700" fill="#333">Aulas 10 e 11</text>
+                <text x="870" y="185" font-size="14" fill="#666">Portal React</text>
+                <text x="870" y="204" font-size="14" fill="#666">Painel Angular</text>
+
+                <circle cx="1090" cy="150" r="13" fill="#fff" stroke="#ED145B" stroke-width="4"/>
+                <text x="1090" y="120" font-size="16" font-weight="800" fill="#ED145B">Hoje</text>
+              </g>
+
+              <rect x="80" y="238" width="900" height="42" rx="8" fill="#fdedec" stroke="#c0392b" stroke-width="2"/>
+              <text x="530" y="265" text-anchor="middle" font-size="17" font-weight="700" fill="#c0392b">
+                Todas essas rotas respondem a quem chamar. Nenhuma pergunta quem é.
+              </text>
+            </g>
+          </svg>
+          <figcaption>A espiral do semestre até aqui. Cada aula acrescentou capacidade; nenhuma acrescentou controle de acesso. Hoje a camada que faltava entra por cima de tudo o que já existe, sem reescrever serviço nenhum.</figcaption>
+        </figure>
 
         <div class="slide-footer">
-          <div class="footer-bar">14 – Segurança Web Enterprise & Git Worktrees II</div>
+          <div class="footer-bar">14 – Resgate da Espiral</div>
+          <div class="footer-page">4</div>
+        </div>
+      </section>
+
+      <!-- ==================== 5: O DESAFIO DO MINI MUNDO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O desafio: o <span class="mono">PATCH</span> que não pergunta nada</h2>
+        </div>
+
+        <p style="font-size:0.72em; margin:2px 0 4px;">A mesma rota que o agente da Aula 08 usa para atender o cliente serve, sem nenhuma diferença, para desviar uma carga.</p>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 300" style="max-height:296px;" role="img" aria-label="Uma requisição anônima alterando o endereço de entrega e o caminhão mudando de destino">
+            <g font-family="Montserrat, sans-serif">
+              <rect x="30" y="70" width="230" height="90" rx="10" fill="#fdedec" stroke="#c0392b" stroke-width="2.5"/>
+              <text x="145" y="100" text-anchor="middle" font-size="17" font-weight="700" fill="#c0392b">Qualquer um</text>
+              <text x="145" y="124" text-anchor="middle" font-size="14" fill="#a03028">na rede da LogiTech</text>
+              <text x="145" y="146" text-anchor="middle" font-size="14" fill="#a03028">sem credencial nenhuma</text>
+
+              <rect x="470" y="70" width="260" height="90" rx="10" fill="#f4f8f4" stroke="#5a8f5a" stroke-width="2.5"/>
+              <text x="600" y="100" text-anchor="middle" font-size="17" font-weight="700" fill="#2d7a2d" font-family="'JetBrains Mono', monospace">pedidos</text>
+              <text x="600" y="124" text-anchor="middle" font-size="14" fill="#555">Aula 05, porta 8080</text>
+              <text x="600" y="146" text-anchor="middle" font-size="14" fill="#555">responde a quem chamar</text>
+
+              <path d="M266 115 L462 115" stroke="#c0392b" stroke-width="3" stroke-dasharray="8,6"/>
+              <polygon points="470,115 456,108 456,122" fill="#c0392b"/>
+              <text x="366" y="103" text-anchor="middle" font-size="13.5" font-weight="700" fill="#c0392b" font-family="'JetBrains Mono', monospace">PATCH /api/v1/pedidos/</text>
+              <text x="366" y="138" text-anchor="middle" font-size="13.5" font-weight="700" fill="#c0392b" font-family="'JetBrains Mono', monospace">PED-1042/endereco</text>
+
+              <circle cx="366" cy="115" r="9" fill="#ED145B" opacity="0">
+                <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.08;0.3;0.36;1" dur="7s" repeatCount="indefinite"/>
+                <animate attributeName="cx" values="270;270;462;462;462" keyTimes="0;0.08;0.3;0.36;1" dur="7s" repeatCount="indefinite"/>
+              </circle>
+
+              <path d="M740 115 L900 115" stroke="#888" stroke-width="2.5"/>
+              <polygon points="908,115 894,108 894,122" fill="#888"/>
+              <text x="1050" y="92" text-anchor="middle" font-size="16" font-weight="700" fill="#333">Endereço de entrega</text>
+
+              <text x="1050" y="120" text-anchor="middle" font-size="15" fill="#2d7a2d" font-family="'JetBrains Mono', monospace">
+                Ribeirão Preto, SP
+                <animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;0.34;0.4;0.96;1" dur="7s" repeatCount="indefinite"/>
+              </text>
+              <text x="1050" y="120" text-anchor="middle" font-size="15" fill="#c0392b" font-weight="700" font-family="'JetBrains Mono', monospace" opacity="0">
+                Guarulhos, galpão 9
+                <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.36;0.44;0.96;1" dur="7s" repeatCount="indefinite"/>
+              </text>
+
+              <text x="1050" y="152" text-anchor="middle" font-size="14" fill="#c0392b" opacity="0">
+                200 OK, sem registro de autoria
+                <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.42;0.5;0.96;1" dur="7s" repeatCount="indefinite"/>
+              </text>
+
+              <rect x="140" y="215" width="900" height="52" rx="8" fill="#fff0f5" stroke="#ED145B" stroke-width="2"/>
+              <text x="590" y="238" text-anchor="middle" font-size="16" font-weight="700" fill="#ED145B">400 caminhões. Uma carga desviada custa nota fiscal, seguro e o cliente.</text>
+              <text x="590" y="258" text-anchor="middle" font-size="14.5" fill="#666">Não é um bug de código: é uma decisão que ninguém tomou.</text>
+            </g>
+          </svg>
+          <figcaption>A animação repete o ataque em sete segundos: a requisição anônima parte da esquerda, chega ao serviço de Pedidos, o endereço de entrega troca de cidade e a resposta é 200, sem nenhum registro de autoria. O serviço não está com defeito: ele faz exatamente o que lhe pedem, porque ninguém nunca disse quem pode pedir.</figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – O Desafio do Mini Mundo</div>
           <div class="footer-page">5</div>
         </div>
       </section>
 
+      <!-- ==================== 6: A RESPOSTA ERRADA ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Resgate da Espiral & LogiTech Enterprise</h2>
+          <h2>Senha compartilhada entre serviços não resolve</h2>
         </div>
 
-        <div class="concept-cards">
-          <div class="concept-card">
-            <h4>Resgate da Espiral</h4>
-            <p>Nas aulas anteriores configuramos APIs, Docker e RAG. Agora, precisamos PROTEGER esses endpoints. Ninguém quer dados de frotas expostos!</p>
+        <div class="side-by-side" style="margin-top:6px;">
+          <div class="concept-card" style="border-top:4px solid #c0392b;">
+            <h4 style="color:#c0392b;">Uma senha compartilhada entre os serviços</h4>
+            <p style="font-size:0.66em;">Um segredo no cabeçalho, o mesmo em todos os serviços, guardado em variável de ambiente.</p>
+            <ul style="font-size:0.63em; line-height:1.5; margin:6px 0 0; padding-left:18px;">
+              <li>Não diz <strong>quem</strong> é o usuário, só que alguém sabia a senha</li>
+              <li>Todo mundo que a tem pode <strong>tudo</strong>: não existe papel</li>
+              <li>Quando vazar, trocar significa reimplantar <strong>todos</strong> os serviços ao mesmo tempo</li>
+              <li>Não expira. O estagiário que saiu ano passado continua entrando</li>
+              <li>Não há trilha: o log registra a senha, não a pessoa</li>
+            </ul>
           </div>
-          <div class="concept-card">
-            <h4>Mini Mundo LogiTech</h4>
-            <p>A LogiTech precisa que os Motoristas acessem apenas seus caminhões (Role: DRIVER), enquanto Analistas visualizam toda a frota (Role: ANALYST).</p>
+          <div class="concept-card" style="border-top:4px solid #2d7a2d;">
+            <h4 style="color:#2d7a2d;">Um token assinado, por usuário, com prazo</h4>
+            <p style="font-size:0.66em;">Um provedor de identidade emite; cada serviço confere a assinatura com a chave pública.</p>
+            <ul style="font-size:0.63em; line-height:1.5; margin:6px 0 0; padding-left:18px;">
+              <li>Diz quem é, e o serviço registra isso no log</li>
+              <li>Carrega <strong>papéis</strong>: cliente não é motorista</li>
+              <li>Vaza um token e ele morre sozinho em <strong>300 segundos</strong></li>
+              <li>Revogar um usuário é desligá-lo em um lugar só</li>
+              <li>Nenhum serviço guarda segredo: só a chave <strong>pública</strong></li>
+            </ul>
           </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A pergunta que separa os dois</span>
+          <p>Segredo compartilhado responde "você sabe a senha?". Token assinado responde "<strong>quem</strong> é você, e o que você pode?". A segunda pergunta é a única que resolve a dor da LogiTech, porque a resposta muda conforme quem pergunta.</p>
         </div>
 
         <div class="slide-footer">
-          <div class="footer-bar">14 – Segurança Web Enterprise & Git Worktrees II</div>
+          <div class="footer-bar">14 – Por que não uma senha</div>
           <div class="footer-page">6</div>
         </div>
       </section>
-      
-      <!-- ==================== SLIDE: GIT WORKTREES II ==================== -->
+
+      <!-- ==================== 7: OS QUATRO PAPÉIS DO OAUTH ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Git Worktrees II (Revisão Prática)</h2>
+          <h2>OAuth 2.0: quatro papéis, e nenhum deles é "o sistema" <a href="#/ref-slide" class="ref-badge">[1]</a></h2>
         </div>
 
-        <p>Como isolar a implementação de segurança sem atrapalhar o desenvolvimento da branch principal?</p>
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 320" style="max-height:318px;" role="img" aria-label="Os quatro papéis do OAuth 2.0 aplicados à LogiTech">
+            <g font-family="Montserrat, sans-serif">
+              <rect x="40" y="40" width="250" height="105" rx="10" fill="#fff0f5" stroke="#ED145B" stroke-width="2.5"/>
+              <text x="165" y="68" text-anchor="middle" font-size="17" font-weight="800" fill="#ED145B">Resource Owner</text>
+              <text x="165" y="94" text-anchor="middle" font-size="15" fill="#333">A Ana, cliente da LogiTech</text>
+              <text x="165" y="118" text-anchor="middle" font-size="14" fill="#666">Dona dos dados. É ela</text>
+              <text x="165" y="136" text-anchor="middle" font-size="14" fill="#666">quem autoriza, ninguém mais</text>
 
-        <pre><code class="language-bash"># Adicionando uma nova worktree para a feature de segurança
-git worktree add ../logitech-security feature/auth-jwt
+              <rect x="340" y="40" width="250" height="105" rx="10" fill="#f0f6ff" stroke="#2d6cb5" stroke-width="2.5"/>
+              <text x="465" y="68" text-anchor="middle" font-size="17" font-weight="800" fill="#2d6cb5">Client</text>
+              <text x="465" y="94" text-anchor="middle" font-size="15" fill="#333">O Portal React, porta 5173</text>
+              <text x="465" y="118" text-anchor="middle" font-size="14" fill="#666">Quer agir em nome dela.</text>
+              <text x="465" y="136" text-anchor="middle" font-size="14" fill="#666">Não é dono de nada</text>
 
-# Verificando as worktrees ativas
-git worktree list
+              <rect x="640" y="40" width="250" height="105" rx="10" fill="#f7f2ff" stroke="#6b3fa0" stroke-width="2.5"/>
+              <text x="765" y="68" text-anchor="middle" font-size="17" font-weight="800" fill="#6b3fa0">Authorization Server</text>
+              <text x="765" y="94" text-anchor="middle" font-size="15" fill="#333">O Keycloak, porta 8090</text>
+              <text x="765" y="118" text-anchor="middle" font-size="14" fill="#666">Autentica a Ana e emite</text>
+              <text x="765" y="136" text-anchor="middle" font-size="14" fill="#666">o token assinado</text>
 
-# Removendo após finalizar (na pasta principal)
-git worktree remove ../logitech-security
-</code></pre>
+              <rect x="940" y="40" width="210" height="105" rx="10" fill="#f4f8f4" stroke="#2d7a2d" stroke-width="2.5"/>
+              <text x="1045" y="68" text-anchor="middle" font-size="17" font-weight="800" fill="#2d7a2d">Resource Server</text>
+              <text x="1045" y="94" text-anchor="middle" font-size="15" fill="#333">Pedidos, Notificações</text>
+              <text x="1045" y="118" text-anchor="middle" font-size="14" fill="#666">Confere a assinatura.</text>
+              <text x="1045" y="136" text-anchor="middle" font-size="14" fill="#666">Não guarda segredo</text>
+
+              <path d="M290 92 L332 92" stroke="#888" stroke-width="2.5"/><polygon points="340,92 327,86 327,98" fill="#888"/>
+              <path d="M590 92 L632 92" stroke="#888" stroke-width="2.5"/><polygon points="640,92 627,86 627,98" fill="#888"/>
+              <path d="M890 92 L932 92" stroke="#888" stroke-width="2.5"/><polygon points="940,92 927,86 927,98" fill="#888"/>
+
+              <rect x="140" y="190" width="900" height="52" rx="8" fill="#fdedec" stroke="#c0392b" stroke-width="2"/>
+              <text x="590" y="213" text-anchor="middle" font-size="16.5" font-weight="700" fill="#c0392b">O erro mais comum da semana: achar que o backend é um "client".</text>
+              <text x="590" y="233" text-anchor="middle" font-size="14.5" fill="#a03028">Ele é Resource Server. Não inicia fluxo, não guarda segredo, não fala com o Keycloak para autenticar ninguém.</text>
+
+              <rect x="140" y="256" width="900" height="44" rx="8" fill="#fff0f5" stroke="#ED145B" stroke-width="2"/>
+              <text x="590" y="284" text-anchor="middle" font-size="16" font-weight="700" fill="#ED145B">OAuth 2.0 é autorização delegada. Ele não diz quem você é: isso é o OpenID Connect.</text>
+            </g>
+          </svg>
+          <figcaption>Os quatro papéis do RFC 6749 mapeados na LogiTech. A separação entre Authorization Server, que emite, e Resource Server, que confere, é o que permite quatro linguagens diferentes validarem o mesmo token sem combinar nada além do formato.</figcaption>
+        </figure>
 
         <div class="slide-footer">
-          <div class="footer-bar">14 – Segurança Web Enterprise & Git Worktrees II</div>
+          <div class="footer-bar">14 – Os papéis do OAuth</div>
           <div class="footer-page">7</div>
         </div>
       </section>
 
-      <!-- ==================== SLIDE: QUIZ 1 ==================== -->
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div>
-        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area">
-          <div class="accent-bar"></div>
-          <h2>Quiz #1 (Fixação do Bloco 1)</h2>
-        </div>
-
-        <div class="quiz-container">
-          <div class="quiz-question">Qual a diferença fundamental entre OAuth 2.0 e OpenID Connect (OIDC)?</div>
-          <ul class="quiz-options">
-            <li data-correct="false">
-              <span class="option-letter">A</span>
-              Ambos servem exclusivamente para criptografia de dados em trânsito
-            </li>
-            <li data-correct="true">
-              <span class="option-letter">B</span>
-              OAuth 2.0 é para delegação de Autorização, enquanto OIDC adiciona uma camada de Autenticação de Identidade
-            </li>
-            <li data-correct="false">
-              <span class="option-letter">C</span>
-              OIDC substitui os JWTs, enquanto OAuth 2.0 obrigatoriamente os utiliza
-            </li>
-            <li data-correct="false">
-              <span class="option-letter">D</span>
-              OAuth 2.0 lida com senhas de usuário, enquanto OIDC lida com biometria
-            </li>
-          </ul>
-          <div class="quiz-feedback"
-               data-correct-msg="Correto! OAuth 2.0 autoriza acesso a recursos, OIDC diz QUEM é o usuário (Autenticação)."
-               data-incorrect-msg="Incorreto. Lembre-se: OAuth 2 = Autorização. OIDC = Autenticação (Identidade) construída em cima do OAuth 2.0.">
-          </div>
-        </div>
-
-        <div class="slide-footer">
-          <div class="footer-bar">14 – Segurança Web Enterprise & Git Worktrees II</div>
-          <div class="footer-page">8</div>
-        </div>
-      </section>
-
-      <!-- ==================== SLIDE: PAUSA ==================== -->
-      <section class="content-slide" style="text-align:center;">
-        <div class="top-bar"></div>
-        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div style="margin-top:100px;">
-          <h2 style="font-size:2.5em; color:var(--fiap-pink);">☕ Pausa para Café</h2>
-          <h3 style="font-size:1.5em; color:var(--fiap-gray-light); margin-top:20px;">20h50 – 21h20 (30 minutos)</h3>
-          <p style="margin-top:40px; font-size:1.1em;">Na volta: Quizzes #2 e #3 + Hands-on Lab de JWT/RBAC!</p>
-        </div>
-        <div class="slide-footer"><div class="footer-page">9</div></div>
-      </section>
-
-      <!-- ==================== SLIDE: QUIZ 2 ==================== -->
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div>
-        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area">
-          <div class="accent-bar"></div>
-          <h2>Quiz #2 (Retorno do Intervalo)</h2>
-        </div>
-
-        <div class="quiz-container">
-          <div class="quiz-question">O que acontece se o Payload de um JWT for alterado maliciosamente por um atacante após ter sido emitido pelo servidor?</div>
-          <ul class="quiz-options">
-            <li data-correct="false">
-              <span class="option-letter">A</span>
-              O servidor processará os dados alterados normalmente, pois o JWT não é criptografado.
-            </li>
-            <li data-correct="true">
-              <span class="option-letter">B</span>
-              A Assinatura (Signature) se tornará inválida, e o servidor rejeitará o token.
-            </li>
-            <li data-correct="false">
-              <span class="option-letter">C</span>
-              O JWT acionará um alerta automático para o Banco de Dados.
-            </li>
-            <li data-correct="false">
-              <span class="option-letter">D</span>
-              O navegador bloqueará a requisição por causa da política CORS.
-            </li>
-          </ul>
-          <div class="quiz-feedback"
-               data-correct-msg="Exato! A assinatura protege a integridade do JWT. Se o payload mudar, a assinatura não baterá."
-               data-incorrect-msg="Cuidado! Embora o payload seja legível (base64), a Assinatura (Signature) garante que qualquer alteração invalide o token.">
-          </div>
-        </div>
-
-        <div class="slide-footer">
-          <div class="footer-bar">14 – Segurança Web Enterprise & Git Worktrees II</div>
-          <div class="footer-page">10</div>
-        </div>
-      </section>
-
-      <!-- ==================== SLIDE: QUIZ 3 ==================== -->
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div>
-        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area">
-          <div class="accent-bar"></div>
-          <h2>Quiz #3</h2>
-        </div>
-
-        <div class="quiz-container">
-          <div class="quiz-question">No contexto do Mini Mundo LogiTech, implementamos RBAC. Qual o propósito principal disso?</div>
-          <ul class="quiz-options">
-            <li data-correct="false">
-              <span class="option-letter">A</span>
-              Garantir que a senha do usuário seja forte e complexa.
-            </li>
-            <li data-correct="false">
-              <span class="option-letter">B</span>
-              Proteger o banco de dados contra ataques de SQL Injection.
-            </li>
-            <li data-correct="true">
-              <span class="option-letter">C</span>
-              Garantir que usuários diferentes (ex: Motorista, Analista) tenham acessos restritos baseados em seus papéis.
-            </li>
-            <li data-correct="false">
-              <span class="option-letter">D</span>
-              Garantir que a comunicação HTTP seja feita via TLS/SSL.
-            </li>
-          </ul>
-          <div class="quiz-feedback"
-               data-correct-msg="Correto! Role-Based Access Control limita o acesso dependendo da role (papel) atribuída ao usuário."
-               data-incorrect-msg="Incorreto. RBAC (Role-Based Access Control) foca exclusivamente em gerenciar autorizações baseadas no papel do usuário no sistema.">
-          </div>
-        </div>
-
-        <div class="slide-footer">
-          <div class="footer-bar">14 – Segurança Web Enterprise & Git Worktrees II</div>
-          <div class="footer-page">11</div>
-        </div>
-      </section>
-
-      <!-- ==================== SLIDE: HANDS-ON LAB ==================== -->
-      <section class="section-slide">
-        <div class="top-bar"></div>
-        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="accent-bar"></div>
-        <h2>Hands-on Lab:<br>Implementação de JWT & RBAC (LogiTech)</h2>
-        <div class="slide-footer"><div class="footer-page">12</div></div>
-      </section>
-
+      <!-- ==================== 8: CLIENT PÚBLICO ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Atividade Prática em Dupla (21h35 – 22h35)</h2>
+          <h2>Por que uma SPA não pode guardar segredo</h2>
         </div>
 
-        <div class="concept-cards">
-          <div class="concept-card">
-            <h4>Parte 1: Git Worktrees</h4>
-            <p>Abra uma nova worktree <code>feature/auth-jwt</code> para trabalhar isoladamente no código de segurança.</p>
-          </div>
-          <div class="concept-card">
-            <h4>Parte 2: Geração de JWT</h4>
-            <p>Criar rota <code>/login</code> no Node.js que valida credenciais fake e retorna um token JWT assinado.</p>
-          </div>
-          <div class="concept-card">
-            <h4>Parte 3: Middleware RBAC</h4>
-            <p>Criar middleware que bloqueia acesso à rota <code>/admin/dashboard</code> caso o JWT não tenha <code>role: 'ANALYST'</code>.</p>
-          </div>
+        <p style="font-size:0.72em; margin:2px 0 8px;">O Portal React é um <strong>client público</strong>. Não é uma escolha de configuração: é uma consequência de onde ele roda.</p>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 250" style="max-height:250px;" role="img" aria-label="Comparação entre client confidencial no servidor e client público no navegador">
+            <g font-family="Montserrat, sans-serif">
+              <text x="290" y="26" text-anchor="middle" font-size="17" font-weight="700" fill="#2d7a2d">Client confidencial: roda no servidor</text>
+              <rect x="40" y="40" width="500" height="150" rx="10" fill="#f4f8f4" stroke="#5a8f5a" stroke-width="2.5"/>
+              <text x="290" y="72" text-anchor="middle" font-size="15" fill="#444">O código e o segredo ficam em uma máquina</text>
+              <text x="290" y="94" text-anchor="middle" font-size="15" fill="#444">que a equipe controla.</text>
+              <rect x="180" y="112" width="220" height="52" rx="8" fill="#fff" stroke="#5a8f5a" stroke-width="2"/>
+              <text x="290" y="134" text-anchor="middle" font-size="14.5" font-family="'JetBrains Mono', monospace" fill="#2d7a2d">client_secret</text>
+              <text x="290" y="154" text-anchor="middle" font-size="13" fill="#666">ninguém de fora lê</text>
+
+              <text x="880" y="26" text-anchor="middle" font-size="17" font-weight="700" fill="#c0392b">Client público: roda no navegador do usuário</text>
+              <rect x="620" y="40" width="520" height="150" rx="10" fill="#fdedec" stroke="#c0392b" stroke-width="2.5"/>
+              <text x="880" y="72" text-anchor="middle" font-size="15" fill="#444">Todo o código foi baixado para a máquina de quem usa.</text>
+              <text x="880" y="94" text-anchor="middle" font-size="15" fill="#444">Um <tspan font-family="'JetBrains Mono', monospace">Ctrl+U</tspan> mostra tudo.</text>
+              <rect x="770" y="112" width="220" height="52" rx="8" fill="#fff" stroke="#c0392b" stroke-width="2"/>
+              <text x="880" y="134" text-anchor="middle" font-size="14.5" font-family="'JetBrains Mono', monospace" fill="#c0392b">client_secret</text>
+              <text x="880" y="154" text-anchor="middle" font-size="13" fill="#a03028">visível na aba de rede</text>
+              <line x1="770" y1="164" x2="990" y2="112" stroke="#c0392b" stroke-width="3"/>
+
+              <rect x="140" y="208" width="900" height="38" rx="8" fill="#fff0f5" stroke="#ED145B" stroke-width="2"/>
+              <text x="590" y="233" text-anchor="middle" font-size="16" font-weight="700" fill="#ED145B">Segredo que o usuário consegue ler não é segredo. É constante.</text>
+            </g>
+          </svg>
+          <figcaption>Um client confidencial guarda o segredo no servidor; um client público, não. O Portal React e o Painel Angular da LogiTech são públicos, e é exatamente esse buraco que o PKCE existe para fechar.</figcaption>
+        </figure>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Consequência prática</span>
+          <p>No realm da LogiTech, <span class="mono">logitech-portal</span> e <span class="mono">logitech-painel-admin</span> são <strong>públicos</strong>. Nenhum backend aparece na lista de clients: eles são Resource Servers.</p>
         </div>
-        
-        <p>Acessem o kit de laboratório em <code>labs/aula14-lab/</code> para as instruções completas.</p>
 
         <div class="slide-footer">
-          <div class="footer-bar">14 – Segurança Web Enterprise & Git Worktrees II</div>
+          <div class="footer-bar">14 – Client público</div>
+          <div class="footer-page">8</div>
+        </div>
+      </section>
+
+      <!-- ==================== 9: AUTHORIZATION CODE SEM PKCE ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Authorization Code sem PKCE: onde ele quebra <a href="#/ref-slide" class="ref-badge">[2]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 330" style="max-height:330px;" role="img" aria-label="Interceptação do código de autorização em um client público sem PKCE">
+            <g font-family="Montserrat, sans-serif">
+              <rect x="30" y="30" width="180" height="60" rx="8" fill="#f0f6ff" stroke="#2d6cb5" stroke-width="2"/>
+              <text x="120" y="58" text-anchor="middle" font-size="15" font-weight="700" fill="#2d6cb5">Portal</text>
+              <text x="120" y="78" text-anchor="middle" font-size="13" fill="#666">no navegador</text>
+
+              <rect x="500" y="30" width="200" height="60" rx="8" fill="#f7f2ff" stroke="#6b3fa0" stroke-width="2"/>
+              <text x="600" y="58" text-anchor="middle" font-size="15" font-weight="700" fill="#6b3fa0">Keycloak</text>
+              <text x="600" y="78" text-anchor="middle" font-size="13" fill="#666">Authorization Server</text>
+
+              <rect x="960" y="30" width="190" height="60" rx="8" fill="#fdedec" stroke="#c0392b" stroke-width="2"/>
+              <text x="1055" y="58" text-anchor="middle" font-size="15" font-weight="700" fill="#c0392b">Atacante</text>
+              <text x="1055" y="78" text-anchor="middle" font-size="13" fill="#a03028">na mesma rede</text>
+
+              <path d="M215 120 L495 120" stroke="#2d6cb5" stroke-width="2.5"/><polygon points="503,120 489,113 489,127" fill="#2d6cb5"/>
+              <text x="352" y="112" text-anchor="middle" font-size="13.5" fill="#444">1. quero entrar (sem segredo nenhum)</text>
+
+              <path d="M495 165 L215 165" stroke="#6b3fa0" stroke-width="2.5"/><polygon points="207,165 221,158 221,172" fill="#6b3fa0"/>
+              <text x="352" y="157" text-anchor="middle" font-size="13.5" fill="#444">2. volta com <tspan font-family="'JetBrains Mono', monospace" font-weight="700">?code=abc123</tspan> na URL</text>
+
+              <path d="M690 165 L950 200" stroke="#c0392b" stroke-width="2.5" stroke-dasharray="7,5" opacity="0">
+                <animate attributeName="opacity" values="0;0;1;1;1;0" keyTimes="0;0.3;0.4;0.85;0.95;1" dur="8s" repeatCount="indefinite"/>
+              </path>
+              <text x="815" y="150" text-anchor="middle" font-size="13.5" font-weight="700" fill="#c0392b" opacity="0">
+                3. o código passa pela URL e é interceptado
+                <animate attributeName="opacity" values="0;0;1;1;1;0" keyTimes="0;0.3;0.4;0.85;0.95;1" dur="8s" repeatCount="indefinite"/>
+              </text>
+
+              <path d="M950 235 L700 235" stroke="#c0392b" stroke-width="3" opacity="0">
+                <animate attributeName="opacity" values="0;0;0;1;1;0" keyTimes="0;0.45;0.55;0.62;0.95;1" dur="8s" repeatCount="indefinite"/>
+              </path>
+              <polygon points="692,235 706,228 706,242" fill="#c0392b" opacity="0">
+                <animate attributeName="opacity" values="0;0;0;1;1;0" keyTimes="0;0.45;0.55;0.62;0.95;1" dur="8s" repeatCount="indefinite"/>
+              </polygon>
+              <text x="825" y="227" text-anchor="middle" font-size="13.5" font-weight="700" fill="#c0392b" opacity="0">
+                4. troca o código por um token
+                <animate attributeName="opacity" values="0;0;0;1;1;0" keyTimes="0;0.45;0.55;0.62;0.95;1" dur="8s" repeatCount="indefinite"/>
+              </text>
+
+              <rect x="360" y="262" width="700" height="52" rx="8" fill="#fdedec" stroke="#c0392b" stroke-width="2.5" opacity="0">
+                <animate attributeName="opacity" values="0;0;0;0;1;1;0" keyTimes="0;0.5;0.6;0.68;0.75;0.95;1" dur="8s" repeatCount="indefinite"/>
+              </rect>
+              <text x="710" y="285" text-anchor="middle" font-size="16" font-weight="700" fill="#c0392b" opacity="0">
+                O Keycloak entrega o token. Do ponto de vista dele, está tudo certo:
+                <animate attributeName="opacity" values="0;0;0;0;1;1;0" keyTimes="0;0.5;0.6;0.68;0.75;0.95;1" dur="8s" repeatCount="indefinite"/>
+              </text>
+              <text x="710" y="305" text-anchor="middle" font-size="13" fill="#a03028" opacity="0">
+                quem apresenta o código é, por definição, quem o pediu. Nada provava o contrário.
+                <animate attributeName="opacity" values="0;0;0;0;1;1;0" keyTimes="0;0.5;0.6;0.68;0.75;0.95;1" dur="8s" repeatCount="indefinite"/>
+              </text>
+            </g>
+          </svg>
+          <figcaption>Ciclo de oito segundos: o Portal pede autorização, o Keycloak devolve o código na barra de endereços, o atacante intercepta esse código e o troca por um token antes do Portal. Sem segredo de cliente e sem PKCE, o Authorization Server não tem como distinguir os dois.</figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – O buraco que o PKCE fecha</div>
+          <div class="footer-page">9</div>
+        </div>
+      </section>
+
+      <!-- ==================== 10: O FLUXO PKCE INTEIRO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>PKCE: o fluxo inteiro, do clique ao token <a href="#/ref-slide" class="ref-badge">[2]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 400" style="max-height:400px;" role="img" aria-label="Fluxo Authorization Code com PKCE, passo a passo animado">
+            <g font-family="Montserrat, sans-serif">
+              <rect x="30" y="24" width="200" height="52" rx="8" fill="#f0f6ff" stroke="#2d6cb5" stroke-width="2"/>
+              <text x="130" y="46" text-anchor="middle" font-size="15" font-weight="700" fill="#2d6cb5">Portal (navegador)</text>
+              <text x="130" y="66" text-anchor="middle" font-size="12.5" fill="#666">client público</text>
+
+              <rect x="900" y="24" width="250" height="52" rx="8" fill="#f7f2ff" stroke="#6b3fa0" stroke-width="2"/>
+              <text x="1025" y="46" text-anchor="middle" font-size="15" font-weight="700" fill="#6b3fa0">Keycloak</text>
+              <text x="1025" y="66" text-anchor="middle" font-size="12.5" fill="#666">realm logitech</text>
+
+              <line x1="130" y1="80" x2="130" y2="380" stroke="#ccc" stroke-width="2"/>
+              <line x1="1025" y1="80" x2="1025" y2="380" stroke="#ccc" stroke-width="2"/>
+
+              <g opacity="0"><animate attributeName="opacity" values="0;1;1;1;1;1;0" keyTimes="0;0.1;0.3;0.5;0.7;0.94;1" dur="8s" repeatCount="indefinite"/>
+                <rect x="150" y="96" width="470" height="52" rx="7" fill="#fff0f5" stroke="#ED145B" stroke-width="2"/>
+                <text x="166" y="117" font-size="14" font-weight="700" fill="#ED145B">1. sorteia o verifier e calcula o desafio</text>
+                <text x="166" y="138" font-size="12.5" font-family="'JetBrains Mono', monospace" fill="#555">challenge = base64url(SHA-256(verifier))</text>
+              </g>
+
+              <g opacity="0"><animate attributeName="opacity" values="0;0;1;1;1;1;0" keyTimes="0;0.18;0.28;0.5;0.7;0.94;1" dur="8s" repeatCount="indefinite"/>
+                <path d="M140 172 L1015 172" stroke="#2d6cb5" stroke-width="2.5"/>
+                <polygon points="1023,172 1009,165 1009,179" fill="#2d6cb5"/>
+                <text x="580" y="165" text-anchor="middle" font-size="14" font-weight="700" fill="#2d6cb5">2. GET /auth?code_challenge=...&amp;code_challenge_method=S256</text>
+                <text x="580" y="190" text-anchor="middle" font-size="13" fill="#777">o verifier NÃO vai. Só o resumo dele.</text>
+              </g>
+
+              <g opacity="0"><animate attributeName="opacity" values="0;0;0;1;1;1;0" keyTimes="0;0.3;0.4;0.5;0.7;0.94;1" dur="8s" repeatCount="indefinite"/>
+                <path d="M1015 224 L140 224" stroke="#6b3fa0" stroke-width="2.5"/>
+                <polygon points="132,224 146,217 146,231" fill="#6b3fa0"/>
+                <text x="580" y="217" text-anchor="middle" font-size="14" font-weight="700" fill="#6b3fa0">3. a Ana entra, e volta ?code=abc123&amp;state=...</text>
+                <text x="580" y="242" text-anchor="middle" font-size="13" fill="#777">o Keycloak guardou o desafio junto com o código</text>
+              </g>
+
+              <g opacity="0"><animate attributeName="opacity" values="0;0;0;0;1;1;0" keyTimes="0;0.45;0.55;0.62;0.72;0.94;1" dur="8s" repeatCount="indefinite"/>
+                <path d="M140 278 L1015 278" stroke="#ED145B" stroke-width="3"/>
+                <polygon points="1023,278 1009,271 1009,285" fill="#ED145B"/>
+                <text x="580" y="271" text-anchor="middle" font-size="14" font-weight="700" fill="#ED145B">4. POST /token com code + code_verifier</text>
+                <text x="580" y="296" text-anchor="middle" font-size="13" fill="#777">agora sim o verifier sai, direto, sem passar pela barra de endereços</text>
+              </g>
+
+              <g opacity="0"><animate attributeName="opacity" values="0;0;0;0;0;1;0" keyTimes="0;0.6;0.7;0.76;0.82;0.94;1" dur="8s" repeatCount="indefinite"/>
+                <rect x="620" y="308" width="420" height="44" rx="7" fill="#f7f2ff" stroke="#6b3fa0" stroke-width="2"/>
+                <text x="830" y="326" text-anchor="middle" font-size="13.5" font-weight="700" fill="#6b3fa0">SHA-256(verifier) == desafio guardado?</text>
+                <text x="830" y="344" text-anchor="middle" font-size="13" fill="#555">é o único jeito de saber se é o mesmo cliente</text>
+                <path d="M1015 372 L140 372" stroke="#2d7a2d" stroke-width="3"/>
+                <polygon points="132,372 146,365 146,379" fill="#2d7a2d"/>
+                <text x="380" y="365" text-anchor="middle" font-size="14.5" font-weight="800" fill="#2d7a2d">5. access_token, expires_in: 300</text>
+              </g>
+            </g>
+          </svg>
+          <figcaption>Os cinco passos, em ciclo de oito segundos. O <span class="mono">code_verifier</span> nasce no navegador e só sai dele no passo 4, direto para o Keycloak. Quem interceptar a URL do passo 3 fica com o código, mas não com o verificador, e o passo 5 nunca acontece para ele.</figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – O fluxo PKCE</div>
+          <div class="footer-page">10</div>
+        </div>
+      </section>
+
+      <!-- ==================== 11: A URL DE AUTORIZAÇÃO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A URL de autorização, parâmetro a parâmetro</h2>
+        </div>
+
+        <p style="font-size:0.7em; margin:2px 0 6px;">Saída real do <span class="mono">pkce.py</span> do laboratório, com quebras de linha para caber no slide.</p>
+
+        <pre class="code-compact" style="font-size:0.5em; margin:4px 0;"><code class="language-text">http://localhost:8090/realms/logitech/protocol/openid-connect/auth
+  ?client_id=logitech-portal
+  &amp;response_type=code
+  &amp;scope=openid+profile+email
+  &amp;redirect_uri=http%3A%2F%2Flocalhost%3A5199%2Fcallback
+  &amp;state=IPZwQPu46hrXXpwJ
+  &amp;code_challenge=xzoosPx8kDQOGpQzQbfxElFSJEJ7EPjkPEpvVeAIz1c
+  &amp;code_challenge_method=S256</code></pre>
+
+        <table class="compact-table" style="font-size:0.55em; margin:2px 0;">
+          <tbody>
+            <tr><td class="mono" style="width:220px;">redirect_uri</td><td>Precisa estar <strong>registrada no realm antes</strong>. É o que impede o atacante de mandar o código para o servidor dele</td></tr>
+            <tr><td class="mono">state</td><td>Casa a resposta com o pedido que <strong>este</strong> navegador iniciou. Sem ele, um terceiro empurra o código dele na sua sessão</td></tr>
+            <tr><td class="mono">code_challenge_method</td><td><span class="mono">S256</span>. Existe <span class="mono">plain</span>, em que o desafio é o próprio verificador, e ele não protege nada</td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">O que não está aí</span>
+          <p>Não há senha e não há <span class="mono">client_secret</span>. Essa URL pode ser lida por qualquer um, e é para isso que ela foi desenhada.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – A URL de autorização</div>
+          <div class="footer-page">11</div>
+        </div>
+      </section>
+
+      <!-- ==================== 12: A TROCA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A troca do código pelo token</h2>
+        </div>
+
+        <pre class="code-compact" style="font-size:0.5em; margin:4px 0;"><code class="language-bash">POST http://localhost:8090/realms/logitech/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=authorization_code
+&amp;client_id=logitech-portal
+&amp;code=67a62543-a0fb-4e7a-a...
+&amp;redirect_uri=http://localhost:5199/callback
+&amp;code_verifier=Nh8bQ2rF...                 &lt;- o segredo que nunca passou pela URL</code></pre>
+
+        <p style="font-size:0.68em; margin:6px 0 4px;">A resposta, medida no laboratório em 31/07/2026 contra o Keycloak 26.0.8:</p>
+
+        <pre class="code-compact" style="font-size:0.5em; margin:0 0 4px;"><code class="language-json">{ "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkEyb0txclcy...",
+  "expires_in": 300, "refresh_expires_in": 1800, "token_type": "Bearer",
+  "id_token": "eyJhbGciOiJSUzI1NiIs...", "scope": "openid profile email" }</code></pre>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Dois tokens, dois propósitos</span>
+          <p>O <span class="mono">access_token</span> vai para as APIs: ele diz o que você pode. O <span class="mono">id_token</span> fica no cliente: ele diz quem você é, e é a parte que o OpenID Connect acrescentou ao OAuth. Mandar o <span class="mono">id_token</span> para a API é erro comum e recusa correta.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – A troca do código</div>
+          <div class="footer-page">12</div>
+        </div>
+      </section>
+
+      <!-- ==================== 13: OIDC ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>OpenID Connect: a camada que faltava <a href="#/ref-slide" class="ref-badge">[3]</a></h2>
+        </div>
+
+        <div class="side-by-side" style="margin-top:6px;">
+          <div class="concept-card" style="border-top:4px solid #6b3fa0;">
+            <h4 style="color:#6b3fa0;">OAuth 2.0 sozinho</h4>
+            <p style="font-size:0.66em;">Responde "este portador pode acessar este recurso?".</p>
+            <p style="font-size:0.66em; margin-top:6px;">Não define o formato do token, não define como descobrir onde fica o servidor, e <strong>não define como saber quem é o usuário</strong>. Cada fornecedor resolvia isso do seu jeito, e integrar dois era escrever dois adaptadores.</p>
+          </div>
+          <div class="concept-card" style="border-top:4px solid #2d7a2d;">
+            <h4 style="color:#2d7a2d;">OIDC, por cima do OAuth</h4>
+            <p style="font-size:0.66em;">Acrescenta três coisas padronizadas:</p>
+            <ul style="font-size:0.63em; line-height:1.55; margin:6px 0 0; padding-left:18px;">
+              <li><span class="mono">id_token</span>, um JWT sobre <strong>a identidade</strong>, com <span class="mono">sub</span>, nome e e-mail</li>
+              <li>o escopo <span class="mono">openid</span>, que é o que liga o OIDC</li>
+              <li><strong>descoberta</strong>: um único endereço bem conhecido de onde sai toda a configuração</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A frase para levar</span>
+          <p>OAuth 2.0 é <strong>autorização</strong>. OpenID Connect é <strong>autenticação</strong>, construída sobre ele. Quem diz "autenticar com OAuth" está, quase sempre, usando OIDC sem saber o nome.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – OpenID Connect</div>
           <div class="footer-page">13</div>
         </div>
       </section>
 
-      <!-- ==================== SLIDE: ENCERRAMENTO ==================== -->
+      <!-- ==================== 14: DESCOBERTA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Um endereço para descobrir todos os outros</h2>
+        </div>
+
+        <p style="font-size:0.7em; margin:2px 0 6px;">Saída real, do Keycloak 26.0.8 do laboratório. Nenhum destes endereços é digitado à mão em código de produção.</p>
+
+        <pre class="code-compact" style="font-size:0.49em; margin:4px 0;"><code class="language-bash">curl -s http://localhost:8090/realms/logitech/.well-known/openid-configuration</code></pre>
+
+        <pre class="code-compact" style="font-size:0.49em; margin:0 0 4px;"><code class="language-json">{
+  "issuer": "http://localhost:8090/realms/logitech",
+  "authorization_endpoint": ".../protocol/openid-connect/auth",
+  "token_endpoint":         ".../protocol/openid-connect/token",
+  "jwks_uri":               ".../protocol/openid-connect/certs",
+  "code_challenge_methods_supported": ["plain", "S256"],
+  "id_token_signing_alg_values_supported": ["RS256", "ES256", "..."]
+}</code></pre>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Guarde o campo <span class="mono">issuer</span></span>
+          <p>Ele diz por qual endereço este servidor se apresenta. Daqui a alguns slides ele vai ser a causa de um 401 com um token perfeitamente válido, e a mensagem de erro não vai ajudar em nada.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Descoberta OIDC</div>
+          <div class="footer-page">14</div>
+        </div>
+      </section>
+
+      <!-- ==================== 15: ANATOMIA DO JWT ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Anatomia do JWT: três partes, dois pontos <a href="#/ref-slide" class="ref-badge">[4]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 210" style="max-height:206px;" role="img" aria-label="As três partes de um JWT separadas por ponto">
+            <g font-family="Montserrat, sans-serif">
+              <rect x="30" y="24" width="360" height="56" rx="8" fill="#fdf0e6" stroke="#c07000" stroke-width="2.5"/>
+              <text x="210" y="46" text-anchor="middle" font-size="15" font-weight="800" fill="#c07000">CABEÇALHO</text>
+              <text x="210" y="68" text-anchor="middle" font-size="13" fill="#555">qual algoritmo, qual chave</text>
+
+              <text x="400" y="60" font-size="30" font-weight="800" fill="#333" font-family="'JetBrains Mono', monospace">.</text>
+
+              <rect x="420" y="24" width="380" height="56" rx="8" fill="#f0f6ff" stroke="#2d6cb5" stroke-width="2.5"/>
+              <text x="610" y="46" text-anchor="middle" font-size="15" font-weight="800" fill="#2d6cb5">CONTEÚDO (payload)</text>
+              <text x="610" y="68" text-anchor="middle" font-size="13" fill="#555">quem é, até quando vale, que papéis tem</text>
+
+              <text x="810" y="60" font-size="30" font-weight="800" fill="#333" font-family="'JetBrains Mono', monospace">.</text>
+
+              <rect x="830" y="24" width="320" height="56" rx="8" fill="#f4f8f4" stroke="#2d7a2d" stroke-width="2.5"/>
+              <text x="990" y="46" text-anchor="middle" font-size="15" font-weight="800" fill="#2d7a2d">ASSINATURA</text>
+              <text x="990" y="68" text-anchor="middle" font-size="13" fill="#555">prova que os dois acima não mudaram</text>
+
+              <text x="30" y="112" font-size="13" font-family="'JetBrains Mono', monospace" fill="#c07000">eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkEyb0txclcyaDVNNFFJTEpiTWRQUWpCbDJGZENheTFlRVNlSHEtN21tQTAifQ</text>
+              <text x="30" y="134" font-size="13" font-family="'JetBrains Mono', monospace" fill="#2d6cb5">.eyJleHAiOjE3NjM1NjQ4NzYsImlhdCI6MTc2MzU2NDU3NiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDkwL3JlYWxtcy9sb2dpdGVjaCIs...</text>
+              <text x="30" y="156" font-size="13" font-family="'JetBrains Mono', monospace" fill="#2d7a2d">.QW5hIFJpYmVpcm8gZSBjbGllbnRlIGRhIExvZ2lUZWNoLCBlIGVzdGEgYXNzaW5hdHVyYSB0ZW0gMzQyIGNhcmFjdGVyZXM...</text>
+
+              <rect x="140" y="170" width="900" height="34" rx="8" fill="#fdedec" stroke="#c0392b" stroke-width="2"/>
+              <text x="590" y="192" text-anchor="middle" font-size="15.5" font-weight="700" fill="#c0392b">base64url é codificação, não criptografia. Qualquer pessoa lê o conteúdo. Ninguém consegue alterá-lo.</text>
+            </g>
+          </svg>
+          <figcaption>Um <span class="mono">access_token</span> real do realm da LogiTech tem 1266 caracteres, medidos em 31/07/2026. As três partes são separadas por ponto. Cabeçalho e conteúdo são base64url de JSON legível, e é por isso que <strong>não se guarda segredo em token</strong>: qualquer um decodifica. A terceira parte não é texto, é a assinatura binária, e o que ela protege é a integridade, não o sigilo.</figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Anatomia do JWT</div>
+          <div class="footer-page">15</div>
+        </div>
+      </section>
+
+      <!-- ==================== 16: UM TOKEN REAL ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Um token de verdade, decodificado</h2>
+        </div>
+
+        <p style="font-size:0.68em; margin:2px 0 5px;">Token de exemplo da <span class="mono">ana.cliente</span>, no formato exato que o realm <span class="mono">logitech</span> emite. Os campos de tempo aqui são ilustrativos; o que foi <strong>medido no laboratório em 31/07/2026</strong> está no rodapé do slide.</p>
+
+        <div style="display:grid; grid-template-columns: 340px 1fr; gap:16px; margin-top:2px;">
+          <div>
+            <p style="font-size:0.6em; font-weight:700; color:#c07000; margin:0 0 3px;">CABEÇALHO</p>
+            <pre class="code-compact" style="font-size:0.47em; margin:0;"><code class="language-json">{
+  "alg": "RS256",
+  "typ": "JWT",
+  "kid": "A2oKqrW2h5M4QILJ..."
+}</code></pre>
+            <p style="font-size:0.56em; margin:7px 0 0; line-height:1.45; color:#555;">O <span class="mono">kid</span> é o que permite trocar a chave sem derrubar ninguém: o token diz qual chave usar.</p>
+          </div>
+          <div>
+            <p style="font-size:0.6em; font-weight:700; color:#2d6cb5; margin:0 0 3px;">CONTEÚDO</p>
+            <pre class="code-compact" style="font-size:0.47em; margin:0;"><code class="language-json">{ "iss": "http://localhost:8090/realms/logitech",
+  "sub": "b2c7...-...-...-...-...", "azp": "logitech-portal", "typ": "Bearer",
+  "preferred_username": "ana.cliente",
+  "iat": 1763564576, "exp": 1763564876,        // exp - iat = 300 segundos
+  "realm_access":    { "roles": ["CLIENTE"] },  // <- daqui todo mundo le
+  "resource_access": { }                        // <- vazio neste realm
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Medido em 31/07/2026, no laboratório</span>
+          <p><span class="mono">exp - iat = 300</span> segundos, porque o realm fixa <span class="mono">accessTokenLifespan: 300</span>; o token tem <strong>1266 caracteres</strong>; e <span class="mono">resource_access</span> vem <strong>vazio</strong>. Cinco minutos de janela: um token vazado morre sozinho antes de o suporte atender o chamado.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – O token por dentro</div>
+          <div class="footer-page">16</div>
+        </div>
+      </section>
+
+      <!-- ==================== 17: A ASSINATURA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A assinatura: o que ela garante, e o que não</h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 330" style="max-height:328px;" role="img" aria-label="Um payload adulterado quebrando a verificação da assinatura">
+            <g font-family="Montserrat, sans-serif">
+              <text x="590" y="24" text-anchor="middle" font-size="16" font-weight="700" fill="#333">O atacante pega um token válido de CLIENTE e troca o papel para ADMIN</text>
+
+              <rect x="60" y="46" width="440" height="112" rx="9" fill="#f0f6ff" stroke="#2d6cb5" stroke-width="2.5"/>
+              <text x="280" y="70" text-anchor="middle" font-size="14.5" font-weight="700" fill="#2d6cb5">CONTEÚDO original</text>
+              <text x="80" y="96" font-size="13.5" font-family="'JetBrains Mono', monospace" fill="#555">"preferred_username": "ana.cliente",</text>
+              <text x="80" y="120" font-size="13.5" font-family="'JetBrains Mono', monospace" fill="#555">"realm_access": {</text>
+              <text x="80" y="142" font-size="13.5" font-family="'JetBrains Mono', monospace" fill="#2d7a2d">  "roles": ["CLIENTE"] }</text>
+
+              <path d="M510 102 L590 102" stroke="#c0392b" stroke-width="3"/>
+              <polygon points="598,102 584,95 584,109" fill="#c0392b"/>
+              <text x="554" y="92" text-anchor="middle" font-size="12.5" font-weight="700" fill="#c0392b">edita</text>
+
+              <rect x="610" y="46" width="440" height="112" rx="9" fill="#fdedec" stroke="#c0392b" stroke-width="2.5"/>
+              <text x="830" y="70" text-anchor="middle" font-size="14.5" font-weight="700" fill="#c0392b">CONTEÚDO adulterado</text>
+              <text x="630" y="96" font-size="13.5" font-family="'JetBrains Mono', monospace" fill="#555">"preferred_username": "ana.cliente",</text>
+              <text x="630" y="120" font-size="13.5" font-family="'JetBrains Mono', monospace" fill="#555">"realm_access": {</text>
+              <text x="630" y="142" font-size="13.5" font-family="'JetBrains Mono', monospace" fill="#c0392b" font-weight="700">  "roles": ["ADMIN"] }</text>
+
+              <text x="590" y="192" text-anchor="middle" font-size="15" fill="#666">A assinatura continua a mesma: o atacante não tem a chave privada para gerar outra.</text>
+
+              <rect x="240" y="212" width="700" height="54" rx="9" fill="#fff" stroke="#888" stroke-width="2"/>
+              <text x="590" y="236" text-anchor="middle" font-size="14.5" font-family="'JetBrains Mono', monospace" fill="#444">verificar(assinatura, cabecalho + "." + conteudo, chave_publica)</text>
+              <text x="590" y="257" text-anchor="middle" font-size="13" fill="#666">o serviço refaz a conta sobre o que recebeu</text>
+
+              <g opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.4;0.5;0.92;1" dur="6s" repeatCount="indefinite"/>
+                <rect x="300" y="278" width="580" height="44" rx="9" fill="#fdedec" stroke="#c0392b" stroke-width="3"/>
+                <text x="590" y="306" text-anchor="middle" font-size="18" font-weight="800" fill="#c0392b">não confere &#8594; 401, e o conteúdo nem chega a ser lido</text>
+              </g>
+            </g>
+          </svg>
+          <figcaption>Ciclo de seis segundos. O conteúdo é editado à vontade, porque base64url não protege nada; a verificação da assinatura, refeita sobre o texto recebido, é que recusa. É por isso que a ordem importa: <strong>enquanto a assinatura não for conferida, todo campo do payload é texto que o cliente mandou</strong>.</figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – A assinatura</div>
+          <div class="footer-page">17</div>
+        </div>
+      </section>
+
+      <!-- ==================== 18: JWKS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>JWKS: validar sem perguntar a ninguém <a href="#/ref-slide" class="ref-badge">[5]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 320" style="max-height:318px;" role="img" aria-label="O serviço baixa o JWKS uma vez e valida todas as requisições seguintes localmente">
+            <g font-family="Montserrat, sans-serif">
+              <rect x="40" y="34" width="220" height="60" rx="9" fill="#f7f2ff" stroke="#6b3fa0" stroke-width="2.5"/>
+              <text x="150" y="58" text-anchor="middle" font-size="15" font-weight="700" fill="#6b3fa0">Keycloak</text>
+              <text x="150" y="79" text-anchor="middle" font-size="12.5" fill="#666">tem a chave PRIVADA</text>
+
+              <rect x="470" y="34" width="250" height="60" rx="9" fill="#f4f8f4" stroke="#2d7a2d" stroke-width="2.5"/>
+              <text x="595" y="58" text-anchor="middle" font-size="15" font-weight="700" fill="#2d7a2d">pedidos (Java)</text>
+              <text x="595" y="79" text-anchor="middle" font-size="12.5" fill="#666">guarda a chave PÚBLICA</text>
+
+              <path d="M266 64 L462 64" stroke="#6b3fa0" stroke-width="2.5"/><polygon points="470,64 456,57 456,71" fill="#6b3fa0"/>
+              <text x="366" y="54" text-anchor="middle" font-size="12.5" font-weight="700" fill="#6b3fa0">GET /certs, UMA vez</text>
+              <text x="366" y="116" text-anchor="middle" font-size="12" fill="#888">e de novo só se aparecer um kid novo</text>
+
+              <rect x="760" y="24" width="390" height="82" rx="9" fill="#fff" stroke="#aaa" stroke-width="2"/>
+              <text x="955" y="45" text-anchor="middle" font-size="13" font-weight="700" fill="#555">o JWKS, em JSON</text>
+              <text x="778" y="66" font-size="12" font-family="'JetBrains Mono', monospace" fill="#666">{"keys":[{"kid":"A2oKqrW2h5M4...",</text>
+              <text x="778" y="84" font-size="12" font-family="'JetBrains Mono', monospace" fill="#666"> "kty":"RSA","use":"sig","n":"...","e":"AQAB"}]}</text>
+              <text x="955" y="100" text-anchor="middle" font-size="11.5" fill="#999">só chave pública: pode ser lido por qualquer um</text>
+
+              <line x1="150" y1="130" x2="150" y2="300" stroke="#ddd" stroke-width="2"/>
+              <line x1="595" y1="130" x2="595" y2="300" stroke="#ddd" stroke-width="2"/>
+
+              <g>
+                <text x="330" y="150" text-anchor="middle" font-size="13.5" font-weight="700" fill="#333">e a partir daqui, nenhuma ida ao Keycloak</text>
+                <g opacity="0"><animate attributeName="opacity" values="0;1;1;1;1;1;1;0" keyTimes="0;0.1;0.25;0.4;0.55;0.7;0.94;1" dur="7s" repeatCount="indefinite"/>
+                  <path d="M300 176 L585 176" stroke="#2d6cb5" stroke-width="2"/><polygon points="593,176 580,170 580,182" fill="#2d6cb5"/>
+                  <text x="440" y="169" text-anchor="middle" font-size="12.5" fill="#555">requisição 1 com token</text>
+                  <text x="700" y="181" font-size="13" font-weight="700" fill="#2d7a2d">confere local, 0 ms de rede</text>
+                </g>
+                <g opacity="0"><animate attributeName="opacity" values="0;0;1;1;1;1;1;0" keyTimes="0;0.2;0.3;0.45;0.6;0.75;0.94;1" dur="7s" repeatCount="indefinite"/>
+                  <path d="M300 212 L585 212" stroke="#2d6cb5" stroke-width="2"/><polygon points="593,212 580,206 580,218" fill="#2d6cb5"/>
+                  <text x="440" y="205" text-anchor="middle" font-size="12.5" fill="#555">requisição 2</text>
+                  <text x="700" y="217" font-size="13" font-weight="700" fill="#2d7a2d">confere local</text>
+                </g>
+                <g opacity="0"><animate attributeName="opacity" values="0;0;0;1;1;1;1;0" keyTimes="0;0.3;0.4;0.5;0.65;0.8;0.94;1" dur="7s" repeatCount="indefinite"/>
+                  <path d="M300 248 L585 248" stroke="#2d6cb5" stroke-width="2"/><polygon points="593,248 580,242 580,254" fill="#2d6cb5"/>
+                  <text x="440" y="241" text-anchor="middle" font-size="12.5" fill="#555">requisição 3 ... 10.000</text>
+                  <text x="700" y="253" font-size="13" font-weight="700" fill="#2d7a2d">confere local</text>
+                </g>
+              </g>
+
+              <rect x="180" y="272" width="820" height="40" rx="8" fill="#fff0f5" stroke="#ED145B" stroke-width="2"/>
+              <text x="590" y="297" text-anchor="middle" font-size="15.5" font-weight="700" fill="#ED145B">Token autocontido: a validação é uma conta de matemática, não uma consulta a banco.</text>
+            </g>
+          </svg>
+          <figcaption>O serviço baixa o JWKS uma vez, guarda a chave pública indexada pelo <span class="mono">kid</span> e valida tudo o que vier localmente. A troca em relação à sessão em banco: ganha-se escala e perde-se revogação imediata, e é por isso que o token dura 300 segundos e não 8 horas.</figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – JWKS</div>
+          <div class="footer-page">18</div>
+        </div>
+      </section>
+
+      <!-- ==================== 19: ALG NONE ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Duas armadilhas do JWT que biblioteca ruim ainda deixa passar</h2>
+        </div>
+
+        <div class="side-by-side" style="margin-top:6px;">
+          <div class="concept-card" style="border-top:4px solid #c0392b;">
+            <h4 style="color:#c0392b;"><span class="mono">alg: none</span></h4>
+            <p style="font-size:0.65em;">O padrão prevê um JWT <strong>sem assinatura</strong>. O atacante monta o token que quiser, escreve <span class="mono">"alg":"none"</span> no cabeçalho e deixa a terceira parte vazia.</p>
+            <p style="font-size:0.65em; margin-top:6px;">Uma biblioteca que <strong>obedece</strong> o campo <span class="mono">alg</span> do próprio token aceita: ela pergunta ao token qual algoritmo usar, e o token responde "nenhum".</p>
+          </div>
+          <div class="concept-card" style="border-top:4px solid #c0392b;">
+            <h4 style="color:#c0392b;">Confusão de algoritmo</h4>
+            <p style="font-size:0.65em;">O JWKS é público: qualquer um baixa a chave pública. O atacante assina um token com <span class="mono">HS256</span>, usando <strong>a chave pública como segredo de HMAC</strong>.</p>
+            <p style="font-size:0.65em; margin-top:6px;">Se o serviço decidir o algoritmo pelo token, ele pega a mesma chave pública e valida com sucesso. Assinatura confere, e o token é forjado.</p>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:10px; padding:13px 18px; border-left:4px solid #2d7a2d;">
+          <p style="font-size:0.68em; margin:0; line-height:1.5;"><strong style="color:#2d7a2d;">A defesa é a mesma para os dois, e cabe em uma linha:</strong> quem decide o algoritmo é o <strong>servidor</strong>, não o token. O <span class="mono">Jwt.java</span> do laboratório recusa qualquer coisa que não seja <span class="mono">RS256</span> antes de olhar mais nada, e o comentário no arquivo explica por quê.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Armadilhas do JWT</div>
+          <div class="footer-page">19</div>
+        </div>
+      </section>
+
+      <!-- ==================== 20: QUIZ 1 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container" data-quiz-key="aula14-quiz1">
+          <div class="quiz-question">Para que serve a assinatura de um JWT, e por que o backend pode confiar no payload sem consultar banco a cada requisição?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> A assinatura criptografa o payload, então só quem tem a chave consegue ler os dados do usuário.</li>
+            <li data-correct="true"><span class="option-letter">B</span> A assinatura garante integridade e autenticidade: se a chave pública do JWKS validar que ela foi gerada pela chave privada do provedor, o backend sabe que o payload não foi adulterado.</li>
+            <li data-correct="false"><span class="option-letter">C</span> A assinatura é um resumo do payload; o backend a compara com uma cópia guardada no banco de sessões.</li>
+            <li data-correct="false"><span class="option-letter">D</span> A assinatura contém a senha do usuário cifrada, e é por isso que o backend não precisa perguntar de novo.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. E repare no que isso NÃO garante: qualquer um lê o payload, porque base64url é codificação, não criptografia. Dado sensível não entra em JWT."
+               data-incorrect-msg="Incorreto. Reveja o slide da assinatura: ela não esconde nada, ela impede alteração. E o JWKS traz só a chave pública, o que dispensa qualquer consulta a banco."></div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="QR de votacao">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">Aponte a câmera para votar<span>Votação ao vivo ainda não publicada</span></div>
+            </div>
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz1Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz1Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Quiz 1</div>
+          <div class="footer-page">20</div>
+        </div>
+      </section>
+
+      <!-- ==================== 21: INTERVALO ==================== -->
+      <section class="content-slide" style="text-align:center; background:transparent;"
+               data-background-image="../assets/img/coffee-relax.jpg"
+               data-background-size="cover"
+               data-background-opacity="0.45">
+        <div style="margin-top:150px;">
+          <h2 style="font-size:4em; color:var(--fiap-pink); margin-bottom:10px; text-shadow:0 2px 12px rgba(255,255,255,0.9);">Intervalo</h2>
+          <h3 style="font-size:2.2em; color:var(--fiap-dark); text-shadow:0 2px 10px rgba(255,255,255,0.9);">30 minutos</h3>
+
+          <div class="quiz-timer-box" style="margin:40px auto 0 auto; padding:15px 30px; font-size:1.3em;">
+            <button class="quiz-timer-btn" style="width:40px; height:40px; font-size:1.2em;" onclick="startTimer('breakTimer', 1800)" aria-label="Iniciar cronômetro do intervalo">&#9654;</button>
+            <span id="breakTimer">30:00</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 22: QUIZ 2 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container" data-quiz-key="aula14-quiz2">
+          <div class="quiz-question">O que é o fluxo Authorization Code com PKCE, e por que ele é o recomendado para SPA em React ou Angular?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> Dispensa o servidor de autorização: a SPA valida a senha e emite o próprio token.</li>
+            <li data-correct="true"><span class="option-letter">B</span> A SPA não usa <span class="mono">client_secret</span>: gera um par dinâmico, <span class="mono">code_verifier</span> e <span class="mono">code_challenge</span>, e só o resumo viaja na URL, o que impede que um código interceptado vire token.</li>
+            <li data-correct="false"><span class="option-letter">C</span> É o fluxo de sempre, com o <span class="mono">client_secret</span> ofuscado no pacote da aplicação.</li>
+            <li data-correct="false"><span class="option-letter">D</span> O token trafega direto na URL de retorno, o que reduz o número de requisições.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. A alternativa D descreve o fluxo Implicit, que o OAuth 2.1 remove justamente por deixar o token na barra de endereços e no histórico."
+               data-incorrect-msg="Incorreto. Reveja o slide do fluxo PKCE: o verificador nasce no navegador e só sai dele na troca final, direto para o Keycloak."></div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="QR de votacao">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">Aponte a câmera para votar<span>Votação ao vivo ainda não publicada</span></div>
+            </div>
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz2Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz2Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Quiz 2</div>
+          <div class="footer-page">22</div>
+        </div>
+      </section>
+
+      <!-- ==================== 23: RBAC ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>RBAC: permissão para papel, não para pessoa <a href="#/ref-slide" class="ref-badge">[6]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 290" style="max-height:288px;" role="img" aria-label="Comparação entre atribuir permissão por usuário e atribuir por papel">
+            <g font-family="Montserrat, sans-serif">
+              <text x="270" y="24" text-anchor="middle" font-size="16" font-weight="700" fill="#c0392b">Permissão por pessoa: 400 motoristas, 400 decisões</text>
+              <rect x="30" y="38" width="480" height="150" rx="9" fill="#fdedec" stroke="#c0392b" stroke-width="2"/>
+              <g font-size="13.5" font-family="'JetBrains Mono', monospace" fill="#555">
+                <text x="50" y="66">bruno   -&gt; ler pedido, cotar frete</text>
+                <text x="50" y="90">carlos  -&gt; ler pedido, cotar frete</text>
+                <text x="50" y="114">daniela -&gt; ler pedido</text>
+                <text x="50" y="138">   ... mais 397 linhas ...</text>
+              </g>
+              <text x="270" y="170" text-anchor="middle" font-size="14" fill="#a03028">quem contratar amanhã entra sem permissão nenhuma,</text>
+              <text x="270" y="186" text-anchor="middle" font-size="14" fill="#a03028">e a daniela ficou de fora do frete por engano</text>
+
+              <text x="880" y="24" text-anchor="middle" font-size="16" font-weight="700" fill="#2d7a2d">Permissão por papel: uma decisão, 400 pessoas</text>
+              <rect x="600" y="38" width="560" height="150" rx="9" fill="#f4f8f4" stroke="#5a8f5a" stroke-width="2"/>
+
+              <rect x="620" y="56" width="150" height="112" rx="8" fill="#fff" stroke="#5a8f5a" stroke-width="1.5"/>
+              <text x="695" y="76" text-anchor="middle" font-size="13" font-weight="700" fill="#333">pessoas</text>
+              <g font-size="12.5" font-family="'JetBrains Mono', monospace" fill="#666" text-anchor="middle">
+                <text x="695" y="98">bruno</text><text x="695" y="118">carlos</text>
+                <text x="695" y="138">daniela</text><text x="695" y="158">+ 397</text>
+              </g>
+
+              <path d="M775 112 L825 112" stroke="#5a8f5a" stroke-width="2.5"/><polygon points="833,112 819,105 819,119" fill="#5a8f5a"/>
+
+              <rect x="840" y="80" width="140" height="64" rx="8" fill="#fff0f5" stroke="#ED145B" stroke-width="2"/>
+              <text x="910" y="106" text-anchor="middle" font-size="14" font-weight="800" fill="#ED145B">MOTORISTA</text>
+              <text x="910" y="128" text-anchor="middle" font-size="12" fill="#888">um papel</text>
+
+              <path d="M985 112 L1035 112" stroke="#5a8f5a" stroke-width="2.5"/><polygon points="1043,112 1029,105 1029,119" fill="#5a8f5a"/>
+
+              <rect x="1050" y="72" width="94" height="80" rx="8" fill="#fff" stroke="#5a8f5a" stroke-width="1.5"/>
+              <g font-size="11.5" fill="#555" text-anchor="middle">
+                <text x="1097" y="92">ler pedido</text><text x="1097" y="112">ver status</text>
+                <text x="1097" y="132">cotar frete</text>
+              </g>
+
+              <rect x="140" y="210" width="900" height="70" rx="9" fill="#fff0f5" stroke="#ED145B" stroke-width="2"/>
+              <text x="590" y="234" text-anchor="middle" font-size="16" font-weight="700" fill="#ED145B">Na LogiTech são três papéis de realm: CLIENTE, MOTORISTA e ADMIN.</text>
+              <text x="590" y="256" text-anchor="middle" font-size="14.5" fill="#666">Contratar um motorista é atribuir um papel. Demitir é tirar. O código dos serviços não muda.</text>
+              <text x="590" y="274" text-anchor="middle" font-size="14" fill="#888">Um usuário pode ter mais de um papel, e basta UM dos aceitos para a rota liberar.</text>
+            </g>
+          </svg>
+          <figcaption>RBAC troca "quem pode o quê" por "quem é o quê", e resolve o problema de escala: o serviço passa a conhecer três papéis em vez de quatrocentas pessoas.</figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – RBAC</div>
+          <div class="footer-page">23</div>
+        </div>
+      </section>
+
+      <!-- ==================== 24: QUIZ 3 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container" data-quiz-key="aula14-quiz3">
+          <div class="quiz-question">Como o modelo RBAC organiza a autorização dos usuários no sistema?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> Cada usuário recebe uma lista própria de permissões, mantida no banco de cada serviço.</li>
+            <li data-correct="true"><span class="option-letter">B</span> As permissões são associadas a papéis, os papéis são atribuídos aos usuários, e o código só verifica se o usuário tem o papel exigido pelo recurso.</li>
+            <li data-correct="false"><span class="option-letter">C</span> As permissões são calculadas em tempo de execução a partir de atributos do usuário, como setor e localização.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Cada serviço mantém sua própria tabela de papéis, o que permite que o mesmo papel signifique coisas diferentes em cada um.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. A alternativa C descreve ABAC, que é outro modelo e resolve outro problema. E a D é exatamente o que a ADR-009 existe para impedir."
+               data-incorrect-msg="Incorreto. Reveja o slide de RBAC: o serviço conhece três papéis, e não quatrocentas pessoas."></div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="QR de votacao">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">Aponte a câmera para votar<span>Votação ao vivo ainda não publicada</span></div>
+            </div>
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz3Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz3Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Quiz 3</div>
+          <div class="footer-page">24</div>
+        </div>
+      </section>
+
+      <!-- ==================== 25: ONDE O PAPEL MORA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O papel mora em um lugar só, e este é o ponto da noite <a href="#/ref-slide" class="ref-badge">[7]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 330" style="max-height:328px;" role="img" aria-label="O mesmo token lido de dois lugares diferentes produz decisões opostas">
+            <g font-family="Montserrat, sans-serif">
+              <rect x="330" y="20" width="520" height="96" rx="9" fill="#f0f6ff" stroke="#2d6cb5" stroke-width="2.5"/>
+              <text x="590" y="42" text-anchor="middle" font-size="14.5" font-weight="700" fill="#2d6cb5">o MESMO token, do MESMO usuário, na MESMA requisição</text>
+              <text x="348" y="66" font-size="13.5" font-family="'JetBrains Mono', monospace" fill="#2d7a2d" font-weight="700">"realm_access":    { "roles": ["MOTORISTA"] }</text>
+              <text x="348" y="90" font-size="13.5" font-family="'JetBrains Mono', monospace" fill="#c0392b" font-weight="700">"resource_access": { }</text>
+              <text x="590" y="108" text-anchor="middle" font-size="12.5" fill="#888">vazio neste realm, porque os papéis são de realm e não de client</text>
+
+              <path d="M480 122 L300 158" stroke="#2d7a2d" stroke-width="2.5"/><polygon points="293,160 306,151 309,164" fill="#2d7a2d"/>
+              <path d="M700 122 L880 158" stroke="#c0392b" stroke-width="2.5"/><polygon points="887,160 871,164 874,151" fill="#c0392b"/>
+
+              <rect x="60" y="166" width="470" height="86" rx="9" fill="#f4f8f4" stroke="#5a8f5a" stroke-width="2.5"/>
+              <text x="295" y="190" text-anchor="middle" font-size="14.5" font-weight="700" fill="#2d7a2d">o serviço lê de realm_access.roles</text>
+              <text x="295" y="216" text-anchor="middle" font-size="14" font-family="'JetBrains Mono', monospace" fill="#555">papeis = ["MOTORISTA"]</text>
+              <text x="295" y="240" text-anchor="middle" font-size="14" fill="#333">rota exige ADMIN &#8594; <tspan font-weight="800" fill="#c0392b">403</tspan>, que é o correto</text>
+
+              <rect x="650" y="166" width="470" height="86" rx="9" fill="#fdedec" stroke="#c0392b" stroke-width="2.5"/>
+              <text x="885" y="190" text-anchor="middle" font-size="14.5" font-weight="700" fill="#c0392b">o serviço lê de resource_access.&lt;client&gt;.roles</text>
+              <text x="885" y="216" text-anchor="middle" font-size="14" font-family="'JetBrains Mono', monospace" fill="#555">papeis = []</text>
+              <text x="885" y="240" text-anchor="middle" font-size="14" fill="#333">nunca encontra papel &#8594; <tspan font-weight="800" fill="#c0392b">403 para todos</tspan></text>
+
+              <g opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.45;0.55;0.92;1" dur="8s" repeatCount="indefinite"/>
+                <rect x="120" y="268" width="940" height="54" rx="9" fill="#fff0f5" stroke="#ED145B" stroke-width="2.5"/>
+                <text x="590" y="290" text-anchor="middle" font-size="16" font-weight="800" fill="#ED145B">Um serviço lendo de um lugar e outro do outro produz um bug sem erro visível.</text>
+                <text x="590" y="311" text-anchor="middle" font-size="13.5" fill="#666">Funciona no Java e falha no Node, com o mesmo token. Nenhum log acusa nada: são duas leituras de um documento correto.</text>
+              </g>
+            </g>
+          </svg>
+          <figcaption>Metade dos exemplos da internet lê de <span class="mono">resource_access</span>, que guarda papéis de client. Neste realm ele vem vazio, medido em 31/07/2026. A <span class="mono">ADR-009</span> fixa <span class="mono">realm_access.roles</span> como o único lugar, e é isso que faz o mesmo token valer em Java, C#, Python e Node.</figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Onde o papel mora</div>
+          <div class="footer-page">25</div>
+        </div>
+      </section>
+
+      <!-- ==================== 26: O CONTRATO DE ROTAS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O contrato de rotas da LogiTech <a href="#/ref-slide" class="ref-badge">[7]</a><a href="#/ref-slide" class="ref-badge">[11]</a></h2>
+        </div>
+
+        <p style="font-size:0.7em; margin:2px 0 4px;">Fixado antes de a aula existir, para as Aulas 14, 15 e 16 não divergirem. A Aula 16 testa exatamente isto.</p>
+
+        <table class="compact-table" style="font-size:0.56em; margin:2px 0;">
+          <thead>
+            <tr><th style="width:130px;">Serviço</th><th style="width:80px;">Método</th><th>Rota</th><th style="width:280px;">Quem pode</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono">pedidos</td><td class="mono">GET</td><td class="mono">/health</td><td><strong style="color:#2d7a2d;">aberta</strong></td></tr>
+            <tr><td class="mono">pedidos</td><td class="mono">GET</td><td class="mono">/api/v1/pedidos</td><td>CLIENTE, MOTORISTA ou ADMIN</td></tr>
+            <tr><td class="mono">pedidos</td><td class="mono">POST</td><td class="mono">/api/v1/pedidos</td><td>CLIENTE ou ADMIN</td></tr>
+            <tr><td class="mono">pedidos</td><td class="mono">PATCH</td><td class="mono">/api/v1/pedidos/{id}/endereco</td><td>CLIENTE ou ADMIN <span style="color:#ED145B; font-weight:700;">&#8592; a dor de hoje</span></td></tr>
+            <tr><td class="mono">pedidos</td><td class="mono">GET</td><td class="mono">/api/v1/pedidos/{id}/status</td><td>qualquer papel autenticado</td></tr>
+            <tr><td class="mono">notificacoes</td><td class="mono">GET</td><td class="mono">/health</td><td><strong style="color:#2d7a2d;">aberta</strong></td></tr>
+            <tr><td class="mono">notificacoes</td><td class="mono">POST</td><td class="mono">/api/v1/notificacoes</td><td>ADMIN</td></tr>
+            <tr><td class="mono">faturamento</td><td class="mono">POST</td><td class="mono">/api/v1/faturas</td><td>ADMIN</td></tr>
+            <tr><td class="mono">ai-gateway</td><td class="mono">POST</td><td class="mono">/v1/chat/completions</td><td>qualquer papel autenticado</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:0.55em; color:#666; margin:3px 0 0;">Recorte do que a atividade de hoje protege. O contrato completo, com <span class="mono">faturamento</span>, <span class="mono">frete</span>, <span class="mono">rag</span> e <span class="mono">ai-gateway</span>, está na <span class="mono">ADR-009</span>, e a Aula 16 testa por inteiro.</p>
+
+        <div class="takeaway" style="margin-top:4px; padding-top:8px; padding-bottom:8px;">
+          <span class="takeaway-label">A ordem das regras importa</span>
+          <p><span class="mono">/api/v1/pedidos</span> e <span class="mono">/api/v1/pedidos/PED-1042</span> são caminhos diferentes, e o padrão de um não pode engolir o do outro. É a primeira armadilha do <span class="mono">TODO-3a</span>, e a suíte de testes cobra isso explicitamente.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – O contrato de rotas</div>
+          <div class="footer-page">26</div>
+        </div>
+      </section>
+
+      <!-- ==================== 27: 401 x 403 ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O mesmo endereço, três respostas <a href="#/ref-slide" class="ref-badge">[8]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 320" style="max-height:318px;" role="img" aria-label="A mesma rota respondendo 200, 401 e 403 conforme quem chama">
+            <g font-family="Montserrat, sans-serif">
+              <rect x="400" y="16" width="380" height="46" rx="8" fill="#fff" stroke="#888" stroke-width="2"/>
+              <text x="590" y="45" text-anchor="middle" font-size="15" font-family="'JetBrains Mono', monospace" fill="#333">PATCH /api/v1/pedidos/PED-1042/endereco</text>
+
+              <g opacity="0"><animate attributeName="opacity" values="1;1;0;0;0;0" keyTimes="0;0.28;0.34;0.66;0.94;1" dur="9s" repeatCount="indefinite"/>
+                <rect x="60" y="90" width="1060" height="200" rx="10" fill="#fdf6e6" stroke="#c07000" stroke-width="2.5"/>
+                <text x="590" y="122" text-anchor="middle" font-size="19" font-weight="800" fill="#c07000">sem cabeçalho Authorization</text>
+                <rect x="500" y="140" width="180" height="46" rx="8" fill="#c07000"/>
+                <text x="590" y="171" text-anchor="middle" font-size="24" font-weight="800" fill="#fff" font-family="'JetBrains Mono', monospace">401</text>
+                <text x="590" y="212" text-anchor="middle" font-size="16" fill="#444">"eu não sei quem você é"</text>
+                <text x="590" y="240" text-anchor="middle" font-size="14.5" fill="#666">Resposta acompanha <tspan font-family="'JetBrains Mono', monospace">WWW-Authenticate: Bearer</tspan>.</text>
+                <text x="590" y="266" text-anchor="middle" font-size="14.5" font-weight="700" fill="#c07000">Fazer login RESOLVE.</text>
+              </g>
+
+              <g opacity="0"><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.3;0.36;0.62;0.68;1" dur="9s" repeatCount="indefinite"/>
+                <rect x="60" y="90" width="1060" height="200" rx="10" fill="#fdedec" stroke="#c0392b" stroke-width="2.5"/>
+                <text x="590" y="122" text-anchor="middle" font-size="19" font-weight="800" fill="#c0392b">token do bruno.motorista, válido e assinado</text>
+                <rect x="500" y="140" width="180" height="46" rx="8" fill="#c0392b"/>
+                <text x="590" y="171" text-anchor="middle" font-size="24" font-weight="800" fill="#fff" font-family="'JetBrains Mono', monospace">403</text>
+                <text x="590" y="212" text-anchor="middle" font-size="16" fill="#444">"eu sei quem você é, e você não pode"</text>
+                <text x="590" y="240" text-anchor="middle" font-size="14.5" fill="#666">Tem MOTORISTA; a rota aceita CLIENTE ou ADMIN.</text>
+                <text x="590" y="266" text-anchor="middle" font-size="14.5" font-weight="700" fill="#c0392b">Fazer login de novo NÃO resolve.</text>
+              </g>
+
+              <g opacity="0"><animate attributeName="opacity" values="0;0;0;0;1;1" keyTimes="0;0.62;0.66;0.7;0.76;1" dur="9s" repeatCount="indefinite"/>
+                <rect x="60" y="90" width="1060" height="200" rx="10" fill="#f4f8f4" stroke="#2d7a2d" stroke-width="2.5"/>
+                <text x="590" y="122" text-anchor="middle" font-size="19" font-weight="800" fill="#2d7a2d">token da ana.cliente, dona do pedido</text>
+                <rect x="500" y="140" width="180" height="46" rx="8" fill="#2d7a2d"/>
+                <text x="590" y="171" text-anchor="middle" font-size="24" font-weight="800" fill="#fff" font-family="'JetBrains Mono', monospace">200</text>
+                <text x="590" y="212" text-anchor="middle" font-size="16" fill="#444">endereço alterado, e o log registra quem alterou</text>
+                <text x="590" y="240" text-anchor="middle" font-size="14.5" fill="#666">Tem CLIENTE, que é um dos papéis aceitos.</text>
+                <text x="590" y="266" text-anchor="middle" font-size="14.5" font-weight="700" fill="#2d7a2d">É a mesma rota da Aula 05. O código dela não mudou.</text>
+              </g>
+            </g>
+          </svg>
+          <figcaption>Ciclo de nove segundos, com os três casos medidos contra os serviços do laboratório em 31/07/2026. A regra prática: se o problema é <strong>saber quem é</strong>, o código é 401; se você já sabe quem é e o problema é <strong>permissão</strong>, é 403. Devolver 403 para quem não se identificou é o erro que o verificador reprova por nome.</figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – 401 contra 403</div>
+          <div class="footer-page">27</div>
+        </div>
+      </section>
+
+      <!-- ==================== 28: /HEALTH ABERTA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Por que <span class="mono">GET /health</span> fica aberta</h2>
+        </div>
+
+        <p style="font-size:0.71em; margin:2px 0 6px;">Parece descuido de quem esqueceu uma rota. É decisão, e a Aula 07 já tinha preparado o terreno.</p>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 250" style="max-height:248px;" role="img" aria-label="O healthcheck do Compose falhando quando a rota de saúde exige token">
+            <g font-family="Montserrat, sans-serif">
+              <rect x="40" y="30" width="250" height="72" rx="9" fill="#f0f6ff" stroke="#2d6cb5" stroke-width="2.5"/>
+              <text x="165" y="56" text-anchor="middle" font-size="15" font-weight="700" fill="#2d6cb5">healthcheck do Compose</text>
+              <text x="165" y="78" text-anchor="middle" font-size="12.5" font-family="'JetBrains Mono', monospace" fill="#666">wget http://127.0.0.1:8080/health</text>
+              <text x="165" y="95" text-anchor="middle" font-size="12" fill="#888">roda dentro do container, a cada 10s</text>
+
+              <path d="M296 66 L470 66" stroke="#888" stroke-width="2.5"/><polygon points="478,66 464,59 464,73" fill="#888"/>
+              <text x="386" y="56" text-anchor="middle" font-size="13" font-weight="700" fill="#c0392b">sem token</text>
+              <text x="386" y="86" text-anchor="middle" font-size="12" fill="#888">e não tem como ter: ninguém fez login</text>
+
+              <rect x="486" y="30" width="230" height="72" rx="9" fill="#fdedec" stroke="#c0392b" stroke-width="2.5"/>
+              <text x="601" y="60" text-anchor="middle" font-size="15" font-weight="700" fill="#c0392b">/health protegida</text>
+              <text x="601" y="84" text-anchor="middle" font-size="17" font-weight="800" fill="#c0392b" font-family="'JetBrains Mono', monospace">401</text>
+
+              <path d="M722 66 L850 66" stroke="#c0392b" stroke-width="2.5"/><polygon points="858,66 844,59 844,73" fill="#c0392b"/>
+
+              <rect x="866" y="18" width="280" height="96" rx="9" fill="#fdedec" stroke="#c0392b" stroke-width="2.5"/>
+              <text x="1006" y="42" text-anchor="middle" font-size="14" font-weight="700" fill="#c0392b">container UNHEALTHY</text>
+              <text x="1006" y="66" text-anchor="middle" font-size="13" fill="#555">para sempre, com o serviço</text>
+              <text x="1006" y="84" text-anchor="middle" font-size="13" fill="#555">funcionando perfeitamente</text>
+              <text x="1006" y="104" text-anchor="middle" font-size="12.5" fill="#a03028">e o depends_on de todo mundo trava</text>
+
+              <rect x="140" y="140" width="900" height="46" rx="8" fill="#f4f8f4" stroke="#5a8f5a" stroke-width="2"/>
+              <text x="590" y="168" text-anchor="middle" font-size="16" font-weight="700" fill="#2d7a2d">Rota de infraestrutura não é rota de negócio. /health não devolve dado de ninguém.</text>
+
+              <rect x="140" y="196" width="900" height="46" rx="8" fill="#fff0f5" stroke="#ED145B" stroke-width="2"/>
+              <text x="590" y="216" text-anchor="middle" font-size="14.5" fill="#555">O que ela devolve: <tspan font-family="'JetBrains Mono', monospace">{"status":"ok","servico":"pedidos","autenticacaoAtiva":true}</tspan></text>
+              <text x="590" y="235" text-anchor="middle" font-size="14" fill="#888">e nada além disso. A tabela de regras fica no log de subida, não numa rota aberta.</text>
+            </g>
+          </svg>
+          <figcaption>Proteger a rota de saúde derruba a orquestração inteira sem que nada esteja errado com o serviço. O mesmo raciocínio vale para o <span class="mono">OPTIONS</span> de pre-flight do navegador, que também não carrega token e também nunca passa pelo portão.</figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – /health aberta</div>
+          <div class="footer-page">28</div>
+        </div>
+      </section>
+
+      <!-- ==================== 29: O INTERRUPTOR ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O interruptor, e por que ele é declarado em voz alta</h2>
+        </div>
+
+        <p style="font-size:0.71em; margin:2px 0 8px;">Os laboratórios das Aulas 05 a 12 foram escritos <strong>sem</strong> autenticação e já estão publicados. Ligar segurança hoje não pode invalidar o que vocês entregaram.</p>
+
+        <div class="side-by-side" style="margin-top:2px;">
+          <div class="concept-card" style="border-top:4px solid #888;">
+            <h4><span class="mono">LOGITECH_AUTH_ATIVA=false</span></h4>
+            <p style="font-size:0.65em;">O padrão no código dos serviços. Toda rota responde a qualquer um, como nas Aulas 05 a 12. Quem faltou a esta aula continua conseguindo rodar os laboratórios anteriores.</p>
+          </div>
+          <div class="concept-card" style="border-top:4px solid #2d7a2d;">
+            <h4><span class="mono">LOGITECH_AUTH_ATIVA=true</span></h4>
+            <p style="font-size:0.65em;">Ligado no <span class="mono">docker-compose.yml</span> <strong>desta</strong> aula, e exigido pelo verificador. A partir da Aula 15, todo o módulo assume ligado.</p>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:12px; padding:14px 18px; border-left:4px solid #ED145B;">
+          <p style="font-size:0.69em; margin:0; line-height:1.5;"><strong style="color:var(--fiap-pink);">Isto não é uma porta dos fundos escondida, e a diferença é toda.</strong> Uma variável que desliga a segurança e que ninguém documenta é um risco. Uma que está no README, no slide, no log de subida do serviço e no próprio <span class="mono">/health</span> é uma <strong>decisão de migração</strong>. Todo sistema que ganha autenticação depois de pronto passa por esse interruptor; o que separa os casos é se ele foi escrito em algum lugar.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – O interruptor</div>
+          <div class="footer-page">29</div>
+        </div>
+      </section>
+
+      <!-- ==================== 30: O ISSUER DIVERGENTE ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O 401 que vai acontecer com vocês hoje, às 22h</h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 330" style="max-height:328px;" role="img" aria-label="O navegador e o container alcançam o mesmo Keycloak por nomes diferentes, e o issuer do token diverge">
+            <g font-family="Montserrat, sans-serif">
+              <rect x="430" y="20" width="320" height="80" rx="10" fill="#f7f2ff" stroke="#6b3fa0" stroke-width="2.5"/>
+              <text x="590" y="48" text-anchor="middle" font-size="16" font-weight="800" fill="#6b3fa0">UM único Keycloak</text>
+              <text x="590" y="72" text-anchor="middle" font-size="13.5" fill="#666">um realm, um par de chaves</text>
+              <text x="590" y="91" text-anchor="middle" font-size="13" fill="#888">e dois nomes de rede</text>
+
+              <rect x="40" y="150" width="330" height="80" rx="10" fill="#f0f6ff" stroke="#2d6cb5" stroke-width="2.5"/>
+              <text x="205" y="176" text-anchor="middle" font-size="15" font-weight="700" fill="#2d6cb5">o seu navegador</text>
+              <text x="205" y="200" text-anchor="middle" font-size="14" font-family="'JetBrains Mono', monospace" fill="#333">http://localhost:8090</text>
+              <text x="205" y="220" text-anchor="middle" font-size="12.5" fill="#888">fora da rede do Compose</text>
+
+              <rect x="810" y="150" width="330" height="80" rx="10" fill="#f4f8f4" stroke="#5a8f5a" stroke-width="2.5"/>
+              <text x="975" y="176" text-anchor="middle" font-size="15" font-weight="700" fill="#2d7a2d">o container pedidos</text>
+              <text x="975" y="200" text-anchor="middle" font-size="14" font-family="'JetBrains Mono', monospace" fill="#333">http://keycloak:8090</text>
+              <text x="975" y="220" text-anchor="middle" font-size="12.5" fill="#888">DNS interno da logitech-net</text>
+
+              <path d="M420 78 L215 144" stroke="#6b3fa0" stroke-width="2.5"/><polygon points="208,146 220,136 224,149" fill="#6b3fa0"/>
+              <path d="M760 78 L965 144" stroke="#6b3fa0" stroke-width="2.5"/><polygon points="972,146 956,149 960,136" fill="#6b3fa0"/>
+
+              <g opacity="0"><animate attributeName="opacity" values="0;1;1;1;1;0" keyTimes="0;0.14;0.3;0.5;0.92;1" dur="9s" repeatCount="indefinite"/>
+                <rect x="30" y="244" width="350" height="42" rx="7" fill="#fff" stroke="#2d6cb5" stroke-width="2"/>
+                <text x="205" y="262" text-anchor="middle" font-size="12.5" fill="#555">o token que voltou traz</text>
+                <text x="205" y="279" text-anchor="middle" font-size="13" font-weight="700" font-family="'JetBrains Mono', monospace" fill="#2d6cb5">"iss": ".../localhost:8090/realms/logitech"</text>
+              </g>
+
+              <g opacity="0"><animate attributeName="opacity" values="0;0;1;1;1;0" keyTimes="0;0.22;0.34;0.5;0.92;1" dur="9s" repeatCount="indefinite"/>
+                <rect x="800" y="244" width="350" height="42" rx="7" fill="#fff" stroke="#5a8f5a" stroke-width="2"/>
+                <text x="975" y="262" text-anchor="middle" font-size="12.5" fill="#555">o serviço só confia em</text>
+                <text x="975" y="279" text-anchor="middle" font-size="13" font-weight="700" font-family="'JetBrains Mono', monospace" fill="#2d7a2d">".../keycloak:8090/realms/logitech"</text>
+              </g>
+
+              <g opacity="0"><animate attributeName="opacity" values="0;0;0;1;1;0" keyTimes="0;0.4;0.5;0.58;0.92;1" dur="9s" repeatCount="indefinite"/>
+                <rect x="392" y="242" width="396" height="82" rx="9" fill="#fdedec" stroke="#c0392b" stroke-width="3"/>
+                <text x="590" y="266" text-anchor="middle" font-size="20" font-weight="800" fill="#c0392b">401</text>
+                <text x="590" y="290" text-anchor="middle" font-size="13.5" fill="#444">com um token perfeitamente válido</text>
+                <text x="590" y="312" text-anchor="middle" font-size="12.5" fill="#a03028">assinatura confere, prazo confere, papel confere</text>
+              </g>
+            </g>
+          </svg>
+          <figcaption>Ciclo de nove segundos. É o mesmo servidor: o Keycloak escreve no campo <span class="mono">iss</span> o endereço pelo qual foi chamado, e o navegador o chama por um nome que só existe fora da rede do Compose. A mensagem que as bibliotecas reais dão nesse caso costuma ser <span class="mono">JWT validation failed</span>, sem dizer qual campo.</figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – O issuer divergente</div>
+          <div class="footer-page">30</div>
+        </div>
+      </section>
+
+      <!-- ==================== 31: O CONSERTO DO ISSUER ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O conserto, e o que ele ensina sobre nomes de rede</h2>
+        </div>
+
+        <p style="font-size:0.7em; margin:2px 0 6px;">São duas variáveis diferentes de propósito, e não redundância. Cada uma responde a uma pergunta distinta.</p>
+
+        <pre class="code-compact" style="font-size:0.49em; margin:4px 0;"><code class="language-yaml">pedidos:
+  environment:
+    # "por onde EU alcanço o Keycloak?"  -> nome de servico, dentro da rede
+    LOGITECH_OIDC_JWKS_URL: http://keycloak:8090/realms/logitech/protocol/openid-connect/certs
+
+    # "que emissores eu aceito no campo iss?"  -> os DOIS nomes do mesmo servidor
+    LOGITECH_OIDC_ISSUER: http://keycloak:8090/realms/logitech,http://localhost:8090/realms/logitech</code></pre>
+
+        <p style="font-size:0.65em; margin:6px 0 4px;">A mensagem que o serviço do laboratório devolve, medida em 31/07/2026, no lugar do <span class="mono">JWT validation failed</span> genérico:</p>
+
+        <pre class="code-compact" style="font-size:0.46em; margin:0 0 4px;"><code class="language-json">{"erro":"nao_autenticado",
+ "motivo":"issuer 'http://localhost:8090/realms/logitech' nao esta na lista de confiaveis
+           [http://keycloak:8090/realms/logitech]. O token foi emitido por um endereco
+           do Keycloak que este servico nao conhece."}</code></pre>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A lição que sobrevive ao Keycloak</span>
+          <p>Em ambiente com container, <strong>o mesmo processo tem mais de um nome</strong>, e qual deles aparece depende de quem perguntou. Isso vale para issuer, para <span class="mono">redirect_uri</span>, para link em e-mail e para URL em documentação gerada. Mensagem de erro que nomeia os dois lados economiza a noite de quem for depurar.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – O conserto do issuer</div>
+          <div class="footer-page">31</div>
+        </div>
+      </section>
+
+      <!-- ==================== 32: REALM DE ARQUIVO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O realm é um arquivo, nunca vinte telas <a href="#/ref-slide" class="ref-badge">[9]</a></h2>
+        </div>
+
+        <div class="side-by-side" style="margin-top:4px;">
+          <div class="concept-card" style="border-top:4px solid #c0392b;">
+            <h4 style="color:#c0392b;">Configurar pela interface</h4>
+            <ul style="font-size:0.63em; line-height:1.55; margin:6px 0 0; padding-left:18px;">
+              <li>Não entra no Git: não há o que revisar em <em>pull request</em></li>
+              <li>Ninguém repete igual: cada aluno cria um realm um pouco diferente</li>
+              <li>Não sobrevive a <span class="mono">docker compose down -v</span></li>
+              <li>Documentar vira captura de tela, que envelhece na próxima versão</li>
+            </ul>
+          </div>
+          <div class="concept-card" style="border-top:4px solid #2d7a2d;">
+            <h4 style="color:#2d7a2d;"><span class="mono">--import-realm</span> de um JSON versionado</h4>
+            <ul style="font-size:0.63em; line-height:1.55; margin:6px 0 0; padding-left:18px;">
+              <li>Papéis, clients e usuários semeados são <strong>código</strong></li>
+              <li>Mudança de política aparece no <span class="mono">git diff</span></li>
+              <li>Ambiente reproduzível: um comando devolve tudo ao zero</li>
+              <li>A turma inteira tem exatamente o mesmo realm</li>
+            </ul>
+          </div>
+        </div>
+
+        <pre class="code-compact" style="font-size:0.47em; margin:8px 0 4px;"><code class="language-yaml">keycloak:
+  image: quay.io/keycloak/keycloak:26.0
+  command: ["start-dev", "--import-realm", "--http-port=8090"]
+  volumes:
+    - ./keycloak:/opt/keycloak/data/import:ro     # o realm versionado entra aqui</code></pre>
+
+        <div class="callout" style="margin-top:6px; padding:11px 16px; border-left:4px solid #c07000;">
+          <p style="font-size:0.64em; margin:0; line-height:1.45;"><strong style="color:#c07000;">Três coisas neste realm que não vão para produção, e o README diz isso com todas as letras:</strong> <span class="mono">sslRequired: none</span>, senha fraca e igual para os três usuários, e credencial escrita em arquivo versionado. Credencial de laboratório que parece de produção ensina a coisa errada.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Realm de arquivo</div>
+          <div class="footer-page">32</div>
+        </div>
+      </section>
+
+      <!-- ==================== 33: WORKTREES II ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Git Worktrees II: retomando a Aula 08 <a href="#/ref-slide" class="ref-badge">[10]</a></h2>
+        </div>
+
+        <p style="font-size:0.71em; margin:2px 0 4px;">Na Aula 08 as worktrees separavam <strong>dois agentes</strong>. Hoje separam <strong>duas naturezas de trabalho</strong> que avançam na mesma noite e se atrapalham.</p>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 280" style="max-height:278px;" role="img" aria-label="Um clone com três diretórios de trabalho e um histórico só">
+            <g font-family="Montserrat, sans-serif">
+              <text x="270" y="22" text-anchor="middle" font-size="16" font-weight="700" fill="#c0392b">Um diretório só, com git switch</text>
+              <rect x="40" y="36" width="470" height="120" rx="9" fill="#fdedec" stroke="#c0392b" stroke-width="2.5"/>
+              <rect x="70" y="58" width="410" height="34" rx="6" fill="#fff" stroke="#c0392b" stroke-width="1.5"/>
+              <text x="275" y="80" text-anchor="middle" font-size="13.5" font-family="'JetBrains Mono', monospace" fill="#555">javac ... TestesSeguranca   (rodando)</text>
+              <rect x="70" y="100" width="410" height="34" rx="6" fill="#fff" stroke="#c0392b" stroke-width="1.5"/>
+              <text x="275" y="122" text-anchor="middle" font-size="13.5" font-family="'JetBrains Mono', monospace" fill="#555">vitest --watch              (rodando)</text>
+              <text x="275" y="150" text-anchor="middle" font-size="13.5" font-weight="700" fill="#c0392b">o switch troca os arquivos debaixo dos dois</text>
+
+              <text x="880" y="22" text-anchor="middle" font-size="16" font-weight="700" fill="#2d7a2d">Um clone, três diretórios de trabalho</text>
+              <rect x="600" y="36" width="550" height="120" rx="9" fill="#f4f8f4" stroke="#5a8f5a" stroke-width="2.5"/>
+
+              <rect x="620" y="56" width="160" height="80" rx="7" fill="#fff" stroke="#5a8f5a" stroke-width="1.5"/>
+              <text x="700" y="78" text-anchor="middle" font-size="13" font-weight="700" fill="#333" font-family="'JetBrains Mono', monospace">lab14/</text>
+              <text x="700" y="98" text-anchor="middle" font-size="12" fill="#666">main</text>
+              <text x="700" y="120" text-anchor="middle" font-size="11.5" fill="#888">integra e faz o commit</text>
+
+              <rect x="795" y="56" width="160" height="80" rx="7" fill="#fff" stroke="#5a8f5a" stroke-width="1.5"/>
+              <text x="875" y="78" text-anchor="middle" font-size="13" font-weight="700" fill="#333" font-family="'JetBrains Mono', monospace">../agent-auth</text>
+              <text x="875" y="98" text-anchor="middle" font-size="12" fill="#666">seguranca/backend</text>
+              <text x="875" y="120" text-anchor="middle" font-size="11.5" fill="#888">TODO-2, 3 e 4</text>
+
+              <rect x="970" y="56" width="160" height="80" rx="7" fill="#fff" stroke="#5a8f5a" stroke-width="1.5"/>
+              <text x="1050" y="78" text-anchor="middle" font-size="13" font-weight="700" fill="#333" font-family="'JetBrains Mono', monospace">../agent-ui</text>
+              <text x="1050" y="98" text-anchor="middle" font-size="12" fill="#666">seguranca/portal</text>
+              <text x="1050" y="120" text-anchor="middle" font-size="11.5" fill="#888">TODO-5</text>
+
+              <text x="875" y="152" text-anchor="middle" font-size="13.5" font-weight="700" fill="#2d7a2d">um histórico só, três estados de trabalho</text>
+
+              <rect x="200" y="180" width="780" height="90" rx="9" fill="#fff0f5" stroke="#ED145B" stroke-width="2"/>
+              <g font-size="14" font-family="'JetBrains Mono', monospace" fill="#333">
+                <text x="230" y="206">git worktree add ../agent-auth seguranca/backend</text>
+                <text x="230" y="230">git worktree add ../agent-ui   seguranca/portal</text>
+                <text x="230" y="254">git worktree list</text>
+              </g>
+            </g>
+          </svg>
+          <figcaption>Cada worktree tem o próprio diretório de trabalho e a própria branch, sobre o <strong>mesmo</strong> histórico e o mesmo diretório <span class="mono">.git</span>. Nenhum <span class="mono">git switch</span> de um lado troca os arquivos debaixo do processo que está rodando do outro, e é isso que permite manter duas frentes com testes contínuos ao mesmo tempo.</figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Git Worktrees II</div>
+          <div class="footer-page">33</div>
+        </div>
+      </section>
+
+      <!-- ==================== 34: WORKTREES E AGENTES ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Por que isto importa quando um agente escreve o código</h2>
+        </div>
+
+        <div class="concept-cards" style="grid-template-columns:1fr 1fr; gap:14px; margin-top:8px;">
+          <div class="concept-card">
+            <h4>O agente não espera</h4>
+            <p style="font-size:0.65em;">Um agente de IA refatorando a camada de segurança edita dezenas de arquivos em minutos. Se a interface está sendo mexida no mesmo diretório, os dois trabalhos se sobrepõem e o <span class="mono">git status</span> vira ruído.</p>
+          </div>
+          <div class="concept-card">
+            <h4>Revisão separada por natureza</h4>
+            <p style="font-size:0.65em;">Mudança de autorização e mudança de tela têm risco diferente e revisor diferente. Duas branches, dois <em>pull requests</em>, duas conversas. Um PR único com as duas coisas não é revisado: é aprovado.</p>
+          </div>
+          <div class="concept-card">
+            <h4>Teste contínuo dos dois lados</h4>
+            <p style="font-size:0.65em;">A suíte Java e o <span class="mono">vitest</span> em modo <em>watch</em> podem ficar rodando ao mesmo tempo, cada um no seu diretório, sem que um invalide o outro a cada troca de branch.</p>
+          </div>
+          <div class="concept-card">
+            <h4>Voltar atrás fica barato</h4>
+            <p style="font-size:0.65em;">Se a frente de interface não fechar até as 22h30, ela simplesmente não é mesclada. A de segurança segue sozinha, porque nunca dependeu do diretório de trabalho da outra.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Onde as worktrees moram</span>
+          <p><strong>Fora</strong> do repositório, um nível acima. Criadas dentro dele, viram arquivos não rastreados do próprio repositório e o <span class="mono">git status</span> fica ilegível. Desfazer é <span class="mono">git worktree remove ../agent-auth</span>.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Worktrees e agentes</div>
+          <div class="footer-page">34</div>
+        </div>
+      </section>
+
+      <!-- ==================== 35: A MESMA DECISÃO, DUAS LINGUAGENS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A mesma decisão, escrita duas vezes</h2>
+        </div>
+
+        <p style="font-size:0.69em; margin:2px 0 5px;">É o que vocês vão escrever nos <span class="mono">TODO-3b</span> e <span class="mono">TODO-4a</span>. Sintaxe diferente, mesmo caminho dentro do token.</p>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:2px;">
+          <div>
+            <p style="font-size:0.6em; font-weight:700; color:#c07000; margin:0 0 3px;">Java, em <span class="mono">Seguranca.java</span></p>
+            <pre class="code-compact" style="font-size:0.45em; margin:0;"><code class="language-java">Object bloco = jwt.conteudo().get("realm_access");
+if (bloco instanceof Map) {
+    Object lista = ((Map&lt;String,Object&gt;) bloco).get("roles");
+    if (lista instanceof List) {
+        for (Object papel : (List&lt;Object&gt;) lista) {
+            papeis.add(String.valueOf(papel));
+        }
+    }
+}</code></pre>
+          </div>
+          <div>
+            <p style="font-size:0.6em; font-weight:700; color:#2d7a2d; margin:0 0 3px;">Node, em <span class="mono">seguranca.mjs</span></p>
+            <pre class="code-compact" style="font-size:0.45em; margin:0;"><code class="language-javascript">const papeis = conteudo?.realm_access?.roles;
+return Array.isArray(papeis) ? papeis.map(String) : [];
+
+
+
+
+// e o mesmo vale para o C# do faturamento
+// e para o Python do frete</code></pre>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">O que os dois têm em comum, e é o que importa</span>
+          <p>A string <span class="mono">"realm_access"</span> seguida de <span class="mono">"roles"</span>, e o comportamento quando ela não existe: <strong>lista vazia, nunca erro</strong>. Token autenticado sem papel nenhum é situação legítima, e ela leva a 403, jamais a 401.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – A mesma decisão, duas vezes</div>
+          <div class="footer-page">35</div>
+        </div>
+      </section>
+
+      <!-- ==================== 36: O FRONTEND NÃO PROTEGE ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Esconder o botão não é segurança</h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 260" style="max-height:258px;" role="img" aria-label="O botão escondido na interface não impede a requisição feita à mão">
+            <g font-family="Montserrat, sans-serif">
+              <rect x="40" y="26" width="440" height="126" rx="9" fill="#f0f6ff" stroke="#2d6cb5" stroke-width="2.5"/>
+              <text x="260" y="52" text-anchor="middle" font-size="15" font-weight="700" fill="#2d6cb5">O Portal esconde o botão de quem não é ADMIN</text>
+              <rect x="120" y="70" width="280" height="34" rx="6" fill="#eee" stroke="#bbb" stroke-width="1.5" stroke-dasharray="5,4"/>
+              <text x="260" y="92" text-anchor="middle" font-size="13.5" fill="#999">Enviar aviso de entrega (oculto)</text>
+              <text x="260" y="128" text-anchor="middle" font-size="13" fill="#666">boa experiência de uso, e nada além disso</text>
+              <text x="260" y="146" text-anchor="middle" font-size="12.5" fill="#888">todo o código do Portal está na máquina do usuário</text>
+
+              <rect x="700" y="26" width="440" height="126" rx="9" fill="#fdedec" stroke="#c0392b" stroke-width="2.5"/>
+              <text x="920" y="52" text-anchor="middle" font-size="15" font-weight="700" fill="#c0392b">E quem monta a requisição à mão?</text>
+              <text x="718" y="80" font-size="12.5" font-family="'JetBrains Mono', monospace" fill="#555">curl -X POST http://localhost:3001/api/v1/</text>
+              <text x="718" y="99" font-size="12.5" font-family="'JetBrains Mono', monospace" fill="#555">     notificacoes -H "Authorization: Bearer $T"</text>
+              <text x="920" y="128" text-anchor="middle" font-size="13" fill="#666">o botão nunca existiu para ele</text>
+              <text x="920" y="146" text-anchor="middle" font-size="12.5" fill="#a03028">a interface não está no caminho da requisição</text>
+
+              <path d="M486 90 L694 90" stroke="#888" stroke-width="2" stroke-dasharray="6,5"/>
+
+              <rect x="140" y="176" width="900" height="74" rx="9" fill="#f4f8f4" stroke="#5a8f5a" stroke-width="2.5"/>
+              <text x="590" y="202" text-anchor="middle" font-size="16.5" font-weight="800" fill="#2d7a2d">A autorização acontece no servidor. Sempre. Sem exceção.</text>
+              <text x="590" y="226" text-anchor="middle" font-size="14.5" fill="#555">O frontend lê o papel para decidir o que MOSTRAR, não o que PERMITIR.</text>
+              <text x="590" y="244" text-anchor="middle" font-size="14" fill="#888">E lê do mesmo realm_access.roles, para não oferecer um botão que o backend vai recusar.</text>
+            </g>
+          </svg>
+          <figcaption>No laboratório o botão fica <strong>visível</strong> para todos de propósito: entrando como Ana e clicando nele, o serviço Node responde 403 e a mensagem aparece na tela. Ver a recusa acontecer ensina mais do que uma tela que esconde o problema.</figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – O frontend não protege</div>
+          <div class="footer-page">36</div>
+        </div>
+      </section>
+
+      <!-- ==================== 37: A PLATAFORMA DE HOJE ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O ambiente de hoje: três containers e um portal</h2>
+        </div>
+
+        <table class="compact-table" style="font-size:0.58em; margin:6px 0;">
+          <thead>
+            <tr><th>Serviço</th><th>Stack</th><th>Porta</th><th>Memória medida</th><th>Papel de OAuth</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono">keycloak</td><td>Quarkus, Java</td><td>8090</td><td>496 MiB</td><td>Authorization Server</td></tr>
+            <tr><td class="mono">pedidos</td><td>Java 21, JDK HttpServer</td><td>8080</td><td>28 MiB</td><td>Resource Server</td></tr>
+            <tr><td class="mono">notificacoes</td><td>Node 22, sem dependência</td><td>3001</td><td>13 MiB</td><td>Resource Server</td></tr>
+            <tr><td class="mono">portal</td><td>React 19 + Vite, fora do Compose</td><td>5173</td><td>-</td><td>Client público</td></tr>
+          </tbody>
+        </table>
+
+        <div class="concept-cards" style="grid-template-columns:1fr 1fr; gap:12px; margin-top:4px;">
+          <div class="concept-card" style="padding:11px 16px;">
+            <h4>Medido, não estimado</h4>
+            <p style="font-size:0.63em;"><span class="mono">docker compose build --no-cache</span> em <strong>7 s</strong>; <span class="mono">up -d --wait</span> até os três saudáveis em <strong>21 s</strong>. macOS 27, Apple Silicon, Docker Desktop 29.6.2, imagens base já baixadas, 31/07/2026.</p>
+          </div>
+          <div class="concept-card" style="padding:11px 16px;">
+            <h4>Pare o Ollama antes</h4>
+            <p style="font-size:0.63em;">O Keycloak sozinho pede quase meio giga. Em Codespace de dois núcleos, o modelo local disputa memória com ele. <span class="mono">pkill ollama</span> antes do <span class="mono">up</span>.</p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – O ambiente de hoje</div>
+          <div class="footer-page">37</div>
+        </div>
+      </section>
+
+      <!-- ==================== 38: ATIVIDADE PRÁTICA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Atividade Prática: proteger a plataforma <a href="#/ref-slide" class="ref-badge">[12]</a></h2>
+        </div>
+
+        <p style="font-size:0.7em; margin:2px 0 6px;">Em dupla, oito passos, um commit por passo. O Lab Kit é
+          <a href="https://github.com/josercf/mwe-2026-2-lab14-oauth-jwt" target="_blank" style="color:var(--fiap-pink); font-weight:700;">mwe-2026-2-lab14-oauth-jwt</a>. Faça <strong>fork</strong>, nunca clone.</p>
+
+        <table class="compact-table" style="font-size:0.55em; margin:2px 0;">
+          <thead>
+            <tr><th style="width:90px;">Lacuna</th><th style="width:290px;">Onde</th><th>O que exercita</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono">TODO-1</td><td class="mono">docker-compose.yml</td><td>O serviço <span class="mono">keycloak</span> com <span class="mono">--import-realm</span>, healthcheck e os dois issuers</td></tr>
+            <tr><td class="mono">TODO-2</td><td class="mono">servicos/pedidos/Seguranca.java</td><td>Extrair o Bearer, validar o JWT pelo JWKS e devolver 401</td></tr>
+            <tr><td class="mono">TODO-3</td><td class="mono">servicos/pedidos/Seguranca.java</td><td>A tabela de regras, os papéis de <span class="mono">realm_access.roles</span> e o 403</td></tr>
+            <tr><td class="mono">TODO-4</td><td class="mono">servicos/notificacoes/seguranca.mjs</td><td>A mesma decisão em Node, lendo do mesmo lugar</td></tr>
+            <tr><td class="mono">TODO-5</td><td class="mono">portal/src/auth/pkce.ts</td><td>Login por PKCE no navegador e o <span class="mono">Authorization: Bearer</span></td></tr>
+            <tr><td class="mono">TODO-6</td><td class="mono">git worktree</td><td>Duas worktrees: segurança de backend e interface</td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Três suítes rodam offline e dizem qual lacuna falta</span>
+          <p><span class="mono">TestesSeguranca</span> em Java (26 testes), <span class="mono">node --test</span> (14) e <span class="mono">npm test</span> no portal (13). Todas geram as próprias chaves e não precisam do Keycloak no ar.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Atividade Prática</div>
+          <div class="footer-page">38</div>
+        </div>
+      </section>
+
+      <!-- ==================== 39: PASSO 1 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 1 de 8: o Keycloak no Compose</h2>
+        </div>
+
+        <div class="exercise-container">
+          <h3><span class="mono">TODO-1a</span>, em <span class="caminho">docker-compose.yml</span></h3>
+          <p style="margin:0 0 7px; font-size:0.63em;">É o único serviço que vocês escrevem do zero. O arquivo diz o que cada linha precisa ter e por quê.</p>
+          <pre style="margin:0 0 7px; font-size:0.46em;"><code class="language-bash">docker network create logitech-net      # so na primeira vez
+cp .env.exemplo .env                    # e troque a senha do admin
+docker compose up -d --build
+docker compose logs keycloak | grep -i imported</code></pre>
+          <p style="margin:0 0 6px; font-size:0.62em;">A linha <span class="mono">Realm 'logitech' imported</span> é a prova de que o realm veio do arquivo. Abra <span class="mono">http://localhost:8090</span>, entre como <span class="mono">admin</span> e veja os três usuários que o JSON semeou.</p>
+          <p style="margin:0; font-size:0.6em; border-top:1px solid rgba(255,255,255,0.2); padding-top:6px;"><strong style="color:var(--fiap-pink);">Confira:</strong> <span class="mono">python3 verificar.py --criterio 1</span>. Registre <span class="mono">TEMPO_ATE_TODOS_SAUDAVEIS_S</span> e <span class="mono">MEMORIA_KEYCLOAK_MB</span>. Commit: <span class="mono">feat(passo-1): keycloak com realm importado de arquivo</span>.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Passo 1</div>
+          <div class="footer-page">39</div>
+        </div>
+      </section>
+
+      <!-- ==================== 40: PASSO 2 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 2 de 8: o fluxo PKCE, pelo navegador</h2>
+        </div>
+
+        <div class="exercise-container">
+          <h3>Sem lacuna de código. Antes de qualquer <span class="mono">curl</span> com token colado.</h3>
+          <pre style="margin:0 0 7px; font-size:0.46em;"><code class="language-bash">python3 pkce.py                  # entre como ana.cliente, senha logitech</code></pre>
+          <p style="margin:0 0 7px; font-size:0.62em;">O programa imprime o <span class="mono">code_verifier</span>, o <span class="mono">code_challenge</span>, a URL de autorização inteira, o código que voltou e o token decodificado em três partes. Leia a saída toda antes de seguir.</p>
+          <p style="margin:0 0 6px; font-size:0.62em;">Preencha <span class="mono">TAMANHO_DO_CODE_VERIFIER</span>, <span class="mono">CODE_CHALLENGE_METHOD</span>, <span class="mono">TOKEN_EXPIRA_EM_S</span>, <span class="mono">PAPEIS_NO_TOKEN</span>, <span class="mono">ISSUER_NO_TOKEN</span> e <span class="mono">RESOURCE_ACCESS_NO_TOKEN</span>.</p>
+          <p style="margin:0; font-size:0.6em; border-top:1px solid rgba(255,255,255,0.2); padding-top:6px;"><strong style="color:var(--fiap-pink);">Não existe atalho:</strong> o <span class="mono">directAccessGrants</span> está desligado nos dois clients do realm, de propósito. Não há como pegar token por usuário e senha em um <span class="mono">curl</span>.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Passo 2</div>
+          <div class="footer-page">40</div>
+        </div>
+      </section>
+
+      <!-- ==================== 41: PASSO 3 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 3 de 8: o 401</h2>
+        </div>
+
+        <div class="exercise-container">
+          <h3><span class="mono">TODO-2a</span> a <span class="mono">TODO-2c</span>, em <span class="caminho">servicos/pedidos/Seguranca.java</span></h3>
+          <pre style="margin:0 0 6px; font-size:0.45em;"><code class="language-java">static String extrairBearer(String authorization) { ... }   // TODO-2a
+// TODO-2b: chamar Jwt.verificar(...) e converter Jwt.Invalido em NaoAutenticado
+// TODO-2c: montar a Identidade (usuario, papeis, exp - iat, iss)</code></pre>
+          <pre style="margin:0 0 7px; font-size:0.45em;"><code class="language-bash">docker compose up -d --build pedidos
+docker compose exec pedidos java -cp /app/classes TestesSeguranca
+curl -i http://localhost:8080/api/v1/pedidos     # 401
+curl -i http://localhost:8080/health             # 200, e continua sem token</code></pre>
+          <p style="margin:0 0 6px; font-size:0.62em;">Registre <span class="mono">CURL_SEM_TOKEN</span>, <span class="mono">MOTIVO_DO_401</span> e, trocando um caractere do meio de um token válido, <span class="mono">MOTIVO_DO_401_COM_TOKEN_ADULTERADO</span>.</p>
+          <p style="margin:0; font-size:0.6em; border-top:1px solid rgba(255,255,255,0.2); padding-top:6px;"><strong style="color:var(--fiap-pink);">Armadilha:</strong> token expirado ou com assinatura errada é <strong>401</strong>, não 403. O verificador reprova essa troca pelo nome.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Passo 3</div>
+          <div class="footer-page">41</div>
+        </div>
+      </section>
+
+      <!-- ==================== 42: PASSO 4 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 4 de 8: o 401 com um token válido</h2>
+        </div>
+
+        <div class="exercise-container">
+          <h3><span class="mono">TODO-1b</span>, mas <strong>só depois</strong> de ver o erro acontecer</h3>
+          <pre style="margin:0 0 7px; font-size:0.45em;"><code class="language-bash">export TOKEN=$(python3 pkce.py --so-token)
+curl -s -H "Authorization: Bearer $TOKEN" http://localhost:8080/api/v1/pedidos</code></pre>
+          <p style="margin:0 0 7px; font-size:0.62em;">Vai dar <strong>401</strong>, com um token perfeitamente válido. Leia o campo <span class="mono">motivo</span>: são dois endereços do mesmo Keycloak, e o serviço só conhece um deles.</p>
+          <p style="margin:0 0 6px; font-size:0.62em;">Registre <span class="mono">MOTIVO_DO_ISSUER</span>, <span class="mono">ISSUER_QUE_VEIO_NO_TOKEN</span>, <span class="mono">ISSUER_QUE_O_SERVICO_ESPERAVA</span> e, com as suas palavras, <span class="mono">POR_QUE_OS_DOIS_DIFEREM</span>. <strong>Só então</strong> preencha o <span class="mono">TODO-1b</span>.</p>
+          <p style="margin:0; font-size:0.6em; border-top:1px solid rgba(255,255,255,0.2); padding-top:6px;"><strong style="color:var(--fiap-pink);">A ordem é o exercício.</strong> Consertar antes de ver o erro é trocar uma vírgula sem entender por quê, e este é o defeito que mais volta em produção.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Passo 4</div>
+          <div class="footer-page">42</div>
+        </div>
+      </section>
+
+      <!-- ==================== 43: PASSO 5 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 5 de 8: o 403, e a dor de negócio resolvida</h2>
+        </div>
+
+        <div class="exercise-container">
+          <h3><span class="mono">TODO-3a</span> a <span class="mono">TODO-3c</span>, em <span class="caminho">servicos/pedidos/Seguranca.java</span></h3>
+          <pre style="margin:0 0 6px; font-size:0.45em;"><code class="language-java">static final List&lt;Regra&gt; REGRAS = List.of(                 // TODO-3a
+        new Regra("GET",  "/health"),
+        new Regra("GET",  "/api/v1/pedidos", "CLIENTE", "MOTORISTA", "ADMIN"),
+        ...  );                       // e o regex do {id} nao pode engolir /status
+static Set&lt;String&gt; papeisDoToken(Jwt jwt) { ... }          // TODO-3b
+// TODO-3c: sem nenhum papel em comum -> new SemPermissao(tinha, precisava)</code></pre>
+          <pre style="margin:0 0 6px; font-size:0.45em;"><code class="language-bash">export TOKEN=$(python3 pkce.py --so-token)      # entre como bruno.motorista
+curl -i -X PATCH http://localhost:8080/api/v1/pedidos/PED-1042/endereco \
+     -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+     -d '{"logradouro":"Rua Bela Cintra","numero":"495","cidade":"Sao Paulo","uf":"SP","cep":"01415-000"}'</code></pre>
+          <p style="margin:0; font-size:0.6em; border-top:1px solid rgba(255,255,255,0.2); padding-top:6px;"><strong style="color:var(--fiap-pink);">Este 403 é a aula.</strong> Registre <span class="mono">CURL_PAPEL_ERRADO</span>, <span class="mono">PAPEIS_QUE_O_BRUNO_TEM</span>, <span class="mono">PAPEIS_ACEITOS_PELA_ROTA</span> e <span class="mono">POR_QUE_401_E_403_SAO_DIFERENTES</span>.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Passo 5</div>
+          <div class="footer-page">43</div>
+        </div>
+      </section>
+
+      <!-- ==================== 44: PASSO 6 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 6 de 8: o mesmo papel, em outra stack</h2>
+        </div>
+
+        <div class="exercise-container">
+          <h3><span class="mono">TODO-4a</span> e <span class="mono">TODO-4b</span>, em <span class="caminho">servicos/notificacoes/seguranca.mjs</span></h3>
+          <pre style="margin:0 0 7px; font-size:0.45em;"><code class="language-bash">docker compose up -d --build notificacoes
+docker compose exec notificacoes node --test seguranca.test.mjs   # 14 de 14</code></pre>
+          <p style="margin:0 0 7px; font-size:0.62em;">E então o teste que vale a noite: <strong>o mesmo token do Bruno</strong>, sem login novo, nos dois serviços.</p>
+          <pre style="margin:0 0 6px; font-size:0.44em;"><code class="language-bash">curl -s -o /dev/null -w '%{http_code}\n' -H "Authorization: Bearer $TOKEN" \
+     http://localhost:8080/api/v1/pedidos                             # 200, servico Java
+curl -s -o /dev/null -w '%{http_code}\n' -X POST -H "Authorization: Bearer $TOKEN" \
+     -H 'Content-Type: application/json' -d '{"canal":"sms","destinatario":"+5511988887777","mensagem":"x"}' \
+     http://localhost:3001/api/v1/notificacoes                        # 403, servico Node</code></pre>
+          <p style="margin:0; font-size:0.6em; border-top:1px solid rgba(255,255,255,0.2); padding-top:6px;"><strong style="color:var(--fiap-pink);">Registre</strong> <span class="mono">STATUS_NO_SERVICO_JAVA</span>, <span class="mono">STATUS_NO_SERVICO_NODE</span>, <span class="mono">DE_ONDE_OS_DOIS_LEEM_O_PAPEL</span> e <span class="mono">SE_O_NODE_LESSE_DE_RESOURCE_ACCESS</span>.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Passo 6</div>
+          <div class="footer-page">44</div>
+        </div>
+      </section>
+
+      <!-- ==================== 45: PASSO 7 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 7 de 8: o portal faz o mesmo, em TypeScript</h2>
+        </div>
+
+        <div class="exercise-container">
+          <h3><span class="mono">TODO-5a</span> a <span class="mono">TODO-5d</span>, em <span class="caminho">portal/src/auth/pkce.ts</span></h3>
+          <pre style="margin:0 0 6px; font-size:0.45em;"><code class="language-typescript">export function gerarVerifier(): string { ... }                      // TODO-5a
+export async function desafioS256(verifier: string) { ... }          // TODO-5b
+export function urlDeAutorizacao(desafio, estado): string { ... }     // TODO-5c
+export async function trocarCodigoPorToken(codigo, verifier) { ... }  // TODO-5d</code></pre>
+          <pre style="margin:0 0 7px; font-size:0.45em;"><code class="language-bash">cd portal && npm test      # 13 de 13; um deles usa o vetor de teste da RFC 7636
+npm run dev                # http://localhost:5173</code></pre>
+          <p style="margin:0 0 6px; font-size:0.62em;">Entre como <span class="mono">ana.cliente</span> e clique em "Enviar aviso de entrega". Depois saia, entre como <span class="mono">carla.admin</span> e clique de novo.</p>
+          <p style="margin:0; font-size:0.6em; border-top:1px solid rgba(255,255,255,0.2); padding-top:6px;"><strong style="color:var(--fiap-pink);">Registre</strong> <span class="mono">MENSAGEM_DO_403_NA_TELA</span>, <span class="mono">RESULTADO_COMO_ADMIN</span> e a resposta de <span class="mono">ESCONDER_O_BOTAO_RESOLVERIA</span>.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Passo 7</div>
+          <div class="footer-page">45</div>
+        </div>
+      </section>
+
+      <!-- ==================== 46: PASSO 8 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 8 de 8: duas worktrees, e a entrega</h2>
+        </div>
+
+        <div class="exercise-container">
+          <h3><span class="mono">TODO-6</span>: quatro comandos, e usar as duas de verdade</h3>
+          <pre style="margin:0 0 6px; font-size:0.45em;"><code class="language-bash">git switch -c seguranca/backend && git switch -c seguranca/portal && git switch main
+git worktree add ../agent-auth seguranca/backend
+git worktree add ../agent-ui   seguranca/portal
+git worktree list</code></pre>
+          <p style="margin:0 0 6px; font-size:0.62em;">Em dois terminais, ao mesmo tempo: a suíte Java em <span class="mono">../agent-auth</span> e o <span class="mono">npm test</span> em <span class="mono">../agent-ui</span>. Registre <span class="mono">WORKTREE_AUTH</span>, <span class="mono">WORKTREE_UI</span>, <span class="mono">SAIDA_DO_GIT_WORKTREE_LIST</span> e <span class="mono">O_QUE_ACONTECERIA_COM_SWITCH</span>.</p>
+          <pre style="margin:0 0 6px; font-size:0.45em;"><code class="language-bash">python3 verificar.py       # os 6 criterios</code></pre>
+          <p style="margin:0; font-size:0.6em; border-top:1px solid rgba(255,255,255,0.2); padding-top:6px;"><strong style="color:var(--fiap-pink);">Ordem de corte, se apertar:</strong> o Passo 8 vira tarefa de casa, depois o Passo 7. Os passos 2 a 5 nunca saem.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Passo 8</div>
+          <div class="footer-page">46</div>
+        </div>
+      </section>
+
+      <!-- ==================== 47: ENTREGA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Formulário de Entrega</h2>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 600px 1fr; gap:26px; align-items:start; margin-top:4px;">
+          <div class="marcador-pendente" style="height:326px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+            <div style="font-size:1.02em; font-weight:800; color:#c0392b; margin-bottom:12px;">Formulário ainda não publicado</div>
+            <p style="font-size:0.66em; color:#a03028; text-align:center; margin:0 0 10px; line-height:1.5;">
+              A URL de entrega desta aula <strong>será publicada pelo professor antes do encontro</strong>,
+              e este slide passa a exibi-la aqui.
+            </p>
+            <p style="font-size:0.62em; color:#a03028; text-align:center; margin:0; line-height:1.5;">
+              Até lá, não use o formulário de outra aula: cada entrega é registrada em um formulário próprio.
+            </p>
+          </div>
+
+          <div>
+            <div class="concept-cards" style="grid-template-columns:1fr; gap:10px; margin-top:0;">
+              <div class="concept-card" style="padding:11px 16px;">
+                <h4>O que enviar</h4>
+                <p style="font-size:0.64em;">A URL do <strong>fork da dupla</strong>, no formato<br><span class="mono">github.com/usuario/mwe-2026-2-lab14-oauth-jwt</span></p>
+              </div>
+              <div class="concept-card" style="padding:11px 16px;">
+                <h4>Quem envia</h4>
+                <p style="font-size:0.64em;">Um envio por dupla, com os nomes dos dois integrantes.</p>
+              </div>
+              <div class="concept-card" style="padding:11px 16px;">
+                <h4>Até quando</h4>
+                <p style="font-size:0.64em;">Até 22h50, com os oito commits no fork e o <span class="mono">docs/EVIDENCIAS.md</span> preenchido.</p>
+              </div>
+            </div>
+
+            <div class="callout" style="margin-top:9px; padding:11px 15px;">
+              <p style="font-size:0.63em; margin:0; line-height:1.5;">Critérios de aceitação completos no
+                <a href="https://github.com/josercf/mwe-2026-2-lab14-oauth-jwt" target="_blank" style="color:var(--fiap-pink); font-weight:700;">README do Lab Kit</a></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Entrega</div>
+          <div class="footer-page">47</div>
+        </div>
+      </section>
+
+      <!-- ==================== 48: A PRÓXIMA VOLTA DA ESPIRAL ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A próxima volta da espiral</h2>
+        </div>
+
+        <p style="font-size:0.72em; margin:2px 0 8px;">Hoje a plataforma passou a saber <strong>quem</strong> está chamando. Isso não a torna segura: torna-a autenticada, que é outra coisa.</p>
+
+        <div class="concept-cards" style="grid-template-columns:1fr 1fr; gap:14px;">
+          <div class="concept-card" style="border-top:4px solid #ED145B;">
+            <h4>Aula 15, 10/11: o que um token válido ainda não impede</h4>
+            <p style="font-size:0.65em;">O assistente da LogiTech atende clientes <strong>autenticados</strong> e tem ferramenta que altera pedido. Um texto bem escrito dentro da pergunta pode fazer o modelo ignorar a instrução de sistema, e o token dele estará perfeitamente em ordem.</p>
+            <p style="font-size:0.65em; margin-top:6px;">OWASP Top 10 para LLM, guardrails de entrada e saída, e Trivy nas imagens que sobem desde a Aula 03.</p>
+          </div>
+          <div class="concept-card" style="border-top:4px solid #6b3fa0;">
+            <h4>Aula 16, 17/11: os treze de pé, com um comando</h4>
+            <p style="font-size:0.65em;">A plataforma inteira sobe junto, autenticada de ponta a ponta, e o fluxo é validado do clique no portal até o banco, atravessando token, gateway e RAG. É o simulado da banca da Global Solution.</p>
+            <p style="font-size:0.65em; margin-top:6px;">O contrato que vocês cumpriram hoje é exatamente o que será testado lá.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">O que fica desta noite</span>
+          <p>Autenticação diz <strong>quem</strong>. Autorização diz <strong>o quê</strong>. Nenhuma das duas diz se o que o usuário pediu era uma boa ideia, e é aí que a Aula 15 começa.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – A próxima volta</div>
+          <div class="footer-page">48</div>
+        </div>
+      </section>
+
+      <!-- ==================== 49: REFERÊNCIAS 1 ==================== -->
+      <section class="content-slide" id="ref-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Referências (1 de 2)</h2>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:6px;">
+          <div style="font-size:0.62em; line-height:1.5;">
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[1] OAuth 2.0</strong><br>
+            HARDT, D. <em>The OAuth 2.0 Authorization Framework</em>. RFC 6749, IETF, 2012.<br>
+            JONES, M.; HARDT, D. <em>The OAuth 2.0 Authorization Framework: Bearer Token Usage</em>. RFC 6750, 2012.<br>
+            <a href="https://oauth.net/2/" target="_blank" style="color:var(--fiap-pink);">oauth.net/2</a>, mapa das especificações e do OAuth 2.1</p>
+
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[2] PKCE</strong><br>
+            SAKIMURA, N. et al. <em>Proof Key for Code Exchange by OAuth Public Clients</em>. RFC 7636, IETF, 2015. O vetor de teste do apêndice B é o mesmo usado na suíte do laboratório.<br>
+            IETF. <em>OAuth 2.0 Security Best Current Practice</em>, RFC 9700, 2025.</p>
+
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[3] OpenID Connect</strong><br>
+            SAKIMURA, N. et al. <em>OpenID Connect Core 1.0</em>. OpenID Foundation.<br>
+            <em>OpenID Connect Discovery 1.0</em>, o documento <span class="mono">.well-known</span>.</p>
+          </div>
+
+          <div style="font-size:0.62em; line-height:1.5;">
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[4] JWT</strong><br>
+            JONES, M.; BRADLEY, J.; SAKIMURA, N. <em>JSON Web Token (JWT)</em>. RFC 7519, IETF, 2015.<br>
+            <em>JSON Web Signature (JWS)</em>, RFC 7515, e <em>JSON Web Algorithms</em>, RFC 7518.<br>
+            IETF. <em>JSON Web Token Best Current Practices</em>, RFC 8725, 2020: é onde <span class="mono">alg: none</span> e a confusão de algoritmo estão descritos.</p>
+
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[5] JWKS</strong><br>
+            JONES, M. <em>JSON Web Key (JWK)</em>. RFC 7517, IETF, 2015.</p>
+
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[6] RBAC</strong><br>
+            SANDHU, R. et al. <em>Role-Based Access Control Models</em>. IEEE Computer, 1996.<br>
+            NIST. <em>INCITS 359-2012, Role Based Access Control</em>.</p>
+
+            <p style="margin:0;"><strong style="color:var(--fiap-pink);">[7] Contratos da plataforma</strong><br>
+            <span class="mono">ADR-006</span>, <span class="mono">ADR-008</span> e <span class="mono">ADR-009</span> do acervo da disciplina. A <span class="mono">ADR-009</span> fixa papéis, rotas, o interruptor e o lugar do papel no token.</p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Bibliografia</div>
+          <div class="footer-page">49</div>
+        </div>
+      </section>
+
+      <!-- ==================== 50: REFERÊNCIAS 2 ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Referências (2 de 2)</h2>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:6px;">
+          <div style="font-size:0.62em; line-height:1.5;">
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[8] Códigos de status HTTP</strong><br>
+            FIELDING, R.; NOTTINGHAM, M.; RESCHKE, J. <em>HTTP Semantics</em>. RFC 9110, IETF, 2022, seções 15.5.2 (401) e 15.5.4 (403).<br>
+            FIELDING, R.; RESCHKE, J. <em>HTTP/1.1 Authentication</em>. RFC 7235, sobre o esquema não sensível a caixa.</p>
+
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[9] Keycloak</strong><br>
+            <a href="https://www.keycloak.org/documentation" target="_blank" style="color:var(--fiap-pink);">keycloak.org/documentation</a>, versão 26: <em>Server Guide</em>, importação de realm e configuração de hostname.<br>
+            THORGERSEN, S.; SILVA, P. I. <em>Keycloak: Identity and Access Management for Modern Applications</em>. 2. ed. Packt, 2023.</p>
+
+            <p style="margin:0;"><strong style="color:var(--fiap-pink);">[10] Git Worktrees</strong><br>
+            <a href="https://git-scm.com/docs/git-worktree" target="_blank" style="color:var(--fiap-pink);">git-scm.com/docs/git-worktree</a><br>
+            CHACON, S.; STRAUB, B. <em>Pro Git</em>. 2. ed. Apress, 2014.</p>
+          </div>
+
+          <div style="font-size:0.62em; line-height:1.5;">
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[11] Segurança de aplicação web</strong><br>
+            OWASP. <em>Top 10 Web Application Security Risks</em>, categoria A01: Broken Access Control.<br>
+            OWASP. <em>Authorization Cheat Sheet</em> e <em>JSON Web Token Cheat Sheet</em>.</p>
+
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[12] Material desta aula</strong><br>
+            LAB KIT: <a href="https://github.com/josercf/mwe-2026-2-lab14-oauth-jwt" target="_blank" style="color:var(--fiap-pink);">mwe-2026-2-lab14-oauth-jwt</a><br>
+            Aula anterior sobre worktrees: <span class="mono">aula08</span>, agente de IA com Function Calling.<br>
+            Aula anterior sobre orquestração: <span class="mono">aula07</span>, Docker Compose e healthcheck.</p>
+
+            <p style="margin:0;"><strong style="color:var(--fiap-pink);">Nota sobre os números deste deck</strong><br>
+            Tempo de subida, tempo de construção, memória, tamanho do token e validade foram <strong>medidos</strong> em 31/07/2026, em macOS 27 com Apple Silicon, Docker Desktop 29.6.2 e Keycloak 26.0.8, com as imagens base já baixadas. Em outra máquina os números mudam; o que não muda é a ordem de grandeza e o método.</p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Bibliografia</div>
+          <div class="footer-page">50</div>
+        </div>
+      </section>
+
+      <!-- ==================== 51: ENCERRAMENTO ==================== -->
       <section class="end-slide">
         <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" style="max-width:350px;">
         <div class="copyright">
           Copyright &copy; 2026<br>
-          Prof.º José Romualdo da Costa Filho<br><br>
-          Todos direitos reservados. Reprodução ou divulgação total ou parcial<br>
-          deste documento é expressamente proibido sem o consentimento formal,<br>
-          por escrito, do Professor (autor).
+          Prof. José Romualdo da Costa Filho<br><br>
+          Todos os direitos reservados. É expressamente proibida a reprodução, divulgação<br>
+          total ou parcial, deste material acadêmico sem autorização formal,<br>
+          por escrito, do Professor autor da ementa.
         </div>
       </section>
+
 
     </div>
   </div>
@@ -365,6 +2174,11 @@ git worktree remove ../logitech-security
       transitionSpeed: 'default',
       plugins: [RevealHighlight]
     });
+    // startTimer(elementId, segundos) vem de ../assets/js/fiap-quiz.js
   </script>
+  <!-- Cliente do serviço Pulso: liga os quizzes com data-quiz-key à votação ao vivo.
+       Carregamento assíncrono (defer) e opcional: se o host estiver fora do ar
+       ou o script falhar, o quiz continua funcionando no modo local de sempre. -->
+  <script defer src="https://vote.jrcf.dev/client.js"></script>
 </body>
 </html>

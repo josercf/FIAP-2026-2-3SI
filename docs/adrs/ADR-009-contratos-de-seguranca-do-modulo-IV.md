@@ -150,6 +150,16 @@ a defesa vira ritual.
 Aceitar HIGH com justificativa escrita é o que times reais fazem; exigir zero
 HIGH faria o aluno inventar número para fechar a conta.
 
+### 7.1 Serviços congelados continuam mínimos
+
+Vale para este módulo o mesmo que a `ADR-007` estabeleceu na Aula 07: o que cada
+lab kit congela em `servicos/` são versões **mínimas**, que obedecem ao contrato
+de rotas e portas mas não carregam os padrões de projeto das aulas em que
+nasceram. O `pedidos` congelado da Aula 14, por exemplo, é Java em memória, sem
+Spring e sem PostgreSQL, porque a aula é sobre validar token, não sobre JPA, e
+um build de Maven dentro do laboratório de segurança comeria o tempo da aula.
+Cada kit declara isso em `servicos/LEIA-ME.md` e no slide correspondente.
+
 ### 8. Variáveis novas
 
 ```

@@ -1,0 +1,123 @@
+{
+  "realm": "logitech",
+  "displayName": "LogiTech Enterprise",
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "resetPasswordAllowed": false,
+  "rememberMe": false,
+  "verifyEmail": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "bruteForceProtected": true,
+  "accessTokenLifespan": 300,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000,
+
+  "roles": {
+    "realm": [
+      {
+        "name": "ADMIN",
+        "description": "Operacao da LogiTech: emite fatura, dispara notificacao e le metricas."
+      },
+      {
+        "name": "MOTORISTA",
+        "description": "Motorista da frota: consulta pedido e cota frete, nao cria nem altera."
+      },
+      {
+        "name": "CLIENTE",
+        "description": "Cliente da LogiTech: cria pedido e altera o endereco de entrega do proprio pedido."
+      }
+    ]
+  },
+
+  "clients": [
+    {
+      "clientId": "logitech-portal",
+      "name": "Portal do Cliente (React)",
+      "description": "SPA React da Aula 10, porta 5173. Authorization Code + PKCE.",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "http://localhost:5173/*",
+        "http://127.0.0.1:5173/*",
+        "http://localhost:5199/*"
+      ],
+      "webOrigins": [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:5199"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:5173/*"
+      }
+    },
+    {
+      "clientId": "logitech-painel-admin",
+      "name": "Painel Administrativo (Angular)",
+      "description": "SPA Angular da Aula 11, porta 4200. Authorization Code + PKCE.",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "http://localhost:4200/*",
+        "http://127.0.0.1:4200/*"
+      ],
+      "webOrigins": [
+        "http://localhost:4200",
+        "http://127.0.0.1:4200"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:4200/*"
+      }
+    }
+  ],
+
+  "users": [
+    {
+      "username": "ana.cliente",
+      "email": "ana.cliente@logitech.example",
+      "firstName": "Ana",
+      "lastName": "Ribeiro",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        { "type": "password", "value": "logitech", "temporary": false }
+      ],
+      "realmRoles": ["CLIENTE"]
+    },
+    {
+      "username": "bruno.motorista",
+      "email": "bruno.motorista@logitech.example",
+      "firstName": "Bruno",
+      "lastName": "Tavares",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        { "type": "password", "value": "logitech", "temporary": false }
+      ],
+      "realmRoles": ["MOTORISTA"]
+    },
+    {
+      "username": "carla.admin",
+      "email": "carla.admin@logitech.example",
+      "firstName": "Carla",
+      "lastName": "Nogueira",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        { "type": "password", "value": "logitech", "temporary": false }
+      ],
+      "realmRoles": ["ADMIN"]
+    }
+  ]
+}
