@@ -1074,11 +1074,13 @@
 }
 
 .pulso-qr {
-  width: 110px;
-  height: 110px;
+  /* Mesma area ocupada por .quiz-qr-code (90px + padding de 5px = 100x100),
+     para o swap com o placeholder nao alterar a altura do slide. */
+  width: 90px;
+  height: 90px;
   border-radius: 8px;
   background: #fff;
-  padding: 6px;
+  padding: 5px;
 }
 
 .pulso-texto {
@@ -1119,4 +1121,3 @@
   color: var(--fiap-pink, #ED145B);
   z-index: 1;
 }
-

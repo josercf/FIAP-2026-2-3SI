@@ -1842,6 +1842,9 @@ git push origin main</code></pre>
     });
     // startTimer(elementId, segundos) vem de ../assets/js/fiap-quiz.js
   </script>
+  <!-- Cliente do servico Pulso: liga os quizzes com data-quiz-key a votacao ao vivo.
+       Carregamento assincrono (defer) e opcional: se o host estiver fora do ar
+       ou o script falhar, o quiz continua funcionando no modo local de sempre. -->
   <script defer src="https://vote.jrcf.dev/client.js"></script>
 </body>
 </html>
