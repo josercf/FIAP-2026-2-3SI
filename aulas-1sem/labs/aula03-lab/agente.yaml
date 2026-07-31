@@ -1,0 +1,14 @@
+models:
+  local:
+    provider: openai
+    model: qwen3.5:2b
+    base_url: http://localhost:11434/v1
+    token_key: OLLAMA_DUMMY_KEY
+
+agents:
+  root:
+    model: local
+    instruction: Você escreve Dockerfiles para a plataforma LogiTech.
+    skills: true
+    toolsets:
+      - type: filesystem
