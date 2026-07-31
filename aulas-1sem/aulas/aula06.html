@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aula 06 – Design Patterns (Adapter, Decorator, Strategy) & APIs | FIAP</title>
+  <title>Aula 06 – Design Patterns Estruturais e Comportamentais em Node.js e Python | FIAP</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
@@ -11,131 +11,2549 @@
   <link rel="stylesheet" href="../assets/css/fiap-print.css">
   <script>if(/print-pdf/gi.test(window.location.search)){var link=document.createElement('link');link.rel='stylesheet';link.href='https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/css/print/pdf.css';document.head.appendChild(link);}</script>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* Tabelas compactas, mesmo padrao das Aulas 02 e 03 */
+    .reveal table.compact-table { font-size: 0.62em; margin: 8px 0; }
+    .reveal table.compact-table th { padding: 7px 12px; }
+    .reveal table.compact-table td { padding: 7px 12px; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    /* A JetBrains Mono desenha ligaduras: `<=` vira o glifo de menor ou igual e
+       `->` vira uma seta. Em slide onde o aluno copia a sintaxe, isso adultera
+       o codigo. Desligado aqui, no deck, e nao no tema compartilhado. */
+    .reveal pre code, .reveal code, .reveal .mono {
+      font-variant-ligatures: none;
+      font-feature-settings: "liga" 0, "clig" 0, "calt" 0;
+    }
+    /* O tema poe `text-transform: uppercase` no h3 do exercise-container.
+       Caminho de arquivo e sensivel a caixa: este span devolve a caixa original. */
+    .reveal .exercise-container h3 .caminho { text-transform: none; }
+    /* Fechamento de atividade, no padrao da Aula 03 */
+    .reveal .exercise-container .fecho {
+      margin: 8px 0 0; font-size: 0.62em;
+      border-top: 1px solid rgba(255,255,255,0.2); padding-top: 8px;
+    }
+    .reveal .exercise-container .fecho strong { color: var(--fiap-pink); }
+    /* Figuras com animacao SVG: altura controlada para nunca estourar os 720px */
+    .reveal .slide-figure { margin: 6px 0 0; }
+    .reveal .slide-figure svg { width: 100%; }
+    .reveal .slide-figure figcaption { font-size: 0.57em; line-height: 1.4; color: #6b6b6b; margin-top: 4px; }
+    /* Par de blocos de codigo lado a lado, para o antes e o depois */
+    .reveal .code-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 8px; }
+    .reveal .code-pair h4 { font-size: 0.64em; margin: 0 0 5px; color: var(--fiap-pink); font-weight: 700; }
+    .reveal .code-pair pre { margin: 0; }
+  </style>
 </head>
 <body>
   <div class="reveal">
     <div class="slides">
-      <section class="cover-slide"><img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" class="fiap-logo-full"></section>
-      <section class="title-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="title-card"><div class="accent-bar"></div><h1>Sistemas de Informação</h1><h2>Microservice and Web Engineering & IT Services</h2><h3>Prof. José Romualdo</h3></div>
-        <div class="lesson-bar">AULA 06 – Design Patterns (Adapter, Decorator, Strategy) & APIs em Node.js (TypeScript) & Python (FastAPI)</div>
+
+      <!-- ==================== 1: CAPA ==================== -->
+      <section class="cover-slide">
+        <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" class="fiap-logo-full">
       </section>
+
+      <!-- ==================== 2: TÍTULO ==================== -->
+      <section class="title-slide" data-background-image="../assets/img/microservices-bg.jpg" data-background-opacity="0.3">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="title-card">
+          <div class="accent-bar"></div>
+          <h1>Sistemas de Informação</h1>
+          <h2>Microservice and Web Engineering &amp; IT Services</h2>
+          <h3>Prof. José Romualdo</h3>
+        </div>
+        <div class="lesson-bar">AULA 06 – Design Patterns Estruturais e Comportamentais em Node.js e Python</div>
+      </section>
+
+      <!-- ==================== 3: AGENDA ==================== -->
       <section class="content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Agenda do Encontro</h2></div>
-        <table>
-          <thead><tr><th>Bloco</th><th>Horário</th><th>Conteúdo & Atividades</th></tr></thead>
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Agenda do Encontro de Hoje</h2>
+        </div>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>Início</th><th>Conteúdo</th></tr>
+          </thead>
           <tbody>
-            <tr><td><strong>Bloco 1</strong></td><td>19h20 – 20h50</td><td>Adapter & Decorator em Python e TypeScript + Quiz #1</td></tr>
-            <tr><td><strong>Intervalo</strong></td><td>20h50 – 21h20</td><td>☕ Pausa para Café e Networking (30 min)</td></tr>
-            <tr><td><strong>Bloco 2</strong></td><td>21h20 – 22h50</td><td>Quizzes #2 e #3 + Criação de API (FastAPI / Express) + Lab</td></tr>
+            <tr><td>19h20</td><td>Resgate da espiral: o síncrono do Java e do C# contra o event loop</td></tr>
+            <tr><td>19h35</td><td>Desafio do Mini Mundo: três dores de negócio, três padrões</td></tr>
+            <tr><td>19h55</td><td>Teoria: Strategy, Adapter e Decorator; async e event loop; contrato com Pydantic e Zod</td></tr>
+            <tr><td>20h35</td><td>Quiz 1</td></tr>
+            <tr><td>20h50</td><td>Intervalo (30 minutos)</td></tr>
+            <tr><td>21h20</td><td>Quizzes 2 e 3</td></tr>
+            <tr><td>21h35</td><td>Atividade prática em dupla: as seis lacunas do laboratório</td></tr>
+            <tr><td>22h35</td><td>Swagger UI, evidências, commit e entrega</td></tr>
           </tbody>
         </table>
-        <div class="slide-footer"><div class="footer-bar">06 – APIs & Patterns</div><div class="footer-page">3</div></div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Entregável de hoje</span>
+          <p>O fork da dupla com as seis lacunas fechadas, <span class="mono">pytest</span> e <span class="mono">vitest</span> verdes e o <span class="mono">verificar.py</span> imprimindo 8 de 8.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Agenda do Encontro</div>
+          <div class="footer-page">3</div>
+        </div>
       </section>
+
+      <!-- ==================== 4: COMO A AULA FUNCIONA ==================== -->
       <section class="content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Padrões Estruturais em APIs</h2></div>
-        <div class="concept-cards">
-          <div class="concept-card"><h4>Adapter</h4><p>Conecta interfaces incompatíveis. Útil para integrar APIs de terceiros (ex: legado).</p></div>
-          <div class="concept-card"><h4>Decorator</h4><p>Adiciona comportamentos a objetos dinamicamente sem alterar a classe (ex: Middlewares, anotações de rota).</p></div>
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Como a aula de hoje funciona</h2>
         </div>
-        <div class="slide-footer"><div class="footer-bar">06 – APIs & Patterns</div><div class="footer-page">4</div></div>
-      </section>
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Quiz #1 (Fixação do Bloco 1)</h2></div>
-        <div class="quiz-container">
-          <div class="quiz-question">Qual é a função do padrão Decorator?</div>
-          <ul class="quiz-options">
-            <li data-correct="false"><span class="option-letter">A</span>Instanciar objetos de forma controlada.</li>
-            <li data-correct="true"><span class="option-letter">B</span>Adicionar responsabilidades adicionais a um objeto dinamicamente.</li>
-            <li data-correct="false"><span class="option-letter">C</span>Prover uma interface simplificada para um subsistema complexo.</li>
-            <li data-correct="false"><span class="option-letter">D</span>Traduzir uma classe para outra.</li>
-          </ul>
-          <div class="quiz-feedback" data-correct-msg="Correto! Ele 'abraça' a função/classe original e adiciona comportamento." data-incorrect-msg="Atenção: O Decorator anexa responsabilidades extras sem alterar a estrutura base."></div>
+
+        <p style="font-size:0.72em; margin-bottom:0;">A teoria de hoje vem inteira antes do intervalo, porque os três padrões se explicam juntos. Depois dos quizzes, são <strong>60 minutos de laboratório em dupla</strong>, com seis lacunas nomeadas em dois serviços que já sobem e respondem.</p>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:13px; margin-top:10px;">
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Lacuna nomeada, não projeto em branco</h4>
+            <p style="font-size:0.68em;">Nada é escrito do zero. Cada <span class="mono">TODO-N</span> tem a especificação na documentação da própria classe e um bloco de testes já escrito, esperando.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Em dupla, um commit por lacuna</h4>
+            <p style="font-size:0.68em;">O fork é da dupla. Cada lacuna fecha com <span class="mono">feat(todo-N): ...</span>, e a progressão da noite fica visível no histórico do repositório.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Ordem de corte declarada</h4>
+            <p style="font-size:0.68em;">Se o relógio vencer, a prioridade já está escrita no README e será repetida em voz alta. Ninguém decide sozinho, às 22h30, o que abandonar.</p>
+          </div>
         </div>
-        <div class="slide-footer"><div class="footer-bar">06 – APIs & Patterns</div><div class="footer-page">5</div></div>
-      </section>
-      <section class="content-slide" style="text-align:center;">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div style="margin-top:100px;">
-          <h2 style="font-size:2.5em; color:var(--fiap-pink);">☕ Pausa para Café</h2>
-          <h3 style="font-size:1.5em; color:var(--fiap-gray-light); margin-top:20px;">20h50 – 21h20 (30 minutos)</h3>
-          <p style="margin-top:40px; font-size:1.1em;">Na volta: Quizzes #2 e #3 + Hands-on Lab!</p>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Autoavaliação contínua</span>
+          <p>O <span class="mono">python3 verificar.py</span> roda a qualquer momento e diz qual critério está faltando e por quê. Ele importa o seu código e o executa: ninguém descobre no fim da noite que o passo 2 estava errado.</p>
         </div>
-        <div class="slide-footer"><div class="footer-page">6</div></div>
-      </section>
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Quiz #2 (Retorno do Intervalo)</h2></div>
-        <div class="quiz-container">
-          <div class="quiz-question">Ao integrar a LogiTech com a API dos Correios (SOAP antigo) para o nosso sistema REST moderno, qual padrão usar?</div>
-          <ul class="quiz-options">
-            <li data-correct="false"><span class="option-letter">A</span>Singleton</li>
-            <li data-correct="true"><span class="option-letter">B</span>Adapter</li>
-            <li data-correct="false"><span class="option-letter">C</span>Observer</li>
-            <li data-correct="false"><span class="option-letter">D</span>Factory</li>
-          </ul>
-          <div class="quiz-feedback" data-correct-msg="Perfeito! O Adapter 'traduz' as chamadas." data-incorrect-msg="Pense num adaptador de tomada: ele conecta interfaces incompatíveis. Padrão Adapter."></div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Como a Aula Funciona</div>
+          <div class="footer-page">4</div>
         </div>
-        <div class="slide-footer"><div class="footer-bar">06 – APIs & Patterns</div><div class="footer-page">7</div></div>
       </section>
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Quiz #3</h2></div>
-        <div class="quiz-container">
-          <div class="quiz-question">No FastAPI, o que representa a notação @app.get('/rota')?</div>
-          <ul class="quiz-options">
-            <li data-correct="true"><span class="option-letter">A</span>Um Decorator que mapeia a URL para a função.</li>
-            <li data-correct="false"><span class="option-letter">B</span>Um Strategy que injeta um banco de dados.</li>
-            <li data-correct="false"><span class="option-letter">C</span>Uma herança múltipla.</li>
-            <li data-correct="false"><span class="option-letter">D</span>Um erro de sintaxe do Python.</li>
-          </ul>
-          <div class="quiz-feedback" data-correct-msg="Exato! Decorators em Python são amplamente usados em web frameworks." data-incorrect-msg="Isso é um decorator Python! Adiciona comportamento de roteamento."></div>
-        </div>
-        <div class="slide-footer"><div class="footer-bar">06 – APIs & Patterns</div><div class="footer-page">8</div></div>
-      </section>
+
+      <!-- ==================== 5: PRÉ-REQUISITOS ==================== -->
       <section class="content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Hands-on Lab: LogiTech Enterprise</h2></div>
-        <div class="concept-cards">
-          <div class="concept-card"><h4>Missão</h4><p>Criar uma API FastAPI usando Adapter para um serviço falso de tracking.</p></div>
-          <div class="concept-card"><h4>Passo a Passo</h4><p>1. Criar `main.py`<br>2. Definir a classe Adapter<br>3. Expor um endpoint GET.</p></div>
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Antes de começar: dois pré-requisitos</h2>
         </div>
-        <pre class="code-compact"><code class="language-python"># main.py (FastAPI)
-from fastapi import FastAPI
-app = FastAPI()
 
-class LegacyTrackingAPI:
-    def get_status(self, code: str) -> str:
-        return "ENTREGUE_LEGADO"
+        <div class="concept-cards" style="grid-template-columns: 1fr 1fr; gap:16px; margin-top:8px;">
+          <div class="concept-card" style="padding:16px 20px;">
+            <h4>1. Fork do Lab Kit, feito agora</h4>
+            <p style="font-size:0.68em;"><strong>Fork</strong>, nunca clone direto, de<br><a href="https://github.com/josercf/mwe-2026-2-lab06-apis-patterns" target="_blank" style="color:var(--fiap-pink); font-weight:700;">josercf/mwe-2026-2-lab06-apis-patterns</a><br>e Codespace criado no seu fork: <span class="mono">Code &gt; Codespaces &gt; Create codespace on main</span>.</p>
+          </div>
+          <div class="concept-card" style="padding:16px 20px;">
+            <h4>2. Dependências instaladas antes do intervalo</h4>
+            <p style="font-size:0.68em;">São duas stacks numa noite só: Python com FastAPI e Node 22 com TypeScript. Instalação que falha às 21h35 custa a atividade inteira da dupla.</p>
+          </div>
+        </div>
 
-class TrackingAdapter:
-    def __init__(self, legacy: LegacyTrackingAPI):
-        self.legacy = legacy
-    def track(self, code: str) -> dict:
-        status = self.legacy.get_status(code)
-        return {"code": code, "status": status.lower(), "modern": True}
+        <pre style="font-size:0.52em; margin:10px 0 0;"><code class="language-bash"># com o Codespace aberto, a partir da raiz do laboratório
+python3 -m pip install -r servicos/frete/requirements.txt
+cd servicos/notificacoes && npm install && cd ../..
 
-@app.get("/track/{code}")
-def track_order(code: str):
-    adapter = TrackingAdapter(LegacyTrackingAPI())
-    return adapter.track(code)</code></pre>
-        <div class="slide-footer"><div class="footer-bar">06 – APIs & Patterns</div><div class="footer-page">9</div></div>
+python3 verificar.py --lista     # os oito critérios da noite, antes de escrever qualquer linha</code></pre>
+
+        <div class="callout" style="margin-top:9px; padding:11px 16px;">
+          <p style="font-size:0.66em; margin:0;">O <span class="mono">post-create.sh</span> do devcontainer já faz isso e ainda sobe o Ollama com o modelo local. Espere ele terminar antes do primeiro comando, e rode o <span class="mono">--lista</span> para confirmar que o verificador responde.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Pré-requisitos</div>
+          <div class="footer-page">5</div>
+        </div>
       </section>
+
+      <!-- ==================== 4: RESGATE DA ESPIRAL ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Resgate da Espiral: o que já está de pé</h2>
+        </div>
+
+        <p style="font-size:0.72em; margin-bottom:0;">A plataforma da LogiTech não começa hoje. Quatro entregas suas já estão rodando, e as duas de hoje encaixam nelas.</p>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>Aula</th><th>O que você entregou</th><th>Como isso volta hoje</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>02</td><td>Coletor UDP e gateway HTTP/SSE</td><td>O mesmo contrato REST, agora em dois serviços novos</td></tr>
+            <tr><td>03</td><td>Imagens Docker, volume e a rede <span class="mono">logitech-net</span></td><td>Os serviços de hoje entram nessa rede na Aula 07</td></tr>
+            <tr><td>05</td><td>Pedidos em Java e Faturamento em C#, com SOLID</td><td>SOLID é o porquê; os padrões de hoje são o como</td></tr>
+            <tr><td>05</td><td>Factory, Repository e Singleton</td><td>Strategy, Adapter e Decorator completam o repertório</td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A frase que amarra o módulo</span>
+          <p>SOLID diz <strong>por que</strong> o código precisa mudar de forma. Design Patterns dizem <strong>que forma</strong> tomar. O Open/Closed da Aula 05 é a razão de existir do Strategy de hoje.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Resgate da Espiral</div>
+          <div class="footer-page">6</div>
+        </div>
+      </section>
+
+      <!-- ==================== 5: EVENT LOOP x SÍNCRONO [ANIM 1] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Thread bloqueada em Java e C#, event loop aqui <a href="#/ref-slide" class="ref-badge" title="Ver referências">[5]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 920 300" style="max-height:420px;" role="img" aria-label="Modelo de thread por requisição comparado ao event loop">
+            <text x="10" y="18" font-size="14" font-weight="700" fill="#333">Aula 05: uma thread por requisição (Java, C#)</text>
+            <g font-size="11" fill="#555">
+              <rect x="10" y="30" width="430" height="112" rx="8" fill="#fafafa" stroke="#ccc"/>
+              <rect x="26" y="46" width="118" height="24" rx="4" fill="#b0b0b0"/><text x="85" y="63" text-anchor="middle" fill="#fff" font-weight="700">thread 1</text>
+              <rect x="26" y="76" width="118" height="24" rx="4" fill="#b0b0b0"/><text x="85" y="93" text-anchor="middle" fill="#fff" font-weight="700">thread 2</text>
+              <rect x="26" y="106" width="118" height="24" rx="4" fill="#b0b0b0"/><text x="85" y="123" text-anchor="middle" fill="#fff" font-weight="700">thread 3</text>
+              <text x="156" y="63">bloqueada esperando o banco</text>
+              <text x="156" y="93">bloqueada esperando a parceira</text>
+              <text x="156" y="123">bloqueada esperando o SMTP</text>
+              <rect x="26" y="46" width="118" height="24" rx="4" fill="#ED145B" opacity="0">
+                <animate attributeName="opacity" values="0;0.85;0.85;0" keyTimes="0;0.08;0.30;0.38" dur="8s" repeatCount="indefinite"/>
+              </rect>
+            </g>
+            <text x="10" y="164" font-size="12" fill="#777">Cada espera custa uma thread parada.</text>
+
+            <text x="480" y="18" font-size="14" font-weight="700" fill="#ED145B">Hoje: um laço só, que nunca espera parado</text>
+            <g fill="none" stroke="#ED145B" stroke-width="2.5">
+              <circle cx="590" cy="90" r="46"/>
+            </g>
+            <circle cx="590" cy="44" r="8" fill="#ED145B">
+              <animateTransform attributeName="transform" type="rotate" from="0 590 90" to="360 590 90" dur="4s" repeatCount="indefinite"/>
+            </circle>
+            <text x="590" y="88" text-anchor="middle" font-size="12" font-weight="700" fill="#333">event</text>
+            <text x="590" y="103" text-anchor="middle" font-size="12" font-weight="700" fill="#333">loop</text>
+
+            <g font-size="11" fill="#555">
+              <rect x="672" y="36" width="228" height="26" rx="4" fill="#f2f2f2" stroke="#ccc"/><text x="684" y="53">await cotacao do frete</text>
+              <rect x="672" y="68" width="228" height="26" rx="4" fill="#f2f2f2" stroke="#ccc"/><text x="684" y="85">await resposta da parceira</text>
+              <rect x="672" y="100" width="228" height="26" rx="4" fill="#f2f2f2" stroke="#ccc"/><text x="684" y="117">await envio do e-mail</text>
+              <rect x="672" y="36" width="228" height="26" rx="4" fill="#ED145B" opacity="0">
+                <animate attributeName="opacity" values="0;0.3;0" keyTimes="0;0.12;0.24" dur="4s" repeatCount="indefinite"/>
+              </rect>
+              <rect x="672" y="68" width="228" height="26" rx="4" fill="#ED145B" opacity="0">
+                <animate attributeName="opacity" values="0;0;0.3;0" keyTimes="0;0.3;0.45;0.57" dur="4s" repeatCount="indefinite"/>
+              </rect>
+              <rect x="672" y="100" width="228" height="26" rx="4" fill="#ED145B" opacity="0">
+                <animate attributeName="opacity" values="0;0;0.3;0" keyTimes="0;0.6;0.75;0.87" dur="4s" repeatCount="indefinite"/>
+              </rect>
+            </g>
+            <text x="480" y="164" font-size="12" fill="#777">Uma thread só, que devolve o controle ao laço em cada await.</text>
+
+            <line x1="460" y1="10" x2="460" y2="176" stroke="#ddd" stroke-width="2"/>
+
+            <g font-size="12" fill="#333">
+              <rect x="10" y="188" width="890" height="98" rx="8" fill="#fff7fa" stroke="#ED145B" stroke-width="1.5"/>
+              <text x="28" y="212" font-weight="700" fill="#ED145B">O que muda é o mecanismo, e não uma promessa de número</text>
+              <text x="28" y="236">Thread por requisição: cada espera de rede prende uma thread inteira, que fica parada até a resposta chegar. Laço de eventos:</text>
+              <text x="28" y="256">a espera devolve o controle ao laço, que atende outras requisições enquanto aquela resposta não volta.</text>
+              <text x="28" y="278" font-weight="700">O preço do modelo: uma linha de CPU pesada, ou um sleep bloqueante, trava o serviço inteiro, e não só a requisição.</text>
+            </g>
+          </svg>
+          <figcaption>
+            À esquerda, o modelo da Aula 05: a animação acende a thread 1 e ela permanece ocupada durante toda a espera, enquanto as outras duas seguem bloqueadas em suas próprias esperas. À direita, o mesmo trabalho no event loop: o ponto rosa dá uma volta completa a cada quatro segundos e, a cada passagem, acende uma das três tarefas pendentes, retomando cada uma no instante em que a resposta chega. Nenhuma thread fica parada esperando rede.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Espiral: Síncrono e Assíncrono</div>
+          <div class="footer-page">7</div>
+        </div>
+      </section>
+
+      <!-- ==================== 6: DESAFIO DO MINI MUNDO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Desafio do Mini Mundo: três dores, três padrões</h2>
+        </div>
+
+        <p style="font-size:0.72em; margin-bottom:0;">A diretoria comercial da LogiTech acabou de anunciar campanha de frete refrigerado para o próximo trimestre. Operações pediu log e reenvio das notificações. E a transportadora parceira mudou o formato do rastreamento sem avisar.</p>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:13px; margin-top:10px;">
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>1. O frete muda toda campanha</h4>
+            <p style="font-size:0.66em;">A rota de cotação conhece cada modalidade pelo nome, numa cadeia de <span class="mono">if</span>. Toda promoção nova obriga a abrir a rota e arriscar o que já funcionava.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>2. A parceira fala outra língua</h4>
+            <p style="font-size:0.66em;">O rastreamento dela devolve <span class="mono">COD_OBJ</span>, <span class="mono">SIT</span> e data em <span class="mono">dd/MM/aaaa</span>. Se esse formato entrar no nosso código, quem versiona a LogiTech passa a ser ela.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>3. O enviador está em produção</h4>
+            <p style="font-size:0.66em;">Log e retentativa precisam entrar sem reescrever a classe do enviador de e-mail, que tem fornecedor homologado e janela de mudança.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A missão de hoje</span>
+          <p>Entregar o serviço de <strong>frete</strong> em Python e o de <strong>notificações</strong> em Node com Strategy, Adapter e Decorator no lugar, e provar que uma modalidade nova entra sem que a rota HTTP mude uma linha.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Desafio do Mini Mundo</div>
+          <div class="footer-page">8</div>
+        </div>
+      </section>
+
+      <!-- ==================== 7: MAPA DA PLATAFORMA [ANIM 2] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Onde os dois serviços de hoje entram na plataforma <a href="#/ref-slide" class="ref-badge" title="Ver referências">[8]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 920 320" style="max-height:430px;" role="img" aria-label="Mapa dos serviços da plataforma LogiTech com frete e notificações destacados">
+            <rect x="8" y="8" width="904" height="184" rx="10" fill="none" stroke="#ccc" stroke-width="2" stroke-dasharray="7,6"/>
+            <text x="24" y="30" font-size="13" fill="#999" font-weight="700">rede logitech-net (Aula 03)</text>
+
+            <g font-size="12">
+              <rect x="40" y="50" width="150" height="52" rx="8" fill="#b0b0b0"/>
+              <text x="115" y="70" text-anchor="middle" fill="#fff" font-weight="700">coletor</text>
+              <text x="115" y="85" text-anchor="middle" fill="#fff" font-size="11">Python · 8081/udp</text>
+              <text x="115" y="98" text-anchor="middle" fill="#fff" font-size="11">e 8082/tcp</text>
+
+              <rect x="40" y="128" width="150" height="52" rx="8" fill="#b0b0b0"/>
+              <text x="115" y="152" text-anchor="middle" fill="#fff" font-weight="700">painel</text>
+              <text x="115" y="169" text-anchor="middle" fill="#fff">Node · 3000</text>
+
+              <rect x="240" y="50" width="150" height="52" rx="8" fill="#8a8a8a"/>
+              <text x="315" y="74" text-anchor="middle" fill="#fff" font-weight="700">pedidos</text>
+              <text x="315" y="91" text-anchor="middle" fill="#fff">Java · 8080</text>
+
+              <rect x="240" y="128" width="150" height="52" rx="8" fill="#8a8a8a"/>
+              <text x="315" y="152" text-anchor="middle" fill="#fff" font-weight="700">faturamento</text>
+              <text x="315" y="169" text-anchor="middle" fill="#fff">C# · 5080</text>
+
+              <rect x="452" y="50" width="170" height="52" rx="8" fill="#ED145B" opacity="0.3">
+                <animate attributeName="opacity" values="0.3;1;1;0.3" keyTimes="0;0.15;0.45;0.6" dur="8s" repeatCount="indefinite"/>
+              </rect>
+              <text x="537" y="74" text-anchor="middle" fill="#fff" font-weight="700">frete</text>
+              <text x="537" y="91" text-anchor="middle" fill="#fff">Python · 8000</text>
+
+              <rect x="452" y="128" width="170" height="52" rx="8" fill="#ED145B" opacity="0.3">
+                <animate attributeName="opacity" values="0.3;0.3;1;1;0.3" keyTimes="0;0.4;0.55;0.85;1" dur="8s" repeatCount="indefinite"/>
+              </rect>
+              <text x="537" y="152" text-anchor="middle" fill="#fff" font-weight="700">notificacoes</text>
+              <text x="537" y="169" text-anchor="middle" fill="#fff">Node 22 · 3001</text>
+
+              <rect x="684" y="50" width="150" height="52" rx="8" fill="#e4e4e4" stroke="#bbb" stroke-dasharray="5,4"/>
+              <text x="759" y="74" text-anchor="middle" fill="#666" font-weight="700">postgres</text>
+              <text x="759" y="91" text-anchor="middle" fill="#666">Aula 07</text>
+
+              <rect x="684" y="128" width="150" height="52" rx="8" fill="#e4e4e4" stroke="#bbb" stroke-dasharray="5,4"/>
+              <text x="759" y="152" text-anchor="middle" fill="#666" font-weight="700">ai-gateway</text>
+              <text x="759" y="169" text-anchor="middle" fill="#666">Aula 07</text>
+            </g>
+
+            <g stroke="#999" stroke-width="1.6" fill="none">
+              <line x1="390" y1="76" x2="452" y2="76"/>
+              <line x1="390" y1="154" x2="452" y2="154"/>
+            </g>
+
+            <g font-size="12">
+              <rect x="452" y="210" width="170" height="32" rx="6" fill="#fff" stroke="#ED145B" stroke-width="1.5"/>
+              <text x="537" y="231" text-anchor="middle" fill="#ED145B" font-weight="700">parceira (legado)</text>
+              <line x1="537" y1="180" x2="537" y2="210" stroke="#ED145B" stroke-width="1.6" stroke-dasharray="4,3"/>
+              <text x="634" y="228" font-size="11" fill="#999">fora da rede da LogiTech</text>
+            </g>
+
+            <g font-size="12" fill="#333">
+              <rect x="8" y="258" width="904" height="54" rx="8" fill="#fafafa" stroke="#ddd"/>
+              <text x="26" y="280"><tspan font-weight="700">Contrato congelado na ADR-006: </tspan><tspan>frete na 8000 com POST /api/v1/frete/cotacao; notificacoes na 3001.</tspan></text>
+              <text x="26" y="302">Todo serviço expõe GET /health, e é nisso que o healthcheck do Docker Compose da Aula 07 vai se apoiar.</text>
+            </g>
+          </svg>
+          <figcaption>
+            Oito serviços na rede que vocês criaram à mão na Aula 03. Em cinza escuro, o que já existe: coletor e painel da Aula 02, pedidos e faturamento da Aula 05. Em cinza claro tracejado, o que chega na Aula 07. A animação acende, em sequência, os dois serviços de hoje: primeiro o frete, consumido por pedidos, e depois notificações, que fala com o sistema legado da transportadora parceira, desenhado abaixo do tracejado por ser o único bloco fora da rede da LogiTech. O coletor aparece com duas portas: a 8081/udp da Aula 02 e a 8082/tcp que a ADR-006 acrescentou, por onde o painel passa a ler a telemetria na Aula 07, no lugar do arquivo compartilhado.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – A Plataforma LogiTech</div>
+          <div class="footer-page">9</div>
+        </div>
+      </section>
+
+      <!-- ==================== 8: O CONTRATO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O contrato da plataforma não é negociável <a href="#/ref-slide" class="ref-badge" title="Ver referências">[8]</a></h2>
+        </div>
+
+        <p style="font-size:0.72em; margin-bottom:0;">Pela primeira vez no semestre, quatro aulas dependem umas das outras. Nomes de serviço, portas, rotas e variáveis estão fixados antes de qualquer código: a Aula 07 vai orquestrar exatamente o que sair de hoje.</p>
+
+        <pre class="code-compact" style="margin-top:10px;"><code class="language-http">frete           GET   /health                     -> 200 {"status":"ok"}
+                POST  /api/v1/frete/cotacao
+                      entra {origem, destino, pesoKg, modalidade}
+                      sai   {valor, prazoDias, modalidade}
+
+notificacoes    GET   /health
+                POST  /api/v1/notificacoes
+                      entra {canal, destinatario, mensagem}</code></pre>
+
+        <div class="callout" style="margin-top:9px; padding:11px 16px;">
+          <p style="font-size:0.66em; margin:0;">Endereço de serviço <strong>nunca</strong> aparece cravado no código: vem de variável com prefixo <span class="mono">LOGITECH_</span> e padrão de desenvolvimento local. É o que permite o mesmo código rodar solto na sua máquina hoje e dentro do Compose na Aula 07, sem uma linha de diferença.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Contrato da Plataforma</div>
+          <div class="footer-page">10</div>
+        </div>
+      </section>
+
+      <!-- ==================== 9: O ANTES DO STRATEGY ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O antes: a rota que conhece cada modalidade pelo nome <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <p style="font-size:0.72em; margin-bottom:0;">Este é o código que está no laboratório de vocês agora, e ele <strong>funciona</strong>: responde certo, tem teste passando e está em produção na LogiTech. O problema não é o comportamento.</p>
+
+        <pre class="code-compact" style="margin-top:8px;"><code class="language-python">@app.post("/api/v1/frete/cotacao")
+def cotar(pedido: PedidoCotacao) -> RespostaCotacao:
+    distancia = distancia_km(pedido.origem, pedido.destino)
+
+    if pedido.modalidade == "expresso":
+        valor = round(distancia * 0.85 + pedido.pesoKg * 1.20, 2)
+        prazo = max(1, ceil(distancia / 700))
+    elif pedido.modalidade == "economico":
+        valor = round(distancia * 0.42 + pedido.pesoKg * 0.55, 2)
+        prazo = ceil(distancia / 350) + 2
+    elif pedido.modalidade == "padrao":
+        ...
+    else:
+        raise HTTPException(status_code=422, detail="modalidade não suportada")</code></pre>
+
+        <div class="takeaway" style="margin-top:6px;">
+          <span class="takeaway-label">A pergunta que denuncia o problema</span>
+          <p>Quantos arquivos precisam mudar para a LogiTech vender frete refrigerado na semana que vem? Se a resposta inclui a rota HTTP, o Open/Closed foi violado.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Strategy: o Antes</div>
+          <div class="footer-page">11</div>
+        </div>
+      </section>
+
+      <!-- ==================== 10: A CADEIA CRESCE [ANIM 3] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O custo real: a cadeia cresce a cada campanha comercial <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 290" style="max-height:400px;" role="img" aria-label="A função de cotação crescendo a cada trimestre">
+            <text x="20" y="20" font-size="13" font-weight="700" fill="#333">a mesma função cotar(), quatro trimestres depois</text>
+
+            <g font-size="11">
+              <rect x="20" y="32" width="190" height="32" rx="5" fill="#ED145B" opacity="0.85"/>
+              <text x="115" y="53" text-anchor="middle" fill="#fff" font-weight="700">if expresso</text>
+              <rect x="20" y="68" width="190" height="32" rx="5" fill="#ED145B" opacity="0.72"/>
+              <text x="115" y="89" text-anchor="middle" fill="#fff" font-weight="700">elif economico</text>
+              <rect x="20" y="104" width="190" height="32" rx="5" fill="#ED145B" opacity="0.6"/>
+              <text x="115" y="125" text-anchor="middle" fill="#fff" font-weight="700">elif padrao</text>
+
+              <g opacity="0">
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.2;0.3;1" dur="8s" repeatCount="indefinite"/>
+                <rect x="20" y="140" width="190" height="32" rx="5" fill="#ED145B" opacity="0.48"/>
+                <text x="115" y="161" text-anchor="middle" fill="#fff" font-weight="700">elif refrigerado</text>
+              </g>
+              <g opacity="0">
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.45;0.55;1" dur="8s" repeatCount="indefinite"/>
+                <rect x="20" y="176" width="190" height="32" rx="5" fill="#ED145B" opacity="0.36"/>
+                <text x="115" y="197" text-anchor="middle" fill="#fff" font-weight="700">elif carga_perigosa</text>
+              </g>
+              <g opacity="0">
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.7;0.8;1" dur="8s" repeatCount="indefinite"/>
+                <rect x="20" y="212" width="190" height="32" rx="5" fill="#ED145B" opacity="0.24"/>
+                <text x="115" y="233" text-anchor="middle" fill="#fff" font-weight="700">elif black_friday</text>
+              </g>
+            </g>
+
+            <defs>
+              <marker id="seta06" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+                <path d="M0,0 L9,4.5 L0,9 z" fill="#999"/>
+              </marker>
+            </defs>
+            <line x1="216" y1="138" x2="286" y2="138" stroke="#999" stroke-width="1.5" marker-end="url(#seta06)"/>
+
+            <g font-size="12" fill="#333">
+              <rect x="300" y="32" width="580" height="96" rx="8" fill="#fafafa" stroke="#ddd"/>
+              <text x="318" y="56" font-weight="700">O que cresce junto, e ninguém coloca no orçamento</text>
+              <text x="318" y="80">Regressão: cada deploy reteste as modalidades antigas, não só a nova.</text>
+              <text x="318" y="100">Merge: duas campanhas no mesmo trimestre editam a mesma função.</text>
+              <text x="318" y="120">Teste: cobrir seis ramos exige exercitar a rota HTTP inteira seis vezes.</text>
+
+              <rect x="300" y="142" width="580" height="106" rx="8" fill="#fff7fa" stroke="#ED145B" stroke-width="1.5"/>
+              <text x="318" y="166" font-weight="700" fill="#ED145B">Open/Closed, da Aula 05, dito no vocabulário de hoje</text>
+              <text x="318" y="190">Um módulo deve estar aberto para extensão e fechado para modificação.</text>
+              <text x="318" y="210">Extensão: acrescentar uma classe. Modificação: reabrir o que já funcionava.</text>
+              <text x="318" y="234" font-weight="700">Strategy é a forma que transforma a segunda coisa na primeira.</text>
+            </g>
+          </svg>
+          <figcaption>
+            A animação acrescenta um ramo a cada dois segundos, na ordem em que as campanhas comerciais chegariam: refrigerado, carga perigosa e Black Friday. O bloco de risco à direita não muda de tamanho na figura, mas cresce na vida real: cada ramo novo obriga a reteste dos anteriores, porque todos moram na mesma função. Ao fim do ciclo, seis modalidades convivem numa rota que deveria só falar HTTP.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Strategy: o Problema</div>
+          <div class="footer-page">12</div>
+        </div>
+      </section>
+
+      <!-- ==================== 11: STRATEGY, A IDEIA [ANIM 4] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Strategy: um algoritmo por classe, escolhido em execução <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 290" style="max-height:400px;" role="img" aria-label="A rota delegando ao registro, que devolve uma das estratégias">
+            <defs>
+              <marker id="seta06b" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+                <path d="M0,0 L9,4.5 L0,9 z" fill="#999"/>
+              </marker>
+            </defs>
+
+            <g font-size="12">
+              <rect x="20" y="105" width="170" height="58" rx="8" fill="#333"/>
+              <text x="105" y="130" text-anchor="middle" fill="#fff" font-weight="700">rota HTTP</text>
+              <text x="105" y="149" text-anchor="middle" fill="#ddd">não sabe nomes</text>
+
+              <rect x="250" y="105" width="170" height="58" rx="8" fill="#ED145B"/>
+              <text x="335" y="130" text-anchor="middle" fill="#fff" font-weight="700">REGISTRO</text>
+              <text x="335" y="149" text-anchor="middle" fill="#fff">nome -&gt; estratégia</text>
+
+              <rect x="500" y="26" width="180" height="46" rx="8" fill="#fff" stroke="#ED145B" stroke-width="2"/>
+              <text x="590" y="54" text-anchor="middle" fill="#333" font-weight="700">FreteExpresso</text>
+              <rect x="500" y="86" width="180" height="46" rx="8" fill="#fff" stroke="#ED145B" stroke-width="2"/>
+              <text x="590" y="114" text-anchor="middle" fill="#333" font-weight="700">FreteEconomico</text>
+              <rect x="500" y="146" width="180" height="46" rx="8" fill="#fff" stroke="#ED145B" stroke-width="2"/>
+              <text x="590" y="174" text-anchor="middle" fill="#333" font-weight="700">FretePadrao</text>
+              <rect x="500" y="206" width="180" height="46" rx="8" fill="#fff" stroke="#ED145B" stroke-width="2" stroke-dasharray="6,4"/>
+              <text x="590" y="234" text-anchor="middle" fill="#ED145B" font-weight="700">FreteRefrigerado</text>
+
+              <rect x="726" y="86" width="152" height="106" rx="8" fill="#fafafa" stroke="#999"/>
+              <text x="802" y="118" text-anchor="middle" fill="#333" font-weight="700">EstrategiaFrete</text>
+              <text x="802" y="138" text-anchor="middle" fill="#666">Protocol</text>
+              <text x="802" y="160" text-anchor="middle" fill="#666">modalidade: str</text>
+              <text x="802" y="178" text-anchor="middle" fill="#666">cotar(...)</text>
+            </g>
+
+            <g stroke="#999" stroke-width="1.6" fill="none">
+              <line x1="190" y1="134" x2="250" y2="134" marker-end="url(#seta06b)"/>
+              <line x1="420" y1="134" x2="500" y2="49"/>
+              <line x1="420" y1="134" x2="500" y2="109"/>
+              <line x1="420" y1="134" x2="500" y2="169"/>
+              <line x1="420" y1="134" x2="500" y2="229" stroke-dasharray="6,4"/>
+              <line x1="680" y1="49" x2="726" y2="112" stroke="#ccc"/>
+              <line x1="680" y1="109" x2="726" y2="126" stroke="#ccc"/>
+              <line x1="680" y1="169" x2="726" y2="144" stroke="#ccc"/>
+              <line x1="680" y1="229" x2="726" y2="158" stroke="#ccc"/>
+            </g>
+
+            <circle cx="200" cy="134" r="7" fill="#ED145B">
+              <animate attributeName="cx" values="200;250;420;500;420;250;200" keyTimes="0;0.16;0.32;0.5;0.68;0.84;1" dur="6s" repeatCount="indefinite"/>
+              <animate attributeName="cy" values="134;134;134;109;134;134;134" keyTimes="0;0.16;0.32;0.5;0.68;0.84;1" dur="6s" repeatCount="indefinite"/>
+            </circle>
+
+            <text x="20" y="276" font-size="12" fill="#777">A rota pergunta "quem atende economico?", recebe um objeto e manda cotar. Ela nunca soube qual classe era.</text>
+          </svg>
+          <figcaption>
+            O ponto rosa percorre uma cotação inteira: sai da rota HTTP, chega ao registro, é encaminhado para a estratégia econômica, executa lá e volta com a cotação pronta. A rota conhece só o registro e o método cotar; o nome da modalidade é dado de entrada, não estrutura de código. A quarta caixa, tracejada, é a modalidade que ainda não existe: quando ela chegar, entra por uma linha nova no registro, sem que nenhuma seta existente mude.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Strategy: a Ideia</div>
+          <div class="footer-page">13</div>
+        </div>
+      </section>
+
+      <!-- ==================== 12: PROTOCOL EM PYTHON ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O contrato em Python: <span class="mono">Protocol</span>, não classe base <a href="#/ref-slide" class="ref-badge" title="Ver referências">[3]</a></h2>
+        </div>
+
+        <p style="font-size:0.72em; margin-bottom:0;">Em Java e C# o contrato é uma <span class="mono">interface</span> que as classes implementam explicitamente. Em Python moderno, <span class="mono">typing.Protocol</span> descreve o formato esperado sem obrigar herança: quem tiver os membros certos já cumpre o contrato.</p>
+
+        <pre class="code-compact" style="margin-top:8px;"><code class="language-python">from typing import Protocol, runtime_checkable
+
+@dataclass(frozen=True)
+class Cotacao:
+    valor: float
+    prazo_dias: int
+    modalidade: str
+
+@runtime_checkable
+class EstrategiaFrete(Protocol):
+    """Contrato que toda modalidade de frete precisa cumprir."""
+    modalidade: str
+
+    def cotar(self, distancia_km: float, peso_kg: float) -> Cotacao: ...</code></pre>
+
+        <div class="takeaway" style="margin-top:6px;">
+          <span class="takeaway-label">Por que isso importa</span>
+          <p>Nenhuma estratégia precisa <span class="mono">import</span>ar o protocolo para cumpri-lo. O acoplamento vai na direção certa: quem depende do contrato é a rota, e não as implementações.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Strategy em Python</div>
+          <div class="footer-page">14</div>
+        </div>
+      </section>
+
+      <!-- ==================== 13: AS TRÊS ESTRATÉGIAS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Uma classe por algoritmo, com a tabela de preços da LogiTech <a href="#/ref-slide" class="ref-badge" title="Ver referências">[3]</a></h2>
+        </div>
+
+        <pre class="code-compact" style="margin-top:4px;"><code class="language-python">class FreteExpresso:
+    modalidade = "expresso"
+    custo_por_km = 0.85
+    custo_por_kg = 1.20
+
+    def cotar(self, distancia_km: float, peso_kg: float) -> Cotacao:
+        return Cotacao(
+            valor=valor_base(distancia_km, peso_kg,
+                             self.custo_por_km, self.custo_por_kg),
+            prazo_dias=max(1, ceil(distancia_km / 700)),
+            modalidade=self.modalidade,
+        )</code></pre>
+
+        <table class="compact-table" style="margin-top:8px;">
+          <thead>
+            <tr><th>Modalidade</th><th>R$/km</th><th>R$/kg</th><th>Prazo em dias</th><th>Rota de referência: 500 km, 100 kg</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono">expresso</td><td>0,85</td><td>1,20</td><td>ceil(dist / 700), mínimo 1</td><td><strong>R$ 545,00 em 1 dia</strong></td></tr>
+            <tr><td class="mono">economico</td><td>0,42</td><td>0,55</td><td>ceil(dist / 350) + 2</td><td><strong>R$ 265,00 em 4 dias</strong></td></tr>
+            <tr><td class="mono">padrao</td><td>0,60</td><td>0,80</td><td>ceil(dist / 500) + 1</td><td><strong>R$ 380,00 em 2 dias</strong></td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway" style="margin-top:6px;">
+          <span class="takeaway-label">O que a classe carrega, e o que ela não carrega</span>
+          <p>Cada classe guarda só as constantes do próprio algoritmo. Nenhuma delas conhece HTTP, banco, ou as outras duas: é isso que permite testar a regra de preço da LogiTech sem subir servidor nenhum.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Strategy: as Estratégias</div>
+          <div class="footer-page">15</div>
+        </div>
+      </section>
+
+      <!-- ==================== 14: O REGISTRO [ANIM 5] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O registro: onde a modalidade nova entra sem tocar na rota <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 285" style="max-height:400px;" role="img" aria-label="Modalidade nova entrando pelo registro enquanto a rota permanece intacta">
+            <defs>
+              <marker id="seta06c" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+                <path d="M0,0 L9,4.5 L0,9 z" fill="#ED145B"/>
+              </marker>
+              <marker id="seta06d" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+                <path d="M0,0 L9,4.5 L0,9 z" fill="#999"/>
+              </marker>
+            </defs>
+
+            <g font-size="12">
+              <rect x="30" y="52" width="200" height="168" rx="10" fill="#f4f4f4" stroke="#999" stroke-width="2"/>
+              <text x="130" y="36" text-anchor="middle" font-size="13" font-weight="700" fill="#333">app/main.py</text>
+              <text x="130" y="80" text-anchor="middle" fill="#555">a rota HTTP</text>
+              <text x="130" y="112" text-anchor="middle" fill="#333" font-weight="700">FECHADA</text>
+              <text x="130" y="132" text-anchor="middle" fill="#333" font-weight="700">para modificação</text>
+              <text x="130" y="166" text-anchor="middle" fill="#777">nenhuma linha muda</text>
+              <text x="130" y="186" text-anchor="middle" fill="#777">quando a campanha</text>
+              <text x="130" y="206" text-anchor="middle" fill="#777">comercial chega</text>
+
+              <rect x="330" y="52" width="240" height="168" rx="10" fill="#fff7fa" stroke="#ED145B" stroke-width="2"/>
+              <text x="450" y="36" text-anchor="middle" font-size="13" font-weight="700" fill="#ED145B">app/registro.py</text>
+              <text x="450" y="84" text-anchor="middle" fill="#333">registrar(FreteExpresso())</text>
+              <text x="450" y="110" text-anchor="middle" fill="#333">registrar(FreteEconomico())</text>
+              <text x="450" y="136" text-anchor="middle" fill="#333">registrar(FretePadrao())</text>
+              <text x="450" y="172" text-anchor="middle" fill="#ED145B" font-weight="700" opacity="0">registrar(FreteRefrigerado())
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.45;0.6;1" dur="8s" repeatCount="indefinite"/>
+              </text>
+              <text x="450" y="204" text-anchor="middle" fill="#777">ABERTO para extensão</text>
+
+              <rect x="660" y="110" width="210" height="54" rx="10" fill="#ED145B" opacity="0">
+                <animate attributeName="opacity" values="0;0;0.9;0.9" keyTimes="0;0.25;0.4;1" dur="8s" repeatCount="indefinite"/>
+              </rect>
+              <text x="765" y="133" text-anchor="middle" fill="#fff" font-weight="700" opacity="0">FreteRefrigerado
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.25;0.4;1" dur="8s" repeatCount="indefinite"/>
+              </text>
+              <text x="765" y="152" text-anchor="middle" fill="#fff" opacity="0">classe nova em estrategias.py
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.25;0.4;1" dur="8s" repeatCount="indefinite"/>
+              </text>
+            </g>
+
+            <g stroke="#ED145B" stroke-width="2" fill="none" stroke-dasharray="6,4" opacity="0">
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.5;0.62;1" dur="8s" repeatCount="indefinite"/>
+              <line x1="656" y1="140" x2="578" y2="166" marker-end="url(#seta06c)"/>
+            </g>
+
+            <line x1="234" y1="136" x2="326" y2="136" stroke="#999" stroke-width="1.6" marker-end="url(#seta06d)"/>
+            <text x="280" y="126" text-anchor="middle" font-size="11" fill="#777">obter()</text>
+
+            <text x="30" y="258" font-size="12" fill="#777">git diff --name-only depois de acrescentar a modalidade: dois arquivos, e nenhum deles é a rota.</text>
+          </svg>
+          <figcaption>
+            A sequência tem três tempos. Primeiro aparece a classe FreteRefrigerado, à direita, num arquivo de estratégias. Depois surge a linha registrar(FreteRefrigerado()) dentro do registro. Por último, a seta tracejada liga uma coisa à outra. O quadro da esquerda, a rota HTTP, permanece idêntico do começo ao fim do ciclo: é essa imobilidade que o critério 8 do laboratório verifica, procurando app/main.py na saída do git diff.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Strategy: o Registro</div>
+          <div class="footer-page">16</div>
+        </div>
+      </section>
+
+      <!-- ==================== 15: O ANTES E O DEPOIS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Antes e depois: a mesma rota, quinze linhas a menos <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <div class="code-pair">
+          <div>
+            <h4>Antes: a rota decide</h4>
+            <pre class="code-compact"><code class="language-python">if pedido.modalidade == "expresso":
+    valor = round(dist * 0.85
+                  + pedido.pesoKg * 1.20, 2)
+    prazo = max(1, ceil(dist / 700))
+elif pedido.modalidade == "economico":
+    valor = round(dist * 0.42
+                  + pedido.pesoKg * 0.55, 2)
+    prazo = ceil(dist / 350) + 2
+elif pedido.modalidade == "padrao":
+    ...
+else:
+    raise HTTPException(422, "...")</code></pre>
+          </div>
+          <div>
+            <h4>Depois: a rota delega</h4>
+            <pre class="code-compact"><code class="language-python">try:
+    estrategia = obter(pedido.modalidade)
+except KeyError as ausente:
+    raise HTTPException(
+        status_code=422,
+        detail=str(ausente)) from None
+
+cotacao = estrategia.cotar(
+    distancia_km(pedido.origem,
+                 pedido.destino),
+    pedido.pesoKg)</code></pre>
+          </div>
+        </div>
+
+        <div class="takeaway" style="margin-top:8px;">
+          <span class="takeaway-label">O que mudou de verdade</span>
+          <p>O comportamento é idêntico: a suíte <span class="mono">test_rota.py</span> passa antes e depois, sem uma linha alterada. O que mudou foi <strong>onde</strong> a decisão mora. Refatoração que muda resposta da API não é refatoração.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Strategy: Antes e Depois</div>
+          <div class="footer-page">17</div>
+        </div>
+      </section>
+
+      <!-- ==================== 16: DO POST À COTAÇÃO [ANIM 6] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Uma cotação de ponta a ponta, com o Strategy no lugar <a href="#/ref-slide" class="ref-badge" title="Ver referências">[4]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 280" style="max-height:400px;" role="img" aria-label="Sequência de uma requisição de cotação atravessando as camadas do serviço">
+            <g font-size="11" fill="#333">
+              <rect x="14" y="30" width="140" height="40" rx="6" fill="#333"/><text x="84" y="55" text-anchor="middle" fill="#fff" font-weight="700">POST /cotacao</text>
+              <rect x="186" y="30" width="140" height="40" rx="6" fill="#666"/><text x="256" y="55" text-anchor="middle" fill="#fff" font-weight="700">Pydantic valida</text>
+              <rect x="358" y="30" width="140" height="40" rx="6" fill="#666"/><text x="428" y="55" text-anchor="middle" fill="#fff" font-weight="700">distancia_km()</text>
+              <rect x="530" y="30" width="140" height="40" rx="6" fill="#ED145B"/><text x="600" y="55" text-anchor="middle" fill="#fff" font-weight="700">obter(modalidade)</text>
+              <rect x="702" y="30" width="184" height="40" rx="6" fill="#ED145B"/><text x="794" y="55" text-anchor="middle" fill="#fff" font-weight="700">estrategia.cotar()</text>
+            </g>
+
+            <g stroke="#bbb" stroke-width="1.5" fill="none">
+              <line x1="154" y1="50" x2="186" y2="50"/>
+              <line x1="326" y1="50" x2="358" y2="50"/>
+              <line x1="498" y1="50" x2="530" y2="50"/>
+              <line x1="670" y1="50" x2="702" y2="50"/>
+            </g>
+
+            <circle cx="84" cy="90" r="7" fill="#ED145B">
+              <animate attributeName="cx" values="84;84;256;428;600;794;794" keyTimes="0;0.08;0.26;0.44;0.62;0.84;1" dur="7s" repeatCount="indefinite"/>
+            </circle>
+
+            <g font-size="11" fill="#555">
+              <text x="84" y="122" text-anchor="middle">{"origem":"SAO",</text>
+              <text x="84" y="138" text-anchor="middle">"destino":"LDB",</text>
+              <text x="84" y="154" text-anchor="middle">"pesoKg":100,</text>
+              <text x="84" y="170" text-anchor="middle">"modalidade":</text>
+              <text x="84" y="186" text-anchor="middle">"expresso"}</text>
+
+              <text x="256" y="122" text-anchor="middle">origem: 3 letras</text>
+              <text x="256" y="138" text-anchor="middle">pesoKg &gt; 0</text>
+              <text x="256" y="154" text-anchor="middle">senão 422, sem</text>
+              <text x="256" y="170" text-anchor="middle">tocar na regra</text>
+
+              <text x="428" y="122" text-anchor="middle">SAO -&gt; LDB</text>
+              <text x="428" y="138" text-anchor="middle">tabela da LogiTech</text>
+              <text x="428" y="158" text-anchor="middle" font-weight="700" fill="#333">500 km</text>
+
+              <text x="600" y="122" text-anchor="middle">o registro devolve</text>
+              <text x="600" y="138" text-anchor="middle">FreteExpresso()</text>
+              <text x="600" y="158" text-anchor="middle" fill="#777">a rota não sabe disso</text>
+
+              <text x="794" y="122" text-anchor="middle">500 x 0,85</text>
+              <text x="794" y="138" text-anchor="middle">+ 100 x 1,20</text>
+              <text x="794" y="160" text-anchor="middle" font-weight="700" fill="#ED145B">R$ 545,00 em 1 dia</text>
+            </g>
+
+            <g font-size="12" fill="#333">
+              <rect x="14" y="206" width="872" height="62" rx="8" fill="#1e1e1e"/>
+              <text x="32" y="230" fill="#888" font-size="11">resposta medida na execução do serviço deste laboratório</text>
+              <text x="32" y="254" fill="#7cffa0" font-family="monospace" font-size="13">{"valor":545.0,"prazoDias":1,"modalidade":"expresso"}</text>
+            </g>
+          </svg>
+          <figcaption>
+            O ponto rosa acompanha uma requisição atravessando as cinco camadas, uma a cada 1,2 segundo: o corpo JSON chega, o Pydantic valida a forma antes que qualquer regra de negócio rode, a tabela de rotas devolve 500 km, o registro devolve a estratégia expressa e ela calcula. As duas caixas rosas são as únicas que o laboratório modifica; as três cinzas já vêm prontas. A linha final é a resposta real do serviço, copiada da execução.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Uma Cotação de Ponta a Ponta</div>
+          <div class="footer-page">18</div>
+        </div>
+      </section>
+
+      <!-- ==================== 17: STRATEGY x FACTORY ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Strategy e Factory parecem iguais no diagrama, e não são <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <p style="font-size:0.7em; margin-bottom:0;">Vocês escreveram uma Factory na Aula 05, para escolher o conector de faturamento. Os dois têm interface comum e várias implementações. A diferença aparece na <strong>linha do tempo da chamada</strong>.</p>
+
+        <div class="figure-split" style="grid-template-columns: 1fr 1fr; gap:20px; margin-top:6px; align-items:start;">
+          <figure class="slide-figure" style="margin:0;">
+            <svg viewBox="0 0 420 232" style="max-height:320px;" role="img" aria-label="Factory Method: a fábrica cria o objeto e sai de cena">
+              <defs>
+                <marker id="setaF06" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 z" fill="#999"/>
+                </marker>
+              </defs>
+              <text x="210" y="16" text-anchor="middle" font-size="14" font-weight="700" fill="#333">Factory Method</text>
+              <text x="210" y="34" text-anchor="middle" font-size="12" fill="#777">"qual objeto criar?"</text>
+
+              <rect x="14" y="52" width="112" height="34" rx="6" fill="#333"/>
+              <text x="70" y="73" text-anchor="middle" fill="#fff" font-size="11">tipo de cliente</text>
+              <line x1="126" y1="69" x2="160" y2="69" stroke="#999" stroke-width="1.6" marker-end="url(#setaF06)"/>
+
+              <rect x="164" y="48" width="112" height="42" rx="6" fill="#ED145B"/>
+              <text x="220" y="66" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">FabricaConector</text>
+              <text x="220" y="81" text-anchor="middle" fill="#fff" font-size="10">criar(tipo)</text>
+              <line x1="276" y1="69" x2="308" y2="69" stroke="#999" stroke-width="1.6" marker-end="url(#setaF06)"/>
+
+              <rect x="312" y="52" width="94" height="34" rx="6" fill="#fff" stroke="#ED145B" stroke-width="2"/>
+              <text x="359" y="73" text-anchor="middle" fill="#333" font-size="11" font-weight="700">ConectorPJ</text>
+
+              <text x="220" y="108" text-anchor="middle" font-size="10.5" fill="#999">a fábrica sai de cena aqui</text>
+              <line x1="164" y1="114" x2="276" y2="114" stroke="#bbb" stroke-width="1.4" stroke-dasharray="4,4"/>
+
+              <rect x="14" y="130" width="392" height="44" rx="6" fill="#fafafa" stroke="#ddd"/>
+              <text x="28" y="149" font-size="11" fill="#555">Foco na construção. O objeto sai pronto e passa</text>
+              <text x="28" y="165" font-size="11" fill="#555">a viver por conta própria, sem a fábrica em volta.</text>
+
+              <text x="14" y="196" font-size="11.5" font-weight="700" fill="#333">Usado uma vez e descartado?</text>
+              <text x="14" y="214" font-size="11.5" fill="#777">Você quer uma Factory.</text>
+            </svg>
+          </figure>
+
+          <figure class="slide-figure" style="margin:0;">
+            <svg viewBox="0 0 420 232" style="max-height:320px;" role="img" aria-label="Strategy: a estratégia permanece e é chamada a cada cotação">
+              <defs>
+                <marker id="setaS06" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                  <path d="M0,0 L8,4 L0,8 z" fill="#ED145B"/>
+                </marker>
+              </defs>
+              <text x="210" y="16" text-anchor="middle" font-size="14" font-weight="700" fill="#ED145B">Strategy</text>
+              <text x="210" y="34" text-anchor="middle" font-size="12" fill="#777">"qual comportamento executar?"</text>
+
+              <rect x="14" y="48" width="118" height="42" rx="6" fill="#333"/>
+              <text x="73" y="66" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">rota HTTP</text>
+              <text x="73" y="81" text-anchor="middle" fill="#ddd" font-size="10">segura a estratégia</text>
+
+              <text x="168" y="61" text-anchor="middle" font-size="10.5" fill="#ED145B">cotar()</text>
+              <line x1="132" y1="69" x2="200" y2="69" stroke="#ED145B" stroke-width="1.6" marker-end="url(#setaS06)"/>
+
+              <rect x="204" y="48" width="118" height="42" rx="6" fill="#ED145B"/>
+              <text x="263" y="66" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">FreteExpresso</text>
+              <text x="263" y="81" text-anchor="middle" fill="#fff" font-size="10">continua ali</text>
+
+              <rect x="330" y="48" width="76" height="42" rx="6" fill="#fff" stroke="#999" stroke-dasharray="5,4"/>
+              <text x="368" y="66" text-anchor="middle" fill="#666" font-size="10">trocável em</text>
+              <text x="368" y="80" text-anchor="middle" fill="#666" font-size="10">execução</text>
+
+              <path d="M263,94 C263,109 73,109 73,96" fill="none" stroke="#ED145B" stroke-width="1.6" stroke-dasharray="4,3" marker-end="url(#setaS06)"/>
+              <text x="168" y="124" text-anchor="middle" font-size="10.5" fill="#ED145B">e de novo, a cada cotação</text>
+
+              <rect x="14" y="130" width="392" height="44" rx="6" fill="#fff7fa" stroke="#ED145B"/>
+              <text x="28" y="149" font-size="11" fill="#555">Foco no algoritmo. A estratégia é injetada, fica,</text>
+              <text x="28" y="165" font-size="11" fill="#555">e é executada quantas vezes o negócio pedir.</text>
+
+              <text x="14" y="196" font-size="11.5" font-weight="700" fill="#333">Chamado repetidamente?</text>
+              <text x="14" y="214" font-size="11.5" fill="#777">Você quer uma Strategy.</text>
+            </svg>
+          </figure>
+        </div>
+
+        <div class="callout" style="margin-top:6px; padding:9px 16px;">
+          <p style="font-size:0.63em; margin:0;">No laboratório de hoje os dois convivem: o <span class="mono">REGISTRO</span> faz o papel de fábrica simples, devolvendo a instância certa, e o que ele devolve é uma <strong>Strategy</strong>, que a rota executa a cada requisição.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Strategy x Factory</div>
+          <div class="footer-page">19</div>
+        </div>
+      </section>
+
+      <!-- ==================== 18: QUANDO NÃO USAR ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quando o <span class="mono">if</span> está certo e o padrão está errado</h2>
+        </div>
+
+        <p style="font-size:0.72em; margin-bottom:0;">Padrão aplicado onde não havia problema é custo puro: mais arquivos, mais indireção, mais tempo até um colega entender o fluxo. Três sinais de que a cadeia de <span class="mono">if</span> pode ficar.</p>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:13px; margin-top:10px;">
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>O conjunto é fechado</h4>
+            <p style="font-size:0.66em;">Dois ramos que existem por definição do domínio e não vão crescer, como <span class="mono">débito</span> e <span class="mono">crédito</span> num lançamento contábil.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Os ramos são de uma linha</h4>
+            <p style="font-size:0.66em;">Se cada caso é uma expressão, uma classe por caso troca clareza por cerimônia. Um dicionário de funções já resolve.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Não há variação por cliente</h4>
+            <p style="font-size:0.66em;">Strategy paga quando alguém <strong>de fora</strong> do seu módulo precisa acrescentar um algoritmo. Sem essa necessidade, é indireção sem retorno.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">O critério honesto</span>
+          <p>A pergunta não é "isso é um padrão conhecido?", e sim "quantos arquivos mudam quando o negócio mudar?". No frete da LogiTech a resposta era a rota inteira, e por isso o Strategy se paga.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Strategy: Limites</div>
+          <div class="footer-page">20</div>
+        </div>
+      </section>
+
+      <!-- ==================== 19: O PROBLEMA DO ADAPTER ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A parceira responde em outra língua, e não vai mudar por nós</h2>
+        </div>
+
+        <div class="code-pair">
+          <div>
+            <h4>O que a transportadora parceira devolve</h4>
+            <pre class="code-compact"><code class="language-json">{
+  "COD_OBJ": "BR9912345",
+  "DT_ULT_MOV": "08/09/2026 14:32",
+  "SIT": "EM_TRANSITO",
+  "UF_ULT": "SP",
+  "DESC_SIT": "Objeto em transito"
+}</code></pre>
+          </div>
+          <div>
+            <h4>O que a LogiTech fala</h4>
+            <pre class="code-compact"><code class="language-json">{
+  "codigoRastreio": "BR9912345",
+  "status": "em_transito",
+  "atualizadoEm": "2026-09-08T14:32:00",
+  "uf": "SP",
+  "descricao": "Objeto em transito"
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="takeaway" style="margin-top:8px;">
+          <span class="takeaway-label">A pergunta de fronteira</span>
+          <p>Quantos arquivos do serviço de notificações têm o direito de saber que existe um campo chamado <span class="mono">COD_OBJ</span>? Se a resposta for mais de um, a próxima mudança unilateral da parceira vira uma caçada por todo o código.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Adapter: o Problema</div>
+          <div class="footer-page">21</div>
+        </div>
+      </section>
+
+      <!-- ==================== 20: ADAPTER, A IDEIA [ANIM 7] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Adapter: o tradutor na fronteira entre dois mundos <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 290" style="max-height:410px;" role="img" aria-label="Payload legado atravessando o adaptador e saindo no formato da LogiTech">
+            <rect x="10" y="26" width="270" height="196" rx="10" fill="#f4f4f4" stroke="#999" stroke-dasharray="6,5"/>
+            <text x="145" y="18" text-anchor="middle" font-size="13" font-weight="700" fill="#777">mundo da parceira</text>
+
+            <rect x="620" y="26" width="270" height="196" rx="10" fill="#fff7fa" stroke="#ED145B"/>
+            <text x="755" y="18" text-anchor="middle" font-size="13" font-weight="700" fill="#ED145B">mundo da LogiTech</text>
+
+            <rect x="366" y="56" width="168" height="136" rx="10" fill="#333"/>
+            <text x="450" y="108" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">Adaptador</text>
+            <text x="450" y="130" text-anchor="middle" fill="#ddd" font-size="12">RastreioLegado</text>
+            <text x="450" y="148" text-anchor="middle" fill="#ddd" font-size="12">-&gt; Rastreio</text>
+            <text x="450" y="40" text-anchor="middle" fill="#777" font-size="12">a única classe que conhece os dois</text>
+
+            <g font-size="11" font-family="monospace">
+              <text x="34" y="66" fill="#555">COD_OBJ</text>
+              <text x="34" y="98" fill="#555">SIT</text>
+              <text x="34" y="130" fill="#555">DT_ULT_MOV</text>
+              <text x="34" y="162" fill="#555">UF_ULT</text>
+              <text x="34" y="194" fill="#555">DESC_SIT</text>
+
+              <text x="646" y="66" fill="#ED145B">codigoRastreio</text>
+              <text x="646" y="98" fill="#ED145B">status</text>
+              <text x="646" y="130" fill="#ED145B">atualizadoEm</text>
+              <text x="646" y="162" fill="#ED145B">uf</text>
+              <text x="646" y="194" fill="#ED145B">descricao</text>
+            </g>
+
+            <g stroke="#bbb" stroke-width="1.4" fill="none">
+              <line x1="150" y1="62" x2="366" y2="86"/>
+              <line x1="150" y1="94" x2="366" y2="106"/>
+              <line x1="150" y1="126" x2="366" y2="126"/>
+              <line x1="150" y1="158" x2="366" y2="146"/>
+              <line x1="150" y1="190" x2="366" y2="166"/>
+              <line x1="534" y1="86" x2="640" y2="62"/>
+              <line x1="534" y1="106" x2="640" y2="94"/>
+              <line x1="534" y1="126" x2="640" y2="126"/>
+              <line x1="534" y1="146" x2="640" y2="158"/>
+              <line x1="534" y1="166" x2="640" y2="190"/>
+            </g>
+
+            <rect x="86" y="84" width="56" height="20" rx="4" fill="#999">
+              <animate attributeName="x" values="86;300;300;560;780;780" keyTimes="0;0.3;0.45;0.6;0.85;1" dur="7s" repeatCount="indefinite"/>
+              <animate attributeName="fill" values="#999;#999;#333;#ED145B;#ED145B;#ED145B" keyTimes="0;0.3;0.45;0.6;0.85;1" dur="7s" repeatCount="indefinite"/>
+              <animate attributeName="y" values="84;116;116;116;84;84" keyTimes="0;0.3;0.45;0.6;0.85;1" dur="7s" repeatCount="indefinite"/>
+            </rect>
+
+            <g font-size="12" fill="#333">
+              <rect x="10" y="234" width="880" height="48" rx="8" fill="#fafafa" stroke="#ddd"/>
+              <text x="28" y="254"><tspan font-weight="700">Regra da fronteira: </tspan><tspan>se a parceira mudar o contrato amanhã, muda um arquivo e mais nenhum.</tspan></text>
+              <text x="28" y="274">Situação fora da tabela de/para vira "desconhecido": derrubar a consulta por causa disso seria pior para o cliente.</text>
+            </g>
+          </svg>
+          <figcaption>
+            O retângulo cinza é um pacote de dados saindo do sistema da parceira. A animação o leva até a caixa preta do adaptador, onde ele muda de cor, e o entrega do outro lado já no vocabulário da LogiTech. As dez linhas finas mostram o de/para campo a campo: cinco entram com nome abreviado em maiúsculas e saem com o nome do case. Nada atravessa a fronteira sem passar pela caixa preta.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Adapter: a Ideia</div>
+          <div class="footer-page">22</div>
+        </div>
+      </section>
+
+      <!-- ==================== 21: ADAPTER EM TYPESCRIPT ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Adapter em TypeScript: dois tipos e uma tradução <a href="#/ref-slide" class="ref-badge" title="Ver referências">[4]</a></h2>
+        </div>
+
+        <pre class="code-compact" style="margin-top:4px;"><code class="language-typescript">export interface RastreioLegado {          // o vocabulário da parceira
+  COD_OBJ: string; DT_ULT_MOV: string; SIT: string; UF_ULT: string; DESC_SIT: string;
+}
+export interface Rastreio {                // o vocabulário da LogiTech
+  codigoRastreio: string; status: StatusRastreio;
+  atualizadoEm: string; uf: string; descricao: string;
+}
+
+export class AdaptadorRastreioLegado {
+  adaptar(bruto: RastreioLegado): Rastreio {
+    return {
+      codigoRastreio: (bruto.COD_OBJ ?? '').trim(),
+      status: MAPA_DE_SITUACAO[bruto.SIT] ?? 'desconhecido',
+      atualizadoEm: paraIso(bruto.DT_ULT_MOV),
+      uf: (bruto.UF_ULT ?? '').toUpperCase(),
+      descricao: bruto.DESC_SIT ?? '',
+    };
+  }
+}</code></pre>
+
+        <div class="takeaway" style="margin-top:6px;">
+          <span class="takeaway-label">Detalhe que separa laboratório de produção</span>
+          <p>Os quatro <span class="mono">??</span> não são preciosismo. Sistema legado manda campo ausente, situação nova sem avisar e data em formato inesperado. O adaptador degrada, e não quebra.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Adapter em TypeScript</div>
+          <div class="footer-page">23</div>
+        </div>
+      </section>
+
+      <!-- ==================== 22: ADAPTER x FACADE x PROXY ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quatro padrões que embrulham objetos, com fins diferentes <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>Padrão</th><th>Intenção</th><th>A interface resultante</th><th>Onde aparece no curso</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Adapter</strong></td><td>Fazer duas interfaces incompatíveis conversarem</td><td><strong>Diferente</strong> da original: é esse o ponto</td><td>Hoje: o rastreamento da parceira</td></tr>
+            <tr><td><strong>Facade</strong></td><td>Simplificar o acesso a um subsistema complicado</td><td>Nova e mais simples, escondendo várias classes</td><td>Aula 07: o AI Gateway escondendo os provedores</td></tr>
+            <tr><td><strong>Proxy</strong></td><td>Controlar o acesso ao objeto real</td><td><strong>Igual</strong> à original, mesmo contrato</td><td>Aula 14: o gateway que autentica antes de encaminhar</td></tr>
+            <tr><td><strong>Decorator</strong></td><td>Acrescentar comportamento sem alterar a classe</td><td><strong>Igual</strong> à original, e empilhável</td><td>Hoje: log e retentativa no enviador</td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">O teste de um segundo</span>
+          <p>Olhe a interface de saída. Diferente da entrada, é Adapter. Igual e empilhável, é Decorator. Igual e sozinho, controlando acesso, é Proxy. Mais simples que várias classes juntas, é Facade.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Adapter, Facade, Proxy</div>
+          <div class="footer-page">24</div>
+        </div>
+      </section>
+
+      <!-- ==================== 23: O PROBLEMA DO DECORATOR ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Log e retentativa num enviador que não pode ser tocado</h2>
+        </div>
+
+        <p style="font-size:0.72em; margin-bottom:0;">O <span class="mono">EnviadorEmail</span> da LogiTech está em produção, com fornecedor homologado e janela de mudança. Operações pediu duas coisas: registrar cada envio e reenviar quando o provedor der timeout. Três caminhos possíveis, e só um sobrevive à segunda pergunta.</p>
+
+        <table class="compact-table" style="margin-top:8px;">
+          <thead>
+            <tr><th>Caminho</th><th>O que acontece</th><th>Sobrevive?</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Editar a classe do enviador</td><td>Log e retentativa entram no meio da regra de envio, e a mesma mudança se repete em SMS e WhatsApp</td><td>Não: janela de mudança e código duplicado três vezes</td></tr>
+            <tr><td>Criar <span class="mono">EnviadorEmailComLogERetentativa</span></td><td>Herança resolve um caso. Com 3 canais, 2 comportamentos e a ordem entre eles, a explosão combinatória chega a 12 classes</td><td>Não: cresce multiplicando, não somando</td></tr>
+            <tr><td><strong>Embrulhar por fora</strong></td><td>Duas classes, cada uma com um comportamento, empilháveis sobre qualquer canal em qualquer ordem</td><td><strong>Sim: é o Decorator</strong></td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A pergunta de projeto</span>
+          <p>Comportamento novo que vale para <strong>todos</strong> os canais não pertence a canal nenhum. Ele pertence a uma camada por fora, que se passa pelo canal.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Decorator: o Problema</div>
+          <div class="footer-page">25</div>
+        </div>
+      </section>
+
+      <!-- ==================== 24: DECORATOR, A IDEIA [ANIM 8] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Decorator: camadas que se passam pelo objeto embrulhado <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 290" style="max-height:400px;" role="img" aria-label="Camadas de decorador se fechando ao redor do enviador">
+            <rect x="360" y="116" width="180" height="58" rx="8" fill="#ED145B"/>
+            <text x="450" y="141" text-anchor="middle" fill="#fff" font-size="13" font-weight="700">EnviadorEmail</text>
+            <text x="450" y="161" text-anchor="middle" fill="#fff" font-size="11">congelado, em produção</text>
+
+            <g fill="none" stroke="#333" stroke-width="2.5">
+              <rect x="310" y="86" width="280" height="118" rx="12" opacity="0">
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.16;0.28;1" dur="8s" repeatCount="indefinite"/>
+              </rect>
+              <rect x="258" y="56" width="384" height="178" rx="14" opacity="0">
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.46;0.58;1" dur="8s" repeatCount="indefinite"/>
+              </rect>
+            </g>
+
+            <text x="450" y="106" text-anchor="middle" font-size="12" font-weight="700" fill="#333" opacity="0">ComLog
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.16;0.28;1" dur="8s" repeatCount="indefinite"/>
+            </text>
+            <text x="450" y="76" text-anchor="middle" font-size="12" font-weight="700" fill="#333" opacity="0">ComRetentativa
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.46;0.58;1" dur="8s" repeatCount="indefinite"/>
+            </text>
+
+            <g font-size="12" fill="#555">
+              <text x="668" y="84" font-weight="700" fill="#333">Todas as três camadas</text>
+              <text x="668" y="106">cumprem a mesma interface</text>
+              <text x="668" y="126" font-family="monospace" fill="#ED145B">Enviador</text>
+              <text x="668" y="156">Quem chama não distingue</text>
+              <text x="668" y="176">o enviador nu do embrulhado:</text>
+              <text x="668" y="196">é isso que permite empilhar</text>
+              <text x="668" y="216">em qualquer ordem.</text>
+            </g>
+
+            <g font-size="12" fill="#555">
+              <text x="24" y="84" font-weight="700" fill="#333">O que cada camada faz</text>
+              <text x="24" y="108">ComRetentativa: repete</text>
+              <text x="24" y="128">quando o de dentro falha</text>
+              <text x="24" y="158">ComLog: registra tentativa,</text>
+              <text x="24" y="178">sucesso e falha, e relança</text>
+              <text x="24" y="208">EnviadorEmail: fala com</text>
+              <text x="24" y="228">o provedor. Só isso.</text>
+            </g>
+
+            <text x="450" y="270" text-anchor="middle" font-size="12" fill="#777" font-family="monospace">new ComRetentativa(new ComLog(new EnviadorEmail(), log), 3)</text>
+          </svg>
+          <figcaption>
+            A animação fecha as camadas de dentro para fora, na mesma ordem em que o código as constrói. Primeiro existe só o EnviadorEmail, em rosa. Aos dois segundos, o ComLog se fecha ao redor dele. Aos quatro, o ComRetentativa se fecha ao redor dos dois. Nenhuma dessas etapas alterou a caixa rosa: ela continua exatamente do mesmo tamanho e com o mesmo conteúdo do primeiro ao último quadro do ciclo.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Decorator: a Ideia</div>
+          <div class="footer-page">26</div>
+        </div>
+      </section>
+
+      <!-- ==================== 25: COMLOG EM CÓDIGO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O primeiro decorador: <span class="mono">ComLog</span> <a href="#/ref-slide" class="ref-badge" title="Ver referências">[4]</a></h2>
+        </div>
+
+        <pre class="code-compact" style="margin-top:4px;"><code class="language-typescript">export class ComLog implements Enviador {
+  constructor(private readonly interno: Enviador,
+              private readonly log: Registrador) {}
+
+  get canal(): string { return this.interno.canal; }   // se passa pelo embrulhado
+
+  async enviar(notificacao: Notificacao): Promise&lt;ResultadoEnvio&gt; {
+    this.log.registrar(`tentativa canal=${this.canal} destinatario=...`);
+    try {
+      const resultado = await this.interno.enviar(notificacao);
+      this.log.registrar(`sucesso canal=${this.canal} identificador=...`);
+      return resultado;                                 // devolve intacto
+    } catch (erro) {
+      const motivo = erro instanceof Error ? erro.message : String(erro);
+      this.log.registrar(`falha canal=${this.canal} motivo=${motivo}`);
+      throw erro;                                       // relança, não engole
+    }
+  }
+}</code></pre>
+
+        <div class="takeaway" style="margin-top:6px;">
+          <span class="takeaway-label">As duas linhas que separam decorador de remendo</span>
+          <p><span class="mono">return resultado</span> sem alterar nada, e <span class="mono">throw erro</span> em vez de engolir. Decorador <strong>observa</strong> e acrescenta; quem decide o que fazer com a falha é a camada de cima. O <span class="mono">instanceof Error</span> não é enfeite: com <span class="mono">strict</span> ligado, o TypeScript tipa o capturado como <span class="mono">unknown</span> e recusa <span class="mono">erro.message</span> direto.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Decorator: ComLog</div>
+          <div class="footer-page">27</div>
+        </div>
+      </section>
+
+      <!-- ==================== 26: EMPILHAMENTO [ANIM 9] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A prova: uma falha atravessando a pilha e voltando <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 285" style="max-height:405px;" role="img" aria-label="Chamada descendo pela pilha de decoradores, falhando e sendo repetida">
+            <g font-size="12">
+              <rect x="26" y="34" width="200" height="44" rx="8" fill="#333"/>
+              <text x="126" y="61" text-anchor="middle" fill="#fff" font-weight="700">ComRetentativa</text>
+              <rect x="26" y="104" width="200" height="44" rx="8" fill="#666"/>
+              <text x="126" y="131" text-anchor="middle" fill="#fff" font-weight="700">ComLog</text>
+              <rect x="26" y="174" width="200" height="44" rx="8" fill="#ED145B"/>
+              <text x="126" y="201" text-anchor="middle" fill="#fff" font-weight="700">EnviadorEmail</text>
+            </g>
+
+            <g stroke="#bbb" stroke-width="1.4">
+              <line x1="126" y1="78" x2="126" y2="104"/>
+              <line x1="126" y1="148" x2="126" y2="174"/>
+              <line x1="248" y1="46" x2="248" y2="206"/>
+            </g>
+
+            <circle cx="248" cy="56" r="8" fill="#ED145B">
+              <animate attributeName="cy" values="56;126;196;196;126;56;126;196;196;126;56;56"
+                       keyTimes="0;0.06;0.12;0.18;0.24;0.30;0.42;0.48;0.54;0.62;0.70;1"
+                       dur="8s" repeatCount="indefinite"/>
+              <animate attributeName="fill" values="#ED145B;#ED145B;#ED145B;#b00020;#b00020;#b00020;#ED145B;#ED145B;#00a050;#00a050;#00a050;#00a050"
+                       keyTimes="0;0.06;0.12;0.18;0.24;0.30;0.42;0.48;0.54;0.62;0.70;1"
+                       dur="8s" repeatCount="indefinite"/>
+            </circle>
+
+            <g font-size="13" font-family="monospace">
+              <rect x="286" y="30" width="590" height="192" rx="8" fill="#1e1e1e"/>
+              <text x="298" y="54" fill="#888" font-size="12">log lido pelo teste de empilhamento</text>
+
+              <text x="298" y="86" fill="#eee" opacity="0">tentativa canal=email destinatario=sac@logitech.example
+                <animate attributeName="opacity" values="0;1;1" keyTimes="0;0.1;1" dur="8s" repeatCount="indefinite"/>
+              </text>
+              <text x="298" y="116" fill="#ff8080" opacity="0">falha canal=email motivo=timeout do provedor na chamada 1
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.22;0.3;1" dur="8s" repeatCount="indefinite"/>
+              </text>
+              <text x="298" y="146" fill="#eee" opacity="0">tentativa canal=email destinatario=sac@logitech.example
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.44;0.52;1" dur="8s" repeatCount="indefinite"/>
+              </text>
+              <text x="298" y="176" fill="#7cffa0" opacity="0">sucesso canal=email identificador=EML-OK9
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.62;0.7;1" dur="8s" repeatCount="indefinite"/>
+              </text>
+              <text x="298" y="208" fill="#888" font-size="12" opacity="0">resultado.tentativas = 2   |   enviadores.ts: 0 linhas alteradas
+                <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.74;0.82;1" dur="8s" repeatCount="indefinite"/>
+              </text>
+            </g>
+
+            <text x="26" y="252" font-size="12" fill="#777">Saída real do laboratório, copiada da execução do teste de empilhamento.</text>
+          </svg>
+          <figcaption>
+            O ponto desce da retentativa para o log e daí para o enviador, fica vermelho quando o provedor recusa, e sobe de volta carregando a exceção. O log registra tentativa e falha. Em seguida a retentativa dispara a segunda passagem: o ponto desce outra vez, agora com sucesso, fica verde e sobe com o resultado. Ao fim, quatro linhas de log e tentativas igual a 2, com zero linha alterada na classe do enviador.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Decorator: Empilhamento</div>
+          <div class="footer-page">28</div>
+        </div>
+      </section>
+
+      <!-- ==================== 27: COMRETENTATIVA EM CÓDIGO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O segundo decorador: <span class="mono">ComRetentativa</span> <a href="#/ref-slide" class="ref-badge" title="Ver referências">[5]</a></h2>
+        </div>
+
+        <pre class="code-compact" style="margin-top:4px;"><code class="language-typescript">export class ComRetentativa implements Enviador {
+  constructor(private readonly interno: Enviador,
+              private readonly maxTentativas = 3,
+              private readonly esperaMs = 0) {}
+
+  async enviar(notificacao: Notificacao): Promise&lt;ResultadoEnvio&gt; {
+    let ultimoErro: unknown;
+    for (let tentativa = 1; tentativa &lt;= this.maxTentativas; tentativa += 1) {
+      try {
+        const resultado = await this.interno.enviar(notificacao);
+        return { ...resultado, tentativas: tentativa };
+      } catch (erro) {
+        ultimoErro = erro;
+        if (tentativa &lt; this.maxTentativas &amp;&amp; this.esperaMs &gt; 0) {
+          await espere(this.esperaMs);       // await, não sleep bloqueante
+        }
+      }
+    }
+    throw ultimoErro;
+  }
+}</code></pre>
+
+        <div class="callout" style="margin-top:6px; padding:10px 16px;">
+          <p style="font-size:0.65em; margin:0;">O <span class="mono">await espere(...)</span> devolve o controle ao event loop durante a espera. Um <span class="mono">sleep</span> bloqueante aqui congelaria as outras notificações em curso: é exatamente a armadilha do modelo assíncrono do início da aula.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Decorator: ComRetentativa</div>
+          <div class="footer-page">29</div>
+        </div>
+      </section>
+
+      <!-- ==================== 28: A ORDEM IMPORTA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A ordem do empilhamento muda o que você enxerga <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <p style="font-size:0.72em; margin-bottom:0;">Os mesmos dois decoradores, invertidos, produzem logs diferentes. Nenhum dos dois está errado: eles respondem a perguntas de operação diferentes.</p>
+
+        <div class="code-pair" style="margin-top:8px;">
+          <div>
+            <h4>ComRetentativa por fora (a do laboratório)</h4>
+            <pre class="code-compact"><code class="language-text">new ComRetentativa(new ComLog(base, log), 3)
+
+tentativa canal=email ...
+falha     canal=email motivo=timeout
+tentativa canal=email ...
+sucesso   canal=email identificador=EML-OK9
+
+4 linhas: cada tentativa aparece</code></pre>
+          </div>
+          <div>
+            <h4>ComLog por fora</h4>
+            <pre class="code-compact"><code class="language-text">new ComLog(new ComRetentativa(base, 3), log)
+
+tentativa canal=email ...
+sucesso   canal=email identificador=EML-OK9
+
+2 linhas: a falha some do log,
+porque foi resolvida por dentro</code></pre>
+          </div>
+        </div>
+
+        <div class="takeaway" style="margin-top:8px;">
+          <span class="takeaway-label">Como escolher</span>
+          <p>Quer <strong>diagnosticar o provedor</strong>, saber quantas vezes ele falhou? Retentativa por fora. Quer só o <strong>resultado de negócio</strong>, sem ruído de infraestrutura no log? Log por fora. O laboratório usa a primeira, porque a evidência pedida é justamente a falha intermediária.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Decorator: a Ordem</div>
+          <div class="footer-page">30</div>
+        </div>
+      </section>
+
+      <!-- ==================== 29: DECORATOR x HERANÇA [ANIM 10] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Por que não herança: a explosão combinatória <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 250" style="max-height:390px;" role="img" aria-label="Doze subclasses contra cinco classes com composição">
+            <text x="20" y="18" font-size="13" font-weight="700" fill="#777">Herança: 3 canais x 2 comportamentos x 2 ordens</text>
+            <g font-size="9" fill="#fff">
+              <rect x="20" y="28" width="96" height="26" rx="4" fill="#b0b0b0"/><text x="68" y="45" text-anchor="middle">EmailLog</text>
+              <rect x="122" y="28" width="96" height="26" rx="4" fill="#b0b0b0"/><text x="170" y="45" text-anchor="middle">EmailRetry</text>
+              <rect x="224" y="28" width="96" height="26" rx="4" fill="#b0b0b0"/><text x="272" y="45" text-anchor="middle">EmailLogRetry</text>
+              <rect x="326" y="28" width="96" height="26" rx="4" fill="#b0b0b0"/><text x="374" y="45" text-anchor="middle">EmailRetryLog</text>
+              <rect x="20" y="60" width="96" height="26" rx="4" fill="#b0b0b0"/><text x="68" y="77" text-anchor="middle">SmsLog</text>
+              <rect x="122" y="60" width="96" height="26" rx="4" fill="#b0b0b0"/><text x="170" y="77" text-anchor="middle">SmsRetry</text>
+              <rect x="224" y="60" width="96" height="26" rx="4" fill="#b0b0b0"/><text x="272" y="77" text-anchor="middle">SmsLogRetry</text>
+              <rect x="326" y="60" width="96" height="26" rx="4" fill="#b0b0b0"/><text x="374" y="77" text-anchor="middle">SmsRetryLog</text>
+              <rect x="20" y="92" width="96" height="26" rx="4" fill="#b0b0b0"/><text x="68" y="109" text-anchor="middle">WppLog</text>
+              <rect x="122" y="92" width="96" height="26" rx="4" fill="#b0b0b0"/><text x="170" y="109" text-anchor="middle">WppRetry</text>
+              <rect x="224" y="92" width="96" height="26" rx="4" fill="#b0b0b0"/><text x="272" y="109" text-anchor="middle">WppLogRetry</text>
+              <rect x="326" y="92" width="96" height="26" rx="4" fill="#b0b0b0"/><text x="374" y="109" text-anchor="middle">WppRetryLog</text>
+            </g>
+            <text x="20" y="138" font-size="12" fill="#777">12 classes, com o código do canal repetido dentro de cada uma.</text>
+
+            <line x1="452" y1="10" x2="452" y2="196" stroke="#ddd" stroke-width="2"/>
+
+            <text x="480" y="18" font-size="13" font-weight="700" fill="#ED145B">Composição: 3 canais + 2 decoradores</text>
+            <g font-size="10" fill="#fff">
+              <rect x="480" y="28" width="126" height="26" rx="4" fill="#ED145B"/><text x="543" y="45" text-anchor="middle">EnviadorEmail</text>
+              <rect x="480" y="60" width="126" height="26" rx="4" fill="#ED145B"/><text x="543" y="77" text-anchor="middle">EnviadorSms</text>
+              <rect x="480" y="92" width="126" height="26" rx="4" fill="#ED145B"/><text x="543" y="109" text-anchor="middle">EnviadorWhatsapp</text>
+              <rect x="620" y="28" width="126" height="26" rx="4" fill="#333"/><text x="683" y="45" text-anchor="middle">ComLog</text>
+              <rect x="620" y="60" width="126" height="26" rx="4" fill="#333"/><text x="683" y="77" text-anchor="middle">ComRetentativa</text>
+            </g>
+            <text x="480" y="138" font-size="12" fill="#777">5 classes, e as 12 combinações continuam possíveis, montadas</text>
+            <text x="480" y="156" font-size="12" fill="#777">em tempo de execução, sem classe nenhuma nova.</text>
+
+            <g opacity="0">
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.4;0.55;1" dur="7s" repeatCount="indefinite"/>
+              <text x="20" y="166" font-size="12" fill="#ED145B" font-weight="700">4º canal em herança: mais 4 classes</text>
+              <text x="480" y="182" font-size="12" fill="#ED145B" font-weight="700">4º canal em composição: mais 1 classe</text>
+            </g>
+
+            <text x="20" y="216" font-size="12" fill="#333" font-weight="700">Herança multiplica. Composição soma.</text>
+          </svg>
+          <figcaption>
+            À esquerda, a matriz de subclasses que a herança exige para cobrir três canais, dois comportamentos e as duas ordens possíveis entre eles: doze classes, cada uma com o código do canal repetido dentro. À direita, as mesmas doze combinações com cinco classes e composição. Aos três segundos, a animação acrescenta a conta de um quarto canal: quatro classes novas de um lado, uma sozinha do outro.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Decorator x Herança</div>
+          <div class="footer-page">31</div>
+        </div>
+      </section>
+
+      <!-- ==================== 30: SÍNTESE DOS TRÊS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Os três padrões de hoje, na mesma tabela <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>Padrão</th><th>Família</th><th>Pergunta que responde</th><th>Onde entra no laboratório</th><th>SOLID</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Strategy</strong></td><td>Comportamental</td><td>Como <strong>trocar</strong> o algoritmo sem reabrir quem o usa?</td><td><span class="mono">TODO-1</span> a <span class="mono">TODO-3</span>: as modalidades de frete</td><td>OCP, DIP</td></tr>
+            <tr><td><strong>Adapter</strong></td><td>Estrutural</td><td>Como conversar com quem fala <strong>outra língua</strong>?</td><td><span class="mono">TODO-4</span>: o rastreamento da parceira</td><td>SRP, DIP</td></tr>
+            <tr><td><strong>Decorator</strong></td><td>Estrutural</td><td>Como <strong>acrescentar</strong> comportamento sem alterar a classe?</td><td><span class="mono">TODO-5</span> e <span class="mono">TODO-6</span>: log e retentativa</td><td>OCP, SRP, LSP</td></tr>
+          </tbody>
+        </table>
+
+        <div class="side-by-side" style="margin-top:10px;">
+          <div class="side">
+            <h4 style="color:var(--fiap-pink);">O que os três têm em comum</h4>
+            <p style="font-size:0.66em; margin:0;">Todos dependem de um <strong>contrato comum</strong> pequeno: <span class="mono">EstrategiaFrete</span> no frete, <span class="mono">Enviador</span> nas notificações. Sem interface enxuta, nenhum dos três é barato.</p>
+          </div>
+          <div class="side">
+            <h4 style="color:var(--fiap-pink);">A diferença de intenção</h4>
+            <p style="font-size:0.66em; margin:0;">Strategy <strong>troca</strong> a implementação. Adapter <strong>traduz</strong> entre duas. Decorator <strong>empilha</strong> várias sobre a mesma. O diagrama de classes é parecido; o propósito, não.</p>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:9px; padding:10px 16px;">
+          <p style="font-size:0.65em; margin:0;">Se você só levar uma frase desta tabela, leve esta: <strong>padrão não é nome de arquivo, é a resposta a uma pergunta de projeto</strong>. Quando alguém disser "aqui cabe um Decorator", a pergunta seguinte é qual comportamento precisa entrar sem reabrir a classe.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Síntese dos Padrões</div>
+          <div class="footer-page">32</div>
+        </div>
+      </section>
+
+      <!-- ==================== 31: ASYNC NA PRÁTICA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O erro clássico: bloquear o event loop <a href="#/ref-slide" class="ref-badge" title="Ver referências">[5]</a></h2>
+        </div>
+
+        <p style="font-size:0.72em; margin-bottom:0;">O modelo do event loop cobra um preço: uma única linha bloqueante trava o serviço inteiro, e não só a requisição que a executou. Em Java, aquela thread travaria sozinha; aqui, travam todas.</p>
+
+        <div class="code-pair" style="margin-top:8px;">
+          <div>
+            <h4>Trava o serviço inteiro</h4>
+            <pre class="code-compact"><code class="language-python">import time, requests
+
+@app.post("/api/v1/frete/cotacao")
+def cotar(pedido):
+    time.sleep(0.2)            # bloqueia
+    r = requests.get(URL)      # bloqueia
+    return calcular(r.json())</code></pre>
+          </div>
+          <div>
+            <h4>Devolve o controle ao laço</h4>
+            <pre class="code-compact"><code class="language-python">import asyncio, httpx
+
+@app.post("/api/v1/frete/cotacao")
+async def cotar(pedido):
+    await asyncio.sleep(0.2)
+    async with httpx.AsyncClient() as c:
+        r = await c.get(URL)
+    return calcular(r.json())</code></pre>
+          </div>
+        </div>
+
+        <div class="takeaway" style="margin-top:8px;">
+          <span class="takeaway-label">A regra de bolso</span>
+          <p>Dentro de uma função <span class="mono">async</span>, toda espera precisa ter <span class="mono">await</span> na frente. Biblioteca sem versão assíncrona vai para um <em>thread pool</em>, nunca direto no laço: no FastAPI, rota declarada com <span class="mono">def</span> comum já roda em thread separada, e é a saída de emergência quando a biblioteca é síncrona.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Async e Event Loop</div>
+          <div class="footer-page">33</div>
+        </div>
+      </section>
+
+      <!-- ==================== 32: CONTRATO: UM ESQUEMA, TRÊS ENTREGAS [ANIM 11] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Um esquema, três entregas: validação, tipo e OpenAPI <a href="#/ref-slide" class="ref-badge" title="Ver referências">[6]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 260" style="max-height:390px;" role="img" aria-label="Do esquema saem validação, tipo estático e documentação OpenAPI">
+            <rect x="40" y="88" width="200" height="80" rx="10" fill="#ED145B"/>
+            <text x="140" y="120" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">o esquema</text>
+            <text x="140" y="142" text-anchor="middle" fill="#fff" font-size="12">Pydantic no frete</text>
+            <text x="140" y="159" text-anchor="middle" fill="#fff" font-size="12">Zod nas notificações</text>
+
+            <g font-size="12" fill="#333">
+              <rect x="470" y="14" width="410" height="58" rx="8" fill="#fafafa" stroke="#999"/>
+              <text x="490" y="38" font-weight="700">1. Validação em tempo de execução</text>
+              <text x="490" y="58" fill="#666">pesoKg negativo vira 422 antes de tocar a regra de negócio</text>
+
+              <rect x="470" y="88" width="410" height="58" rx="8" fill="#fafafa" stroke="#999"/>
+              <text x="490" y="112" font-weight="700">2. Tipo em tempo de compilação</text>
+              <text x="490" y="132" fill="#666">z.infer e o type checker: um só lugar declara a forma</text>
+
+              <rect x="470" y="162" width="410" height="58" rx="8" fill="#fafafa" stroke="#999"/>
+              <text x="490" y="186" font-weight="700">3. Documentação gerada</text>
+              <text x="490" y="206" fill="#666">/docs do FastAPI e o JSON Schema publicado pelo Zod</text>
+            </g>
+
+            <g stroke="#ED145B" stroke-width="2" fill="none">
+              <path d="M240,114 C350,114 370,43 470,43"/>
+              <path d="M240,128 C350,128 370,117 470,117"/>
+              <path d="M240,142 C350,142 370,191 470,191"/>
+            </g>
+
+            <circle r="6" fill="#ED145B">
+              <animateMotion dur="4s" repeatCount="indefinite" path="M240,114 C350,114 370,43 470,43"/>
+            </circle>
+            <circle r="6" fill="#ED145B">
+              <animateMotion dur="4s" begin="1.2s" repeatCount="indefinite" path="M240,128 C350,128 370,117 470,117"/>
+            </circle>
+            <circle r="6" fill="#ED145B">
+              <animateMotion dur="4s" begin="2.4s" repeatCount="indefinite" path="M240,142 C350,142 370,191 470,191"/>
+            </circle>
+
+            <text x="40" y="240" font-size="12" fill="#777">Especificação escrita à mão envelhece no primeiro deploy. Especificação gerada do código não tem como divergir dele.</text>
+          </svg>
+          <figcaption>
+            Três pontos saem do mesmo esquema, um a cada 1,2 segundo, e cada um chega a uma entrega diferente: a validação que recusa a requisição malformada antes de qualquer regra de negócio, o tipo estático que o editor e o compilador usam, e a documentação OpenAPI que o time de integração consome. É a mesma declaração servindo às três, e é por isso que ela não pode divergir do código: não existe segunda cópia para envelhecer.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Contrato de API</div>
+          <div class="footer-page">34</div>
+        </div>
+      </section>
+
+      <!-- ==================== 33: PYDANTIC x ZOD ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O mesmo contrato, nas duas linguagens <a href="#/ref-slide" class="ref-badge" title="Ver referências">[6]</a></h2>
+        </div>
+
+        <div class="code-pair">
+          <div>
+            <h4>Python: Pydantic no serviço de frete</h4>
+            <pre class="code-compact"><code class="language-python">class PedidoCotacao(BaseModel):
+    origem: str = Field(min_length=3,
+                        max_length=3)
+    destino: str = Field(min_length=3,
+                         max_length=3)
+    pesoKg: float = Field(gt=0, le=30000)
+    modalidade: str = Field(min_length=3)
+
+# /docs e /openapi.json saem daqui,
+# sem uma linha de YAML escrita à mão</code></pre>
+          </div>
+          <div>
+            <h4>TypeScript: Zod nas notificações</h4>
+            <pre class="code-compact"><code class="language-typescript">export const EsquemaNotificacao = z.object({
+  canal: z.enum(['email','sms','whatsapp']),
+  destinatario: z.string().min(3).max(120),
+  mensagem: z.string().min(1).max(1000),
+});
+
+export type NotificacaoValidada =
+  z.infer&lt;typeof EsquemaNotificacao&gt;;
+
+z.toJSONSchema(EsquemaNotificacao);</code></pre>
+          </div>
+        </div>
+
+        <div class="takeaway" style="margin-top:8px;">
+          <span class="takeaway-label">A diferença que importa</span>
+          <p>No Python o tipo vem primeiro e a validação nasce dele; no TypeScript o esquema vem primeiro e o tipo nasce dele, porque o tipo do TypeScript some em tempo de execução. O resultado é o mesmo: <strong>uma única fonte da verdade</strong> para a forma do dado.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Pydantic e Zod</div>
+          <div class="footer-page">35</div>
+        </div>
+      </section>
+
+      <!-- ==================== 34: A PIRÂMIDE DE TESTES DESTE LAB ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Os testes já vêm escritos, e vermelhos <a href="#/ref-slide" class="ref-badge" title="Ver referências">[7]</a></h2>
+        </div>
+
+        <p style="font-size:0.72em; margin-bottom:0;">Não é engano do professor: cada lacuna do laboratório tem um bloco de testes esperando por ela. O ciclo da noite é ver o teste vermelho, entender o que ele cobra, preencher a lacuna e vê-lo acender.</p>
+
+        <table class="compact-table" style="margin-top:8px;">
+          <thead>
+            <tr><th>Arquivo de teste</th><th>Ferramenta</th><th>Cobre</th><th>Estado no esqueleto</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono">test_estrategias.py</td><td>pytest</td><td><span class="mono">TODO-1</span> e <span class="mono">TODO-2</span></td><td>vermelho</td></tr>
+            <tr><td class="mono">test_registro.py</td><td>pytest</td><td><span class="mono">TODO-3</span></td><td>vermelho</td></tr>
+            <tr><td class="mono">test_rota.py</td><td>pytest</td><td>O contrato HTTP, antes e depois</td><td><strong>verde, e precisa continuar</strong></td></tr>
+            <tr><td class="mono">adaptador.test.ts</td><td>vitest</td><td><span class="mono">TODO-4</span></td><td>vermelho</td></tr>
+            <tr><td class="mono">decoradores.test.ts</td><td>vitest</td><td><span class="mono">TODO-5</span></td><td>vermelho</td></tr>
+            <tr><td class="mono">empilhamento.test.ts</td><td>vitest</td><td><span class="mono">TODO-6</span>, e que <span class="mono">enviadores.ts</span> não mudou</td><td>vermelho</td></tr>
+            <tr><td class="mono">servidor.test.ts</td><td>vitest</td><td>O contrato HTTP das notificações</td><td><strong>verde, e precisa continuar</strong></td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Os dois verdes são a rede de segurança</span>
+          <p><span class="mono">test_rota.py</span> e <span class="mono">servidor.test.ts</span> passam desde o primeiro minuto. Se algum deles ficar vermelho durante o refactor, o comportamento mudou, e aí não foi refactor.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Pirâmide de Testes</div>
+          <div class="footer-page">36</div>
+        </div>
+      </section>
+
+      <!-- ==================== 35: QUIZ 1 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container" data-quiz-key="aula06-quiz1">
+          <div class="quiz-question">Como o padrão Strategy permite acrescentar um cálculo de frete novo sem violar o princípio Open/Closed?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> Ele concentra todos os cálculos em uma função só, mais fácil de editar quando surge uma modalidade nova.</li>
+            <li data-correct="true"><span class="option-letter">B</span> Ele encapsula cada algoritmo em uma classe que cumpre um contrato comum, e a modalidade nova entra como classe e registro, sem modificar o código que já usava as antigas.</li>
+            <li data-correct="false"><span class="option-letter">C</span> Ele obriga toda modalidade a herdar de uma classe base abstrata, que é reaberta a cada acréscimo.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Ele adia a escolha do cálculo para o banco de dados, tirando a decisão do código da aplicação.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. Aberto para extensão (classe nova) e fechado para modificação (a rota não muda). É exatamente o que o critério 8 do laboratório verifica, procurando app/main.py no git diff."
+               data-incorrect-msg="Incorreto. A chave é o contrato comum mais o registro: acrescentar vira criar uma classe, e não reabrir a rota. Reveja os slides do registro e do antes e depois.">
+          </div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz1Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz1Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Verificação de Aprendizado</div>
+          <div class="footer-page">37</div>
+        </div>
+      </section>
+
+      <!-- ==================== 36: INTERVALO ==================== -->
+      <section class="content-slide" style="text-align:center; background:transparent;"
+               data-background-image="../assets/img/coffee-relax.jpg"
+               data-background-size="cover"
+               data-background-opacity="0.45">
+        <div style="margin-top:150px;">
+          <h2 style="font-size:4em; color:var(--fiap-pink); margin-bottom:10px; text-shadow:0 2px 12px rgba(255,255,255,0.9);">Intervalo</h2>
+          <h3 style="font-size:2.2em; color:var(--fiap-dark); text-shadow:0 2px 10px rgba(255,255,255,0.9);">30 minutos</h3>
+
+          <div class="quiz-timer-box" style="margin:40px auto 0 auto; padding:15px 30px; font-size:1.3em;">
+            <button class="quiz-timer-btn" style="width:40px; height:40px; font-size:1.2em;" onclick="startTimer('breakTimer', 1800)" aria-label="Iniciar cronômetro do intervalo">&#9654;</button>
+            <span id="breakTimer">30:00</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 37: QUIZ 2 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container" data-quiz-key="aula06-quiz2">
+          <div class="quiz-question">Qual a utilidade do padrão Adapter ao integrar uma API externa que a sua equipe não controla?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> Ele acelera a chamada à API externa, guardando as respostas em cache antes de devolvê-las.</li>
+            <li data-correct="false"><span class="option-letter">B</span> Ele obriga o fornecedor externo a publicar uma interface compatível com a nossa.</li>
+            <li data-correct="true"><span class="option-letter">C</span> Ele traduz entre a interface que a nossa aplicação espera e a interface incompatível do terceiro, concentrando num único arquivo o impacto de qualquer mudança que o terceiro fizer.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Ele repete a chamada quando a API externa falha, garantindo que a integração nunca caia.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. O Adapter é a única classe autorizada a conhecer COD_OBJ e SIT. Se a parceira mudar o contrato amanhã, muda um arquivo e mais nenhum."
+               data-incorrect-msg="Incorreto. Cache é outra coisa, repetir a chamada é o Decorator de retentativa, e ninguém obriga um terceiro a mudar. O Adapter traduz na fronteira.">
+          </div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz2Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz2Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Verificação de Aprendizado</div>
+          <div class="footer-page">39</div>
+        </div>
+      </section>
+
+      <!-- ==================== 38: QUIZ 3 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container" data-quiz-key="aula06-quiz3">
+          <div class="quiz-question">O que é o padrão Decorator e como ele acrescenta comportamento a um objeto em tempo de execução?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> É um padrão criacional que decide qual objeto instanciar a partir de um parâmetro recebido.</li>
+            <li data-correct="false"><span class="option-letter">B</span> É uma anotação da linguagem que altera o código-fonte da classe original durante a compilação.</li>
+            <li data-correct="true"><span class="option-letter">C</span> É um padrão estrutural que embrulha o objeto original numa classe que cumpre a mesma interface, acrescentando comportamento antes ou depois da chamada, sem alterar a classe embrulhada.</li>
+            <li data-correct="false"><span class="option-letter">D</span> É uma subclasse do objeto original que sobrescreve os métodos que precisam de comportamento adicional.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. Mesma interface, comportamento por fora e empilhável: por isso ComRetentativa envolve ComLog, que envolve o enviador, sem que enviadores.ts mude uma linha."
+               data-incorrect-msg="Incorreto. A alternativa D descreve herança, justamente o caminho que gera a explosão combinatória de 12 classes. Decorator usa composição, mantendo a mesma interface.">
+          </div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz3Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz3Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Verificação de Aprendizado</div>
+          <div class="footer-page">40</div>
+        </div>
+      </section>
+
+      <!-- ==================== 39: ATIVIDADE, ABERTURA ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Atividade Prática em dupla: seis lacunas, 60 minutos</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>Os dois serviços já sobem e respondem. Vocês preenchem lacunas nomeadas.</h3>
+          <p style="font-size:0.64em; margin:0 0 8px;">Fork de <a href="https://github.com/josercf/mwe-2026-2-lab06-apis-patterns" target="_blank" class="mono" style="color:var(--fiap-pink); font-weight:700;">josercf/mwe-2026-2-lab06-apis-patterns</a>, nunca clone direto. As suítes já vêm escritas e <strong>vermelhas</strong>: cada lacuna fechada acende um bloco delas.</p>
+          <pre style="margin:0 0 8px; font-size:0.48em;"><code class="language-text">TODO-1  frete (Python)    EstrategiaFrete como protocolo comum
+TODO-2  frete             FreteExpresso, FreteEconomico e FretePadrao
+TODO-3  frete             Registro de estratégias, e a rota parando de citar modalidade
+TODO-4  notificacoes (TS) AdaptadorRastreioLegado traduzindo o formato da parceira
+TODO-5  notificacoes      ComLog como Decorator do enviador
+TODO-6  notificacoes      ComRetentativa empilhável sobre o ComLog</code></pre>
+          <p style="margin:0; font-size:0.6em;"><strong style="color:var(--fiap-pink);">Não editem</strong> <span class="mono">servicos/notificacoes/src/enviadores.ts</span>: o verificador guarda a impressão digital do arquivo e reprova o critério 6 se ele mudar. Resolver por dentro funcionaria, e perderia a aula.</p>
+          <p class="fecho"><strong>O que vocês vão provar hoje:</strong> que uma modalidade de frete nova entra na LogiTech sem que a rota HTTP mude uma linha, e que log e retentativa entram no envio sem que a classe do enviador mude uma linha.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Atividade Prática</div>
+          <div class="footer-page">41</div>
+        </div>
+      </section>
+
+      <!-- ==================== 40: PASSO 0 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 0: os três serviços de pé, antes de escrever qualquer linha</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>Três terminais, e as três sondas de saúde respondendo</h3>
+          <pre style="margin:0 0 8px; font-size:0.48em;"><code class="language-bash"># terminal 1: o sistema legado da transportadora parceira
+python3 servicos/parceira-rastreio/servidor.py
+
+# terminal 2: o serviço de frete
+cd servicos/frete && uvicorn app.main:app --port 8000 --reload
+
+# terminal 3: o serviço de notificações
+cd servicos/notificacoes && npm run dev</code></pre>
+          <pre style="margin:0 0 8px; font-size:0.48em;"><code class="language-bash">curl -s http://localhost:8000/health   # {"status":"ok"}
+curl -s http://localhost:3001/health   # {"status":"ok"}
+curl -s http://localhost:9090/health   # {"status":"ok"}</code></pre>
+          <p style="margin:0; font-size:0.6em;">Abram também <span class="mono">http://localhost:8000/docs</span>: é o Swagger UI que o Pydantic gerou sozinho, e vai ser a ferramenta de teste manual de vocês a noite inteira.</p>
+          <p class="fecho"><strong>A linha de base:</strong> três serviços, em três linguagens, respondendo antes de qualquer refactor. Se um deles parar depois, foi o que vocês escreveram, e não o esqueleto.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Laboratório, Passo 0</div>
+          <div class="footer-page">42</div>
+        </div>
+      </section>
+
+      <!-- ==================== 41: PASSO 1 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 1, <span class="mono">TODO-1</span>: o contrato comum das estratégias</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>Arquivo: <span class="mono caminho">servicos/frete/app/estrategias.py</span> · 8 minutos</h3>
+          <pre style="margin:0 0 8px; font-size:0.48em;"><code class="language-python">@runtime_checkable
+class EstrategiaFrete(Protocol):
+    ______________________          # o atributo, com anotação de tipo
+
+    def ____________(self, distancia_km: float, peso_kg: float) -> Cotacao: ...</code></pre>
+          <pre style="margin:0 0 8px; font-size:0.48em;"><code class="language-bash">python3 verificar.py --criterio 1
+git commit -am "feat(todo-1): EstrategiaFrete como protocolo comum"</code></pre>
+          <p style="margin:0; font-size:0.6em;">Protocolo vazio aceita qualquer objeto e não é contrato nenhum: o critério 1 confere que <span class="mono">cotar</span> e <span class="mono">modalidade</span> estão declarados de verdade.</p>
+          <p class="fecho"><strong>O que você acabou de provar:</strong> um contrato existe sem herança nenhuma. Nenhuma classe de frete importa <span class="mono">EstrategiaFrete</span>, e mesmo assim todas o cumprem.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Laboratório, Passo 1</div>
+          <div class="footer-page">43</div>
+        </div>
+      </section>
+
+      <!-- ==================== 42: PASSO 2 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 2, <span class="mono">TODO-2</span>: uma classe por algoritmo</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>Mesmo arquivo · 10 minutos · a tabela de preços está na docstring do módulo</h3>
+          <pre style="margin:0 0 8px; font-size:0.48em;"><code class="language-python">class FreteExpresso:
+    modalidade = "expresso"
+    custo_por_km = 0.85
+    custo_por_kg = 1.20
+
+    def cotar(self, distancia_km: float, peso_kg: float) -> Cotacao:
+        return Cotacao(valor=valor_base(________________________),
+                       prazo_dias=____________________,
+                       modalidade=self.modalidade)</code></pre>
+          <pre style="margin:0 0 8px; font-size:0.48em;"><code class="language-bash">python3 -m pytest servicos/frete/tests/test_estrategias.py
+python3 verificar.py --criterio 2
+git commit -am "feat(todo-2): as tres modalidades de frete"</code></pre>
+          <p style="margin:0; font-size:0.6em;">Alvo na rota de referência (SAO para LDB, 500 km, 100 kg): <strong>545,00 em 1 dia</strong>, <strong>265,00 em 4 dias</strong> e <strong>380,00 em 2 dias</strong>. O verificador executa a sua classe e compara.</p>
+          <p class="fecho"><strong>O contraste que importa:</strong> três classes com a mesma forma e fórmulas diferentes. Trocar de modalidade virou trocar de objeto, e não percorrer um <span class="mono">if</span>.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Laboratório, Passo 2</div>
+          <div class="footer-page">44</div>
+        </div>
+      </section>
+
+      <!-- ==================== 43: PASSO 3 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 3, <span class="mono">TODO-3</span>: o registro, e a rota que esquece os nomes</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>Arquivos: <span class="mono caminho">app/registro.py</span> e <span class="mono caminho">app/main.py</span> · 12 minutos</h3>
+          <pre style="margin:0 0 8px; font-size:0.48em;"><code class="language-python"># registro.py, no fim do arquivo
+registrar(_________________())
+registrar(_________________())
+registrar(_________________())
+
+# main.py, dentro da rota de cotação: a cadeia de if inteira sai daqui
+estrategia = ____________(pedido.modalidade)   # KeyError vira HTTPException(422)
+cotacao = estrategia.__________(distancia, pedido.pesoKg)</code></pre>
+          <pre style="margin:0 0 8px; font-size:0.48em;"><code class="language-bash">python3 verificar.py --criterio 3
+git commit -am "feat(todo-3): registro de estrategias, rota sem modalidade"</code></pre>
+          <p style="margin:0; font-size:0.6em;"><strong style="color:var(--fiap-pink);">Critério:</strong> nenhum nome de modalidade pode sobrar em <span class="mono">main.py</span>. O verificador procura por eles no texto do arquivo, e também por <span class="mono">modalidade ==</span>.</p>
+          <p class="fecho"><strong>Repare no que não existe:</strong> nenhuma das palavras <span class="mono">expresso</span>, <span class="mono">economico</span> ou <span class="mono">padrao</span> sobrou em <span class="mono">main.py</span>, e nenhum comportamento se perdeu no caminho.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Laboratório, Passo 3</div>
+          <div class="footer-page">45</div>
+        </div>
+      </section>
+
+      <!-- ==================== 44: PASSO 4 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 4, <span class="mono">TODO-4</span>: o Adapter do rastreamento</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>Arquivo: <span class="mono caminho">servicos/notificacoes/src/adaptador.ts</span> · 10 minutos</h3>
+          <pre style="margin:0 0 8px; font-size:0.48em;"><code class="language-typescript">adaptar(bruto: RastreioLegado): Rastreio {
+  return {
+    codigoRastreio: ____________________,   // sem espaços nas pontas
+    status: ____________________,           // tabela de/para, senão 'desconhecido'
+    atualizadoEm: ____________________,     // dd/MM/aaaa HH:mm  ->  ISO
+    uf: ____________________,               // maiúsculas
+    descricao: ____________________,        // ausente vira string vazia
+  };
+}</code></pre>
+          <pre style="margin:0 0 8px; font-size:0.48em;"><code class="language-bash">cd servicos/notificacoes && npx vitest run tests/adaptador.test.ts && cd ../..
+python3 verificar.py --criterio 4
+git commit -am "feat(todo-4): adaptador do rastreio da parceira"</code></pre>
+          <p style="margin:0; font-size:0.6em;">Depois de fechar, compare no navegador: <span class="mono">localhost:9090/consulta?objeto=BR9912345</span> contra <span class="mono">localhost:3001/api/v1/rastreio/BR9912345</span>.</p>
+          <p class="fecho"><strong>O que você acabou de provar:</strong> <span class="mono">COD_OBJ</span> e <span class="mono">SIT</span> existem em um único arquivo do serviço. A próxima mudança unilateral da parceira não vira caçada pelo código.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Laboratório, Passo 4</div>
+          <div class="footer-page">46</div>
+        </div>
+      </section>
+
+      <!-- ==================== 45: PASSO 5 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 5, <span class="mono">TODO-5</span>: <span class="mono">ComLog</span> ao redor do enviador</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>Arquivo: <span class="mono caminho">servicos/notificacoes/src/decoradores.ts</span> · 10 minutos</h3>
+          <pre style="margin:0 0 8px; font-size:0.48em;"><code class="language-typescript">async enviar(notificacao: Notificacao): Promise&lt;ResultadoEnvio&gt; {
+  this.log.registrar(`tentativa canal=${this.canal} destinatario=...`);
+  try {
+    const resultado = ____________________________;
+    this.log.registrar(`sucesso canal=... identificador=...`);
+    return ____________;                    // intacto, sem alterar nada
+  } catch (erro) {
+    this.log.registrar(`falha canal=... motivo=...`);
+    ____________;                           // relançar, não engolir
+  }
+}</code></pre>
+          <pre style="margin:0 0 8px; font-size:0.48em;"><code class="language-bash">cd servicos/notificacoes && npx vitest run tests/decoradores.test.ts && cd ../..
+python3 verificar.py --criterio 5
+git commit -am "feat(todo-5): ComLog ao redor do enviador"</code></pre>
+          <p style="margin:0; font-size:0.6em;">As três primeiras palavras (<span class="mono">tentativa</span>, <span class="mono">sucesso</span>, <span class="mono">falha</span>) são o contrato que o teste lê. O resto da linha é livre.</p>
+          <p class="fecho"><strong>O que você acabou de provar:</strong> o comportamento novo entrou por fora. O <span class="mono">EnviadorEmail</span> segue sem saber que existe log, e o teste do servidor continua verde.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Laboratório, Passo 5</div>
+          <div class="footer-page">47</div>
+        </div>
+      </section>
+
+      <!-- ==================== 46: PASSO 6 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 6, <span class="mono">TODO-6</span>: <span class="mono">ComRetentativa</span> por fora do log</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>Mesmo arquivo · 10 minutos · é a prova da aula</h3>
+          <pre style="margin:0 0 8px; font-size:0.48em;"><code class="language-typescript">let ultimoErro: unknown;
+for (let tentativa = 1; tentativa &lt;= this.maxTentativas; tentativa += 1) {
+  try {
+    const resultado = await this.interno.enviar(notificacao);
+    return { ...resultado, tentativas: ____________ };
+  } catch (erro) {
+    ultimoErro = erro;
+    if (____________________________) { await espere(this.esperaMs); }
+  }
+}
+throw ____________;</code></pre>
+          <pre style="margin:0 0 8px; font-size:0.48em;"><code class="language-bash">cd servicos/notificacoes && npx vitest run tests/empilhamento.test.ts && cd ../..
+python3 verificar.py --criterio 6
+git commit -am "feat(todo-6): ComRetentativa empilhavel"</code></pre>
+          <p style="margin:0; font-size:0.6em;">O teste lê <span class="mono">enviadores.ts</span> do disco e reprova se aparecer log ou retentativa lá dentro. Copiem as quatro linhas de log para <span class="mono">docs/EVIDENCIAS.md</span>.</p>
+          <p class="fecho"><strong>O contraste que importa:</strong> duas camadas empilhadas, quatro linhas de log, e <span class="mono">enviadores.ts</span> com a mesma impressão digital do início da noite.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Laboratório, Passo 6</div>
+          <div class="footer-page">48</div>
+        </div>
+      </section>
+
+      <!-- ==================== 47: FECHAMENTO DO LAB ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Fechamento: a modalidade nova, e a prova do Open/Closed</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>10 minutos · aqui o Strategy mostra para que serviu</h3>
+          <p style="font-size:0.64em; margin:0 0 8px;">Acrescentem uma quarta modalidade (<span class="mono">refrigerado</span>, <span class="mono">carga_perigosa</span>, a campanha que quiserem): uma classe nova em <span class="mono">estrategias.py</span>, uma linha em <span class="mono">registro.py</span>, e mais nada.</p>
+          <pre style="margin:0 0 8px; font-size:0.48em;"><code class="language-bash">git diff --name-only        # app/main.py NÃO pode aparecer aqui
+python3 -m pytest           # 30 testes ou mais, verdes
+cd servicos/notificacoes && npx vitest run && cd ../..
+python3 verificar.py        # o placar precisa fechar em 8 de 8
+git push</code></pre>
+          <p style="margin:0; font-size:0.6em;">Preencham <span class="mono">docs/EVIDENCIAS.md</span> com os valores que a <strong>sua</strong> execução devolveu. O verificador executa a sua estratégia e compara: número inventado não passa.</p>
+          <p class="fecho"><strong>O ciclo fechou:</strong> a campanha comercial entrou na LogiTech em uma classe e uma linha de registro. O <span class="mono">git diff --name-only</span> é a prova assinada do Open/Closed.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Laboratório, Fechamento</div>
+          <div class="footer-page">49</div>
+        </div>
+      </section>
+
+      <!-- ==================== 48: O VERIFICADOR ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A régua é pública: <span class="mono">verificar.py</span> é o que o professor roda</h2>
+        </div>
+
+        <pre class="code-compact" style="margin-top:2px; font-size:0.435em; line-height:1.35;"><code class="language-text">========================================================================
+Laboratório da Aula 06: Strategy, Adapter e Decorator
+========================================================================
+[1] TODO-1: EstrategiaFrete como protocolo comum
+    APROVADO   EstrategiaFrete declara modalidade e cotar
+[2] TODO-2: FreteExpresso, FreteEconomico e FretePadrao
+    APROVADO   as três estratégias batem na rota de referência: economico 265.00/4d, expresso 545.00/1d, padrao 380.00/2d
+[3] TODO-3: registro de estratégias e rota sem nome de modalidade
+    APROVADO   registro com 4 modalidade(s) e rota sem nome de modalidade
+[4] TODO-4: AdaptadorRastreioLegado traduzindo a parceira
+    APROVADO   TODO-4: 10 testes do Adapter passaram
+[5] TODO-5: ComLog como Decorator do enviador
+    APROVADO   TODO-5: 6 testes do ComLog passaram
+[6] TODO-6: ComRetentativa empilhável, sem tocar no enviador
+    APROVADO   TODO-6: 6 testes de empilhamento passaram, com enviadores.ts intacto
+[7] Pirâmide de testes: pytest e vitest verdes
+    APROVADO   pytest 33 testes, vitest 29 testes, tudo verde
+[8] Modalidade nova sem tocar na rota e evidências preenchidas
+    APROVADO   modalidade nova 'refrigerado' cotando 730.00 sem tocar na rota, evidências completas
+========================================================================
+Placar: 8 de 8 critério(s)
+========================================================================
+Tudo o que foi pedido passou. Faça o commit e envie o fork.</code></pre>
+
+        <p style="font-size:0.58em; margin:6px 0 0; color:#6b6b6b;">Execução real do <span class="mono">verificar.py</span> sobre uma solução completa do laboratório, com a modalidade nova <span class="mono">refrigerado</span> a R$ 1,10 por km e R$ 1,80 por kg. As linhas em branco entre critérios foram suprimidas para o bloco caber no slide; nenhum texto foi encurtado. Ele importa as suas classes e as executa, roda as duas suítes de verdade e confere a impressão digital do enviador: se passou aí, passa na correção.</p>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Autoavaliação</div>
+          <div class="footer-page">50</div>
+        </div>
+      </section>
+
+      <!-- ==================== 49: ORDEM DE CORTE ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Se o relógio vencer: a ordem de corte, declarada antes</h2>
+        </div>
+
+        <p style="font-size:0.72em; margin-bottom:0;">Sessenta minutos são apertados para seis lacunas em duas linguagens. A prioridade está no README e vale para todo mundo, para ninguém decidir sozinho, às 22h30, o que abandonar.</p>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:13px; margin-top:10px;">
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>1. Não caem nunca</h4>
+            <p style="font-size:0.66em;"><span class="mono">TODO-1</span>, <span class="mono">TODO-2</span> e <span class="mono">TODO-3</span>. É o serviço que a Aula 07 orquestra e o que o CP2 cobra.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>2. Prioridade alta</h4>
+            <p style="font-size:0.66em;"><span class="mono">TODO-5</span> e <span class="mono">TODO-6</span>. O empilhamento é a prova da aula, e é a pergunta de verificação 3 respondida com código.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>3. Primeiros a ficar para casa</h4>
+            <p style="font-size:0.66em;"><span class="mono">TODO-4</span> e a modalidade nova. Terminem depois e refaçam o push: o <span class="mono">verificar.py</span> continua a mesma régua.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Por que isso é dito em voz alta</span>
+          <p>Dupla que trava numa lacuna e some não entrega nada. Dupla que corta na ordem certa entrega o que importa para a próxima aula funcionar.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Ordem de Corte</div>
+          <div class="footer-page">51</div>
+        </div>
+      </section>
+
+      <!-- ==================== MARCADORES DE EVIDENCIAS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O formulário de evidências: dez marcadores, formato fixo</h2>
+        </div>
+
+        <p style="font-size:0.66em; margin-bottom:0;">O critério 8 lê <span class="mono">docs/EVIDENCIAS.md</span> procurando <span class="mono">MARCADOR: valor</span>. Não apaguem o nome, não mudem a grafia, e troquem <span class="mono">PREENCHER</span> pelo que a <strong>sua</strong> execução devolveu.</p>
+
+        <table class="compact-table" style="margin-top:6px; font-size:0.55em;">
+          <thead>
+            <tr><th>Marcador</th><th>O que ele espera</th><th>Conferido pela máquina</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono">VALOR_EXPRESSO_500KM · PRAZO_EXPRESSO_500KM</td><td>Valor e prazo da cotação expressa na rota de referência</td><td>Sim, contra a sua estratégia</td></tr>
+            <tr><td class="mono">VALOR_ECONOMICO_500KM · PRAZO_ECONOMICO_500KM</td><td>O mesmo par, na modalidade econômica</td><td>Sim, contra a sua estratégia</td></tr>
+            <tr><td class="mono">MODALIDADE_NOVA</td><td>O nome da quarta modalidade; não vale uma das três originais</td><td>Sim, precisa estar no registro</td></tr>
+            <tr><td class="mono">VALOR_MODALIDADE_NOVA_500KM</td><td>O que a sua modalidade nova cobra na rota de referência</td><td>Sim, executada e comparada</td></tr>
+            <tr><td class="mono">ARQUIVOS_TOCADOS_PELA_MODALIDADE_NOVA</td><td>A saída de <span class="mono">git diff --name-only</span>, em uma linha</td><td>Parcial: recusa <span class="mono">main.py</span></td></tr>
+            <tr><td class="mono">TESTES_PYTEST · TESTES_VITEST</td><td>Os números que cada suíte imprimiu na sua máquina</td><td>O verificador roda as duas sozinho</td></tr>
+            <tr><td class="mono">STATUS_ADAPTADO</td><td>O status traduzido que o Adapter devolveu na consulta</td><td>Não: é registro de execução sua</td></tr>
+            <tr><td class="mono">LOG_DA_RETENTATIVA_INICIO · _FIM</td><td>As quatro linhas do log coladas entre os dois marcadores</td><td>Parcial: a ordem das quatro</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout" style="margin-top:8px; padding:9px 16px;">
+          <p style="font-size:0.62em; margin:0;">Preencher sem ter rodado engana a correção, não o <span class="mono">verificar.py</span>: ele executa a sua estratégia e compara com o número registrado. Marcador em branco reprova o critério 8 inteiro.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Formulário de Evidências</div>
+          <div class="footer-page">52</div>
+        </div>
+      </section>
+
+      <!-- ==================== 50: CHECKLIST DA ENTREGA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O que vai no repositório da dupla: checklist da entrega</h2>
+        </div>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>#</th><th>Evidência</th><th>Confirmado por</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>As <strong>6 lacunas</strong> preenchidas, um commit por lacuna</td><td><span class="mono">verificar.py</span>, critérios 1 a 6</td></tr>
+            <tr><td>2</td><td><span class="mono">python3 -m pytest</span> verde, com no mínimo <strong>30 testes</strong></td><td>critério 7</td></tr>
+            <tr><td>3</td><td><span class="mono">npx vitest run</span> verde, com no mínimo <strong>27 testes</strong></td><td>critério 7</td></tr>
+            <tr><td>4</td><td><strong>1 modalidade nova</strong> registrada, com <span class="mono">git diff --name-only</span> sem <span class="mono">app/main.py</span></td><td>critério 8</td></tr>
+            <tr><td>5</td><td><span class="mono">docs/EVIDENCIAS.md</span> com os <strong>10 marcadores</strong> e o log da retentativa em <strong>4 linhas</strong></td><td>critério 8</td></tr>
+            <tr><td>6</td><td><span class="mono">enviadores.ts</span> com a impressão digital original</td><td>critério 6</td></tr>
+            <tr><td>7</td><td>Um commit por lacuna, no padrão <span class="mono">feat(todo-N): ...</span></td><td>correção do professor</td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">O alvo da noite</span>
+          <p><span class="mono">python3 verificar.py</span> imprimindo <strong>8 de 8</strong>, com os dois serviços respondendo em <span class="mono">/health</span> e o <span class="mono">/docs</span> do FastAPI no ar.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Entrega</div>
+          <div class="footer-page">53</div>
+        </div>
+      </section>
+
+      <!-- ==================== 51: FORMULÁRIO DE ENTREGA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Formulário de Entrega</h2>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 600px 1fr; gap:26px; align-items:start; margin-top:4px;">
+          <div style="border:3px dashed var(--fiap-pink); border-radius:8px; height:350px; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:0 30px; background:#fff7fa;">
+            <div style="font-size:1.05em; font-weight:800; color:var(--fiap-pink); letter-spacing:0.04em;">URL DO FORMULÁRIO</div>
+            <div style="font-size:1.05em; font-weight:800; color:var(--fiap-pink); letter-spacing:0.04em; margin-bottom:14px;">A SER PUBLICADA</div>
+            <p style="font-size:0.6em; color:#555; margin:0; line-height:1.55;">O formulário desta aula ainda não foi criado. O endereço será publicado no portal da disciplina <strong>antes da aula</strong>, e este slide passa a trazer o formulário embutido.</p>
+          </div>
+
+          <div>
+            <div class="concept-cards" style="grid-template-columns:1fr; gap:10px; margin-top:0;">
+              <div class="concept-card" style="padding:11px 16px;">
+                <h4>O que enviar</h4>
+                <p style="font-size:0.64em;">A URL do <strong>fork da dupla</strong>, no formato<br><span class="mono">github.com/usuario/mwe-2026-2-lab06-apis-patterns</span></p>
+              </div>
+              <div class="concept-card" style="padding:11px 16px;">
+                <h4>Quem envia</h4>
+                <p style="font-size:0.64em;">Um envio por dupla, com os dois nomes no formulário.</p>
+              </div>
+              <div class="concept-card" style="padding:11px 16px;">
+                <h4>Até quando</h4>
+                <p style="font-size:0.64em;">Até 22h50, com os commits das lacunas visíveis no histórico do fork.</p>
+              </div>
+            </div>
+
+            <div class="callout" style="margin-top:9px; padding:11px 15px;">
+              <p style="font-size:0.62em; margin:0; line-height:1.5;">Critérios de aceitação completos no
+                <a href="https://github.com/josercf/mwe-2026-2-lab06-apis-patterns" target="_blank" style="color:var(--fiap-pink); font-weight:700;">README do Lab Kit</a></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Entrega da Atividade</div>
+          <div class="footer-page">54</div>
+        </div>
+      </section>
+
+      <!-- ==================== 52: O QUE VEM ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O que vem: a plataforma inteira em um comando, na Aula 07</h2>
+        </div>
+
+        <div class="concept-cards" style="grid-template-columns: 1fr 1fr; gap:16px; margin-top:8px;">
+          <div class="concept-card" style="padding:16px 20px;">
+            <h4>15/09: Docker Compose multi-serviço</h4>
+            <p style="font-size:0.68em;">Os quatro serviços poliglotas, o coletor e o painel da Aula 03, o PostgreSQL e um AI Gateway, num único <span class="mono">docker-compose.yml</span>, com <span class="mono">healthcheck</span>, rede, variáveis e limite de memória por serviço. O que vocês entregam hoje vira três linhas de YAML lá.</p>
+          </div>
+          <div class="concept-card" style="padding:16px 20px;">
+            <h4>A dívida da Aula 03 sendo paga</h4>
+            <p style="font-size:0.68em;">O painel de rastreamento deixa de ler o arquivo compartilhado e passa a consumir o coletor por HTTP, com o endereço vindo de <span class="mono">LOGITECH_TELEMETRIA_URL</span>. Foi prometido em ADR na Aula 03, e é lá que se cumpre.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A espiral continua</span>
+          <p>O Strategy de hoje reaparece na Aula 07 escolhendo entre provedores de IA dentro do gateway, e o contrato OpenAPI do frete é o que o agente da Aula 08 vai ler para saber qual ferramenta chamar. Guardem o fork.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Próximos Passos</div>
+          <div class="footer-page">55</div>
+        </div>
+      </section>
+
+      <!-- ==================== 53: REFERÊNCIAS ==================== -->
+      <section id="ref-slide" class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Referências Bibliográficas e Documentação</h2>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px 28px; font-size:0.6em; line-height:1.5; color:var(--fiap-gray);">
+          <div>
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[1] Design Patterns: a fonte</strong><br>
+            GAMMA, E. et al. <em>Design Patterns: Elements of Reusable Object-Oriented Software</em>. Addison-Wesley, 1994. Adapter p. 139, Decorator p. 175, Strategy p. 315.<br>
+            REFACTORING GURU: <a href="https://refactoring.guru/design-patterns/catalog" target="_blank" style="color:var(--fiap-pink);">Catálogo de padrões</a></p>
+
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[2] SOLID e projeto orientado a objetos</strong><br>
+            MARTIN, R. C. <em>Clean Architecture</em>. Prentice Hall, 2017. Cap. 8, OCP.<br>
+            FREEMAN, E. et al. <em>Head First Design Patterns</em>. 2. ed. O'Reilly, 2020.</p>
+
+            <p style="margin:0;"><strong style="color:var(--fiap-pink);">[3] Python: tipos e protocolos</strong><br>
+            PSF: <a href="https://docs.python.org/3/library/typing.html#typing.Protocol" target="_blank" style="color:var(--fiap-pink);">typing.Protocol</a> | <a href="https://peps.python.org/pep-0544/" target="_blank" style="color:var(--fiap-pink);">PEP 544</a><br>
+            PSF: <a href="https://docs.python.org/3/library/dataclasses.html" target="_blank" style="color:var(--fiap-pink);">dataclasses</a></p>
+          </div>
+
+          <div>
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[4] FastAPI e TypeScript</strong><br>
+            FASTAPI: <a href="https://fastapi.tiangolo.com/" target="_blank" style="color:var(--fiap-pink);">Documentação oficial</a><br>
+            TYPESCRIPT: <a href="https://www.typescriptlang.org/docs/handbook/2/classes.html" target="_blank" style="color:var(--fiap-pink);">Handbook, classes</a></p>
+
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[5] Assíncrono e event loop</strong><br>
+            PSF: <a href="https://docs.python.org/3/library/asyncio.html" target="_blank" style="color:var(--fiap-pink);">asyncio</a><br>
+            NODE.JS: <a href="https://nodejs.org/en/learn/asynchronous-work/event-loop-timers-and-nexttick" target="_blank" style="color:var(--fiap-pink);">Event loop, timers e nextTick</a></p>
+
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[6] Contrato de API: Pydantic, Zod e OpenAPI</strong><br>
+            PYDANTIC: <a href="https://docs.pydantic.dev/latest/" target="_blank" style="color:var(--fiap-pink);">Documentação</a> | ZOD: <a href="https://zod.dev/" target="_blank" style="color:var(--fiap-pink);">zod.dev</a><br>
+            OPENAPI: <a href="https://spec.openapis.org/oas/latest.html" target="_blank" style="color:var(--fiap-pink);">Especificação 3.1</a></p>
+
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[7] Testes</strong><br>
+            PYTEST: <a href="https://docs.pytest.org/" target="_blank" style="color:var(--fiap-pink);">docs.pytest.org</a> | VITEST: <a href="https://vitest.dev/" target="_blank" style="color:var(--fiap-pink);">vitest.dev</a></p>
+
+            <p style="margin:0;"><strong style="color:var(--fiap-pink);">[8] Material da disciplina</strong><br>
+            ADR-006: contratos compartilhados do Módulo II, no acervo da disciplina<br>
+            LAB KIT: <a href="https://github.com/josercf/mwe-2026-2-lab06-apis-patterns" target="_blank" style="color:var(--fiap-pink);">mwe-2026-2-lab06-apis-patterns</a></p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">06 – Bibliografia da Aula</div>
+          <div class="footer-page">56</div>
+        </div>
+      </section>
+
+      <!-- ==================== 54: ENCERRAMENTO ==================== -->
       <section class="end-slide">
         <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" style="max-width:350px;">
-        <div class="copyright">Copyright &copy; 2026<br>Prof.º José Romualdo da Costa Filho<br><br>Todos direitos reservados.</div>
+        <div class="copyright">
+          Copyright &copy; 2026<br>
+          Prof. José Romualdo da Costa Filho<br><br>
+          Todos os direitos reservados. É expressamente proibida a reprodução, divulgação<br>
+          total ou parcial, deste material acadêmico sem autorização formal,<br>
+          por escrito, do Professor autor da ementa.
+        </div>
       </section>
+
     </div>
   </div>
+
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
   <script src="../assets/js/fiap-quiz.js"></script>
+  <script src="../assets/js/fiap-zoom.js"></script>
+  <script src="../assets/js/fiap-print.js"></script>
   <script>
-    Reveal.initialize({ hash: true, slideNumber: false, width: 1280, height: 720, margin: 0, minScale: 0.2, maxScale: 2.0, center: false, pdfMaxPagesPerSlide: 1, pdfSeparateFragments: false, transition: 'slide', transitionSpeed: 'default', plugins: [RevealHighlight] });
+    Reveal.initialize({
+      hash: true,
+      slideNumber: false,
+      width: 1280,
+      height: 720,
+      margin: 0,
+      minScale: 0.2,
+      maxScale: 2.0,
+      center: false,
+      pdfMaxPagesPerSlide: 1,
+      pdfSeparateFragments: false,
+      transition: 'slide',
+      transitionSpeed: 'default',
+      plugins: [RevealHighlight]
+    });
+    // startTimer(elementId, segundos) vem de ../assets/js/fiap-quiz.js
   </script>
+  <!-- Cliente do serviço Pulso: liga os quizzes com data-quiz-key à votação ao vivo.
+       Carregamento assíncrono (defer) e opcional: se o host estiver fora do ar
+       ou o script falhar, o quiz continua funcionando no modo local de sempre. -->
+  <script defer src="https://vote.jrcf.dev/client.js"></script>
 </body>
 </html>
