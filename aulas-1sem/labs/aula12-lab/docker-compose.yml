@@ -1,0 +1,103 @@
+# Plataforma LogiTech, recorte da Aula 12.
+#
+# Um serviço só sobe aqui: o **banco**. E ele muda de imagem.
+#
+#   Aula 07:  postgres:16
+#   Aula 12:  pgvector/pgvector:pg16      <- ADR-008
+#
+# É o mesmo PostgreSQL 16, com a extensão de vetores compilada e **disponível**.
+# Disponível não é instalada: ativar continua sendo `CREATE EXTENSION vector`,
+# que é o TODO-2a do laboratório e não some da aula por causa da troca de
+# imagem.
+#
+# O `rag` e o `mcp-logitech` rodam no seu devcontainer, e não em container
+# próprio. É decisão desta aula, e o motivo é o relógio: você vai editar
+# `rag/busca.py` e `mcp-logitech/src/servidor.ts` várias vezes em 60 minutos, e
+# um `docker compose build` a cada tentativa custa mais do que ensina. O
+# serviço `rag` containerizado está aqui embaixo, sob um profile, para quem
+# quiser depois.
+
+name: logitech-aula12
+
+services:
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: logitech-postgres
+    environment:
+      POSTGRES_DB: logitech
+      POSTGRES_USER: logitech
+      POSTGRES_PASSWORD: ${LOGITECH_DB_PASSWORD:-logitech}
+    ports:
+      # Publicada de propósito: o `psql` do Passo 1, o serviço `rag` e o
+      # `verificar.py` rodam fora do container do banco.
+      - "5432:5432"
+    volumes:
+      - logitech-postgres:/var/lib/postgresql/data
+      # Roda uma vez, na primeira subida de um volume vazio. É a SQL que os
+      # ORMs das Aulas 05 e 06 geraram, e é o que o Passo 1 manda ler.
+      - ./servicos/orm-gerado.sql:/docker-entrypoint-initdb.d/10-orm-gerado.sql:ro
+    networks:
+      - logitech-net
+    mem_limit: 512m
+    healthcheck:
+      # Mesma checagem da Aula 07: container existir não é banco pronto.
+      test: ["CMD-SHELL", "pg_isready -U logitech -d logitech"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 10s
+
+  # ---------------------------------------------------------------------
+  # Opcional, fora do tempo de aula: o serviço `rag` como container.
+  #
+  #     docker compose --profile completo up -d --build rag
+  #
+  # `extra_hosts` existe porque o Ollama roda no host, e de dentro de um
+  # container `localhost` é o próprio container. Mesma armadilha da Aula 07.
+  # ---------------------------------------------------------------------
+  rag:
+    profiles: ["completo"]
+    build:
+      # A raiz, e não ./rag: o Dockerfile precisa de `contratos/`, que é irmã
+      # da pasta do serviço. Contexto de build é o que o Docker enxerga.
+      context: .
+      dockerfile: rag/Dockerfile
+    container_name: logitech-rag
+    environment:
+      LOGITECH_DB_URL: postgresql://logitech:${LOGITECH_DB_PASSWORD:-logitech}@postgres:5432/logitech
+      LOGITECH_OLLAMA_URL: http://host.docker.internal:11434
+      LOGITECH_EMBEDDING_MODELO: ${LOGITECH_EMBEDDING_MODELO:-paraphrase-multilingual}
+      LOGITECH_MODELO: ${LOGITECH_MODELO:-qwen2.5:1.5b}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "8010:8010"
+    networks:
+      - logitech-net
+    mem_limit: 384m
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request;urllib.request.urlopen('http://127.0.0.1:8010/health',timeout=3)\""]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 15s
+
+networks:
+  logitech-net:
+    # A mesma rede criada à mão na Aula 03 e usada na Aula 07.
+    external: true
+
+volumes:
+  logitech-postgres:
+    # Nomeado, e não anônimo: o dado sobrevive a `docker compose down`.
+    #
+    # Se este volume já existir da Aula 07, ele foi criado pela imagem
+    # `postgres:16` e **não** tem a extensão de vetores disponível. Apague antes
+    # da primeira subida, como manda o Passo 0 do README:
+    #
+    #     docker compose down -v
+    name: logitech-postgres
