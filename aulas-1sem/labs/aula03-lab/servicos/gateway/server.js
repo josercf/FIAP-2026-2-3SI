@@ -2,12 +2,19 @@
 //
 // Serviço congelado da Aula 02 para a Aula 03: o caminho de dados é
 // configurável pela variável de ambiente LOGITECH_DADOS. Quando ela não é
-// definida, o padrão é "dados/telemetria.jsonl" dentro do próprio diretório
-// deste serviço (servicos/gateway/dados/), o que permite rodar solto, sem
-// container e sem exportar nada, sem pedir uma permissão que o usuário não
-// tem. Os Dockerfiles do laboratório fixam essa variável para um caminho
-// absoluto dentro do container (/dados/telemetria.jsonl); é o container,
-// não o código, quem decide onde os dados moram lá dentro.
+// definida, o padrão é "dados/telemetria.jsonl" na raiz do laboratório (dois
+// níveis acima de servicos/gateway/, o mesmo nível de servicos/), não dentro
+// da pasta deste serviço. Isso é o que faz o coletor e o gateway, rodados
+// soltos e sem variável nenhuma, enxergarem o mesmo arquivo: se cada um
+// resolvesse a própria pasta, o coletor gravaria em servicos/coletor/dados/
+// e o gateway leria de servicos/gateway/dados/, dois arquivos diferentes, e
+// o painel mostraria zero caminhão mesmo com o coletor funcionando. O
+// caminho continua gravável sem privilégio especial (é dentro do checkout
+// do repositório) e não depende de onde o aluno estava quando chamou o
+// comando, porque é derivado da localização do próprio arquivo, não do
+// diretório corrente. Os Dockerfiles do laboratório fixam essa variável
+// para um caminho absoluto dentro do container (/dados/telemetria.jsonl);
+// é o container, não o código, quem decide onde os dados moram lá dentro.
 //
 // Uso:
 //   node servicos/gateway/server.js
@@ -17,8 +24,11 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
+const DIR_SERVICO = __dirname;
+const RAIZ_LAB = path.dirname(path.dirname(DIR_SERVICO));
+
 const PORTA = Number(process.env.PORTA || 3000);
-const CAMINHO_DADOS = process.env.LOGITECH_DADOS || path.join(__dirname, 'dados', 'telemetria.jsonl');
+const CAMINHO_DADOS = process.env.LOGITECH_DADOS || path.join(RAIZ_LAB, 'dados', 'telemetria.jsonl');
 const PAGINA_PAINEL = path.join(__dirname, 'public', 'index.html');
 const INICIADO_EM = Date.now();
 

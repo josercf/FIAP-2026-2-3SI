@@ -17,12 +17,18 @@ Cada datagrama recebido é anexado ao arquivo apontado por LOGITECH_DADOS. É
 dessa linha que o servidor HTTP (gateway) lê.
 
 O caminho de dados é configurável pela variável de ambiente LOGITECH_DADOS.
-Quando ela não é definida, o padrão é "dados/telemetria.jsonl" dentro do
-próprio diretório deste serviço (servicos/coletor/dados/), o que permite
-rodar solto, sem container e sem exportar nada, sem pedir uma permissão que
-o usuário não tem (escrever em "/dados", na raiz do sistema de arquivos,
-exigiria root). Os Dockerfiles do laboratório fixam essa variável para um
-caminho absoluto dentro do container (/dados/telemetria.jsonl); é o
+Quando ela não é definida, o padrão é "dados/telemetria.jsonl" na raiz do
+laboratório (dois níveis acima de servicos/coletor/, o mesmo nível de
+servicos/), não dentro da pasta deste serviço. Isso é o que faz o coletor e
+o gateway, rodados soltos e sem variável nenhuma, enxergarem o mesmo
+arquivo: se cada um resolvesse a própria pasta, o coletor gravaria em
+servicos/coletor/dados/ e o gateway leria de servicos/gateway/dados/, dois
+arquivos diferentes, e o painel mostraria zero caminhão mesmo com o coletor
+funcionando. O caminho continua gravável sem privilégio especial (é dentro
+do checkout do repositório) e não depende de onde o aluno estava quando
+chamou o comando, porque é derivado da localização do próprio arquivo, não
+do diretório corrente. Os Dockerfiles do laboratório fixam essa variável
+para um caminho absoluto dentro do container (/dados/telemetria.jsonl); é o
 container, não o código, quem decide onde os dados moram lá dentro.
 
 Uso:
@@ -38,8 +44,9 @@ import threading
 from datetime import datetime, timezone
 
 DIR_SERVICO = os.path.dirname(os.path.abspath(__file__))
+RAIZ_LAB = os.path.dirname(os.path.dirname(DIR_SERVICO))
 CAMINHO_DADOS = os.environ.get(
-    "LOGITECH_DADOS", os.path.join(DIR_SERVICO, "dados", "telemetria.jsonl")
+    "LOGITECH_DADOS", os.path.join(RAIZ_LAB, "dados", "telemetria.jsonl")
 )
 DIR_DADOS = os.path.dirname(CAMINHO_DADOS) or "."
 ARQ_TELEMETRIA = CAMINHO_DADOS
