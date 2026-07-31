@@ -1,0 +1,233 @@
+# =============================================================================
+# GABARITO da Aula 07. Rede de segurança, não atalho.
+# =============================================================================
+#
+# Este é o docker-compose.yml completo, com as cinco lacunas preenchidas.
+# Ele existe pelo mesmo motivo que o diretório `resgate/` existia na Aula 03:
+# travar no Passo 2 não pode matar os Passos 3, 4 e 5.
+#
+# Se você usar este arquivo, registre em `docs/EVIDENCIAS.md`:
+#
+#     USEI_O_GABARITO: sim, a partir do Passo N
+#
+# Usar o gabarito não reprova critério nenhum que o verificador consiga
+# confirmar por máquina. É informação que o professor precisa ter, não
+# armadilha.
+#
+# Para usar, copie sobre o seu arquivo, a partir da raiz do laboratório:
+#
+#     cp gabarito/docker-compose.yml docker-compose.yml
+#     docker compose up -d
+#
+# Os caminhos de `build:` são relativos à **raiz do laboratório**, que é onde
+# este arquivo deve rodar. Rodá-lo de dentro de `gabarito/` faria o Compose
+# procurar `gabarito/servicos/`, que não existe.
+#
+# =============================================================================
+
+# `name:` fixa o nome do projeto. Sem ele, o Compose usa o nome do diretório,
+# e rodar o gabarito criaria uma segunda plataforma chamada "gabarito",
+# duplicando os oito containers e disputando as mesmas portas do host.
+#
+# Nenhum serviço declara `container_name`: o Compose já nomeia cada container
+# como `logitech-<servico>-1`, e um nome fixo colidiria com o PostgreSQL que a
+# Aula 05 subiu por `docker run --name logitech-postgres`.
+name: logitech
+
+# Bloco reutilizável de healthcheck. Os oito serviços têm a mesma cadência;
+# o que muda de um para outro é só o comando de teste.
+x-saude: &saude
+  interval: 10s
+  timeout: 4s
+  retries: 6
+  start_period: 25s
+
+# Repare no `127.0.0.1`, e não `localhost`: dentro de uma imagem Alpine o
+# `localhost` pode resolver primeiro para `::1` (IPv6), enquanto os serviços
+# escutam em IPv4. O healthcheck falharia com "Connection refused" mesmo com
+# o serviço no ar. Endereço literal não tem essa ambiguidade.
+
+services:
+
+  # ---------------------------------------------------------------------
+  # Passo 1: o banco e o primeiro serviço que depende dele
+  # ---------------------------------------------------------------------
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: logitech
+      POSTGRES_USER: logitech
+      # A senha nunca é escrita aqui. Vem do .env, que está no .gitignore.
+      POSTGRES_PASSWORD: ${LOGITECH_DB_PASSWORD:?defina LOGITECH_DB_PASSWORD no arquivo .env (copie de .env.exemplo)}
+    volumes:
+      - logitech-postgres:/var/lib/postgresql/data
+    networks:
+      - logitech-net
+    mem_limit: 256m
+    # Sem publicar porta no host, de propósito: o banco só é alcançável de
+    # dentro da rede da plataforma. Publicar 5432 seria expor o banco da
+    # LogiTech na máquina inteira sem necessidade nenhuma.
+    healthcheck:
+      <<: *saude
+      # pg_isready responde "o processo aceita conexão", que é diferente de
+      # "o container subiu". É essa diferença que o Passo 1 demonstra.
+      test: ["CMD-SHELL", "pg_isready -U logitech -d logitech"]
+
+  pedidos:
+    build: ./servicos/pedidos
+    environment:
+      # Cada stack tem o seu formato de DSN. O nome da variável é o mesmo
+      # (contrato da ADR-006), o valor obedece ao driver de cada linguagem.
+      LOGITECH_DB_URL: jdbc:postgresql://postgres:5432/logitech
+      LOGITECH_DB_USER: logitech
+      LOGITECH_DB_PASSWORD: ${LOGITECH_DB_PASSWORD}
+      LOGITECH_FRETE_URL: http://frete:8000
+      LOGITECH_FATURAMENTO_URL: http://faturamento:5080
+      LOGITECH_NOTIFICACOES_URL: http://notificacoes:3001
+    ports:
+      - "8080:8080"
+    networks:
+      - logitech-net
+    mem_limit: 320m
+    depends_on:
+      postgres:
+        # `service_started` (o padrão de `depends_on` na forma de lista)
+        # esperaria só o container existir. `service_healthy` espera o
+        # healthcheck acima passar.
+        condition: service_healthy
+    healthcheck:
+      <<: *saude
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/health"]
+
+  # ---------------------------------------------------------------------
+  # Passo 2: os três serviços que a plataforma ganhou nas Aulas 05 e 06
+  # ---------------------------------------------------------------------
+
+  faturamento:
+    build: ./servicos/faturamento
+    environment:
+      # Formato de connection string do .NET, mesmo nome de variável.
+      LOGITECH_DB_URL: Host=postgres;Port=5432;Database=logitech;Username=logitech;Password=${LOGITECH_DB_PASSWORD}
+    ports:
+      - "5080:5080"
+    networks:
+      - logitech-net
+    mem_limit: 256m
+    healthcheck:
+      <<: *saude
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:5080/health"]
+
+  frete:
+    build: ./servicos/frete
+    ports:
+      - "8000:8000"
+    networks:
+      - logitech-net
+    mem_limit: 192m
+    healthcheck:
+      <<: *saude
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8000/health"]
+
+  notificacoes:
+    build: ./servicos/notificacoes
+    ports:
+      - "3001:3001"
+    networks:
+      - logitech-net
+    mem_limit: 128m
+    healthcheck:
+      <<: *saude
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:3001/health"]
+
+  # ---------------------------------------------------------------------
+  # Passo 3: telemetria, e a dívida da ADR-002 sendo paga
+  # ---------------------------------------------------------------------
+
+  coletor:
+    build: ./servicos/coletor
+    environment:
+      LOGITECH_DADOS: /dados/telemetria.jsonl
+    volumes:
+      # O volume continua, mas agora é a **persistência do coletor**, não
+      # mais um canal de comunicação com o painel.
+      - logitech-telemetria:/dados
+    ports:
+      - "8081:8081/udp"
+      - "8082:8082"
+    networks:
+      - logitech-net
+    mem_limit: 96m
+    healthcheck:
+      <<: *saude
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8082/health"]
+
+  painel:
+    build: ./servicos/painel
+    environment:
+      # A dívida da ADR-002 paga em uma linha: o endereço da telemetria, e
+      # não o caminho de um arquivo compartilhado.
+      LOGITECH_TELEMETRIA_URL: http://coletor:8082/telemetria
+    ports:
+      - "3000:3000"
+    networks:
+      - logitech-net
+    mem_limit: 128m
+    # Nenhum `volumes:` aqui. Se você montou o volume da telemetria neste
+    # serviço, a dívida não foi paga: ele voltou a depender do arquivo.
+    depends_on:
+      coletor:
+        condition: service_healthy
+    healthcheck:
+      <<: *saude
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:3000/health"]
+
+  # ---------------------------------------------------------------------
+  # Passo 4: o ponto único de entrada de IA
+  # ---------------------------------------------------------------------
+
+  ai-gateway:
+    build: ./servicos/ai-gateway
+    environment:
+      LOGITECH_IA_ESTRATEGIA: preferir-remoto
+      LOGITECH_IA_REMOTA_URL: https://api.openai.com/v1/chat/completions
+      # Vazia na sala de aula: é isto que faz o fallback acontecer de
+      # verdade, em vez de encenado. Preencher no .env liga o caminho remoto
+      # sem tocar em uma linha de código.
+      LOGITECH_IA_REMOTA_CHAVE: ${LOGITECH_IA_REMOTA_CHAVE:-}
+      LOGITECH_IA_OLLAMA_URL: http://host.docker.internal:11434
+      LOGITECH_IA_MODELO_LOCAL: ${LOGITECH_IA_MODELO_LOCAL:-qwen2.5:1.5b}
+      LOGITECH_IA_LIMITE_POR_MINUTO: "30"
+    ports:
+      - "4000:4000"
+    networks:
+      - logitech-net
+    mem_limit: 256m
+    extra_hosts:
+      # O Ollama roda no host, não é serviço da plataforma. No Docker
+      # Desktop este nome já existe; no Linux (o caso do Codespace) ele só
+      # existe se for declarado aqui.
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      <<: *saude
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:4000/health"]
+
+# -------------------------------------------------------------------------
+# Rede e volumes
+# -------------------------------------------------------------------------
+
+networks:
+  logitech-net:
+    # Herdada da Aula 03, criada à mão com `docker network create`. `external`
+    # diz ao Compose para usar a que existe em vez de criar uma nova, e para
+    # não removê-la no `docker compose down`.
+    external: true
+
+volumes:
+  logitech-telemetria:
+    # Também herdado da Aula 03. O dado da telemetria é anterior a este
+    # laboratório e sobrevive a ele.
+    external: true
+  logitech-postgres:
+    # Este é novo, nasce hoje: quem cria e destrói é o Compose.
+    name: logitech-postgres

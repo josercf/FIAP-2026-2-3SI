@@ -1,0 +1,11 @@
+# Segredos: o .env carrega senha e chave de API, e nunca é commitado.
+# O .env.exemplo, sim, e é ele que documenta quais variáveis existem.
+.env
+
+# Artefatos de execução
+__pycache__/
+*.pyc
+dados/
+node_modules/
+bin/
+obj/

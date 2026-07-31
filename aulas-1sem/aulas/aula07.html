@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aula 07 – Docker Compose Multi-Serviço & AI Gateways (Strategy/Facade Patterns) | FIAP</title>
+  <title>Aula 07 – Docker Compose Multi-Serviço e AI Gateway | FIAP</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
@@ -11,127 +11,2523 @@
   <link rel="stylesheet" href="../assets/css/fiap-print.css">
   <script>if(/print-pdf/gi.test(window.location.search)){var link=document.createElement('link');link.rel='stylesheet';link.href='https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/css/print/pdf.css';document.head.appendChild(link);}</script>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* Tabelas compactas, mesmo padrao das Aulas 02 e 03 */
+    .reveal table.compact-table { font-size: 0.62em; margin: 8px 0; }
+    .reveal table.compact-table th { padding: 7px 12px; }
+    .reveal table.compact-table td { padding: 7px 12px; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    /* Figuras com animacao SVG: altura controlada para nunca estourar os 720px */
+    .reveal .slide-figure { margin: 6px 0 0; }
+    .reveal .slide-figure svg { width: 100%; }
+    .reveal .slide-figure figcaption { font-size: 0.58em; line-height: 1.42; color: #6b6b6b; margin-top: 4px; }
+  </style>
 </head>
 <body>
   <div class="reveal">
     <div class="slides">
-      <section class="cover-slide"><img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" class="fiap-logo-full"></section>
-      <section class="title-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="title-card"><div class="accent-bar"></div><h1>Sistemas de Informação</h1><h2>Microservice and Web Engineering & IT Services</h2><h3>Prof. José Romualdo</h3></div>
-        <div class="lesson-bar">AULA 07 – Docker Compose Multi-Serviço & AI Gateways (Strategy/Facade Patterns)</div>
+
+      <!-- ==================== 1: CAPA ==================== -->
+      <section class="cover-slide">
+        <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" class="fiap-logo-full">
       </section>
+
+      <!-- ==================== 2: TÍTULO ==================== -->
+      <section class="title-slide" data-background-image="../assets/img/microservices-bg.jpg" data-background-opacity="0.3">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="title-card">
+          <div class="accent-bar"></div>
+          <h1>Sistemas de Informação</h1>
+          <h2>Microservice and Web Engineering &amp; IT Services</h2>
+          <h3>Prof. José Romualdo</h3>
+        </div>
+        <div class="lesson-bar">AULA 07 – Docker Compose Multi-Serviço e AI Gateway</div>
+      </section>
+
+      <!-- ==================== 3: AGENDA ==================== -->
       <section class="content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Agenda do Encontro</h2></div>
-        <table>
-          <thead><tr><th>Bloco</th><th>Horário</th><th>Conteúdo & Atividades</th></tr></thead>
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Agenda do Encontro de Hoje</h2>
+        </div>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>Início</th><th>Conteúdo</th></tr>
+          </thead>
           <tbody>
-            <tr><td><strong>Bloco 1</strong></td><td>19h20 – 20h50</td><td>Docker Compose, Volumes, Network + Quiz #1</td></tr>
-            <tr><td><strong>Intervalo</strong></td><td>20h50 – 21h20</td><td>☕ Pausa para Café e Networking (30 min)</td></tr>
-            <tr><td><strong>Bloco 2</strong></td><td>21h20 – 22h50</td><td>Quizzes #2 e #3 + AI Gateways (Facade) + Lab</td></tr>
+            <tr><td>19h20</td><td>Resgate da espiral: os Dockerfiles das Aulas 03, 05 e 06</td></tr>
+            <tr><td>19h35</td><td>Desafio do Mini Mundo: orquestrar a LogiTech com um comando só</td></tr>
+            <tr><td>19h55</td><td>Teoria: anatomia do Compose, rede, variáveis, volumes, <span class="mono">depends_on</span> e <span class="mono">healthcheck</span>. Arquitetura de AI Gateway: Facade, Strategy, fallback, limite de taxa e cache</td></tr>
+            <tr><td>20h35</td><td>Quiz 1 e tira-dúvidas</td></tr>
+            <tr><td>20h50</td><td>Intervalo (30 minutos)</td></tr>
+            <tr><td>21h20</td><td>Quizzes 2 e 3</td></tr>
+            <tr><td>21h35</td><td>Atividade prática em grupo: os cinco passos do <span class="mono">docker-compose.yml</span></td></tr>
+            <tr><td>22h35</td><td><span class="mono">docker compose up</span> em sala, verificação e commit</td></tr>
           </tbody>
         </table>
-        <div class="slide-footer"><div class="footer-bar">07 – Compose & Gateways</div><div class="footer-page">3</div></div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Entregável de hoje</span>
+          <p>O seu fork com o <span class="mono">docker-compose.yml</span> dos oito serviços, o <span class="mono">verificar.py</span> imprimindo 5 de 5 e as evidências medidas na sua máquina.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Agenda do Encontro</div>
+          <div class="footer-page">3</div>
+        </div>
       </section>
+
+      <!-- ==================== 4: RESGATE DA ESPIRAL ==================== -->
       <section class="content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Orquestração Local & AI Gateways</h2></div>
-        <div class="concept-cards">
-          <div class="concept-card"><h4>Docker Compose</h4><p>Ferramenta para definir e rodar aplicações multi-container usando YAML.</p></div>
-          <div class="concept-card"><h4>AI Gateway / Facade</h4><p>Uma interface única que abstrai chamadas para múltiplos LLMs (OpenAI, Gemini, etc).</p></div>
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Resgate da Espiral: quatro aulas viraram seis serviços</h2>
         </div>
-        <div class="slide-footer"><div class="footer-bar">07 – Compose & Gateways</div><div class="footer-page">4</div></div>
-      </section>
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Quiz #1 (Fixação do Bloco 1)</h2></div>
-        <div class="quiz-container">
-          <div class="quiz-question">Qual arquivo é usado por padrão para configurar o Docker Compose?</div>
-          <ul class="quiz-options">
-            <li data-correct="true"><span class="option-letter">A</span>docker-compose.yml</li>
-            <li data-correct="false"><span class="option-letter">B</span>Dockerfile</li>
-            <li data-correct="false"><span class="option-letter">C</span>package.json</li>
-            <li data-correct="false"><span class="option-letter">D</span>Makefile</li>
-          </ul>
-          <div class="quiz-feedback" data-correct-msg="Isso mesmo! O manifesto YAML define os serviços, redes e volumes." data-incorrect-msg="Lembre-se: Compose usa arquivos .yml ou .yaml."></div>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(4, 1fr); gap:11px; margin-top:8px;">
+          <div class="concept-card" style="padding:13px 15px;">
+            <h4>Aula 02: telemetria</h4>
+            <p style="font-size:0.64em;">O <strong>coletor</strong> em Python e o <strong>painel</strong> em Node, conversando por um arquivo compartilhado. Simplificação declarada em ADR.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 15px;">
+            <h4>Aula 03: empacotamento</h4>
+            <p style="font-size:0.64em;">Os dois viraram <strong>imagem multi-stage</strong>, com volume nomeado, rede <span class="mono">logitech-net</span> e limite de memória. Tudo por <span class="mono">docker run</span>.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 15px;">
+            <h4>Aula 05: o núcleo</h4>
+            <p style="font-size:0.64em;"><strong>Pedidos</strong> em Java e <strong>Faturamento</strong> em C#, com SOLID, Repository, Factory e um Singleton thread-safe.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 15px;">
+            <h4>Aula 06: as bordas</h4>
+            <p style="font-size:0.64em;"><strong>Frete</strong> em FastAPI e <strong>Notificações</strong> em Node, com Strategy, Adapter e Decorator.</p>
+          </div>
         </div>
-        <div class="slide-footer"><div class="footer-bar">07 – Compose & Gateways</div><div class="footer-page">5</div></div>
-      </section>
-      <section class="content-slide" style="text-align:center;">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div style="margin-top:100px;">
-          <h2 style="font-size:2.5em; color:var(--fiap-pink);">☕ Pausa para Café</h2>
-          <h3 style="font-size:1.5em; color:var(--fiap-gray-light); margin-top:20px;">20h50 – 21h20 (30 minutos)</h3>
-          <p style="margin-top:40px; font-size:1.1em;">Na volta: Quizzes #2 e #3 + Hands-on Lab!</p>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A espiral em uma frase</span>
+          <p>Nenhum serviço novo é escrito hoje. O que muda é que eles deixam de ser seis programas soltos e passam a ser <strong>uma plataforma</strong>, descrita em um arquivo que qualquer pessoa consegue subir igual.</p>
         </div>
-        <div class="slide-footer"><div class="footer-page">6</div></div>
-      </section>
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Quiz #2 (Retorno do Intervalo)</h2></div>
-        <div class="quiz-container">
-          <div class="quiz-question">O padrão Facade (Fachada) é aplicado em um AI Gateway para:</div>
-          <ul class="quiz-options">
-            <li data-correct="true"><span class="option-letter">A</span>Esconder a complexidade das múltiplas APIs de IA por trás de uma única interface simples.</li>
-            <li data-correct="false"><span class="option-letter">B</span>Aumentar a complexidade do cliente.</li>
-            <li data-correct="false"><span class="option-letter">C</span>Substituir o uso de Docker no backend.</li>
-            <li data-correct="false"><span class="option-letter">D</span>Proibir o uso de Inteligência Artificial.</li>
-          </ul>
-          <div class="quiz-feedback" data-correct-msg="Exato! O Facade simplifica o consumo." data-incorrect-msg="O objetivo do Facade é justamente esconder a complexidade."></div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Resgate da Espiral</div>
+          <div class="footer-page">4</div>
         </div>
-        <div class="slide-footer"><div class="footer-bar">07 – Compose & Gateways</div><div class="footer-page">7</div></div>
       </section>
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Quiz #3</h2></div>
-        <div class="quiz-container">
-          <div class="quiz-question">Como os serviços dentro do mesmo Docker Compose se comunicam?</div>
-          <ul class="quiz-options">
-            <li data-correct="false"><span class="option-letter">A</span>Através de chamadas HTTPS para a internet pública.</li>
-            <li data-correct="true"><span class="option-letter">B</span>Através dos nomes dos serviços, que funcionam como DNS numa rede interna.</li>
-            <li data-correct="false"><span class="option-letter">C</span>Lendo e escrevendo no mesmo disco rígido.</li>
-            <li data-correct="false"><span class="option-letter">D</span>Não se comunicam.</li>
-          </ul>
-          <div class="quiz-feedback" data-correct-msg="Perfeito! O Docker embutiu um servidor DNS para isso." data-incorrect-msg="No compose, a resolução de nomes é automática usando o nome do serviço (DNS)."></div>
-        </div>
-        <div class="slide-footer"><div class="footer-bar">07 – Compose & Gateways</div><div class="footer-page">8</div></div>
-      </section>
+
+      <!-- ==================== 5: O MAPA DA PLATAFORMA [ANIM 1] ==================== -->
       <section class="content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Hands-on Lab: LogiTech Enterprise</h2></div>
-        <div class="concept-cards">
-          <div class="concept-card"><h4>Missão</h4><p>Subir uma infraestrutura completa (API + Redis) e criar um Facade para IA.</p></div>
-          <div class="concept-card"><h4>Passo a Passo</h4><p>1. Criar `docker-compose.yml`<br>2. Definir o serviço web e redis<br>3. `docker compose up -d`.</p></div>
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A LogiTech hoje: oito serviços, quatro linguagens</h2>
         </div>
-        <pre class="code-compact"><code class="language-yaml"># docker-compose.yml
-version: '3.8'
-services:
-  web:
-    build: .
-    ports:
-      - "8000:8000"
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 330" style="max-height:340px;" role="img" aria-label="Os oito serviços da plataforma aparecendo por aula de origem">
+            <rect x="8" y="8" width="884" height="314" rx="10" fill="none" stroke="#ccc" stroke-width="2" stroke-dasharray="7,5"/>
+            <text x="450" y="28" text-anchor="middle" font-size="13" font-weight="700" fill="#888">rede logitech-net</text>
+
+            <g font-size="12" font-weight="700">
+              <!-- Aula 02 e 03 -->
+              <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.06;0.16;1" dur="9s" repeatCount="indefinite"/>
+                <rect x="30" y="52" width="180" height="54" rx="8" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+                <text x="120" y="74" text-anchor="middle" fill="#333">coletor</text>
+                <text x="120" y="92" text-anchor="middle" font-weight="400" fill="#666">Python · 8081/udp · 8082</text>
+              </g>
+              <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.06;0.16;1" dur="9s" repeatCount="indefinite"/>
+                <rect x="30" y="118" width="180" height="54" rx="8" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+                <text x="120" y="140" text-anchor="middle" fill="#333">painel</text>
+                <text x="120" y="158" text-anchor="middle" font-weight="400" fill="#666">Node · 3000</text>
+              </g>
+              <!-- Aula 05 -->
+              <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.26;0.36;1" dur="9s" repeatCount="indefinite"/>
+                <rect x="245" y="52" width="180" height="54" rx="8" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+                <text x="335" y="74" text-anchor="middle" fill="#333">pedidos</text>
+                <text x="335" y="92" text-anchor="middle" font-weight="400" fill="#666">Java 21 · 8080</text>
+              </g>
+              <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.26;0.36;1" dur="9s" repeatCount="indefinite"/>
+                <rect x="245" y="118" width="180" height="54" rx="8" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+                <text x="335" y="140" text-anchor="middle" fill="#333">faturamento</text>
+                <text x="335" y="158" text-anchor="middle" font-weight="400" fill="#666">C# .NET 8 · 5080</text>
+              </g>
+              <!-- Aula 06 -->
+              <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.46;0.56;1" dur="9s" repeatCount="indefinite"/>
+                <rect x="460" y="52" width="180" height="54" rx="8" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+                <text x="550" y="74" text-anchor="middle" fill="#333">frete</text>
+                <text x="550" y="92" text-anchor="middle" font-weight="400" fill="#666">FastAPI · 8000</text>
+              </g>
+              <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.46;0.56;1" dur="9s" repeatCount="indefinite"/>
+                <rect x="460" y="118" width="180" height="54" rx="8" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+                <text x="550" y="140" text-anchor="middle" fill="#333">notificacoes</text>
+                <text x="550" y="158" text-anchor="middle" font-weight="400" fill="#666">Node 22 TS · 3001</text>
+              </g>
+              <!-- Aula 07 -->
+              <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.66;0.78;1" dur="9s" repeatCount="indefinite"/>
+                <rect x="675" y="52" width="195" height="54" rx="8" fill="#ED145B" opacity="0.92"/>
+                <text x="772" y="74" text-anchor="middle" fill="#fff">postgres</text>
+                <text x="772" y="92" text-anchor="middle" font-weight="400" fill="#fff">PostgreSQL 16 · 5432</text>
+              </g>
+              <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.66;0.78;1" dur="9s" repeatCount="indefinite"/>
+                <rect x="675" y="118" width="195" height="54" rx="8" fill="#ED145B" opacity="0.92"/>
+                <text x="772" y="140" text-anchor="middle" fill="#fff">ai-gateway</text>
+                <text x="772" y="158" text-anchor="middle" font-weight="400" fill="#fff">FastAPI · 4000</text>
+              </g>
+            </g>
+
+            <g font-size="12" fill="#777">
+              <text x="120" y="200" text-anchor="middle">Aulas 02 e 03</text>
+              <text x="335" y="200" text-anchor="middle">Aula 05</text>
+              <text x="550" y="200" text-anchor="middle">Aula 06</text>
+              <text x="772" y="200" text-anchor="middle" fill="#ED145B" font-weight="700">Aula 07, hoje</text>
+            </g>
+
+            <rect x="30" y="228" width="840" height="72" rx="8" fill="#fafafa" stroke="#ddd"/>
+            <text x="450" y="252" text-anchor="middle" font-size="13" font-weight="700" fill="#333">um arquivo: docker-compose.yml</text>
+            <text x="450" y="274" text-anchor="middle" font-size="12" fill="#666">nomes, portas, rotas e variáveis fixados no contrato da plataforma</text>
+            <text x="450" y="292" text-anchor="middle" font-size="12" fill="#666">o mesmo contrato que a Aula 08 vai consumir</text>
+          </svg>
+          <figcaption>
+            A plataforma se monta por aula: primeiro o coletor e o painel das Aulas 02 e 03, depois pedidos e faturamento da Aula 05, então frete e notificações da Aula 06, e por fim os dois que nascem hoje, o PostgreSQL e o AI Gateway, em rosa. Todos na mesma rede logitech-net, todos descritos por um único docker-compose.yml.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:4px;">
+          <span class="takeaway-label">Por que o contrato veio antes do código</span>
+          <p>Nomes, portas e rotas foram fixados em ADR <strong>antes</strong> das Aulas 05 e 06 serem escritas. Sem isso, hoje seria aula de conserto de incompatibilidade, e a Aula 08 não saberia em que endereço bater.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – A Plataforma</div>
+          <div class="footer-page">5</div>
+        </div>
+      </section>
+
+      <!-- ==================== 6: DESAFIO DO MINI MUNDO [ANIM 2] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Desafio: ninguém sobe isso duas vezes igual</h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 300" style="max-height:300px;" role="img" aria-label="Vinte e três comandos à mão contra um único arquivo">
+            <text x="225" y="24" text-anchor="middle" font-size="14" font-weight="700" fill="#c0392b">hoje: à mão, na ordem certa, sem errar nenhum</text>
+            <g font-family="JetBrains Mono, monospace" font-size="10.5" fill="#555">
+              <text x="40" y="52" opacity="0">docker network create logitech-net<animate attributeName="opacity" values="0;1;1;1" keyTimes="0;0.05;0.75;1" dur="9s" repeatCount="indefinite"/></text>
+              <text x="40" y="72" opacity="0">docker volume create logitech-postgres<animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.08;0.13;0.75;1" dur="9s" repeatCount="indefinite"/></text>
+              <text x="40" y="92" opacity="0">docker run -d --name postgres --network ... postgres:16<animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.16;0.21;0.75;1" dur="9s" repeatCount="indefinite"/></text>
+              <text x="40" y="112" opacity="0">sleep 10   # sera que ja subiu?<animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.24;0.29;0.75;1" dur="9s" repeatCount="indefinite"/></text>
+              <text x="40" y="132" opacity="0">docker run -d --name pedidos -p 8080:8080 -e LOGITECH_DB_URL=...<animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.32;0.37;0.75;1" dur="9s" repeatCount="indefinite"/></text>
+              <text x="40" y="152" opacity="0">docker run -d --name faturamento -p 5080:5080 ...<animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.40;0.45;0.75;1" dur="9s" repeatCount="indefinite"/></text>
+              <text x="40" y="172" opacity="0">docker run -d --name frete -p 8000:8000 --memory 192m ...<animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.48;0.53;0.75;1" dur="9s" repeatCount="indefinite"/></text>
+              <text x="40" y="192" opacity="0">docker run -d --name notificacoes ...   # faltou a rede<animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.56;0.61;0.75;1" dur="9s" repeatCount="indefinite"/></text>
+              <text x="40" y="212" opacity="0">docker rm -f notificacoes &amp;&amp; docker run -d ...   # de novo<animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.63;0.68;0.75;1" dur="9s" repeatCount="indefinite"/></text>
+              <text x="40" y="232" font-weight="700" fill="#c0392b" opacity="0">... e mais 14 comandos, na ordem, toda vez<animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.70;0.75;1" dur="9s" repeatCount="indefinite"/></text>
+            </g>
+
+            <line x1="460" y1="30" x2="460" y2="270" stroke="#ddd" stroke-width="2"/>
+
+            <text x="680" y="24" text-anchor="middle" font-size="14" font-weight="700" fill="#1e8449">a partir de hoje</text>
+            <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.76;0.84;1" dur="9s" repeatCount="indefinite"/>
+              <rect x="500" y="80" width="360" height="130" rx="10" fill="#ED145B" opacity="0.92"/>
+              <text x="680" y="118" text-anchor="middle" font-size="15" font-weight="700" fill="#fff" font-family="JetBrains Mono, monospace">docker compose up -d</text>
+              <text x="680" y="148" text-anchor="middle" font-size="12" fill="#fff">um arquivo versionado no Git</text>
+              <text x="680" y="170" text-anchor="middle" font-size="12" fill="#fff">a ordem, a rede e os limites por escrito</text>
+              <text x="680" y="192" text-anchor="middle" font-size="12" fill="#fff">idêntico no seu Codespace e no do colega</text>
+            </g>
+            <text x="680" y="248" text-anchor="middle" font-size="12" fill="#777" opacity="0">infraestrutura deixa de ser memória de quem estava lá<animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.86;0.93;1" dur="9s" repeatCount="indefinite"/></text>
+          </svg>
+          <figcaption>
+            À esquerda os comandos vão se empilhando um a um, com um sleep no meio para adivinhar se o banco já subiu e um rm seguido de run porque alguém esqueceu a rede. À direita, quando a lista termina, tudo isso colapsa em uma linha: docker compose up -d, lendo um arquivo que está no repositório e roda igual em qualquer máquina.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:4px;">
+          <span class="takeaway-label">O que se ganha ao trocar comandos por arquivo</span>
+          <p>Reprodutibilidade e revisão. Um comando digitado é conhecimento de quem estava na sala; um arquivo versionado é conhecimento da equipe, e passa por Pull Request como qualquer código.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Desafio do Mini Mundo</div>
+          <div class="footer-page">6</div>
+        </div>
+      </section>
+
+      <!-- ==================== 7: O COMANDO VIRA YAML ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O <span class="mono">docker run</span> da Aula 03 vira três linhas de YAML <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <p style="font-size:0.7em; margin-bottom:0;">Não existe conceito novo aqui. Cada bandeira que vocês digitaram na Aula 03 tem uma chave equivalente, e a tradução é literal.</p>
+
+        <div class="side-by-side" style="margin-top:9px;">
+          <div class="side" style="padding:14px 16px;">
+            <h4 style="color:var(--fiap-pink); margin-top:0;">Aula 03, na linha de comando</h4>
+            <pre class="code-compact" style="margin:0; font-size:0.5em;"><code class="language-bash">docker run -d \
+  --name coletor \
+  --network logitech-net \
+  -v logitech-telemetria:/dados \
+  -e LOGITECH_DADOS=/dados/telemetria.jsonl \
+  -p 8081:8081/udp -p 8082:8082 \
+  --memory 96m \
+  logitech/coletor:1.0</code></pre>
+          </div>
+          <div class="side" style="padding:14px 16px;">
+            <h4 style="color:var(--fiap-pink); margin-top:0;">Aula 07, no arquivo</h4>
+            <pre class="code-compact" style="margin:0; font-size:0.5em;"><code class="language-yaml">coletor:
+  build: ./servicos/coletor
+  networks: [logitech-net]
+  volumes:
+    - logitech-telemetria:/dados
+  environment:
+    LOGITECH_DADOS: /dados/telemetria.jsonl
+  ports: ["8081:8081/udp", "8082:8082"]
+  mem_limit: 96m</code></pre>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">O que muda de verdade</span>
+          <p>Não é a sintaxe: é o arquivo <strong>ser versionado</strong>. O comando morre no histórico do terminal de quem o digitou; o YAML entra no Git, passa por revisão e sobe igual daqui a seis meses.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Anatomia do Compose</div>
+          <div class="footer-page">7</div>
+        </div>
+      </section>
+
+      <!-- ==================== 8: ANATOMIA DO ARQUIVO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Anatomia do <span class="mono">docker-compose.yml</span> <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1.15fr 1fr; gap:20px; margin-top:6px;">
+          <pre class="code-compact" style="margin:0; font-size:0.52em;"><code class="language-yaml">name: logitech          # nome do projeto
+
+services:               # os containers
+  postgres:
+    image: postgres:16-alpine
+    environment: { POSTGRES_DB: logitech }
+    volumes: [logitech-postgres:/var/lib/...]
+    networks: [logitech-net]
+    mem_limit: 256m
+    healthcheck: { test: [...] }
+
+networks:               # as redes
+  logitech-net: { external: true }
+
+volumes:                # os volumes nomeados
+  logitech-postgres: { name: logitech-postgres }</code></pre>
+
+          <div>
+            <table class="compact-table" style="font-size:0.58em; margin-top:0;">
+              <thead><tr><th>Bloco</th><th>Responde a</th></tr></thead>
+              <tbody>
+                <tr><td><span class="mono">name</span></td><td>Como o Compose vai prefixar containers, redes e volumes deste projeto</td></tr>
+                <tr><td><span class="mono">services</span></td><td>Quais processos existem, de onde vem a imagem e como cada um é configurado</td></tr>
+                <tr><td><span class="mono">networks</span></td><td>Em que redes eles se enxergam, e quais já existiam antes</td></tr>
+                <tr><td><span class="mono">volumes</span></td><td>Onde mora o dado que precisa sobreviver ao container</td></tr>
+              </tbody>
+            </table>
+            <div class="callout" style="margin-top:8px; padding:10px 14px;">
+              <p style="font-size:0.62em; margin:0;">Não existe mais <span class="mono">version:</span> no topo. Ela era da era do <span class="mono">docker-compose</span> com hífen; a Compose Specification atual ignora esse campo e avisa que ele é obsoleto.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Anatomia do Compose</div>
+          <div class="footer-page">8</div>
+        </div>
+      </section>
+
+      <!-- ==================== 9: BUILD X IMAGE ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2><span class="mono">build</span> ou <span class="mono">image</span>: quem constrói e quem baixa</h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 210" style="max-height:215px;" role="img" aria-label="Serviço com build lê Dockerfile local, serviço com image baixa do registry">
+            <defs>
+              <marker id="s1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#555"/>
+              </marker>
+            </defs>
+
+            <rect x="30" y="30" width="200" height="58" rx="8" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+            <text x="130" y="54" text-anchor="middle" font-size="12" font-weight="700" fill="#333">servicos/frete/</text>
+            <text x="130" y="74" text-anchor="middle" font-size="11" fill="#666">Dockerfile + código-fonte</text>
+
+            <rect x="30" y="130" width="200" height="58" rx="8" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+            <text x="130" y="154" text-anchor="middle" font-size="12" font-weight="700" fill="#333">Docker Hub</text>
+            <text x="130" y="174" text-anchor="middle" font-size="11" fill="#666">postgres:16-alpine</text>
+
+            <g stroke="#555" stroke-width="2" fill="none" marker-end="url(#s1)">
+              <path d="M 230 59 L 380 59"/>
+              <path d="M 230 159 L 380 159"/>
+            </g>
+            <text x="305" y="50" text-anchor="middle" font-size="11" fill="#555">docker build</text>
+            <text x="305" y="150" text-anchor="middle" font-size="11" fill="#555">docker pull</text>
+
+            <rect x="385" y="30" width="230" height="58" rx="8" fill="#ED145B" opacity="0.9"/>
+            <text x="500" y="54" text-anchor="middle" font-size="12" font-weight="700" fill="#fff" font-family="JetBrains Mono, monospace">build: ./servicos/frete</text>
+            <text x="500" y="74" text-anchor="middle" font-size="11" fill="#fff">o código é seu, muda a cada commit</text>
+
+            <rect x="385" y="130" width="230" height="58" rx="8" fill="#333"/>
+            <text x="500" y="154" text-anchor="middle" font-size="12" font-weight="700" fill="#fff" font-family="JetBrains Mono, monospace">image: postgres:16-alpine</text>
+            <text x="500" y="174" text-anchor="middle" font-size="11" fill="#fff">software de prateleira, com tag fixa</text>
+
+            <g stroke="#555" stroke-width="2" fill="none" marker-end="url(#s1)">
+              <path d="M 615 59 L 700 100 L 730 105"/>
+              <path d="M 615 159 L 700 118 L 730 113"/>
+            </g>
+            <rect x="735" y="80" width="135" height="58" rx="8" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+            <text x="802" y="104" text-anchor="middle" font-size="12" font-weight="700" fill="#333">container</text>
+            <text x="802" y="124" text-anchor="middle" font-size="11" fill="#666">rodando na plataforma</text>
+          </svg>
+          <figcaption>
+            Serviço com build aponta para uma pasta com Dockerfile e o Compose constrói a imagem no seu Docker; serviço com image aponta para um nome no registry e o Compose apenas baixa. Os seis serviços da LogiTech usam build, porque o código é de vocês; o PostgreSQL usa image, com tag fixa.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:4px;">
+          <span class="takeaway-label">A regra prática</span>
+          <p><span class="mono">build</span> exige <span class="mono">--build</span> no <span class="mono">up</span> quando o código muda. Esquecer disso é o motivo número um de "alterei e não mudou nada".</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Anatomia do Compose</div>
+          <div class="footer-page">9</div>
+        </div>
+      </section>
+
+      <!-- ==================== 10: REDE E DNS [ANIM 3] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Rede e DNS: o nome do serviço vira endereço <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 280" style="max-height:290px;" role="img" aria-label="O serviço pedidos resolvendo o nome frete pelo DNS interno da rede">
+            <rect x="20" y="40" width="860" height="180" rx="10" fill="#fafafa" stroke="#bbb" stroke-width="2" stroke-dasharray="7,5"/>
+            <text x="450" y="62" text-anchor="middle" font-size="12" font-weight="700" fill="#888">rede logitech-net, 172.26.0.0/16</text>
+
+            <rect x="55" y="105" width="160" height="60" rx="8" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+            <text x="135" y="130" text-anchor="middle" font-size="13" font-weight="700" fill="#333">pedidos</text>
+            <text x="135" y="150" text-anchor="middle" font-size="11" fill="#666">172.26.0.12</text>
+
+            <rect x="370" y="90" width="170" height="90" rx="8" fill="#333"/>
+            <text x="455" y="118" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">DNS do Docker</text>
+            <text x="455" y="140" text-anchor="middle" font-size="11" fill="#ccc">tabela de nomes da rede</text>
+            <text x="455" y="160" text-anchor="middle" font-size="11" fill="#ccc">um nome por serviço</text>
+
+            <rect x="690" y="105" width="160" height="60" rx="8" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+            <text x="770" y="130" text-anchor="middle" font-size="13" font-weight="700" fill="#333">frete</text>
+            <text x="770" y="150" text-anchor="middle" font-size="11" fill="#666">172.26.0.5</text>
+
+            <!-- ida da pergunta -->
+            <circle r="7" fill="#ED145B" opacity="0">
+              <animate attributeName="opacity" values="0;1;1;0;0;0;0" keyTimes="0;0.05;0.28;0.3;0.5;0.9;1" dur="9s" repeatCount="indefinite"/>
+              <animateMotion path="M 215 135 L 370 135" dur="9s" keyTimes="0;0.05;0.28;1" keyPoints="0;0;1;1" calcMode="linear" repeatCount="indefinite"/>
+            </circle>
+            <text x="292" y="122" text-anchor="middle" font-size="11" fill="#ED145B" font-family="JetBrains Mono, monospace" opacity="0">quem é "frete"?
+              <animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.08;0.28;0.32;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+
+            <!-- volta da resposta -->
+            <text x="292" y="172" text-anchor="middle" font-size="11" fill="#1e8449" font-family="JetBrains Mono, monospace" opacity="0">172.26.0.5
+              <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.34;0.4;0.52;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+
+            <!-- a chamada HTTP direta -->
+            <path d="M 215 168 C 400 245 600 245 690 168" stroke="#1e8449" stroke-width="2.5" fill="none" stroke-dasharray="6,4" opacity="0">
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.55;0.65;1" dur="9s" repeatCount="indefinite"/>
+            </path>
+            <text x="450" y="248" text-anchor="middle" font-size="12" fill="#1e8449" font-weight="700" font-family="JetBrains Mono, monospace" opacity="0">GET http://frete:8000/health
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.6;0.7;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+            <text x="450" y="268" text-anchor="middle" font-size="11" fill="#777" opacity="0">nenhum IP no código, nenhum arquivo de configuração de endereço
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.75;0.85;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+          </svg>
+          <figcaption>
+            O serviço pedidos pergunta ao DNS interno do Docker quem é "frete", recebe de volta o endereço 172.26.0.5 e faz a chamada HTTP direta para frete:8000. O nome do serviço no YAML é o nome de host na rede: mudar o IP do container não quebra nada, porque nenhum IP foi escrito em lugar algum.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:4px;">
+          <span class="takeaway-label">É a mesma rede da Aula 03</span>
+          <p><span class="mono">logitech-net</span> foi criada à mão por vocês em <span class="mono">docker network create</span>. O que muda hoje é que oito serviços entram nela por declaração, não por bandeira de linha de comando.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Rede e DNS</div>
+          <div class="footer-page">10</div>
+        </div>
+      </section>
+
+      <!-- ==================== 11: PORTS X REDE INTERNA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2><span class="mono">ports</span> é para o mundo de fora, não para os vizinhos <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 240" style="max-height:250px;" role="img" aria-label="Serviços alcançáveis pela rede interna, apenas alguns publicados no host">
+            <rect x="45" y="45" width="810" height="160" rx="10" fill="#fafafa" stroke="#bbb" stroke-width="2" stroke-dasharray="7,5"/>
+            <text x="450" y="66" text-anchor="middle" font-size="12" font-weight="700" fill="#888">rede logitech-net: todos se enxergam pela porta do container</text>
+
+            <g font-size="11">
+              <rect x="80" y="88" width="130" height="46" rx="7" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+              <text x="145" y="107" text-anchor="middle" font-weight="700" fill="#333">pedidos</text>
+              <text x="145" y="124" text-anchor="middle" fill="#666">8080</text>
+
+              <rect x="235" y="88" width="130" height="46" rx="7" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+              <text x="300" y="107" text-anchor="middle" font-weight="700" fill="#333">frete</text>
+              <text x="300" y="124" text-anchor="middle" fill="#666">8000</text>
+
+              <rect x="390" y="88" width="130" height="46" rx="7" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+              <text x="455" y="107" text-anchor="middle" font-weight="700" fill="#333">ai-gateway</text>
+              <text x="455" y="124" text-anchor="middle" fill="#666">4000</text>
+
+              <rect x="545" y="88" width="130" height="46" rx="7" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+              <text x="610" y="107" text-anchor="middle" font-weight="700" fill="#333">coletor</text>
+              <text x="610" y="124" text-anchor="middle" fill="#666">8082</text>
+
+              <rect x="700" y="88" width="130" height="46" rx="7" fill="#333"/>
+              <text x="765" y="107" text-anchor="middle" font-weight="700" fill="#fff">postgres</text>
+              <text x="765" y="124" text-anchor="middle" fill="#ccc">5432</text>
+            </g>
+
+            <text x="765" y="152" text-anchor="middle" font-size="10.5" fill="#c0392b" font-weight="700">sem ports:</text>
+            <text x="765" y="167" text-anchor="middle" font-size="10.5" fill="#c0392b">o banco não existe fora daqui</text>
+
+            <g stroke="#1e8449" stroke-width="2.5" fill="none">
+              <path d="M 145 134 L 145 205"/>
+              <path d="M 300 134 L 300 205"/>
+              <path d="M 455 134 L 455 205"/>
+              <path d="M 610 134 L 610 205"/>
+            </g>
+            <line x1="45" y1="205" x2="855" y2="205" stroke="#333" stroke-width="2.5"/>
+            <text x="450" y="228" text-anchor="middle" font-size="12" font-weight="700" fill="#333">o host: só chega aqui o que tiver ports:</text>
+          </svg>
+          <figcaption>
+            Dentro da rede os serviços se alcançam pela porta do container, sem publicar nada. A linha de baixo é o host: apenas os serviços com ports atravessam. O PostgreSQL fica sem ports de propósito, e por isso não existe endereço nenhum na sua máquina que chegue ao banco da LogiTech.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:4px;">
+          <span class="takeaway-label">Superfície de ataque</span>
+          <p>Cada linha de <span class="mono">ports</span> é uma porta aberta na máquina. Publicar o banco "para poder olhar com o DBeaver" é como deixar a chave do cofre embaixo do tapete: use <span class="mono">docker compose exec postgres psql</span>.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Rede e DNS</div>
+          <div class="footer-page">11</div>
+        </div>
+      </section>
+
+      <!-- ==================== 12: DEPENDS_ON NÃO BASTA [ANIM 4, OBRIGATÓRIA] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2><span class="mono">depends_on</span>: a promessa que ele não faz <a href="#/ref-slide" class="ref-badge" title="Ver referências">[3]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 300" style="max-height:300px;" role="img" aria-label="O serviço sobe antes do banco aceitar conexão e morre">
+            <text x="450" y="20" text-anchor="middle" font-size="12.5" font-weight="700" fill="#888">linha do tempo, do docker compose up em diante</text>
+            <line x1="60" y1="270" x2="850" y2="270" stroke="#333" stroke-width="2"/>
+            <g font-size="10.5" fill="#777">
+              <text x="70" y="288">0 s</text><text x="270" y="288">2 s</text>
+              <text x="470" y="288">4 s</text><text x="670" y="288">6 s</text>
+            </g>
+
+            <!-- faixa do postgres -->
+            <text x="55" y="72" text-anchor="end" font-size="12" font-weight="700" fill="#333">postgres</text>
+            <rect x="70" y="52" width="0" height="30" rx="5" fill="#e8a33d">
+              <animate attributeName="width" values="0;0;330;330;330" keyTimes="0;0.08;0.5;0.9;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <text x="235" y="72" text-anchor="middle" font-size="11" fill="#fff" font-weight="700" opacity="0">initdb: criando cluster, ainda não escuta
+              <animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.2;0.3;0.9;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+            <rect x="400" y="52" width="0" height="30" rx="5" fill="#1e8449">
+              <animate attributeName="width" values="0;0;450;450" keyTimes="0;0.5;0.62;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <text x="600" y="72" text-anchor="middle" font-size="11" fill="#fff" font-weight="700" opacity="0">aceitando conexão na 5432
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.56;0.64;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+
+            <!-- o que o compose enxerga -->
+            <text x="55" y="122" text-anchor="end" font-size="12" font-weight="700" fill="#333">o Compose vê</text>
+            <text x="90" y="122" font-size="11.5" fill="#c0392b" font-weight="700" opacity="0">"container do postgres: criado". Solta o próximo.
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.1;0.18;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+
+            <!-- faixa do pedidos -->
+            <text x="55" y="182" text-anchor="end" font-size="12" font-weight="700" fill="#333">pedidos</text>
+            <rect x="120" y="162" width="0" height="30" rx="5" fill="#888">
+              <animate attributeName="width" values="0;0;150;150;150" keyTimes="0;0.14;0.3;0.9;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <text x="195" y="182" text-anchor="middle" font-size="11" fill="#fff" font-weight="700" opacity="0">JVM subindo
+              <animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.2;0.28;0.9;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+
+            <circle cx="290" cy="177" r="0" fill="#c0392b">
+              <animate attributeName="r" values="0;0;13;13;13" keyTimes="0;0.32;0.38;0.9;1" dur="9s" repeatCount="indefinite"/>
+            </circle>
+            <text x="290" y="182" text-anchor="middle" font-size="14" font-weight="700" fill="#fff" opacity="0">X
+              <animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.34;0.4;0.9;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+
+            <g opacity="0"><animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.4;0.5;0.9;1" dur="9s" repeatCount="indefinite"/>
+              <rect x="325" y="152" width="520" height="52" rx="7" fill="#fdedec" stroke="#c0392b" stroke-width="2"/>
+              <text x="340" y="172" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#c0392b">[FATAL] o banco de dados nao aceitou a conexao:</text>
+              <text x="340" y="188" font-size="10.5" font-family="JetBrains Mono, monospace" fill="#c0392b">Connection to postgres:5432 refused.  -&gt;  Exited (1)</text>
+            </g>
+
+            <text x="450" y="238" text-anchor="middle" font-size="12.5" font-weight="700" fill="#c0392b" opacity="0">o banco só passou a aceitar conexão 2 segundos DEPOIS de o serviço já ter morrido
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.66;0.76;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+          </svg>
+          <figcaption>
+            O Compose vê o container do postgres criado e imediatamente solta o pedidos. Enquanto o PostgreSQL ainda roda o initdb e não escuta na 5432, a JVM termina de subir, tenta conectar, leva connection refused e encerra com código 1. Dois segundos depois o banco fica pronto, para um serviço que já não existe mais.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:4px;">
+          <span class="takeaway-label">O que <span class="mono">depends_on</span> promete, e o que não</span>
+          <p>Ele promete <strong>ordem de partida</strong>. Ele não promete prontidão, porque não olha para dentro do processo: para o Compose, "o container existe" e "o banco aceita conexão" são a mesma coisa.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – depends_on e healthcheck</div>
+          <div class="footer-page">12</div>
+        </div>
+      </section>
+
+      <!-- ==================== 13: A EVIDÊNCIA MEDIDA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Isso não é hipótese: é o log do laboratório de hoje</h2>
+        </div>
+
+        <p style="font-size:0.7em; margin-bottom:0;">O esqueleto do laboratório vem com o <span class="mono">postgres</span> <strong>sem</strong> <span class="mono">healthcheck</span> e o <span class="mono">pedidos</span> com <span class="mono">depends_on</span> na forma de lista. O Passo 1 manda vocês subirem assim <strong>antes</strong> de consertar.</p>
+
+        <pre class="code-compact" style="margin:10px 0 0; font-size:0.52em;"><code class="language-bash">$ docker compose up -d --build
+$ docker compose ps -a
+NAME                  SERVICE    STATUS
+logitech-pedidos-1    pedidos    Exited (1) 5 seconds ago
+logitech-postgres-1   postgres   Up 12 seconds
+
+$ docker compose logs pedidos
+=== LogiTech Enterprise - Servico de Pedidos ===
+banco: jdbc:postgresql://postgres:5432/logitech
+[FATAL] o banco de dados nao aceitou a conexao: Connection to postgres:5432
+        refused. Check that the hostname and port are correct and that the
+        postmaster is accepting TCP/IP connections.
+[FATAL] o servico de pedidos nao sobe sem banco. Encerrando com codigo 1.</code></pre>
+
+        <div class="takeaway" style="margin-top:8px;">
+          <span class="takeaway-label">Por que o serviço não tenta de novo</span>
+          <p>Um laço de retentativa dentro da aplicação é solução legítima e comum em produção. Aqui ele foi <strong>deliberadamente removido</strong>: retentativa esconde o problema, e o objetivo do Passo 1 é vocês verem a falha acontecer antes de aprenderem a evitá-la.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – depends_on e healthcheck</div>
+          <div class="footer-page">13</div>
+        </div>
+      </section>
+
+      <!-- ==================== 14: HEALTHCHECK ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2><span class="mono">healthcheck</span>: o contrato de prontidão <a href="#/ref-slide" class="ref-badge" title="Ver referências">[3]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 200" style="max-height:205px;" role="img" aria-label="Estados de saúde de um container: starting, healthy e unhealthy">
+            <defs>
+              <marker id="s2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#555"/>
+              </marker>
+            </defs>
+            <g font-size="13" font-weight="700">
+              <rect x="45" y="70" width="170" height="52" rx="8" fill="#e8a33d"/>
+              <text x="130" y="102" text-anchor="middle" fill="#fff">starting</text>
+              <rect x="360" y="20" width="170" height="52" rx="8" fill="#1e8449"/>
+              <text x="445" y="52" text-anchor="middle" fill="#fff">healthy</text>
+              <rect x="360" y="120" width="170" height="52" rx="8" fill="#c0392b"/>
+              <text x="445" y="152" text-anchor="middle" fill="#fff">unhealthy</text>
+            </g>
+            <g stroke="#555" stroke-width="2" fill="none" marker-end="url(#s2)">
+              <path d="M 215 84 L 356 52"/>
+              <path d="M 215 108 L 356 142"/>
+              <path d="M 445 72 L 445 116"/>
+              <path d="M 470 116 L 470 76"/>
+            </g>
+            <g font-size="11" fill="#555">
+              <text x="285" y="55" text-anchor="middle">1º teste passou</text>
+              <text x="285" y="145" text-anchor="middle">retries esgotadas</text>
+              <text x="410" y="98" text-anchor="middle">falhou</text>
+              <text x="510" y="98" text-anchor="middle">voltou</text>
+            </g>
+            <g font-family="JetBrains Mono, monospace" font-size="11" fill="#555">
+              <text x="570" y="42">interval: 10s      de quanto em quanto tempo testa</text>
+              <text x="570" y="66">timeout: 4s        quanto espera cada teste</text>
+              <text x="570" y="90">retries: 6         quantas falhas seguidas derrubam</text>
+              <text x="570" y="114">start_period: 25s  carência inicial, sem contar falha</text>
+            </g>
+            <text x="723" y="150" text-anchor="middle" font-size="11" fill="#888">o estado aparece na coluna STATUS do docker compose ps</text>
+          </svg>
+          <figcaption>
+            Todo container começa em starting. O primeiro teste bem-sucedido o leva a healthy; falhas seguidas em número igual a retries o levam a unhealthy, e ele volta a healthy assim que um teste passar de novo. O start_period é a carência: falha dentro dela não conta, para serviço que demora a subir não nascer condenado.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:4px;">
+          <span class="takeaway-label">O critério que importa</span>
+          <p>O teste precisa provar que o serviço <strong>atende</strong>, não que o processo existe. <span class="mono">pg_isready</span> no banco e <span class="mono">GET /health</span> nos serviços HTTP: é para isso que a ADR-006 exige <span class="mono">/health</span> em todos os oito.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – depends_on e healthcheck</div>
+          <div class="footer-page">14</div>
+        </div>
+      </section>
+
+      <!-- ==================== 15: CONDITION SERVICE_HEALTHY [ANIM 5] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A mesma corrida, agora com um portão <a href="#/ref-slide" class="ref-badge" title="Ver referências">[3]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 250" style="max-height:250px;" role="img" aria-label="Com condition service_healthy o serviço só é liberado depois do banco ficar saudável">
+            <line x1="60" y1="215" x2="850" y2="215" stroke="#333" stroke-width="2"/>
+            <g font-size="10.5" fill="#777">
+              <text x="70" y="233">0 s</text><text x="270" y="233">2 s</text>
+              <text x="470" y="233">4 s</text><text x="670" y="233">6 s</text>
+            </g>
+
+            <text x="55" y="52" text-anchor="end" font-size="12" font-weight="700" fill="#333">postgres</text>
+            <rect x="70" y="32" width="0" height="30" rx="5" fill="#e8a33d">
+              <animate attributeName="width" values="0;0;330;330;330" keyTimes="0;0.06;0.42;0.9;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <text x="235" y="52" text-anchor="middle" font-size="11" fill="#fff" font-weight="700" opacity="0">starting: pg_isready ainda diz não
+              <animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.16;0.26;0.9;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+            <rect x="400" y="32" width="0" height="30" rx="5" fill="#1e8449">
+              <animate attributeName="width" values="0;0;450;450" keyTimes="0;0.42;0.54;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <text x="600" y="52" text-anchor="middle" font-size="11" fill="#fff" font-weight="700" opacity="0">healthy
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.48;0.56;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+
+            <!-- portão -->
+            <line x1="400" y1="20" x2="400" y2="200" stroke="#ED145B" stroke-width="3" stroke-dasharray="8,5"/>
+            <text x="400" y="14" text-anchor="middle" font-size="11.5" font-weight="700" fill="#ED145B">o portão abre aqui</text>
+
+            <text x="55" y="122" text-anchor="end" font-size="12" font-weight="700" fill="#333">pedidos</text>
+            <rect x="70" y="102" width="330" height="30" rx="5" fill="#eee" stroke="#bbb" stroke-dasharray="5,4"/>
+            <text x="235" y="122" text-anchor="middle" font-size="11" fill="#888" font-weight="700" opacity="0">esperando: o Compose nem cria o container
+              <animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.12;0.22;0.9;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+            <rect x="400" y="102" width="0" height="30" rx="5" fill="#888">
+              <animate attributeName="width" values="0;0;150;150" keyTimes="0;0.54;0.66;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <text x="475" y="122" text-anchor="middle" font-size="11" fill="#fff" font-weight="700" opacity="0">JVM subindo
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.6;0.68;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+            <rect x="555" y="102" width="0" height="30" rx="5" fill="#1e8449">
+              <animate attributeName="width" values="0;0;295;295" keyTimes="0;0.7;0.8;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <text x="700" y="122" text-anchor="middle" font-size="11" fill="#fff" font-weight="700" opacity="0">conectado, schema criado, escutando na 8080
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.76;0.84;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+
+            <g font-family="JetBrains Mono, monospace" font-size="11" fill="#555">
+              <text x="70" y="172">depends_on:</text>
+              <text x="70" y="188">  postgres:</text>
+              <text x="70" y="204">    condition: service_healthy</text>
+            </g>
+          </svg>
+          <figcaption>
+            Com condition service_healthy o Compose não cria o container do pedidos enquanto o pg_isready do postgres não passar. O portão rosa marca o instante em que o banco fica saudável; só depois dele a JVM sobe, conecta na primeira tentativa, cria o schema e começa a escutar. Mesma infraestrutura, mesma ordem, resultado oposto.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – depends_on e healthcheck</div>
+          <div class="footer-page">15</div>
+        </div>
+      </section>
+
+      <!-- ==================== 16: HEALTHCHECK POR LINGUAGEM ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Um comando de saúde para quatro linguagens</h2>
+        </div>
+
+        <p style="font-size:0.7em; margin-bottom:0;">O teste roda <strong>dentro</strong> do container, então ele só pode usar o que aquela imagem tem. As oito imagens do laboratório são Alpine, e o Alpine traz <span class="mono">wget</span> no BusyBox: um comando só serve para Java, C#, Python e Node.</p>
+
+        <pre class="code-compact" style="margin:9px 0 0; font-size:0.5em;"><code class="language-yaml">x-saude: &amp;saude            # ancora YAML: escrita uma vez, usada oito
+  interval: 10s
+  timeout: 4s
+  retries: 6
+  start_period: 25s
+
+frete:
+  healthcheck:
+    &lt;&lt;: *saude              # herda a cadencia
+    test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8000/health"]</code></pre>
+
+        <div class="callout" style="margin-top:9px; padding:11px 15px; border-left:4px solid #c0392b;">
+          <p style="font-size:0.66em; margin:0;"><strong style="color:#c0392b;">Armadilha encontrada na validação deste laboratório:</strong> com <span class="mono">http://localhost:8000/health</span> quatro dos oito serviços ficaram <span class="mono">unhealthy</span> mesmo respondendo. Dentro do Alpine o <span class="mono">localhost</span> pode resolver primeiro para <span class="mono">::1</span>, em IPv6, enquanto o servidor escuta em IPv4. Use o literal <span class="mono">127.0.0.1</span>: ele não tem essa ambiguidade.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – depends_on e healthcheck</div>
+          <div class="footer-page">16</div>
+        </div>
+      </section>
+
+      <!-- ==================== 17: VARIÁVEIS E SEGREDOS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Variáveis: o arquivo diz <em>quais</em>, o <span class="mono">.env</span> diz <em>quais são</em> <a href="#/ref-slide" class="ref-badge" title="Ver referências">[4]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 215" style="max-height:220px;" role="img" aria-label="O compose declara as variáveis e o env fornece os valores; só o compose vai para o Git">
+            <rect x="35" y="30" width="300" height="120" rx="8" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+            <text x="185" y="52" text-anchor="middle" font-size="12.5" font-weight="700" fill="#333">docker-compose.yml</text>
+            <g font-family="JetBrains Mono, monospace" font-size="10" fill="#555">
+              <text x="52" y="76">environment:</text>
+              <text x="52" y="94">  LOGITECH_DB_URL: jdbc:postgresql://...</text>
+              <text x="52" y="112">  LOGITECH_DB_USER: logitech</text>
+              <text x="52" y="130">  LOGITECH_DB_PASSWORD: ${LOGITECH_DB_PASSWORD}</text>
+            </g>
+            <text x="185" y="172" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e8449">vai para o Git</text>
+            <text x="185" y="190" text-anchor="middle" font-size="10.5" fill="#777">é a documentação viva da configuração</text>
+
+            <rect x="380" y="30" width="230" height="120" rx="8" fill="#fdedec" stroke="#c0392b" stroke-width="2"/>
+            <text x="495" y="52" text-anchor="middle" font-size="12.5" font-weight="700" fill="#c0392b">.env</text>
+            <g font-family="JetBrains Mono, monospace" font-size="10" fill="#a03028">
+              <text x="396" y="80">LOGITECH_DB_PASSWORD=...</text>
+              <text x="396" y="100">LOGITECH_IA_REMOTA_CHAVE=</text>
+              <text x="396" y="120">LOGITECH_IA_MODELO_LOCAL=...</text>
+            </g>
+            <text x="495" y="172" text-anchor="middle" font-size="11.5" font-weight="700" fill="#c0392b">NUNCA vai para o Git</text>
+            <text x="495" y="190" text-anchor="middle" font-size="10.5" fill="#777">está no .gitignore desde o primeiro commit</text>
+
+            <rect x="655" y="30" width="215" height="120" rx="8" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+            <text x="762" y="52" text-anchor="middle" font-size="12.5" font-weight="700" fill="#333">.env.exemplo</text>
+            <g font-family="JetBrains Mono, monospace" font-size="10" fill="#555">
+              <text x="670" y="80">LOGITECH_DB_PASSWORD=troque</text>
+              <text x="670" y="100">LOGITECH_IA_REMOTA_CHAVE=</text>
+              <text x="670" y="120">LOGITECH_IA_MODELO_LOCAL=...</text>
+            </g>
+            <text x="762" y="172" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e8449">vai para o Git</text>
+            <text x="762" y="190" text-anchor="middle" font-size="10.5" fill="#777">diz quais variáveis existem, sem segredo</text>
+          </svg>
+          <figcaption>
+            Três arquivos com papéis distintos. O docker-compose.yml declara quais variáveis cada serviço precisa e é versionado. O .env carrega os valores, inclusive senha e chave de API, e está no .gitignore. O .env.exemplo é a cópia sem segredo, versionada, que diz a quem clona o repositório o que precisa preencher.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:4px;">
+          <span class="takeaway-label">O truque que evita o erro silencioso</span>
+          <p><span class="mono">${LOGITECH_DB_PASSWORD:?copie .env.exemplo para .env}</span> faz o Compose <strong>recusar</strong> subir quando a variável falta, com a mensagem que você escreveu. Sem os dois-pontos e a interrogação, ele subiria com senha vazia.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Variáveis e Volumes</div>
+          <div class="footer-page">17</div>
+        </div>
+      </section>
+
+      <!-- ==================== 18: VOLUMES ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Volumes: o que o Compose cria e o que ele apenas usa <a href="#/ref-slide" class="ref-badge" title="Ver referências">[5]</a></h2>
+        </div>
+
+        <div class="side-by-side" style="margin-top:8px;">
+          <div class="side" style="padding:15px 18px;">
+            <h4 style="color:var(--fiap-pink); margin-top:0;">Gerenciado pelo Compose</h4>
+            <pre class="code-compact" style="margin:0 0 8px; font-size:0.5em;"><code class="language-yaml">volumes:
+  logitech-postgres:
+    name: logitech-postgres</code></pre>
+            <p style="font-size:0.66em; margin:0;">Nasce hoje, junto com o banco. O Compose cria no <span class="mono">up</span> e destrói no <span class="mono">down -v</span>. Ciclo de vida amarrado ao projeto.</p>
+          </div>
+          <div class="side" style="padding:15px 18px;">
+            <h4 style="color:var(--fiap-pink); margin-top:0;">Externo, herdado da Aula 03</h4>
+            <pre class="code-compact" style="margin:0 0 8px; font-size:0.5em;"><code class="language-yaml">volumes:
+  logitech-telemetria:
+    external: true</code></pre>
+            <p style="font-size:0.66em; margin:0;">Já existia antes deste arquivo, criado à mão com <span class="mono">docker volume create</span>. O Compose usa e <strong>não remove</strong> nem com <span class="mono">down -v</span>.</p>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:10px; padding:11px 15px;">
+          <p style="font-size:0.66em; margin:0;">A rede <span class="mono">logitech-net</span> segue a mesma lógica: <span class="mono">external: true</span>, porque é a mesma que vocês criaram à mão na Aula 03. A regra que vale para os dois: <strong>o que nasce com o projeto, o projeto gerencia; o que é anterior a ele, ele apenas usa</strong>.</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Cuidado com dado de produção</span>
+          <p>Um <span class="mono">docker compose down -v</span> distraído apaga todo volume gerenciado. Volume de banco em ambiente compartilhado tende a ser declarado <span class="mono">external</span> exatamente para não morrer por engano.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Variáveis e Volumes</div>
+          <div class="footer-page">18</div>
+        </div>
+      </section>
+
+      <!-- ==================== 19: LIMITES DE MEMÓRIA [ANIM 6] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Oito containers e um teto: <span class="mono">mem_limit</span> por serviço <a href="#/ref-slide" class="ref-badge" title="Ver referências">[5]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 265" style="max-height:270px;" role="img" aria-label="Sem limite um serviço consome tudo; com limite cada um tem seu teto">
+            <text x="225" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#c0392b">sem mem_limit</text>
+            <rect x="45" y="32" width="365" height="185" rx="8" fill="#fafafa" stroke="#bbb" stroke-width="2"/>
+            <text x="227" y="234" text-anchor="middle" font-size="11" fill="#777">memória do Codespace: 8 GB</text>
+
+            <rect x="60" y="200" width="60" height="0" fill="#888">
+              <animate attributeName="height" values="0;20;20;20" keyTimes="0;0.15;0.9;1" dur="9s" repeatCount="indefinite"/>
+              <animate attributeName="y" values="200;180;180;180" keyTimes="0;0.15;0.9;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <rect x="130" y="200" width="60" height="0" fill="#888">
+              <animate attributeName="height" values="0;28;28;28" keyTimes="0;0.18;0.9;1" dur="9s" repeatCount="indefinite"/>
+              <animate attributeName="y" values="200;172;172;172" keyTimes="0;0.18;0.9;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <rect x="200" y="200" width="60" height="0" fill="#c0392b">
+              <animate attributeName="height" values="0;20;130;130;130" keyTimes="0;0.2;0.55;0.9;1" dur="9s" repeatCount="indefinite"/>
+              <animate attributeName="y" values="200;180;70;70;70" keyTimes="0;0.2;0.55;0.9;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <text x="230" y="54" text-anchor="middle" font-size="10.5" fill="#c0392b" font-weight="700" opacity="0">vazamento no serviço C
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.42;0.5;1" dur="9s" repeatCount="indefinite"/>
+            </text>
+            <rect x="270" y="200" width="60" height="0" fill="#888">
+              <animate attributeName="height" values="0;22;22;22" keyTimes="0;0.22;0.9;1" dur="9s" repeatCount="indefinite"/>
+              <animate attributeName="y" values="200;178;178;178" keyTimes="0;0.22;0.9;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.62;0.72;1" dur="9s" repeatCount="indefinite"/>
+              <text x="315" y="130" font-size="11.5" font-weight="700" fill="#c0392b">os outros três</text>
+              <text x="315" y="146" font-size="11.5" font-weight="700" fill="#c0392b">morrem por OOM</text>
+            </g>
+
+            <text x="675" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#1e8449">com mem_limit</text>
+            <rect x="490" y="32" width="365" height="185" rx="8" fill="#fafafa" stroke="#bbb" stroke-width="2"/>
+            <text x="672" y="234" text-anchor="middle" font-size="11" fill="#777">cada serviço com o seu teto, somando 1632 MB</text>
+
+            <g stroke="#1e8449" stroke-width="2" stroke-dasharray="4,3" fill="none">
+              <line x1="505" y1="120" x2="565" y2="120"/>
+              <line x1="575" y1="105" x2="635" y2="105"/>
+              <line x1="645" y1="120" x2="705" y2="120"/>
+              <line x1="715" y1="135" x2="775" y2="135"/>
+            </g>
+            <rect x="505" y="200" width="60" height="0" fill="#888">
+              <animate attributeName="height" values="0;20;20;20" keyTimes="0;0.15;0.9;1" dur="9s" repeatCount="indefinite"/>
+              <animate attributeName="y" values="200;180;180;180" keyTimes="0;0.15;0.9;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <rect x="575" y="200" width="60" height="0" fill="#888">
+              <animate attributeName="height" values="0;28;28;28" keyTimes="0;0.18;0.9;1" dur="9s" repeatCount="indefinite"/>
+              <animate attributeName="y" values="200;172;172;172" keyTimes="0;0.18;0.9;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <rect x="645" y="200" width="60" height="0" fill="#e8a33d">
+              <animate attributeName="height" values="0;20;80;80;80" keyTimes="0;0.2;0.55;0.9;1" dur="9s" repeatCount="indefinite"/>
+              <animate attributeName="y" values="200;180;120;120;120" keyTimes="0;0.2;0.55;0.9;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <rect x="715" y="200" width="60" height="0" fill="#888">
+              <animate attributeName="height" values="0;22;22;22" keyTimes="0;0.22;0.9;1" dur="9s" repeatCount="indefinite"/>
+              <animate attributeName="y" values="200;178;178;178" keyTimes="0;0.22;0.9;1" dur="9s" repeatCount="indefinite"/>
+            </rect>
+            <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.62;0.72;1" dur="9s" repeatCount="indefinite"/>
+              <text x="790" y="130" font-size="11.5" font-weight="700" fill="#1e8449">só o C é morto,</text>
+              <text x="790" y="146" font-size="11.5" font-weight="700" fill="#1e8449">no teto dele</text>
+            </g>
+          </svg>
+          <figcaption>
+            Os quatro serviços sobem consumindo pouco. À esquerda, sem teto, o serviço com vazamento cresce até o limite da máquina e leva os outros três junto por falta de memória. À direita cada um tem a sua linha tracejada: o mesmo vazamento bate no teto de 256 MB, o container é morto por OOM sozinho, e a plataforma continua de pé.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:4px;">
+          <span class="takeaway-label">Limite é isolamento de falha</span>
+          <p>Sem teto, o defeito de um serviço vira indisponibilidade da plataforma inteira. Com teto, ele vira um container reiniciado. É a mesma <span class="mono">--memory</span> da Aula 03, agora por escrito e para os oito.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Limites e Medição</div>
+          <div class="footer-page">19</div>
+        </div>
+      </section>
+
+      <!-- ==================== 20: OS NÚMEROS MEDIDOS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quanto custa a plataforma inteira, medido</h2>
+        </div>
+
+        <p style="font-size:0.7em; margin-bottom:0;">Números da validação deste laboratório em <strong>arm64, Docker Desktop com 10 núcleos e 7,75 GiB para a VM</strong>, imagens já construídas e volume do banco zerado. Os de vocês vão diferir, e é por isso que <span class="mono">ONDE_MEDI</span> é um dos marcadores obrigatórios.</p>
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:18px; margin-top:10px;">
+          <table class="compact-table" style="margin:0; font-size:0.58em;">
+            <thead><tr><th>Medida</th><th>Valor</th></tr></thead>
+            <tbody>
+              <tr><td>Do <span class="mono">up -d --wait</span> aos oito <span class="mono">healthy</span></td><td><strong>11,9 s</strong></td></tr>
+              <tr><td>Memória somada dos oito, em repouso</td><td><strong>228 MB</strong></td></tr>
+              <tr><td>Teto declarado no arquivo</td><td>1632 MB</td></tr>
+              <tr><td>Maior consumidor: <span class="mono">pedidos</span> (JVM)</td><td>46 MB</td></tr>
+              <tr><td>Menor consumidor: <span class="mono">painel</span></td><td>9,7 MB</td></tr>
+            </tbody>
+          </table>
+          <table class="compact-table" style="margin:0; font-size:0.58em;">
+            <thead><tr><th>Imagem construída</th><th>Tamanho</th></tr></thead>
+            <tbody>
+              <tr><td><span class="mono">logitech-coletor</span></td><td>78,9 MB</td></tr>
+              <tr><td><span class="mono">logitech-frete</span></td><td>100 MB</td></tr>
+              <tr><td><span class="mono">logitech-ai-gateway</span></td><td>103 MB</td></tr>
+              <tr><td><span class="mono">logitech-faturamento</span></td><td>166 MB</td></tr>
+              <tr><td><span class="mono">logitech-notificacoes</span> e <span class="mono">logitech-painel</span></td><td>229 MB</td></tr>
+              <tr><td><span class="mono">logitech-pedidos</span></td><td>287 MB</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">O teto não é a conta</span>
+          <p>1632 MB é o que a plataforma <strong>pode</strong> usar; 228 MB é o que ela usa parada. Limite serve para conter o pior caso, não para reservar memória, e por isso a soma dos tetos pode passar do que a máquina tem.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Limites e Medição</div>
+          <div class="footer-page">20</div>
+        </div>
+      </section>
+
+      <!-- ==================== 21: COMANDOS DO DIA A DIA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Os comandos que vocês vão usar a noite inteira <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <table class="compact-table" style="font-size:0.58em;">
+          <thead><tr><th>Comando</th><th>O que faz, e quando você precisa dele</th></tr></thead>
+          <tbody>
+            <tr><td><span class="mono">docker compose up -d --build</span></td><td>Constrói o que mudou e sobe tudo em segundo plano. Sem <span class="mono">--build</span>, alteração no código não entra na imagem</td></tr>
+            <tr><td><span class="mono">docker compose up -d --wait</span></td><td>Sobe e <strong>espera</strong> os healthchecks passarem. É o comando que você cronometra no Passo 5</td></tr>
+            <tr><td><span class="mono">docker compose ps</span></td><td>Estado e saúde. <span class="mono">Up</span> significa que subiu; <span class="mono">healthy</span> significa que responde</td></tr>
+            <tr><td><span class="mono">docker compose ps -a</span></td><td>Inclui os que já morreram. É como você enxerga o <span class="mono">Exited (1)</span> do Passo 1</td></tr>
+            <tr><td><span class="mono">docker compose logs -f pedidos</span></td><td>Log de um serviço, acompanhando. Sem o nome, mostra os oito misturados</td></tr>
+            <tr><td><span class="mono">docker compose exec pedidos sh</span></td><td>Um shell dentro do container. É de onde você prova o DNS interno</td></tr>
+            <tr><td><span class="mono">docker compose config</span></td><td>O arquivo já resolvido, com variáveis e âncoras expandidas. Mostra o que o Compose realmente entendeu</td></tr>
+            <tr><td><span class="mono">docker compose down</span></td><td>Derruba e remove os containers. Com <span class="mono">-v</span>, apaga também os volumes gerenciados</td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">O primeiro comando quando algo não funciona</span>
+          <p><span class="mono">docker compose config</span>. Metade dos problemas de YAML é uma variável que não chegou ou uma indentação que pôs a chave no serviço errado, e os dois aparecem ali antes de você perder dez minutos lendo log.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Comandos do Compose</div>
+          <div class="footer-page">21</div>
+        </div>
+      </section>
+
+      <!-- ==================== 22: SEÇÃO AI GATEWAY ==================== -->
+      <section class="section-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="accent-bar"></div>
+        <h2>AI Gateway</h2>
+        <p>O oitavo serviço: um ponto único de entrada para toda a IA da plataforma, com Facade escondendo os provedores e Strategy escolhendo entre eles.</p>
+        <div class="slide-footer">
+          <div class="footer-bar">07 – AI Gateway</div>
+          <div class="footer-page">22</div>
+        </div>
+      </section>
+
+      <!-- ==================== 23: A DOR [ANIM 7] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Cinco serviços, dez integrações, cinco chaves espalhadas</h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 285" style="max-height:290px;" role="img" aria-label="De seis integrações diretas com dois provedores para um gateway único">
+            <text x="215" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#c0392b">sem gateway: cada serviço com a sua integração</text>
+            <g font-size="10.5">
+              <rect x="35" y="42" width="86" height="30" rx="6" fill="#f2f2f2" stroke="#999"/><text x="78" y="62" text-anchor="middle" fill="#333">pedidos</text>
+              <rect x="35" y="82" width="86" height="30" rx="6" fill="#f2f2f2" stroke="#999"/><text x="78" y="102" text-anchor="middle" fill="#333">faturamento</text>
+              <rect x="35" y="122" width="86" height="30" rx="6" fill="#f2f2f2" stroke="#999"/><text x="78" y="142" text-anchor="middle" fill="#333">frete</text>
+              <rect x="35" y="162" width="86" height="30" rx="6" fill="#f2f2f2" stroke="#999"/><text x="78" y="182" text-anchor="middle" fill="#333">notificacoes</text>
+              <rect x="35" y="202" width="86" height="30" rx="6" fill="#f2f2f2" stroke="#999"/><text x="78" y="222" text-anchor="middle" fill="#333">painel</text>
+              <rect x="290" y="82" width="90" height="30" rx="6" fill="#333"/><text x="335" y="102" text-anchor="middle" fill="#fff">remoto</text>
+              <rect x="290" y="162" width="90" height="30" rx="6" fill="#333"/><text x="335" y="182" text-anchor="middle" fill="#fff">local</text>
+            </g>
+            <g stroke="#c0392b" stroke-width="1.4" fill="none" opacity="0">
+              <animate attributeName="opacity" values="0;0;0.85;0.85;0.85;0.85" keyTimes="0;0.05;0.2;0.45;0.5;1" dur="10s" repeatCount="indefinite"/>
+              <path d="M 121 57 L 290 92"/><path d="M 121 57 L 290 172"/>
+              <path d="M 121 97 L 290 95"/><path d="M 121 97 L 290 175"/>
+              <path d="M 121 137 L 290 100"/><path d="M 121 137 L 290 178"/>
+              <path d="M 121 177 L 290 105"/><path d="M 121 177 L 290 181"/>
+              <path d="M 121 217 L 290 110"/><path d="M 121 217 L 290 184"/>
+            </g>
+            <text x="215" y="256" text-anchor="middle" font-size="11.5" fill="#c0392b" font-weight="700" opacity="0">10 integrações, 10 lugares para trocar, 0 visão de custo
+              <animate attributeName="opacity" values="0;0;1;1;1;1" keyTimes="0;0.22;0.3;0.45;0.5;1" dur="10s" repeatCount="indefinite"/>
+            </text>
+            <text x="215" y="274" text-anchor="middle" font-size="11" fill="#777" opacity="0">e a chave de API copiada em cinco repositórios
+              <animate attributeName="opacity" values="0;0;1;1;1;1" keyTimes="0;0.32;0.38;0.45;0.5;1" dur="10s" repeatCount="indefinite"/>
+            </text>
+
+            <line x1="450" y1="30" x2="450" y2="240" stroke="#ddd" stroke-width="2"/>
+
+            <text x="675" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="#1e8449">com gateway: uma porta só</text>
+            <g font-size="10.5" opacity="0">
+              <animate attributeName="opacity" values="0;0;0;1;1" keyTimes="0;0.5;0.55;0.68;1" dur="10s" repeatCount="indefinite"/>
+              <rect x="480" y="42" width="86" height="30" rx="6" fill="#f2f2f2" stroke="#999"/><text x="523" y="62" text-anchor="middle" fill="#333">pedidos</text>
+              <rect x="480" y="82" width="86" height="30" rx="6" fill="#f2f2f2" stroke="#999"/><text x="523" y="102" text-anchor="middle" fill="#333">faturamento</text>
+              <rect x="480" y="122" width="86" height="30" rx="6" fill="#f2f2f2" stroke="#999"/><text x="523" y="142" text-anchor="middle" fill="#333">frete</text>
+              <rect x="480" y="162" width="86" height="30" rx="6" fill="#f2f2f2" stroke="#999"/><text x="523" y="182" text-anchor="middle" fill="#333">notificacoes</text>
+              <rect x="480" y="202" width="86" height="30" rx="6" fill="#f2f2f2" stroke="#999"/><text x="523" y="222" text-anchor="middle" fill="#333">painel</text>
+            </g>
+            <g stroke="#1e8449" stroke-width="1.6" fill="none" opacity="0">
+              <animate attributeName="opacity" values="0;0;0;1;1" keyTimes="0;0.55;0.6;0.72;1" dur="10s" repeatCount="indefinite"/>
+              <path d="M 566 57 L 660 122"/><path d="M 566 97 L 660 128"/>
+              <path d="M 566 137 L 660 134"/><path d="M 566 177 L 660 140"/>
+              <path d="M 566 217 L 660 146"/>
+            </g>
+            <g opacity="0"><animate attributeName="opacity" values="0;0;0;1;1" keyTimes="0;0.6;0.66;0.76;1" dur="10s" repeatCount="indefinite"/>
+              <rect x="662" y="112" width="100" height="48" rx="7" fill="#ED145B"/>
+              <text x="712" y="132" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">ai-gateway</text>
+              <text x="712" y="149" text-anchor="middle" font-size="10" fill="#fff">porta 4000</text>
+            </g>
+            <g stroke="#1e8449" stroke-width="1.6" fill="none" opacity="0">
+              <animate attributeName="opacity" values="0;0;0;0;1;1" keyTimes="0;0.7;0.76;0.82;0.9;1" dur="10s" repeatCount="indefinite"/>
+              <path d="M 762 126 L 815 97"/><path d="M 762 148 L 815 177"/>
+            </g>
+            <g font-size="10.5" opacity="0"><animate attributeName="opacity" values="0;0;0;0;1;1" keyTimes="0;0.7;0.76;0.82;0.9;1" dur="10s" repeatCount="indefinite"/>
+              <rect x="817" y="82" width="60" height="30" rx="6" fill="#333"/><text x="847" y="102" text-anchor="middle" fill="#fff">remoto</text>
+              <rect x="817" y="162" width="60" height="30" rx="6" fill="#333"/><text x="847" y="182" text-anchor="middle" fill="#fff">local</text>
+            </g>
+            <text x="675" y="256" text-anchor="middle" font-size="11.5" fill="#1e8449" font-weight="700" opacity="0">1 integração, 1 credencial, 1 lugar que mede o custo
+              <animate attributeName="opacity" values="0;0;0;0;1;1" keyTimes="0;0.78;0.84;0.88;0.94;1" dur="10s" repeatCount="indefinite"/>
+            </text>
+          </svg>
+          <figcaption>
+            À esquerda, cinco serviços puxando linha para dois provedores: dez integrações, dez lugares para mexer quando o formato do payload mudar, e a chave de API copiada em cinco repositórios. À direita, os mesmos cinco serviços falam com um único endereço, e só o gateway conhece os provedores, guarda a credencial e mede o consumo.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:4px;">
+          <span class="takeaway-label">A conta que ninguém faz</span>
+          <p>Com N serviços e M provedores são N vezes M integrações; com gateway, N mais M. E só no segundo caso existe um lugar capaz de responder quanto a empresa gastou com IA no mês.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – AI Gateway</div>
+          <div class="footer-page">23</div>
+        </div>
+      </section>
+
+      <!-- ==================== 24: O QUE UM AI GATEWAY FAZ ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>As cinco responsabilidades de um AI Gateway <a href="#/ref-slide" class="ref-badge" title="Ver referências">[6]</a></h2>
+        </div>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:12px; margin-top:8px;">
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>1. Fachada única</h4>
+            <p style="font-size:0.65em;">Um endereço, um formato de requisição. Quem chama não sabe quantos provedores existem nem qual foi usado.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>2. Roteamento</h4>
+            <p style="font-size:0.65em;">Qual provedor atende esta chamada: por custo, por qualidade, por conformidade ou pelo tamanho da pergunta.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>3. Fallback</h4>
+            <p style="font-size:0.65em;">O preferido caiu, e a operação não pode parar. A fila continua, e a troca fica registrada.</p>
+          </div>
+        </div>
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:12px; margin-top:12px;">
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>4. Limite de taxa</h4>
+            <p style="font-size:0.65em;">Um laço com defeito em um serviço não pode consumir em dez segundos a cota que os outros sete precisam no mês.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>5. Cache</h4>
+            <p style="font-size:0.65em;">A chamada mais barata e mais rápida é a que não acontece. Pergunta repetida não vai ao modelo duas vezes.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 16px; border-left:4px solid var(--fiap-pink);">
+            <h4>E a que justifica tudo</h4>
+            <p style="font-size:0.65em;"><strong>Observabilidade.</strong> Sem gateway ninguém responde quanto a empresa gasta com IA, nem quanto do tráfego o cache já economizou.</p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – AI Gateway</div>
+          <div class="footer-page">24</div>
+        </div>
+      </section>
+
+      <!-- ==================== 25: FACADE ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Facade: uma porta de entrada, complexidade escondida <a href="#/ref-slide" class="ref-badge" title="Ver referências">[7]</a></h2>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1.05fr 1fr; gap:18px; margin-top:6px;">
+          <figure class="slide-figure" style="margin:0;">
+            <svg viewBox="0 0 440 250" style="max-height:250px;" role="img" aria-label="A fachada como única porta entre o cliente e os subsistemas">
+              <rect x="20" y="20" width="130" height="44" rx="7" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+              <text x="85" y="47" text-anchor="middle" font-size="12" font-weight="700" fill="#333">painel</text>
+              <path d="M 85 64 L 85 92" stroke="#555" stroke-width="2"/>
+              <rect x="20" y="94" width="400" height="44" rx="7" fill="#ED145B"/>
+              <text x="220" y="121" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">GatewayDeIA.responder(pergunta)</text>
+              <g stroke="#999" stroke-width="1.6" stroke-dasharray="4,3" fill="none">
+                <path d="M 90 138 L 70 176"/><path d="M 160 138 L 165 176"/>
+                <path d="M 250 138 L 268 176"/><path d="M 350 138 L 355 176"/>
+              </g>
+              <g font-size="10.5" fill="#555">
+                <rect x="20" y="178" width="90" height="52" rx="6" fill="#fafafa" stroke="#bbb"/>
+                <text x="65" y="199" text-anchor="middle" font-weight="700">limite</text>
+                <text x="65" y="215" text-anchor="middle">janela de 60 s</text>
+                <rect x="112" y="178" width="106" height="52" rx="6" fill="#fafafa" stroke="#bbb"/>
+                <text x="165" y="199" text-anchor="middle" font-weight="700">cache</text>
+                <text x="165" y="215" text-anchor="middle">exato e similaridade</text>
+                <rect x="224" y="178" width="98" height="52" rx="6" fill="#fafafa" stroke="#bbb"/>
+                <text x="273" y="199" text-anchor="middle" font-weight="700">estratégia</text>
+                <text x="273" y="215" text-anchor="middle">ordem de tentativa</text>
+                <rect x="320" y="178" width="100" height="52" rx="6" fill="#fafafa" stroke="#bbb"/>
+                <text x="370" y="199" text-anchor="middle" font-weight="700">provedores</text>
+                <text x="370" y="215" text-anchor="middle">remoto e local</text>
+              </g>
+            </svg>
+            <figcaption>O painel conhece um método. Limite de taxa, cache, estratégia e provedores existem atrás da fachada e não aparecem em nenhuma importação do lado de fora.</figcaption>
+          </figure>
+
+          <div>
+            <pre class="code-compact" style="margin:0; font-size:0.5em;"><code class="language-python">class GatewayDeIA:
+    """A fachada. Uma porta para toda a IA."""
+
+    async def responder(self, pergunta, modelo=None,
+                        cliente="anonimo"):
+        self.limitador.permitir(cliente)      # 1
+        em_cache, tipo, nota = \
+            self.cache.consultar(pergunta)    # 2
+        if em_cache is not None:
+            return ...                        # nem sai da rede
+
+        ordem = self.estrategia.ordenar(      # 3
+            list(self.provedores), pergunta)
+
+        for provedor in ordem:                # 4
+            try:
+                return await provedor.responder(pergunta)
+            except ProvedorIndisponivel:
+                ...                           # fallback</code></pre>
+            <div class="callout" style="margin-top:8px; padding:10px 14px;">
+              <p style="font-size:0.62em; margin:0;">Repare no que <strong>não</strong> está aqui: nenhum <span class="mono">if provedor == "openai"</span>, nenhuma URL, nenhuma chave. A fachada orquestra; ela não conhece nenhum provedor por nome.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Facade e Strategy</div>
+          <div class="footer-page">25</div>
+        </div>
+      </section>
+
+      <!-- ==================== 26: STRATEGY ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Strategy: a decisão sai do <span class="mono">if</span> e vira um objeto <a href="#/ref-slide" class="ref-badge" title="Ver referências">[7]</a></h2>
+        </div>
+
+        <div class="side-by-side" style="margin-top:6px;">
+          <div class="side" style="padding:14px 16px;">
+            <h4 style="color:#c0392b; margin-top:0;">Sem Strategy</h4>
+            <pre class="code-compact" style="margin:0 0 8px; font-size:0.48em;"><code class="language-python">if politica == "barato":
+    ordem = [local, remoto]
+elif politica == "qualidade":
+    ordem = [remoto, local]
+elif politica == "conformidade":
+    ordem = [local]
+elif politica == "por_tamanho":
+    ordem = [local] if len(p) &lt; 280 else [remoto]
+# a quinta politica entra aqui, editando
+# um metodo que ja funcionava</code></pre>
+            <p style="font-size:0.63em; margin:0;">Cada política nova mexe em código testado. É a violação do OCP que a Aula 05 nomeou.</p>
+          </div>
+          <div class="side" style="padding:14px 16px;">
+            <h4 style="color:#1e8449; margin-top:0;">Com Strategy</h4>
+            <pre class="code-compact" style="margin:0 0 8px; font-size:0.48em;"><code class="language-python">class SomenteLocal:
+    nome = "somente-local"
+
+    def ordenar(self, provedores, pergunta):
+        return [p for p in provedores
+                if p.nome == "local"]
+
+ESTRATEGIAS = {
+    PreferirRemoto.nome: PreferirRemoto,
+    PreferirLocal.nome:  PreferirLocal,
+    SomenteLocal.nome:   SomenteLocal,
+    PorTamanhoDaPergunta.nome: PorTamanhoDaPergunta,
+}</code></pre>
+            <p style="font-size:0.63em; margin:0;">Política nova é classe nova mais uma linha no registro. A fachada não muda.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Por que isto é Strategy, e não configuração</span>
+          <p>A política <span class="mono">por-tamanho</span> decide <strong>a cada requisição</strong>, olhando a pergunta. Uma lista ordenada em arquivo de configuração não faria isso: só um objeto com comportamento faz.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Facade e Strategy</div>
+          <div class="footer-page">26</div>
+        </div>
+      </section>
+
+      <!-- ==================== 27: FACADE E STRATEGY JUNTOS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Dois padrões no mesmo serviço, com papéis diferentes</h2>
+        </div>
+
+        <p style="font-size:0.7em; margin-bottom:0;">A confusão mais comum da noite é achar que os dois fazem a mesma coisa porque aparecem juntos. Eles resolvem problemas opostos, e é isso que os torna complementares.</p>
+
+        <table class="compact-table" style="font-size:0.6em; margin-top:9px;">
+          <thead><tr><th></th><th>Facade</th><th>Strategy</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Problema</strong></td><td>O cliente teria que conhecer e coordenar cinco partes</td><td>O comportamento precisa mudar sem editar quem o usa</td></tr>
+            <tr><td><strong>Intenção</strong></td><td>Simplificar: uma interface no lugar de muitas</td><td>Variar: várias implementações da mesma interface</td></tr>
+            <tr><td><strong>Quantidade</strong></td><td>Uma fachada para o subsistema inteiro</td><td>Uma classe por política, e o registro delas</td></tr>
+            <tr><td><strong>Quem escolhe</strong></td><td>Ninguém: a fachada é sempre a mesma</td><td>Configuração, em <span class="mono">LOGITECH_IA_ESTRATEGIA</span></td></tr>
+            <tr><td><strong>No gateway</strong></td><td><span class="mono">GatewayDeIA</span>, a única classe que os outros serviços conhecem</td><td><span class="mono">EstrategiaDeRoteamento</span>, decidindo a ordem de tentativa</td></tr>
+            <tr><td><strong>Se você tirar</strong></td><td>Cada serviço volta a montar cache, limite e fallback por conta própria</td><td>Volta a cadeia de <span class="mono">if</span>, e cada política nova mexe em código testado</td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Como decidir em uma frase</span>
+          <p>Facade responde "por onde se entra"; Strategy responde "o que acontece lá dentro desta vez". <strong>Os provedores também são Strategy</strong>: mesma interface, implementações trocáveis.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Facade e Strategy</div>
+          <div class="footer-page">27</div>
+        </div>
+      </section>
+
+      <!-- ==================== 28: AS QUATRO ESTRATÉGIAS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>As quatro políticas de roteamento do laboratório</h2>
+        </div>
+
+        <table class="compact-table" style="font-size:0.6em;">
+          <thead><tr><th>Política</th><th>Ordem de tentativa</th><th>Quando a LogiTech usaria</th></tr></thead>
+          <tbody>
+            <tr><td><span class="mono">preferir-remoto</span></td><td>remoto, depois local</td><td>Padrão. O modelo grande responde melhor ao atendimento, e o local existe para a operação não parar</td></tr>
+            <tr><td><span class="mono">preferir-local</span></td><td>local, depois remoto</td><td>Volume alto e pergunta simples: custo e latência mandam</td></tr>
+            <tr><td><span class="mono">somente-local</span></td><td>só local</td><td>A pergunta carrega dado de cliente e nada pode sair da rede da empresa</td></tr>
+            <tr><td><span class="mono">por-tamanho</span></td><td>decide a cada chamada</td><td>Pergunta curta vai ao local; pergunta longa, com contexto, justifica o custo do remoto</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout" style="margin-top:10px; padding:11px 15px;">
+          <p style="font-size:0.66em; margin:0;"><strong><span class="mono">somente-local</span> não "prefere" o local: ele remove o remoto da lista.</strong> A diferença é de engenharia, não de estilo. Política de conformidade que apenas ordena preferências continua deixando o dado sair quando o preferido falha. Preferência não é controle.</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Trocar de política</span>
+          <p>Uma linha no <span class="mono">docker-compose.yml</span>: <span class="mono">LOGITECH_IA_ESTRATEGIA: somente-local</span>. Nenhuma imagem é reconstruída, nenhum código é tocado, nenhum serviço cliente fica sabendo.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Facade e Strategy</div>
+          <div class="footer-page">28</div>
+        </div>
+      </section>
+
+      <!-- ==================== 29: FALLBACK [ANIM 8] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Fallback: a fila continua quando o preferido cai</h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 265" style="max-height:265px;" role="img" aria-label="A chamada tenta o provedor remoto, falha, e cai para o local">
+            <rect x="30" y="95" width="130" height="52" rx="8" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+            <text x="95" y="118" text-anchor="middle" font-size="12" font-weight="700" fill="#333">painel</text>
+            <text x="95" y="136" text-anchor="middle" font-size="10.5" fill="#666">faz uma pergunta</text>
+
+            <rect x="215" y="85" width="160" height="72" rx="8" fill="#ED145B"/>
+            <text x="295" y="112" text-anchor="middle" font-size="12.5" font-weight="700" fill="#fff">ai-gateway</text>
+            <text x="295" y="132" text-anchor="middle" font-size="10.5" fill="#fff">estratégia: preferir-remoto</text>
+
+            <rect x="590" y="30" width="170" height="56" rx="8" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+            <text x="675" y="53" text-anchor="middle" font-size="12" font-weight="700" fill="#333">provedor remoto</text>
+            <text x="675" y="71" text-anchor="middle" font-size="10.5" fill="#666">compatível com OpenAI</text>
+
+            <rect x="590" y="160" width="170" height="56" rx="8" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+            <text x="675" y="183" text-anchor="middle" font-size="12" font-weight="700" fill="#333">provedor local</text>
+            <text x="675" y="201" text-anchor="middle" font-size="10.5" fill="#666">Ollama do devcontainer</text>
+
+            <path d="M 160 121 L 211 121" stroke="#555" stroke-width="2"/>
+
+            <!-- tentativa 1 -->
+            <path d="M 375 105 L 586 62" stroke="#c0392b" stroke-width="2.5" fill="none" opacity="0">
+              <animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.08;0.16;0.9;1" dur="10s" repeatCount="indefinite"/>
+            </path>
+            <text x="470" y="80" text-anchor="middle" font-size="11" fill="#c0392b" font-weight="700" opacity="0">1. tenta
+              <animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.08;0.16;0.9;1" dur="10s" repeatCount="indefinite"/>
+            </text>
+            <g opacity="0"><animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.2;0.28;0.9;1" dur="10s" repeatCount="indefinite"/>
+              <circle cx="675" cy="106" r="12" fill="#c0392b"/>
+              <text x="675" y="111" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">X</text>
+              <text x="775" y="111" font-size="10.5" fill="#c0392b" font-weight="700">credencial ausente</text>
+            </g>
+
+            <!-- fallback -->
+            <path d="M 375 137 L 586 188" stroke="#1e8449" stroke-width="2.5" fill="none" opacity="0">
+              <animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.34;0.44;0.9;1" dur="10s" repeatCount="indefinite"/>
+            </path>
+            <text x="470" y="180" text-anchor="middle" font-size="11" fill="#1e8449" font-weight="700" opacity="0">2. cai para o próximo da fila
+              <animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.34;0.44;0.9;1" dur="10s" repeatCount="indefinite"/>
+            </text>
+            <g opacity="0"><animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.5;0.58;0.9;1" dur="10s" repeatCount="indefinite"/>
+              <circle cx="675" cy="140" r="12" fill="#1e8449"/>
+              <text x="675" y="145" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">OK</text>
+            </g>
+
+            <!-- resposta ao cliente -->
+            <path d="M 590 216 C 400 258 200 210 95 152" stroke="#1e8449" stroke-width="2.5" fill="none" stroke-dasharray="6,4" opacity="0">
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.62;0.72;1" dur="10s" repeatCount="indefinite"/>
+            </path>
+            <text x="330" y="248" text-anchor="middle" font-size="11.5" fill="#1e8449" font-weight="700" opacity="0">3. o painel recebe a resposta e nem fica sabendo que houve troca
+              <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.68;0.78;1" dur="10s" repeatCount="indefinite"/>
+            </text>
+
+            <g opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.8;0.88;1" dur="10s" repeatCount="indefinite"/>
+              <rect x="30" y="15" width="330" height="52" rx="7" fill="#fafafa" stroke="#bbb"/>
+              <text x="42" y="35" font-size="9.5" font-family="JetBrains Mono, monospace" fill="#555">[FALLBACK] provedor 'remoto' indisponivel</text>
+              <text x="42" y="50" font-size="9.5" font-family="JetBrains Mono, monospace" fill="#555">(credencial ausente); caindo para 'local'</text>
+              <text x="42" y="63" font-size="9" fill="#888">a linha que vira a evidência FALLBACK_ACIONADO</text>
+            </g>
+          </svg>
+          <figcaption>
+            O painel pergunta ao gateway, que tenta o provedor remoto por ordem da estratégia. O remoto falha por credencial ausente, o gateway registra a linha de log e cai para o local, que responde. O painel recebe a resposta e não fica sabendo de nada disso: só o gateway, o log e a rota de métricas viram a troca acontecer.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:4px;">
+          <span class="takeaway-label">Fallback silencioso não é fallback bom</span>
+          <p>Se o cliente não percebe, ótimo. Se <strong>ninguém</strong> percebe, você acaba de rodar meses no provedor de contingência sem saber. Por isso a troca vai para o log e para <span class="mono">/v1/metricas</span>.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Fallback e Cache</div>
+          <div class="footer-page">29</div>
+        </div>
+      </section>
+
+      <!-- ==================== 30: FALLBACK REAL ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Fallback de verdade, não encenado</h2>
+        </div>
+
+        <p style="font-size:0.7em; margin-bottom:0;">O planejamento pedia fallback entre um provedor pago e modelos locais. Não há chave paga para a turma, e a saída fácil seria simular a falha com um <span class="mono">if</span>. A decisão registrada em ADR foi outra.</p>
+
+        <div class="side-by-side" style="margin-top:9px;">
+          <div class="side" style="padding:14px 17px;">
+            <h4 style="color:#c0392b; margin-top:0;">O que não fizemos</h4>
+            <pre class="code-compact" style="margin:0 0 8px; font-size:0.48em;"><code class="language-python"># fallback de mentira
+if SIMULAR_FALHA_DO_REMOTO:
+    print("fingindo que o remoto caiu")
+    return provedor_local.responder(p)</code></pre>
+            <p style="font-size:0.63em; margin:0;">Passa a impressão certa e ensina a coisa errada: nenhum caminho de erro real é exercitado, e o dia em que o provedor cair de verdade será a primeira vez que o código roda.</p>
+          </div>
+          <div class="side" style="padding:14px 17px;">
+            <h4 style="color:#1e8449; margin-top:0;">O que o laboratório faz</h4>
+            <pre class="code-compact" style="margin:0 0 8px; font-size:0.48em;"><code class="language-python">def por_que_indisponivel(self):
+    if not self.chave:
+        return ("credencial ausente: a variavel "
+                "LOGITECH_IA_REMOTA_CHAVE esta vazia")
+    return None
+# a chamada levanta ProvedorIndisponivel,
+# e a fachada trata como trataria um 503</code></pre>
+            <p style="font-size:0.63em; margin:0;">A falha é real e o caminho de erro é o mesmo de uma indisponibilidade de produção. Preencher a chave no <span class="mono">.env</span> liga o remoto sem tocar em código.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Detalhe de engenharia que vale a pena notar</span>
+          <p>O provedor remoto falha <strong>antes de abrir socket</strong>. Não se manda requisição sabidamente inválida para um provedor pago só para "tentar": isso queima cota, polui métrica e atrasa o fallback.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Fallback e Cache</div>
+          <div class="footer-page">30</div>
+        </div>
+      </section>
+
+      <!-- ==================== 31: RATE LIMIT ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Limite de taxa: por cliente, não global <a href="#/ref-slide" class="ref-badge" title="Ver referências">[6]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 205" style="max-height:210px;" role="img" aria-label="Janela deslizante de 60 segundos por cliente">
+            <text x="450" y="18" text-anchor="middle" font-size="12.5" font-weight="700" fill="#888">janela deslizante de 60 segundos, uma por serviço que chama</text>
+
+            <text x="60" y="58" text-anchor="end" font-size="11.5" font-weight="700" fill="#333">painel</text>
+            <rect x="70" y="40" width="500" height="26" rx="5" fill="#eef7f0" stroke="#1e8449"/>
+            <g fill="#1e8449">
+              <circle cx="95" cy="53" r="5"/><circle cx="130" cy="53" r="5"/><circle cx="168" cy="53" r="5"/>
+              <circle cx="215" cy="53" r="5"/><circle cx="260" cy="53" r="5"/>
+            </g>
+            <text x="600" y="58" font-size="11" fill="#1e8449">5 de 30 na janela: passa</text>
+
+            <text x="60" y="110" text-anchor="end" font-size="11.5" font-weight="700" fill="#333">pedidos</text>
+            <rect x="70" y="92" width="500" height="26" rx="5" fill="#fdedec" stroke="#c0392b"/>
+            <g fill="#c0392b">
+              <circle cx="85" cy="105" r="5"/><circle cx="100" cy="105" r="5"/><circle cx="115" cy="105" r="5"/>
+              <circle cx="130" cy="105" r="5"/><circle cx="145" cy="105" r="5"/><circle cx="160" cy="105" r="5"/>
+              <circle cx="175" cy="105" r="5"/><circle cx="190" cy="105" r="5"/><circle cx="205" cy="105" r="5"/>
+              <circle cx="220" cy="105" r="5"/><circle cx="235" cy="105" r="5"/><circle cx="250" cy="105" r="5"/>
+              <circle cx="265" cy="105" r="5"/><circle cx="280" cy="105" r="5"/><circle cx="295" cy="105" r="5"/>
+              <circle cx="310" cy="105" r="5"/><circle cx="325" cy="105" r="5"/><circle cx="340" cy="105" r="5"/>
+              <circle cx="355" cy="105" r="5"/><circle cx="370" cy="105" r="5"/><circle cx="385" cy="105" r="5"/>
+              <circle cx="400" cy="105" r="5"/><circle cx="415" cy="105" r="5"/><circle cx="430" cy="105" r="5"/>
+              <circle cx="445" cy="105" r="5"/><circle cx="460" cy="105" r="5"/><circle cx="475" cy="105" r="5"/>
+              <circle cx="490" cy="105" r="5"/><circle cx="505" cy="105" r="5"/><circle cx="520" cy="105" r="5"/>
+            </g>
+            <text x="600" y="110" font-size="11" fill="#c0392b" font-weight="700">30 de 30: a 31ª leva HTTP 429</text>
+
+            <text x="60" y="162" text-anchor="end" font-size="11.5" font-weight="700" fill="#333">frete</text>
+            <rect x="70" y="144" width="500" height="26" rx="5" fill="#eef7f0" stroke="#1e8449"/>
+            <g fill="#1e8449"><circle cx="95" cy="157" r="5"/><circle cx="140" cy="157" r="5"/></g>
+            <text x="600" y="162" font-size="11" fill="#1e8449">segue passando: o vizinho não o afeta</text>
+
+            <text x="450" y="196" text-anchor="middle" font-size="11.5" fill="#777">a chave da janela é o cabeçalho X-Servico enviado por quem chama</text>
+          </svg>
+          <figcaption>
+            Cada serviço tem a sua janela de 60 segundos. O pedidos, com um laço defeituoso, encheu a própria janela e recebe 429 com um cabeçalho Retry-After. O painel e o frete continuam sendo atendidos normalmente: limite global teria derrubado os três de uma vez, punindo quem não errou.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Fallback e Cache</div>
+          <div class="footer-page">31</div>
+        </div>
+      </section>
+
+      <!-- ==================== 32: CACHE [ANIM 9] ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Cache: a chamada mais barata é a que não acontece</h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 265" style="max-height:265px;" role="img" aria-label="A primeira pergunta vai ao modelo; a repetida volta do cache">
+            <rect x="30" y="60" width="120" height="50" rx="8" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+            <text x="90" y="90" text-anchor="middle" font-size="12" font-weight="700" fill="#333">painel</text>
+
+            <rect x="230" y="50" width="150" height="70" rx="8" fill="#ED145B"/>
+            <text x="305" y="76" text-anchor="middle" font-size="12.5" font-weight="700" fill="#fff">ai-gateway</text>
+            <text x="305" y="96" text-anchor="middle" font-size="10.5" fill="#fff">consulta o cache antes</text>
+
+            <rect x="230" y="160" width="150" height="60" rx="8" fill="#fafafa" stroke="#bbb" stroke-width="2" stroke-dasharray="5,4"/>
+            <text x="305" y="184" text-anchor="middle" font-size="11.5" font-weight="700" fill="#555">cache</text>
+            <text x="305" y="202" text-anchor="middle" font-size="10.5" fill="#777">pergunta normalizada</text>
+
+            <rect x="640" y="50" width="150" height="70" rx="8" fill="#333"/>
+            <text x="715" y="76" text-anchor="middle" font-size="12.5" font-weight="700" fill="#fff">modelo</text>
+            <text x="715" y="96" text-anchor="middle" font-size="10.5" fill="#ccc">provedor local ou remoto</text>
+
+            <!-- 1a chamada -->
+            <g opacity="0"><animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.06;0.42;0.46;1" dur="11s" repeatCount="indefinite"/>
+              <path d="M 150 85 L 226 85" stroke="#555" stroke-width="2"/>
+              <path d="M 380 85 L 636 85" stroke="#c0392b" stroke-width="2.5"/>
+              <text x="500" y="70" text-anchor="middle" font-size="11.5" fill="#c0392b" font-weight="700">1ª pergunta: cache vazio, vai ao modelo</text>
+              <text x="508" y="108" text-anchor="middle" font-size="13" fill="#c0392b" font-weight="700" font-family="JetBrains Mono, monospace">152.660 ms</text>
+              <path d="M 305 120 L 305 156" stroke="#1e8449" stroke-width="2" stroke-dasharray="4,3"/>
+              <text x="395" y="146" font-size="10.5" fill="#1e8449">a resposta é guardada</text>
+            </g>
+
+            <!-- 2a e 3a chamada -->
+            <g opacity="0"><animate attributeName="opacity" values="0;0;0;1;1" keyTimes="0;0.46;0.52;0.62;1" dur="11s" repeatCount="indefinite"/>
+              <path d="M 150 85 L 226 85" stroke="#555" stroke-width="2"/>
+              <path d="M 290 120 L 290 156" stroke="#1e8449" stroke-width="2.5"/>
+              <path d="M 320 156 L 320 120" stroke="#1e8449" stroke-width="2.5"/>
+              <text x="500" y="70" text-anchor="middle" font-size="11.5" fill="#1e8449" font-weight="700">2ª e 3ª: mesma pergunta, o cache responde</text>
+              <text x="508" y="108" text-anchor="middle" font-size="13" fill="#1e8449" font-weight="700" font-family="JetBrains Mono, monospace">5 ms e 0 ms</text>
+              <text x="508" y="132" text-anchor="middle" font-size="11" fill="#777">o modelo nem fica sabendo que alguém perguntou</text>
+              <line x1="400" y1="85" x2="630" y2="85" stroke="#ccc" stroke-width="2" stroke-dasharray="6,5"/>
+            </g>
+
+            <rect x="30" y="232" width="840" height="26" rx="6" fill="#fafafa" stroke="#ddd"/>
+            <text x="450" y="250" text-anchor="middle" font-size="12" font-weight="700" fill="#333">medido no laboratório: 152.660 ms contra 0 ms para a mesma pergunta</text>
+          </svg>
+          <figcaption>
+            Na primeira chamada o cache está vazio, a pergunta atravessa até o modelo e a resposta demora 152,7 segundos, sendo guardada na volta. Na segunda e na terceira a mesma pergunta é atendida pelo cache em 5 e em 0 milissegundos, e a seta até o modelo some: nenhuma chamada sai do gateway.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:4px;">
+          <span class="takeaway-label">Onde o cache entra na ordem</span>
+          <p>Antes do roteamento e antes de qualquer provedor. Consultar o cache depois de escolher o provedor jogaria fora justamente a economia que ele existe para produzir.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Fallback e Cache</div>
+          <div class="footer-page">32</div>
+        </div>
+      </section>
+
+      <!-- ==================== 33: CACHING SEMÂNTICO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Caching semântico: acerto sem igualdade de texto <a href="#/ref-slide" class="ref-badge" title="Ver referências">[8]</a></h2>
+        </div>
+
+        <p style="font-size:0.7em; margin-bottom:0;">Cache comum guarda por chave exata: um espaço a mais e é erro de cache. Caching <strong>semântico</strong> guarda por <em>significado</em>, e acerta perguntas escritas de formas diferentes.</p>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 175" style="max-height:180px;" role="img" aria-label="Como um cache semântico compara perguntas por proximidade de significado">
+            <text x="225" y="18" text-anchor="middle" font-size="12" font-weight="700" fill="#333">o que a operação recebe</text>
+            <g font-size="10.5" fill="#555" font-family="JetBrains Mono, monospace">
+              <text x="35" y="46">"Onde esta meu pedido 4471?"</text>
+              <text x="35" y="70">"onde esta o pedido 4471"</text>
+              <text x="35" y="94">"Cade minha encomenda 4471?"</text>
+              <text x="35" y="118">"Qual o prazo de entrega do 4471?"</text>
+            </g>
+
+            <g stroke="#999" stroke-width="1.5" fill="none">
+              <path d="M 380 42 L 445 66"/><path d="M 380 66 L 445 70"/>
+              <path d="M 380 90 L 445 74"/><path d="M 380 114 L 445 108"/>
+            </g>
+
+            <rect x="450" y="30" width="150" height="105" rx="8" fill="#333"/>
+            <text x="525" y="56" text-anchor="middle" font-size="11.5" font-weight="700" fill="#fff">normalizar</text>
+            <text x="525" y="74" text-anchor="middle" font-size="10" fill="#ccc">tirar acento, caixa,</text>
+            <text x="525" y="88" text-anchor="middle" font-size="10" fill="#ccc">pontuação e palavras vazias</text>
+            <text x="525" y="110" text-anchor="middle" font-size="11.5" font-weight="700" fill="#fff">medir distância</text>
+            <text x="525" y="126" text-anchor="middle" font-size="10" fill="#ccc">aceitar acima do limiar</text>
+
+            <g stroke="#1e8449" stroke-width="2" fill="none">
+              <path d="M 600 68 L 665 68"/>
+            </g>
+            <path d="M 600 112 L 665 112" stroke="#c0392b" stroke-width="2" fill="none"/>
+
+            <rect x="670" y="46" width="200" height="44" rx="7" fill="#eef7f0" stroke="#1e8449" stroke-width="2"/>
+            <text x="770" y="64" text-anchor="middle" font-size="11" font-weight="700" fill="#1e8449">acerto de cache</text>
+            <text x="770" y="80" text-anchor="middle" font-size="10" fill="#1e8449">as três primeiras: mesma resposta</text>
+
+            <rect x="670" y="98" width="200" height="44" rx="7" fill="#fdedec" stroke="#c0392b" stroke-width="2"/>
+            <text x="770" y="116" text-anchor="middle" font-size="11" font-weight="700" fill="#c0392b">erro de cache</text>
+            <text x="770" y="132" text-anchor="middle" font-size="10" fill="#c0392b">pergunta diferente: vai ao modelo</text>
+
+            <text x="450" y="165" text-anchor="middle" font-size="11" fill="#777">o mecanismo é sempre este; o que muda entre implementações é como a distância é medida</text>
+          </svg>
+          <figcaption>
+            Quatro perguntas chegam escritas de jeitos diferentes. As três primeiras querem a mesma coisa e, depois de normalizadas, ficam próximas o bastante para compartilhar a resposta; a quarta pergunta outra coisa e segue para o modelo. Normalizar, medir distância e aceitar acima de um limiar é o mecanismo inteiro.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Fallback e Cache</div>
+          <div class="footer-page">33</div>
+        </div>
+      </section>
+
+      <!-- ==================== 34: O QUE O LAB FAZ, COM HONESTIDADE ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Semântico de verdade usa vetores. O laboratório usa palavras.</h2>
+        </div>
+
+        <div class="side-by-side" style="margin-top:6px;">
+          <div class="side" style="padding:14px 17px;">
+            <h4 style="color:var(--fiap-pink); margin-top:0;">Como se faz em produção</h4>
+            <p style="font-size:0.66em; margin:0 0 6px;">A pergunta vira um <strong>vetor de embeddings</strong>, e a busca acontece num banco vetorial por <strong>similaridade de cosseno</strong>.</p>
+            <p style="font-size:0.66em; margin:0;">"Onde está meu pedido" e "cadê minha encomenda" viram vetores vizinhos <strong>sem uma palavra em comum</strong>. Exige um modelo de embeddings e um banco vetorial.</p>
+          </div>
+          <div class="side" style="padding:14px 17px;">
+            <h4 style="color:var(--fiap-pink); margin-top:0;">Como o laboratório faz</h4>
+            <p style="font-size:0.66em; margin:0 0 6px;">Similaridade <strong>lexical</strong>, por índice de Jaccard sobre as palavras normalizadas: interseção dividida por união, com limiar de 0,72.</p>
+            <p style="font-size:0.66em; margin:0;">Pega variação de acento, caixa, pontuação e ordem das palavras. <strong>Não pega sinônimo.</strong> Roda sem modelo de embeddings e sem banco vetorial.</p>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:10px; padding:11px 15px;">
+          <p style="font-size:0.66em; margin:0;">Na validação do laboratório, "Responda em uma frase curta: o que faz uma transportadora de cargas?" e "O que faz uma transportadora de cargas? Responda em uma frase curta." foram servidas pela mesma entrada do cache, por similaridade. O mesmo conjunto de palavras, outra ordem.</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Por que dizer isso em vez de esconder</span>
+          <p>O mecanismo é idêntico: normalizar, medir distância, aceitar acima do limiar. Só a métrica de distância é mais simples. O banco vetorial chega no Módulo III, e aí a troca é de uma classe, não da arquitetura.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Fallback e Cache</div>
+          <div class="footer-page">34</div>
+        </div>
+      </section>
+
+      <!-- ==================== 35: AS ROTAS E AS MÉTRICAS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O que o gateway responde, e o que ele conta sobre si</h2>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr 1.05fr; gap:18px; margin-top:6px;">
+          <div>
+            <table class="compact-table" style="margin:0 0 8px; font-size:0.56em;">
+              <thead><tr><th>Rota</th><th>Para quê</th></tr></thead>
+              <tbody>
+                <tr><td><span class="mono">GET /health</span></td><td>Saúde do gateway. Responde 200 mesmo com os provedores fora</td></tr>
+                <tr><td><span class="mono">POST /v1/chat/completions</span></td><td>Compatível com o formato da OpenAI: qualquer cliente já sabe falar</td></tr>
+                <tr><td><span class="mono">GET /v1/metricas</span></td><td>Cache, fallback, uso por provedor e limite de taxa</td></tr>
+              </tbody>
+            </table>
+            <div class="callout" style="padding:10px 14px;">
+              <p style="font-size:0.62em; margin:0;"><strong>Saúde do gateway não é saúde do provedor.</strong> Se <span class="mono">/health</span> devolvesse erro por credencial ausente, o Compose reiniciaria o container em laço por um problema que reiniciar não resolve.</p>
+            </div>
+          </div>
+
+          <pre class="code-compact" style="margin:0; font-size:0.47em;"><code class="language-json">{
+  "requisicoes": 4,
+  "estrategia": "preferir-remoto",
+  "cache": {
+    "acertos": 3,
+    "acertos_exatos": 2,
+    "acertos_por_similaridade": 1,
+    "erros": 1,
+    "taxa_de_acerto": 0.75,
+    "entradas": 1
+  },
+  "fallback": {
+    "acionado": 1,
+    "ultimo_motivo": "provedor 'remoto' indisponivel ..."
+  },
+  "limite_de_taxa": { "limite_por_minuto": 30, "recusadas": 0 },
+  "provedores": {
+    "remoto": { "tentativas": 1, "sucessos": 0, "falhas": 1 },
+    "local":  { "tentativas": 1, "sucessos": 1, "falhas": 0 }
+  }
+}</code></pre>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – AI Gateway</div>
+          <div class="footer-page">35</div>
+        </div>
+      </section>
+
+      <!-- ==================== 36: QUIZ 1 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container" data-quiz-key="aula07-quiz1">
+          <div class="quiz-question">Qual o papel da propriedade <span class="mono">depends_on</span> no Docker Compose e por que ela isoladamente não garante que o banco de dados esteja pronto para receber conexões?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> Garante ordem e prontidão, desde que os dois serviços estejam na mesma rede.</li>
+            <li data-correct="true"><span class="option-letter">B</span> Define a ordem de inicialização, mas apenas aguarda o container do banco subir, e não a conclusão da inicialização interna do processo, sendo necessário healthcheck com condition service_healthy.</li>
+            <li data-correct="false"><span class="option-letter">C</span> Só tem efeito na primeira subida; depois o Compose inicia todos os serviços em paralelo.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Reinicia o serviço dependente até o banco responder, e falha após três tentativas.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. Container criado e processo pronto são coisas diferentes: o PostgreSQL ainda roda o initdb quando o container já existe. O healthcheck com pg_isready é o que fecha essa lacuna, e é o TODO-1a do laboratório de hoje."
+               data-incorrect-msg="Incorreto. depends_on ordena, e só. Ele não reinicia nada, vale em toda subida e não olha para dentro do processo. Revise o slide da corrida entre o serviço e o banco.">
+          </div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz1Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz1Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Verificação de Aprendizado</div>
+          <div class="footer-page">36</div>
+        </div>
+      </section>
+
+      <!-- ==================== 37: INTERVALO ==================== -->
+      <section class="content-slide" style="text-align:center; background:transparent;"
+               data-background-image="../assets/img/coffee-relax.jpg"
+               data-background-size="cover"
+               data-background-opacity="0.45">
+        <div style="margin-top:150px;">
+          <h2 style="font-size:4em; color:var(--fiap-pink); margin-bottom:10px; text-shadow:0 2px 12px rgba(255,255,255,0.9);">Intervalo</h2>
+          <h3 style="font-size:2.2em; color:var(--fiap-dark); text-shadow:0 2px 10px rgba(255,255,255,0.9);">30 minutos</h3>
+
+          <div class="quiz-timer-box" style="margin:40px auto 0 auto; padding:15px 30px; font-size:1.3em;">
+            <button class="quiz-timer-btn" style="width:40px; height:40px; font-size:1.2em;" onclick="startTimer('breakTimer', 1800)" aria-label="Iniciar cronômetro do intervalo">&#9654;</button>
+            <span id="breakTimer">30:00</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 38: QUIZ 2 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container" data-quiz-key="aula07-quiz2">
+          <div class="quiz-question">Como o padrão Facade é utilizado na arquitetura de um AI Gateway corporativo?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> Ele mantém uma instância única do cliente de cada provedor, garantindo que só exista uma conexão aberta por processo.</li>
+            <li data-correct="false"><span class="option-letter">B</span> Ele envolve o provedor original em uma classe que acrescenta log e retentativa antes e depois da chamada.</li>
+            <li data-correct="true"><span class="option-letter">C</span> Ele fornece uma interface única e simplificada para a aplicação consumidora, ocultando a complexidade de integração, autenticação e formato de payload de múltiplos provedores de IA diferentes.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Ele traduz o formato de um provedor legado para o formato que a aplicação espera, sem que ela precise conhecer o original.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. A alternativa A descreve Singleton, a B descreve Decorator e a D descreve Adapter. Facade é a porta única: o painel chama responder(pergunta) e não sabe quantos provedores existem, nem qual respondeu."
+               data-incorrect-msg="Incorreto. A alternativa escolhida descreve outro padrão. Facade não cria instância única, não envolve o objeto para acrescentar comportamento e não traduz formato alheio: ela simplifica o acesso a um subsistema inteiro.">
+          </div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz2Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz2Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Verificação de Aprendizado</div>
+          <div class="footer-page">38</div>
+        </div>
+      </section>
+
+      <!-- ==================== 39: QUIZ 3 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container" data-quiz-key="aula07-quiz3">
+          <div class="quiz-question">O que é o Caching Semântico em um AI Gateway e como ele reduz custos operacionais?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> É guardar a resposta apenas quando o texto da pergunta é idêntico, caractere por caractere, ao de uma pergunta já respondida.</li>
+            <li data-correct="true"><span class="option-letter">B</span> É um cache que armazena respostas com base na similaridade de significado entre as perguntas, evitando novas chamadas ao provedor para perguntas conceitualmente iguais escritas de formas diferentes.</li>
+            <li data-correct="false"><span class="option-letter">C</span> É comprimir o histórico da conversa antes de enviá-lo ao modelo, reduzindo o número de tokens cobrados em cada chamada.</li>
+            <li data-correct="false"><span class="option-letter">D</span> É manter o modelo carregado na memória entre as chamadas, para não pagar o tempo de carga a cada requisição.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. A alternativa A é cache exato, que erra por um espaço a mais; C é redução de contexto e D é keep-alive do modelo. Semântico compara significado: no laboratório de hoje, por similaridade lexical, e em produção por vetores de embeddings."
+               data-incorrect-msg="Incorreto. Cache exato, compressão de contexto e modelo residente em memória são três outras técnicas, todas úteis e todas diferentes. O que define o semântico é comparar perguntas por proximidade de significado, não por igualdade de texto.">
+          </div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz3Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz3Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Verificação de Aprendizado</div>
+          <div class="footer-page">39</div>
+        </div>
+      </section>
+
+      <!-- ==================== 40: ATIVIDADE, ABERTURA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Atividade prática: a plataforma em cinco passos</h2>
+        </div>
+
+        <p style="font-size:0.7em; margin-bottom:0;">Em grupo, no fork de <span class="mono">josercf/mwe-2026-2-lab07-compose-gateway</span>. O único arquivo que vocês escrevem é o <span class="mono">docker-compose.yml</span>: tudo em <span class="mono">servicos/</span> vem pronto e congelado, e <strong>não é tarefa</strong>.</p>
+
+        <table class="compact-table" style="font-size:0.58em; margin-top:9px;">
+          <thead><tr><th>Passo</th><th>Lacuna</th><th>O que entra</th><th>Como você sabe que fechou</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td><span class="mono">TODO-1a</span>, <span class="mono">TODO-1b</span></td><td><span class="mono">healthcheck</span> do banco e <span class="mono">condition: service_healthy</span></td><td>O <span class="mono">pedidos</span> para de morrer na largada</td></tr>
+            <tr><td>2</td><td><span class="mono">TODO-2</span></td><td><span class="mono">faturamento</span>, <span class="mono">frete</span> e <span class="mono">notificacoes</span></td><td>Um container chama o outro pelo nome</td></tr>
+            <tr><td>3</td><td><span class="mono">TODO-3</span></td><td><span class="mono">coletor</span> e <span class="mono">painel</span>, pagando a dívida da ADR-002</td><td><span class="mono">/health</span> do painel diz <span class="mono">fonte: http</span></td></tr>
+            <tr><td>4</td><td><span class="mono">TODO-4</span></td><td><span class="mono">ai-gateway</span> com os dois provedores</td><td><span class="mono">/v1/metricas</span> mostra fallback e cache</td></tr>
+            <tr><td>5</td><td><span class="mono">TODO-5a</span>, <span class="mono">TODO-5b</span></td><td><span class="mono">healthcheck</span> dos oito</td><td><span class="mono">compose ps</span> com 8 <span class="mono">healthy</span> e um pedido ponta a ponta</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout" style="margin-top:9px; padding:11px 15px; border-left:4px solid #c0392b;">
+          <p style="font-size:0.66em; margin:0;"><strong style="color:#c0392b;">Antes do primeiro comando:</strong> <span class="mono">cp .env.exemplo .env</span> e <span class="mono">pkill ollama</span>. São oito containers, e o modelo local disputa memória com todos eles. O Passo 4 diz quando religar.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Atividade Prática</div>
+          <div class="footer-page">40</div>
+        </div>
+      </section>
+
+      <!-- ==================== 41: PASSO 1 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 1 de 5: ver a falha antes de consertá-la</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:15px 20px;">
+          <h3>Primeiro suba quebrado. Só depois preencha as lacunas.</h3>
+          <pre style="margin:0 0 7px; font-size:0.48em;"><code class="language-bash">cp .env.exemplo .env
+docker network create logitech-net        # se ainda nao existir
+docker volume  create logitech-telemetria
+
+docker compose up -d --build              # postgres SEM healthcheck ainda
+docker compose ps -a                      # pedidos: Exited (1)
+docker compose logs pedidos               # copie a linha [FATAL] para as evidencias</code></pre>
+          <p style="margin:0 0 6px; font-size:0.63em;">Registre <span class="mono">PEDIDOS_SEM_HEALTHCHECK</span> em <span class="mono">docs/EVIDENCIAS.md</span>. Depois preencha <span class="mono">TODO-1a</span> (o <span class="mono">healthcheck</span> com <span class="mono">pg_isready</span>) e <span class="mono">TODO-1b</span> (o <span class="mono">depends_on</span> com <span class="mono">condition: service_healthy</span>), suba de novo e compare.</p>
+          <pre style="margin:0 0 6px; font-size:0.48em;"><code class="language-bash">docker compose up -d && python3 verificar.py --criterio 1</code></pre>
+          <p style="margin:0; font-size:0.62em; border-top:1px solid rgba(255,255,255,0.2); padding-top:6px;"><strong style="color:var(--fiap-pink);">Travou?</strong> <span class="mono">gabarito/docker-compose.yml</span> tem o arquivo completo. Registre <span class="mono">USEI_O_GABARITO</span> e siga: os passos 2 a 5 dependem deste. Commit: <span class="mono">feat(passo-1): healthcheck do banco e depends_on com condição</span>.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Passo 1</div>
+          <div class="footer-page">41</div>
+        </div>
+      </section>
+
+      <!-- ==================== 42: PASSO 2 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 2 de 5: os três serviços das Aulas 05 e 06</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:15px 20px;">
+          <h3><span class="mono">TODO-2</span>: declare faturamento, frete e notificacoes</h3>
+          <pre style="margin:0 0 7px; font-size:0.47em;"><code class="language-yaml">  faturamento:
+    build: ./servicos/________          # a pasta do servico
     environment:
-      - REDIS_HOST=redis
-    depends_on:
-      - redis
-  redis:
-    image: "redis:alpine"
-    ports:
-      - "6379:6379"</code></pre>
-        <div class="slide-footer"><div class="footer-bar">07 – Compose & Gateways</div><div class="footer-page">9</div></div>
+      LOGITECH_DB_URL: Host=postgres;Port=5432;Database=logitech;Username=logitech;Password=${LOGITECH_DB_PASSWORD}
+    ports: ["____:____"]                # a porta do contrato, mesma no host
+    networks: [____________]            # sem isso ele nao enxerga ninguem
+    mem_limit: ____                     # 256m para o .NET</code></pre>
+          <p style="margin:0 0 6px; font-size:0.63em;">Repita para <span class="mono">frete</span> (porta 8000, 192m) e <span class="mono">notificacoes</span> (porta 3001, 128m), que não precisam de variável nenhuma. O <span class="mono">healthcheck</span> dos três fica para o Passo 5.</p>
+          <pre style="margin:0 0 6px; font-size:0.47em;"><code class="language-bash">docker compose up -d --build
+docker compose exec pedidos wget -qO- http://frete:8000/health   # prova o DNS interno
+python3 verificar.py --criterio 2</code></pre>
+          <p style="margin:0; font-size:0.62em; border-top:1px solid rgba(255,255,255,0.2); padding-top:6px;">Registre a resposta em <span class="mono">DNS_INTERNO</span>. Commit: <span class="mono">feat(passo-2): faturamento, frete e notificações orquestrados</span>.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Passo 2</div>
+          <div class="footer-page">42</div>
+        </div>
       </section>
+
+      <!-- ==================== 43: A DÍVIDA DA ADR-002 ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A dívida que a Aula 02 declarou vence hoje</h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 215" style="max-height:220px;" role="img" aria-label="Antes o painel lia o arquivo do coletor; agora consome a API na porta 8082">
+            <text x="215" y="18" text-anchor="middle" font-size="12.5" font-weight="700" fill="#c0392b">Aulas 02 e 03: acoplamento por arquivo</text>
+            <rect x="40" y="36" width="120" height="44" rx="7" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+            <text x="100" y="63" text-anchor="middle" font-size="11.5" font-weight="700" fill="#333">coletor</text>
+            <rect x="270" y="36" width="120" height="44" rx="7" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+            <text x="330" y="63" text-anchor="middle" font-size="11.5" font-weight="700" fill="#333">painel</text>
+            <rect x="140" y="118" width="150" height="44" rx="7" fill="#fdedec" stroke="#c0392b" stroke-width="2"/>
+            <text x="215" y="139" text-anchor="middle" font-size="10.5" font-weight="700" fill="#c0392b">volume compartilhado</text>
+            <text x="215" y="154" text-anchor="middle" font-size="9.5" fill="#c0392b">/dados/telemetria.jsonl</text>
+            <path d="M 100 80 L 160 116" stroke="#c0392b" stroke-width="2" fill="none"/>
+            <path d="M 330 80 L 272 116" stroke="#c0392b" stroke-width="2" fill="none"/>
+            <text x="215" y="186" text-anchor="middle" font-size="10.5" fill="#c0392b">os dois precisam do mesmo volume, no mesmo caminho</text>
+            <text x="215" y="202" text-anchor="middle" font-size="10.5" fill="#c0392b">mover um deles de máquina quebra o outro</text>
+
+            <line x1="450" y1="25" x2="450" y2="195" stroke="#ddd" stroke-width="2"/>
+
+            <text x="675" y="18" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1e8449">Aula 07: contrato de API</text>
+            <rect x="500" y="36" width="120" height="44" rx="7" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+            <text x="560" y="58" text-anchor="middle" font-size="11.5" font-weight="700" fill="#333">coletor</text>
+            <text x="560" y="72" text-anchor="middle" font-size="9.5" fill="#666">porta 8082</text>
+            <rect x="730" y="36" width="120" height="44" rx="7" fill="#f2f2f2" stroke="#999" stroke-width="2"/>
+            <text x="790" y="63" text-anchor="middle" font-size="11.5" font-weight="700" fill="#333">painel</text>
+            <path d="M 730 58 L 622 58" stroke="#1e8449" stroke-width="2.5" fill="none"/>
+            <text x="675" y="50" text-anchor="middle" font-size="10" fill="#1e8449" font-family="JetBrains Mono, monospace">GET /telemetria</text>
+            <rect x="500" y="118" width="120" height="44" rx="7" fill="#eef7f0" stroke="#1e8449" stroke-width="2"/>
+            <text x="560" y="139" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1e8449">volume</text>
+            <text x="560" y="154" text-anchor="middle" font-size="9.5" fill="#1e8449">só do coletor</text>
+            <path d="M 560 80 L 560 116" stroke="#1e8449" stroke-width="2" fill="none"/>
+            <text x="675" y="186" text-anchor="middle" font-size="10.5" fill="#1e8449">o painel não sabe onde o coletor guarda nada</text>
+            <text x="675" y="202" text-anchor="middle" font-size="10.5" fill="#1e8449">e não precisa saber</text>
+          </svg>
+          <figcaption>
+            À esquerda, coletor e painel amarrados ao mesmo volume no mesmo caminho: um detalhe interno de armazenamento virou contrato entre serviços. À direita, o volume passa a ser só do coletor, que expõe GET /telemetria na 8082, e o painel consome o endereço que vem em LOGITECH_TELEMETRIA_URL.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:4px;">
+          <span class="takeaway-label">Dívida técnica declarada é dívida que se paga</span>
+          <p>Essa simplificação foi registrada em ADR na Aula 02, repetida no slide de encerramento da Aula 03 com o ponto de substituição nomeado, e vence agora. Dívida não declarada vira lenda.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Passo 3</div>
+          <div class="footer-page">43</div>
+        </div>
+      </section>
+
+      <!-- ==================== 44: PASSO 3 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 3 de 5: o painel deixa de ler arquivo</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:15px 20px;">
+          <h3><span class="mono">TODO-3</span>: coletor e painel, sem volume no painel</h3>
+          <pre style="margin:0 0 7px; font-size:0.47em;"><code class="language-yaml">  coletor:
+    build: ./servicos/coletor
+    environment: { LOGITECH_DADOS: /dados/telemetria.jsonl }
+    volumes: ["logitech-telemetria:/dados"]
+    ports: ["8081:8081/____", "8082:8082"]   # a 8082 e a novidade da aula
+    networks: [logitech-net]
+    mem_limit: 96m
+
+  painel:
+    build: ./servicos/painel
+    environment:
+      LOGITECH_TELEMETRIA_URL: http://________:8082/telemetria
+    ports: ["3000:3000"]
+    networks: [logitech-net]
+    mem_limit: 128m
+    depends_on: { coletor: { condition: ________________ } }</code></pre>
+          <p style="margin:0; font-size:0.62em; border-top:1px solid rgba(255,255,255,0.2); padding-top:6px;"><strong style="color:var(--fiap-pink);">O critério do passo:</strong> o painel <strong>não monta volume nenhum</strong>. Confirme com <span class="mono">curl -s localhost:3000/health</span>, campo <span class="mono">fonte: http</span>, registre <span class="mono">PAINEL_LE_ARQUIVO: não</span> e rode <span class="mono">verificar.py --criterio 3</span>.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Passo 3</div>
+          <div class="footer-page">44</div>
+        </div>
+      </section>
+
+      <!-- ==================== 45: PASSO 4 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 4 de 5: o AI Gateway e o fallback acontecendo</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:15px 20px;">
+          <h3><span class="mono">TODO-4</span>: religue o Ollama, só para este passo</h3>
+          <pre style="margin:0 0 7px; font-size:0.47em;"><code class="language-yaml">  ai-gateway:
+    build: ./servicos/ai-gateway
+    environment:
+      LOGITECH_IA_ESTRATEGIA: ________________     # preferir-remoto
+      LOGITECH_IA_REMOTA_CHAVE: ${LOGITECH_IA_REMOTA_CHAVE:-}   # vazia, de proposito
+      LOGITECH_IA_OLLAMA_URL: http://host.docker.internal:11434
+    ports: ["4000:4000"]
+    networks: [logitech-net]
+    mem_limit: 256m
+    extra_hosts: ["host.docker.internal:____________"]   # host-gateway</code></pre>
+          <pre style="margin:0 0 6px; font-size:0.47em;"><code class="language-bash">ollama serve &                                   # so agora, e so por dois minutos
+for i in 1 2 3; do curl -s localhost:4000/v1/chat/completions \
+  -H 'Content-Type: application/json' -H 'X-Servico: painel' \
+  -d '{"messages":[{"role":"user","content":"Responda em uma frase curta: o que faz uma transportadora de cargas?"}]}'; done
+curl -s localhost:4000/v1/metricas
+docker compose logs ai-gateway | grep FALLBACK</code></pre>
+          <p style="margin:0; font-size:0.62em; border-top:1px solid rgba(255,255,255,0.2); padding-top:6px;">A primeira chamada demora, as duas seguintes voltam em milissegundos. Registre <span class="mono">FALLBACK_ACIONADO</span> e <span class="mono">ACERTOS_DE_CACHE</span>, rode <span class="mono">verificar.py --criterio 4</span> e então <span class="mono">pkill ollama</span> antes do Passo 5.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Passo 4</div>
+          <div class="footer-page">45</div>
+        </div>
+      </section>
+
+      <!-- ==================== 46: PASSO 5 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 5 de 5: oito <span class="mono">healthy</span> e um pedido atravessando tudo</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:15px 20px;">
+          <h3><span class="mono">TODO-5a</span> e <span class="mono">TODO-5b</span>: o <span class="mono">healthcheck</span> dos oito</h3>
+          <p style="margin:0 0 7px; font-size:0.63em;"><span class="mono">Up</span> significa que o container subiu; <span class="mono">healthy</span> significa que ele responde. Sem <span class="mono">healthcheck</span> você tem oito containers de pé e nenhuma prova de que funcionam.</p>
+          <pre style="margin:0 0 7px; font-size:0.47em;"><code class="language-bash">docker compose down
+time docker compose up -d --wait          # cronometre: TEMPO_ATE_TODOS_SAUDAVEIS_S
+docker compose ps                         # os oito precisam dizer (healthy)
+docker stats --no-stream --format '{{.Name}} {{.MemUsage}}'   # MEMORIA_TOTAL_MB
+
+curl -s -X POST localhost:8080/api/v1/pedidos -H 'Content-Type: application/json' \
+  -d '{"cliente":"ana@logitech.com.br","origem":"Guarulhos-SP","destino":"Betim-MG",
+       "pesoKg":820,"modalidade":"expresso"}'</code></pre>
+          <p style="margin:0; font-size:0.62em; border-top:1px solid rgba(255,255,255,0.2); padding-top:6px;">O campo <span class="mono">jornada</span> da resposta precisa trazer <span class="mono">ok</span> nas quatro etapas: <span class="mono">frete</span>, <span class="mono">pedidos</span>, <span class="mono">faturamento</span> e <span class="mono">notificacoes</span>. Feche com <span class="mono">python3 verificar.py</span> imprimindo <strong>5 de 5</strong>.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Passo 5</div>
+          <div class="footer-page">46</div>
+        </div>
+      </section>
+
+      <!-- ==================== 47: O VERIFICADOR ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O verificador olha o YAML e conversa com a plataforma</h2>
+        </div>
+
+        <pre class="code-compact" style="margin:6px 0 0; font-size:0.5em;"><code class="language-bash">$ python3 verificar.py
+
+  Saude dos servicos (contrato da ADR-006):
+    [OK] ai-gateway    porta 4000        [OK] notificacoes  porta 3001
+    [OK] coletor       porta 8082        [OK] painel        porta 3000
+    [OK] faturamento   porta 5080        [OK] pedidos       porta 8080
+    [OK] frete         porta 8000
+
+  [OK] Criterio 1: Passo 1: healthcheck do banco e depends_on com condicao
+  [OK] Criterio 2: Passo 2: faturamento, frete e notificacoes na rede
+  [OK] Criterio 3: Passo 3: o painel deixa de ler arquivo (ADR-002)
+  [OK] Criterio 4: Passo 4: AI Gateway com fallback real e cache
+  [OK] Criterio 5: Passo 5: os oito saudaveis e um pedido de ponta a ponta
+
+  5 de 5</code></pre>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Por que a saúde vem antes dos critérios</span>
+          <p>Critério que falha porque o container nem subiu tem conserto diferente de critério que falha porque falta uma linha no YAML. Misturar os dois manda você procurar no lugar errado, e a régua é pública: é a mesma que o professor roda na correção.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Verificação</div>
+          <div class="footer-page">47</div>
+        </div>
+      </section>
+
+      <!-- ==================== 48: EVIDÊNCIAS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>As evidências que vocês medem, não estimam</h2>
+        </div>
+
+        <table class="compact-table" style="font-size:0.57em;">
+          <thead><tr><th>Marcador</th><th>De onde sai</th><th>Passo</th></tr></thead>
+          <tbody>
+            <tr><td><span class="mono">PEDIDOS_SEM_HEALTHCHECK</span></td><td>A linha <span class="mono">[FATAL]</span> do <span class="mono">docker compose logs pedidos</span> na primeira subida</td><td>1</td></tr>
+            <tr><td><span class="mono">SEGUNDOS_ATE_O_PRIMEIRO_HEALTHY</span></td><td>Quanto o postgres levou do <span class="mono">up</span> até ficar saudável</td><td>1</td></tr>
+            <tr><td><span class="mono">DNS_INTERNO</span></td><td><span class="mono">docker compose exec pedidos wget -qO- http://frete:8000/health</span></td><td>2</td></tr>
+            <tr><td><span class="mono">PAINEL_LE_ARQUIVO</span></td><td>O campo <span class="mono">fonte</span> do <span class="mono">/health</span> do painel, mais a ausência de volume</td><td>3</td></tr>
+            <tr><td><span class="mono">FALLBACK_ACIONADO</span></td><td>A linha <span class="mono">[FALLBACK]</span> do log do gateway</td><td>4</td></tr>
+            <tr><td><span class="mono">ACERTOS_DE_CACHE</span></td><td><span class="mono">cache.acertos</span> em <span class="mono">GET /v1/metricas</span>, mínimo 2</td><td>4</td></tr>
+            <tr><td><span class="mono">TEMPO_ATE_TODOS_SAUDAVEIS_S</span></td><td>O <span class="mono">time</span> do <span class="mono">docker compose up -d --wait</span></td><td>5</td></tr>
+            <tr><td><span class="mono">MEMORIA_TOTAL_MB</span> e <span class="mono">MEMORIA_MAIOR_CONSUMIDOR_MB</span></td><td><span class="mono">docker stats --no-stream</span>, somando os oito</td><td>5</td></tr>
+            <tr><td><span class="mono">ONDE_MEDI</span></td><td>Arquitetura e ambiente: número sem contexto não diz nada</td><td>5</td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">O que a máquina não prova</span>
+          <p>O verificador confere que o número existe e é positivo, não que você cronometrou. A tabela "o que a máquina prova" no README diz exatamente onde ele acredita em você, e é lá que o professor confere na correção.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Verificação</div>
+          <div class="footer-page">48</div>
+        </div>
+      </section>
+
+      <!-- ==================== 49: CHECKLIST DA ENTREGA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O que vai no repositório do grupo</h2>
+        </div>
+
+        <table class="compact-table" style="font-size:0.59em;">
+          <thead><tr><th>#</th><th>Evidência</th><th>Confirmado por</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td><span class="mono">docker-compose.yml</span> com os 8 serviços do contrato, nem um a mais</td><td><span class="mono">verificar.py</span>, critério 5</td></tr>
+            <tr><td>2</td><td><span class="mono">healthcheck</span> nos 8, e <span class="mono">depends_on</span> com <span class="mono">condition</span> onde há dependência real</td><td>critérios 1 e 5</td></tr>
+            <tr><td>3</td><td>Rede, variáveis e <span class="mono">mem_limit</span> em todos os serviços</td><td>critério 2</td></tr>
+            <tr><td>4</td><td>Painel sem volume, consumindo <span class="mono">coletor:8082</span></td><td>critério 3</td></tr>
+            <tr><td>5</td><td>AI Gateway com fallback acionado e no mínimo 2 acertos de cache</td><td>critério 4</td></tr>
+            <tr><td>6</td><td><span class="mono">docs/EVIDENCIAS.md</span> com os 12 marcadores, incluindo <span class="mono">ONDE_MEDI</span></td><td>critérios 1 a 5</td></tr>
+            <tr><td>7</td><td>Um pedido com <span class="mono">jornada</span> em <span class="mono">ok</span> nas quatro etapas</td><td>critério 5</td></tr>
+            <tr><td>8</td><td>Um commit por passo, <span class="mono">feat(passo-N)</span>, visível no histórico</td><td>correção do professor</td></tr>
+            <tr><td>9</td><td>Usou o gabarito? <span class="mono">USEI_O_GABARITO</span> preenchido, sem penalidade automática</td><td>correção do professor</td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A régua é pública</span>
+          <p><span class="mono">python3 verificar.py</span> imprimindo 5 de 5 é a mesma régua que o professor roda. Sem surpresa: se passou aí, passou lá.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Entrega</div>
+          <div class="footer-page">49</div>
+        </div>
+      </section>
+
+      <!-- ==================== 50: FORMULÁRIO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Formulário de Entrega</h2>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 620px 1fr; gap:26px; align-items:start; margin-top:4px;">
+          <div style="border:2px dashed #c0392b; border-radius:8px; height:340px; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#fdedec; padding:20px;">
+            <div style="font-size:1.05em; font-weight:800; color:#c0392b; margin-bottom:12px;">Formulário ainda não publicado</div>
+            <p style="font-size:0.68em; color:#a03028; text-align:center; margin:0 0 10px; line-height:1.5;">
+              A URL de entrega desta aula <strong>será publicada pelo professor antes do encontro</strong>,
+              e este slide passa a exibi-la aqui.
+            </p>
+            <p style="font-size:0.64em; color:#a03028; text-align:center; margin:0; line-height:1.5;">
+              Até lá, não use o formulário de outra aula: cada entrega é registrada em um formulário próprio.
+            </p>
+          </div>
+
+          <div>
+            <div class="concept-cards" style="grid-template-columns:1fr; gap:10px; margin-top:0;">
+              <div class="concept-card" style="padding:11px 16px;">
+                <h4>O que enviar</h4>
+                <p style="font-size:0.66em;">A URL do <strong>fork do grupo</strong>, no formato<br><span class="mono">github.com/usuario/mwe-2026-2-lab07-compose-gateway</span></p>
+              </div>
+              <div class="concept-card" style="padding:11px 16px;">
+                <h4>Quem envia</h4>
+                <p style="font-size:0.66em;">Um envio por grupo, com os nomes de todos os integrantes.</p>
+              </div>
+              <div class="concept-card" style="padding:11px 16px;">
+                <h4>Até quando</h4>
+                <p style="font-size:0.66em;">Até 22h50, com os cinco commits no fork.</p>
+              </div>
+            </div>
+
+            <div class="callout" style="margin-top:9px; padding:11px 15px;">
+              <p style="font-size:0.64em; margin:0; line-height:1.5;">Critérios de aceitação completos no
+                <a href="https://github.com/josercf/mwe-2026-2-lab07-compose-gateway" target="_blank" style="color:var(--fiap-pink); font-weight:700;">README do Lab Kit</a></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Entrega da Atividade</div>
+          <div class="footer-page">50</div>
+        </div>
+      </section>
+
+      <!-- ==================== 51: O QUE VEM ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O que vem: o agente entra nesta plataforma</h2>
+        </div>
+
+        <div class="concept-cards" style="grid-template-columns: 1fr 1fr; gap:16px; margin-top:8px;">
+          <div class="concept-card" style="padding:16px 20px;">
+            <h4>Aula 08, 22/09: Function Calling e Command Pattern</h4>
+            <p style="font-size:0.68em;">O atendimento da LogiTech responde à mão, o dia inteiro, a duas perguntas: "onde está meu pedido" e "muda o endereço de entrega". O agente vai resolver as duas chamando <span class="mono">GET /api/v1/pedidos/{id}/status</span> e <span class="mono">PATCH /api/v1/pedidos/{id}/endereco</span>, as duas rotas que já estão de pé no seu Compose, e usando este mesmo AI Gateway como backend de modelo.</p>
+          </div>
+          <div class="concept-card" style="padding:16px 20px;">
+            <h4>E o que continua valendo daqui</h4>
+            <p style="font-size:0.68em;">O <span class="mono">docker-compose.yml</span> de hoje é o <strong>ambiente</strong> em que aquele agente roda. Nada de "sobe o banco à mão de novo": um <span class="mono">docker compose up -d</span> e a plataforma está lá. É a diferença entre acumular entregáveis e recomeçar toda aula.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A espiral continua</span>
+          <p>Sockets viraram HTTP, que virou container, que virou plataforma orquestrada. Na Aula 08 essa plataforma ganha um agente que age sobre ela, e a Global Solution herda o conjunto. Guardem o fork.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Próximos Passos</div>
+          <div class="footer-page">51</div>
+        </div>
+      </section>
+
+      <!-- ==================== 52: REFERÊNCIAS ==================== -->
+      <section id="ref-slide" class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Referências Bibliográficas e Documentação</h2>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px 28px; font-size:0.6em; line-height:1.5; color:var(--fiap-gray);">
+          <div>
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[1] Docker Compose: arquivo, CLI e especificação</strong><br>
+            DOCKER: <a href="https://docs.docker.com/compose/" target="_blank" style="color:var(--fiap-pink);">Compose overview</a> | <a href="https://docs.docker.com/reference/cli/docker/compose/" target="_blank" style="color:var(--fiap-pink);">CLI reference</a><br>
+            SPEC: <a href="https://github.com/compose-spec/compose-spec/blob/main/spec.md" target="_blank" style="color:var(--fiap-pink);">Compose Specification</a></p>
+
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[2] Rede e DNS entre containers</strong><br>
+            DOCKER: <a href="https://docs.docker.com/engine/network/" target="_blank" style="color:var(--fiap-pink);">Networking overview</a><br>
+            DOCKER: <a href="https://docs.docker.com/compose/how-tos/networking/" target="_blank" style="color:var(--fiap-pink);">Networking in Compose</a></p>
+
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[3] Ordem de inicialização e healthcheck</strong><br>
+            DOCKER: <a href="https://docs.docker.com/compose/how-tos/startup-order/" target="_blank" style="color:var(--fiap-pink);">Control startup order</a><br>
+            DOCKER: <a href="https://docs.docker.com/reference/dockerfile/#healthcheck" target="_blank" style="color:var(--fiap-pink);">HEALTHCHECK</a> | POSTGRESQL: <a href="https://www.postgresql.org/docs/16/app-pg-isready.html" target="_blank" style="color:var(--fiap-pink);">pg_isready</a></p>
+
+            <p style="margin:0;"><strong style="color:var(--fiap-pink);">[4] Variáveis de ambiente e segredos</strong><br>
+            DOCKER: <a href="https://docs.docker.com/compose/how-tos/environment-variables/" target="_blank" style="color:var(--fiap-pink);">Environment variables</a><br>
+            OWASP: <a href="https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html" target="_blank" style="color:var(--fiap-pink);">Secrets Management Cheat Sheet</a></p>
+          </div>
+
+          <div>
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[5] Volumes e limites de recurso</strong><br>
+            DOCKER: <a href="https://docs.docker.com/engine/storage/volumes/" target="_blank" style="color:var(--fiap-pink);">Volumes</a><br>
+            DOCKER: <a href="https://docs.docker.com/engine/containers/resource_constraints/" target="_blank" style="color:var(--fiap-pink);">Resource constraints</a></p>
+
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[6] AI Gateway: roteamento, fallback e limite de taxa</strong><br>
+            LITELLM: <a href="https://docs.litellm.ai/docs/proxy/reliability" target="_blank" style="color:var(--fiap-pink);">Proxy: fallbacks e retry</a><br>
+            OPENAI: <a href="https://platform.openai.com/docs/api-reference/chat" target="_blank" style="color:var(--fiap-pink);">Chat Completions API</a> | OLLAMA: <a href="https://github.com/ollama/ollama/blob/main/docs/api.md" target="_blank" style="color:var(--fiap-pink);">API</a></p>
+
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[7] Facade e Strategy</strong><br>
+            GAMMA, E. et al. <em>Design Patterns: Elements of Reusable Object-Oriented Software</em>. Addison-Wesley, 1994.<br>
+            REFACTORING GURU: <a href="https://refactoring.guru/design-patterns/facade" target="_blank" style="color:var(--fiap-pink);">Facade</a> | <a href="https://refactoring.guru/design-patterns/strategy" target="_blank" style="color:var(--fiap-pink);">Strategy</a></p>
+
+            <p style="margin:0;"><strong style="color:var(--fiap-pink);">[8] Caching semântico</strong><br>
+            GPTCACHE: <a href="https://github.com/zilliztech/GPTCache" target="_blank" style="color:var(--fiap-pink);">zilliztech/GPTCache</a><br>
+            LAB KIT: <a href="https://github.com/josercf/mwe-2026-2-lab07-compose-gateway" target="_blank" style="color:var(--fiap-pink);">mwe-2026-2-lab07-compose-gateway</a></p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">07 – Bibliografia da Aula</div>
+          <div class="footer-page">52</div>
+        </div>
+      </section>
+
+      <!-- ==================== 53: ENCERRAMENTO ==================== -->
       <section class="end-slide">
         <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" style="max-width:350px;">
-        <div class="copyright">Copyright &copy; 2026<br>Prof.º José Romualdo da Costa Filho<br><br>Todos direitos reservados.</div>
+        <div class="copyright">
+          Copyright &copy; 2026<br>
+          Prof. José Romualdo da Costa Filho<br><br>
+          Todos os direitos reservados. É expressamente proibida a reprodução, divulgação<br>
+          total ou parcial, deste material acadêmico sem autorização formal,<br>
+          por escrito, do Professor autor da ementa.
+        </div>
       </section>
+
     </div>
   </div>
+
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
   <script src="../assets/js/fiap-quiz.js"></script>
+  <script src="../assets/js/fiap-zoom.js"></script>
+  <script src="../assets/js/fiap-print.js"></script>
   <script>
-    Reveal.initialize({ hash: true, slideNumber: false, width: 1280, height: 720, margin: 0, minScale: 0.2, maxScale: 2.0, center: false, pdfMaxPagesPerSlide: 1, pdfSeparateFragments: false, transition: 'slide', transitionSpeed: 'default', plugins: [RevealHighlight] });
+    Reveal.initialize({
+      hash: true,
+      slideNumber: false,
+      width: 1280,
+      height: 720,
+      margin: 0,
+      minScale: 0.2,
+      maxScale: 2.0,
+      center: false,
+      pdfMaxPagesPerSlide: 1,
+      pdfSeparateFragments: false,
+      transition: 'slide',
+      transitionSpeed: 'default',
+      plugins: [RevealHighlight]
+    });
+    // startTimer(elementId, segundos) vem de ../assets/js/fiap-quiz.js
   </script>
+  <!-- Cliente do serviço Pulso: liga os quizzes com data-quiz-key à votação ao vivo.
+       Carregamento assíncrono (defer) e opcional: se o host estiver fora do ar
+       ou o script falhar, o quiz continua funcionando no modo local de sempre. -->
+  <script defer src="https://vote.jrcf.dev/client.js"></script>
 </body>
 </html>
