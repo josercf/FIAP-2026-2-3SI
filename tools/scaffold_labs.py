@@ -23,6 +23,11 @@ CASE = "LogiTech Enterprise AI Platform"
 # SLM que acompanha o devcontainer. ~1 GB, roda em CPU no Codespaces de 2 nucleos.
 MODELO_SLM = "qwen2.5:1.5b"
 
+
+def modelo_do_lab(lab):
+    """Modelo local do laboratório, com o global como padrão."""
+    return lab.get("modelo", MODELO_SLM)
+
 # Imagens oficiais de devcontainer da Microsoft
 IMG = {
     "python": "mcr.microsoft.com/devcontainers/python:1-3.12-bookworm",
@@ -53,12 +58,13 @@ LABS = [
     },
     {
         "n": "03", "slug": "docker", "img": "python", "docker": True,
+        "modelo": "qwen3.5:2b",
         "titulo": "Docker I: Dockerfile Multi-Stage, Volumes e Networks",
         "aula": "Aula 03 - Docker I: Engine, Imagens, Multi-Stage e Persistencia",
         "data": "18/08/2026",
-        "missao": "Conteinerizar a API de telemetria da LogiTech com Dockerfile multi-stage, reduzindo a imagem final e persistindo dados em volume.",
-        "entrega": ["Dockerfile", "docker-compose.yml"],
-        "ports": [8000],
+        "missao": "Conteinerizar o coletor de telemetria e o gateway HTTP da LogiTech em sete etapas progressivas, do isolamento de processos ate a publicacao da imagem no Docker Hub.",
+        "entrega": ["Dockerfile.coletor", "Dockerfile.gateway", "docs/EVIDENCIAS.md"],
+        "ports": [3000, 8081],
     },
     {
         "n": "05", "slug": "solid-patterns", "img": "java", "docker": False,
@@ -154,23 +160,22 @@ LABS = [
 
 
 # --------------------------------------------------------------------------
-# Helper de IA: GitHub Models (padrao) com fallback para Ollama local
+# Helper de IA: Ollama local, o único backend dos laboratórios (ADR-005)
 # --------------------------------------------------------------------------
 AI_ASK = r'''#!/usr/bin/env python3
 """
-Cliente minimo de IA para os laboratorios da disciplina.
+Cliente mínimo de IA para os laboratórios da disciplina.
 
-Ordem de tentativa:
-  1. GitHub Models  - usa o GITHUB_TOKEN, que o Codespaces ja injeta.
-                      Nenhuma conta ou cartao adicional e necessario.
-  2. Ollama local   - fallback offline, se voce tiver `ollama serve` rodando.
+Backend único: o servidor Ollama instalado neste devcontainer. O GitHub
+Models foi retirado do ar em 30/07/2026, antes da primeira aula, e deixou
+de ser uma opção (decisão registrada na ADR-005 do acervo da disciplina).
 
 Uso:
-    python ai/ask.py "escreva um PRD para o servico de telemetria"
+    python ai/ask.py "escreva um PRD para o serviço de telemetria"
     cat prompt.txt | python ai/ask.py
-    MODEL=microsoft/phi-4-mini-instruct python ai/ask.py "..."
+    OLLAMA_MODEL=qwen2.5:3b python ai/ask.py "..."
 
-Sem dependencias externas: so a biblioteca padrao.
+Sem dependências externas: só a biblioteca padrão.
 """
 import json
 import os
@@ -178,55 +183,35 @@ import sys
 import urllib.error
 import urllib.request
 
-GITHUB_ENDPOINT = "https://models.github.ai/inference/chat/completions"
-OLLAMA_ENDPOINT = "http://localhost:11434/api/chat"
-
-# Modelos pequenos, adequados ao uso em sala
-DEFAULT_GITHUB_MODEL = os.environ.get("MODEL", "openai/gpt-4o-mini")
-DEFAULT_OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "qwen2.5:1.5b")
-
-TIMEOUT = int(os.environ.get("AI_TIMEOUT", "120"))
+BASE_URL = os.environ.get("OLLAMA_HOST", "http://localhost:11434").rstrip("/")
+MODELO = os.environ.get("OLLAMA_MODEL", "__MODELO__")
+TIMEOUT = int(os.environ.get("AI_TIMEOUT", "300"))
 
 
-def _post(url, payload, headers, timeout=TIMEOUT):
+def ollama_no_ar():
+    """Confirma que o servidor Ollama responde antes de mandar o prompt."""
+    try:
+        with urllib.request.urlopen(BASE_URL + "/api/tags", timeout=5):
+            return True
+    except (urllib.error.URLError, OSError):
+        return False
+
+
+def perguntar(prompt):
     req = urllib.request.Request(
-        url,
-        data=json.dumps(payload).encode("utf-8"),
-        headers={"Content-Type": "application/json", **headers},
+        BASE_URL + "/api/chat",
+        data=json.dumps(
+            {
+                "model": MODELO,
+                "messages": [{"role": "user", "content": prompt}],
+                "stream": False,
+            }
+        ).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
         method="POST",
     )
-    with urllib.request.urlopen(req, timeout=timeout) as resp:
-        return json.loads(resp.read().decode("utf-8"))
-
-
-def via_github_models(prompt):
-    token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
-    if not token:
-        raise RuntimeError("GITHUB_TOKEN ausente")
-
-    data = _post(
-        GITHUB_ENDPOINT,
-        {
-            "model": DEFAULT_GITHUB_MODEL,
-            "messages": [{"role": "user", "content": prompt}],
-            "temperature": 0.7,
-        },
-        {"Authorization": "Bearer " + token},
-    )
-    return data["choices"][0]["message"]["content"]
-
-
-def via_ollama(prompt):
-    data = _post(
-        OLLAMA_ENDPOINT,
-        {
-            "model": DEFAULT_OLLAMA_MODEL,
-            "messages": [{"role": "user", "content": prompt}],
-            "stream": False,
-        },
-        {},
-        timeout=300,
-    )
+    with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
+        data = json.loads(resp.read().decode("utf-8"))
     return data["message"]["content"]
 
 
@@ -238,31 +223,32 @@ def main():
         print(__doc__)
         return 1
 
-    tentativas = [("GitHub Models", via_github_models), ("Ollama local", via_ollama)]
-    erros = []
+    if not ollama_no_ar():
+        sys.stderr.write(
+            "O servidor Ollama não está respondendo em %s.\n"
+            "Suba com: ollama serve\n"
+            "Depois confirme o modelo com: ollama list\n" % BASE_URL
+        )
+        return 1
 
-    for nome, fn in tentativas:
-        try:
-            print("[{}] consultando...".format(nome), file=sys.stderr)
-            print(fn(prompt))
-            return 0
-        except urllib.error.HTTPError as e:
-            corpo = e.read().decode("utf-8", "replace")[:300]
-            erros.append("{}: HTTP {} {}".format(nome, e.code, corpo))
-        except Exception as e:  # noqa: BLE001
-            erros.append("{}: {}".format(nome, e))
-
-    print("\nNenhum backend de IA respondeu.\n", file=sys.stderr)
-    for e in erros:
-        print("  - " + e, file=sys.stderr)
-    print(
-        "\nDicas:\n"
-        "  - No Codespaces o GITHUB_TOKEN e injetado automaticamente.\n"
-        "  - Localmente: export GITHUB_TOKEN=$(gh auth token)\n"
-        "  - Offline: ollama serve && ollama pull qwen2.5:3b\n",
-        file=sys.stderr,
-    )
-    return 1
+    try:
+        print("[Ollama] consultando o modelo %s..." % MODELO, file=sys.stderr)
+        print(perguntar(prompt))
+        return 0
+    except urllib.error.HTTPError as e:
+        corpo = e.read().decode("utf-8", "replace")[:300]
+        sys.stderr.write(
+            "O Ollama respondeu HTTP %d: %s\n"
+            "Se o modelo não existe localmente, baixe com: ollama pull %s\n"
+            % (e.code, corpo, MODELO)
+        )
+        return 1
+    except (urllib.error.URLError, OSError) as e:
+        sys.stderr.write(
+            "Falha ao consultar o Ollama: %s\n"
+            "Confira o servidor com: ollama list\n" % e
+        )
+        return 1
 
 
 if __name__ == "__main__":
@@ -277,7 +263,7 @@ def devcontainer(lab):
     }
     if lab["docker"]:
         features["ghcr.io/devcontainers/features/docker-in-docker:2"] = {}
-    if lab["img"] == "python" and lab["n"] in ("02",):
+    if lab["img"] == "python" and lab["n"] in ("02", "03"):
         features["ghcr.io/devcontainers/features/node:1"] = {}
 
     extensions = ["GitHub.copilot", "GitHub.vscode-pull-request-github", "eamodio.gitlens"]
@@ -297,10 +283,6 @@ def devcontainer(lab):
         "forwardPorts": lab["ports"] + [11434],
         "postCreateCommand": "bash .devcontainer/post-create.sh",
         "postStartCommand": "bash .devcontainer/post-start.sh",
-        "remoteEnv": {
-            # No Codespaces esta variavel ja existe; localmente o aluno exporta.
-            "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}"
-        },
         "customizations": {
             "vscode": {
                 "extensions": extensions,
@@ -324,11 +306,11 @@ echo "==> Configurando o laboratorio {nome}"
 {stack}
 
 # --- Ollama: SLM rodando dentro do proprio container -----------------------
-# Backend de IA offline, usado quando o GitHub Models nao esta disponivel
-# ou quando a cota da conta do aluno acabou.
+# Backend único de IA dos laboratórios, decisão registrada na ADR-005 do
+# acervo: o GitHub Models foi retirado do ar em 30/07/2026.
 if ! command -v ollama >/dev/null 2>&1; then
   echo "==> Instalando o Ollama"
-  curl -fsSL https://ollama.com/install.sh | sh
+  curl -fsSL --connect-timeout 10 --max-time 600 https://ollama.com/install.sh | sh
 fi
 
 echo "==> Subindo o servidor Ollama"
@@ -344,14 +326,14 @@ echo "==> Baixando o modelo {modelo} (uso unico, fica em cache)"
 ollama pull {modelo} || echo "    AVISO: falha ao baixar o modelo. Rode 'ollama pull {modelo}' manualmente."
 
 # --- Verificacao do backend de IA -----------------------------------------
-if [ -n "${{GITHUB_TOKEN:-}}" ]; then
-  echo "==> GITHUB_TOKEN presente: GitHub Models disponivel."
-  echo "    Teste com: python ai/ask.py \"diga ola\""
+if curl -sf --connect-timeout 5 http://localhost:11434/api/tags >/dev/null 2>&1 \
+   && ollama list 2>/dev/null | grep -q "{modelo}"; then
+  echo "==> Backend de IA pronto: Ollama respondendo com o modelo {modelo}."
+  echo "    Teste com: python ai/ask.py \"diga olá\""
 else
-  echo "==> AVISO: GITHUB_TOKEN ausente."
-  echo "    No Codespaces ele e injetado automaticamente."
-  echo "    Localmente, rode: export GITHUB_TOKEN=\$(gh auth token)"
-  echo "    Ou use Ollama offline: ollama serve && ollama pull qwen2.5:3b"
+  echo "==> AVISO: o Ollama não confirmou o modelo {modelo}."
+  echo "    Suba o servidor com: ollama serve"
+  echo "    Depois baixe o modelo com: ollama pull {modelo}"
 fi
 
 echo ""
@@ -424,43 +406,29 @@ code .
 # VS Code vai sugerir: "Reopen in Container"
 ```
 
-Localmente, exporte o token para habilitar o assistente de IA:
-
-```bash
-export GITHUB_TOKEN=$(gh auth token)
-```
-
 ---
 
 ## Assistente de IA incluso
 
-O laboratorio traz um cliente minimo que fala com **GitHub Models** usando o
-token que o Codespaces ja injeta. Voce nao precisa criar conta, gerar chave nem
-cadastrar cartao.
-
-```bash
-python ai/ask.py "explique a diferenca entre TCP e UDP em duas frases"
-
-# escolher outro modelo pequeno
-MODEL=microsoft/phi-4-mini-instruct python ai/ask.py "..."
-
-# usar um arquivo como prompt
-cat prompts/prd.md | python ai/ask.py
-```
-
-Se o GitHub Models estiver indisponivel ou a cota da sua conta tiver acabado, o
-script cai automaticamente para o **Ollama que ja vem instalado neste
-devcontainer**, com o modelo `qwen2.5:1.5b` baixado na criacao do ambiente.
+O laboratorio traz um cliente minimo que fala com o **Ollama que ja vem
+instalado neste devcontainer**, com o modelo `{modelo}` baixado na criacao
+do ambiente. Nenhuma conta, chave ou cartao e necessario, e o prompt nao sai
+da sua maquina.
 
 ```bash
 ollama list                      # o modelo ja deve aparecer aqui
-OLLAMA_MODEL=qwen2.5:1.5b python ai/ask.py "..."   # forcar o modelo local
+python ai/ask.py "explique a diferenca entre TCP e UDP em duas frases"
+
+# usar um arquivo como prompt
+cat prompts/prd.md | python ai/ask.py
+
+# escolher outro modelo local
 ollama pull qwen2.5:3b           # modelo maior, se a maquina aguentar
+OLLAMA_MODEL=qwen2.5:3b python ai/ask.py "..."
 ```
 
-> A cota gratuita do GitHub Models e limitada por dia. Se a turma inteira
-> disparar requisicoes ao mesmo tempo, o fallback local resolve sem depender
-> de rede.
+> Se o `ai/ask.py` avisar que o servidor nao responde, rode `ollama serve`
+> em um terminal separado e tente de novo.
 
 ---
 
@@ -538,7 +506,7 @@ Portas expostas pelo ambiente: {portas}
 │   ├── devcontainer.json   # ambiente reproduzivel (Codespaces e local)
 │   └── post-create.sh      # instalacao de dependencias
 ├── ai/
-│   └── ask.py              # cliente de IA (GitHub Models -> Ollama)
+│   └── ask.py              # cliente de IA (Ollama local)
 ├── docs/                   # artefatos de especificacao
 └── README.md
 ```
@@ -567,6 +535,7 @@ Este laboratorio faz parte do acervo da disciplina:
         repo=nome_repo,
         entregaveis=entregaveis,
         portas=portas,
+        modelo=modelo_do_lab(lab),
     )
 
 
@@ -616,11 +585,17 @@ def main():
         write(os.path.join(root, ".devcontainer", "devcontainer.json"), devcontainer(lab))
         write(
             os.path.join(root, ".devcontainer", "post-create.sh"),
-            POST_CREATE.format(nome=nome, stack=STACK_CMDS[lab["img"]], modelo=MODELO_SLM),
+            POST_CREATE.format(
+                nome=nome, stack=STACK_CMDS[lab["img"]], modelo=modelo_do_lab(lab)
+            ),
             executable=True,
         )
         write(os.path.join(root, ".devcontainer", "post-start.sh"), POST_START, executable=True)
-        write(os.path.join(root, "ai", "ask.py"), AI_ASK, executable=True)
+        write(
+            os.path.join(root, "ai", "ask.py"),
+            AI_ASK.replace("__MODELO__", modelo_do_lab(lab)),
+            executable=True,
+        )
         write(os.path.join(root, "README.md"), readme(lab))
         write(os.path.join(root, ".gitignore"), GITIGNORE)
         write(
