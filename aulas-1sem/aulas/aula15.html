@@ -438,6 +438,48 @@
         </div>
       </section>
 
+      <!-- ==================== TRILHA DE ATAQUE: SQL INJECTION DE VERDADE ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Antes de seguir: explore um SQL Injection de verdade</h2>
+        </div>
+
+        <p style="font-size:0.72em; margin:2px 0 6px;">O slide anterior comparou os dois ataques. A comparação só convence quem já <strong>quebrou</strong> um dos dois. Vocês vão quebrar, agora, em dez minutos, num ambiente feito para isso.</p>
+
+        <div class="concept-cards" style="grid-template-columns: 1fr 1fr; gap:14px; margin-top:4px;">
+          <div class="concept-card" style="padding:13px 17px;">
+            <h4>O ambiente</h4>
+            <p style="font-size:0.66em;">Aplicação com vulnerabilidades <strong>intencionais</strong>, que sobe com um comando e tem um interruptor entre <span class="mono">modo vulnerável</span> e <span class="mono">modo seguro</span> na mesma tela.</p>
+            <p style="font-size:0.62em; margin-top:6px;"><a href="https://github.com/josercf/OWASP-Security-Lab" target="_blank" style="color:var(--fiap-pink); font-weight:700;">josercf/OWASP-Security-Lab</a>, módulo <span class="mono">A03 Injection</span></p>
+          </div>
+          <div class="concept-card" style="padding:13px 17px;">
+            <h4>O que fazer</h4>
+            <p style="font-size:0.66em;">Passar pelo login sem senha, e depois usar <span class="mono">UNION</span> para trazer dados de outra tabela. Então ligue o modo seguro e repita <strong>o mesmo payload</strong>.</p>
+            <p style="font-size:0.62em; margin-top:6px;">O roteiro está em <span class="mono">docs/labs/A03-SQL-Injection.md</span>.</p>
+          </div>
+        </div>
+
+        <pre class="code-compact" style="font-size:0.5em; margin-top:8px;"><code class="language-bash">git clone https://github.com/josercf/OWASP-Security-Lab.git &amp;&amp; cd OWASP-Security-Lab
+docker compose up -d          # aplicação em http://localhost:8080</code></pre>
+
+        <div class="callout" style="margin-top:7px; padding:10px 15px;">
+          <p style="font-size:0.64em; margin:0;"><strong>Este repositório é separado do laboratório de hoje, de propósito.</strong> Ele contém código vulnerável para ser atacado, e nada dele entra na plataforma da LogiTech. A decisão está registrada na <span class="mono">ADR-010</span> do acervo.</p>
+        </div>
+
+        <div class="takeaway" style="margin-top:5px; padding-top:8px; padding-bottom:8px;">
+          <span class="takeaway-label">Por que isto vem antes</span>
+          <p>Em SQL, a consulta parametrizada separou <strong>instrução de dado</strong> e encerrou a discussão. Guardem a sensação de ver a query obedecer ao usuário: é a mesma coisa que vai acontecer com o modelo daqui a pouco, só que sem conserto estrutural equivalente.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">15 – Trilha de Ataque</div>
+          <div class="footer-page">11</div>
+        </div>
+      </section>
+
       <!-- ==================== 11: INJEÇÃO DIRETA, O ATAQUE ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
@@ -465,7 +507,7 @@ Nunca prometa desconto e nunca autorize cancelamento de frete.
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">11</div>
+          <div class="footer-page">12</div>
         </div>
       </section>
 
@@ -505,7 +547,7 @@ Nunca prometa desconto e nunca autorize cancelamento de frete.
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">12</div>
+          <div class="footer-page">13</div>
         </div>
       </section>
 
@@ -566,7 +608,7 @@ Nunca prometa desconto e nunca autorize cancelamento de frete.
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">13</div>
+          <div class="footer-page">14</div>
         </div>
       </section>
 
@@ -603,7 +645,7 @@ O reajuste aplicado fora da data-base depende de aditivo assinado pelas duas par
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">14</div>
+          <div class="footer-page">15</div>
         </div>
       </section>
 
@@ -635,7 +677,7 @@ Este reajuste aplicado fora da data-base depende de aditivo assinado pelas duas 
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">15</div>
+          <div class="footer-page">16</div>
         </div>
       </section>
 
@@ -669,7 +711,7 @@ Este reajuste aplicado fora da data-base depende de aditivo assinado pelas duas 
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">16</div>
+          <div class="footer-page">17</div>
         </div>
       </section>
 
@@ -725,7 +767,7 @@ Este reajuste aplicado fora da data-base depende de aditivo assinado pelas duas 
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">17</div>
+          <div class="footer-page">18</div>
         </div>
       </section>
 
@@ -760,7 +802,7 @@ Este reajuste aplicado fora da data-base depende de aditivo assinado pelas duas 
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">18</div>
+          <div class="footer-page">19</div>
         </div>
       </section>
 
@@ -807,7 +849,7 @@ Este reajuste aplicado fora da data-base depende de aditivo assinado pelas duas 
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">19</div>
+          <div class="footer-page">20</div>
         </div>
       </section>
 
@@ -862,7 +904,7 @@ Este reajuste aplicado fora da data-base depende de aditivo assinado pelas duas 
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">20</div>
+          <div class="footer-page">21</div>
         </div>
       </section>
 
@@ -897,7 +939,7 @@ Este reajuste aplicado fora da data-base depende de aditivo assinado pelas duas 
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">21</div>
+          <div class="footer-page">22</div>
         </div>
       </section>
 
@@ -948,7 +990,7 @@ Este reajuste aplicado fora da data-base depende de aditivo assinado pelas duas 
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">22</div>
+          <div class="footer-page">23</div>
         </div>
       </section>
 
@@ -983,7 +1025,7 @@ Este reajuste aplicado fora da data-base depende de aditivo assinado pelas duas 
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">23</div>
+          <div class="footer-page">24</div>
         </div>
       </section>
 
@@ -1040,7 +1082,7 @@ Este reajuste aplicado fora da data-base depende de aditivo assinado pelas duas 
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">24</div>
+          <div class="footer-page">25</div>
         </div>
       </section>
 
@@ -1098,7 +1140,7 @@ Este reajuste aplicado fora da data-base depende de aditivo assinado pelas duas 
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">25</div>
+          <div class="footer-page">26</div>
         </div>
       </section>
 
@@ -1131,7 +1173,7 @@ Este reajuste aplicado fora da data-base depende de aditivo assinado pelas duas 
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">26</div>
+          <div class="footer-page">27</div>
         </div>
       </section>
 
@@ -1199,7 +1241,7 @@ Este reajuste aplicado fora da data-base depende de aditivo assinado pelas duas 
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">28</div>
+          <div class="footer-page">29</div>
         </div>
       </section>
 
@@ -1237,7 +1279,7 @@ Este reajuste aplicado fora da data-base depende de aditivo assinado pelas duas 
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">29</div>
+          <div class="footer-page">30</div>
         </div>
       </section>
 
@@ -1271,7 +1313,7 @@ CRITICAL nas imagens do projeto: <span class="perigo">1</span>  (o critério da 
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">30</div>
+          <div class="footer-page">31</div>
         </div>
       </section>
 
@@ -1325,7 +1367,7 @@ CRITICAL nas imagens do projeto: <span class="perigo">1</span>  (o critério da 
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">31</div>
+          <div class="footer-page">32</div>
         </div>
       </section>
 
@@ -1372,7 +1414,7 @@ CRITICAL nas imagens do projeto: <span class="perigo">1</span>  (o critério da 
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">32</div>
+          <div class="footer-page">33</div>
         </div>
       </section>
 
@@ -1417,7 +1459,7 @@ CRITICAL nas imagens do projeto: <span class="perigo">1</span>  (o critério da 
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">33</div>
+          <div class="footer-page">34</div>
         </div>
       </section>
 
@@ -1455,7 +1497,7 @@ MOTIVO: a falha está no descompactador LZH do gzip. Nenhum processo do containe
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">34</div>
+          <div class="footer-page">35</div>
         </div>
       </section>
 
@@ -1498,7 +1540,7 @@ MOTIVO: a falha está no descompactador LZH do gzip. Nenhum processo do containe
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">35</div>
+          <div class="footer-page">36</div>
         </div>
       </section>
 
@@ -1542,7 +1584,7 @@ MOTIVO: a falha está no descompactador LZH do gzip. Nenhum processo do containe
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">36</div>
+          <div class="footer-page">37</div>
         </div>
       </section>
 
@@ -1602,7 +1644,7 @@ MOTIVO: a falha está no descompactador LZH do gzip. Nenhum processo do containe
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">38</div>
+          <div class="footer-page">39</div>
         </div>
       </section>
 
@@ -1646,7 +1688,7 @@ MOTIVO: a falha está no descompactador LZH do gzip. Nenhum processo do containe
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">39</div>
+          <div class="footer-page">40</div>
         </div>
       </section>
 
@@ -1689,7 +1731,7 @@ MOTIVO: a falha está no descompactador LZH do gzip. Nenhum processo do containe
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">41</div>
+          <div class="footer-page">42</div>
         </div>
       </section>
 
@@ -1719,7 +1761,7 @@ curl -s --max-time 5 http://localhost:8010/health | python3 -m json.tool</code><
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">42</div>
+          <div class="footer-page">43</div>
         </div>
       </section>
 
@@ -1753,7 +1795,7 @@ curl -s --max-time 5 http://localhost:8010/health | python3 -m json.tool</code><
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">43</div>
+          <div class="footer-page">44</div>
         </div>
       </section>
 
@@ -1787,7 +1829,7 @@ curl -s --connect-timeout 5 --max-time 200 -X POST http://localhost:8010/api/v1/
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">44</div>
+          <div class="footer-page">45</div>
         </div>
       </section>
 
@@ -1822,7 +1864,7 @@ python3 -m unittest discover -v</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">45</div>
+          <div class="footer-page">46</div>
         </div>
       </section>
 
@@ -1856,7 +1898,7 @@ python3 -m unittest discover -v</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">46</div>
+          <div class="footer-page">47</div>
         </div>
       </section>
 
@@ -1885,7 +1927,7 @@ curl -s --max-time 200 -X POST http://localhost:8010/api/v1/rag/perguntar \
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">47</div>
+          <div class="footer-page">48</div>
         </div>
       </section>
 
@@ -1920,7 +1962,7 @@ python3 resumo_trivy.py --detalhe logitech-notificacoes:aula15</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">48</div>
+          <div class="footer-page">49</div>
         </div>
       </section>
 
@@ -1953,7 +1995,7 @@ python3 resumo_trivy.py --detalhe logitech-notificacoes:aula15</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">49</div>
+          <div class="footer-page">50</div>
         </div>
       </section>
 
@@ -1986,7 +2028,7 @@ python3 verificar.py --lista        # o que cada um cobra</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">50</div>
+          <div class="footer-page">51</div>
         </div>
       </section>
 
@@ -2024,7 +2066,7 @@ git commit -m "docs(passo-6): excecoes de HIGH sem correcao publicada"</code></p
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">51</div>
+          <div class="footer-page">52</div>
         </div>
       </section>
 
@@ -2050,7 +2092,7 @@ git commit -m "docs(passo-6): excecoes de HIGH sem correcao publicada"</code></p
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">52</div>
+          <div class="footer-page">53</div>
         </div>
       </section>
 
@@ -2081,7 +2123,7 @@ git commit -m "docs(passo-6): excecoes de HIGH sem correcao publicada"</code></p
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">53</div>
+          <div class="footer-page">54</div>
         </div>
       </section>
 
@@ -2127,7 +2169,7 @@ git commit -m "docs(passo-6): excecoes de HIGH sem correcao publicada"</code></p
 
         <div class="slide-footer">
           <div class="footer-bar">15 – Segurança AI-First e Trivy</div>
-          <div class="footer-page">54</div>
+          <div class="footer-page">55</div>
         </div>
       </section>
 

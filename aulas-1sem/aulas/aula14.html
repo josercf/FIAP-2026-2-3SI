@@ -1014,6 +1014,45 @@ grant_type=authorization_code
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
+          <h2>Antes de fechar a porta, abra uma</h2>
+        </div>
+
+        <p style="font-size:0.72em; margin:2px 0 6px;">Vocês vão passar a noite implementando controle de acesso. Vale dez minutos para <strong>quebrar</strong> um primeiro, e sentir o que exatamente se está impedindo.</p>
+
+        <div class="concept-cards" style="grid-template-columns: 1fr 1fr; gap:14px; margin-top:4px;">
+          <div class="concept-card" style="padding:13px 17px;">
+            <h4>O ataque</h4>
+            <p style="font-size:0.66em;">Entre como um usuário comum e troque o <strong>identificador do alvo</strong> na requisição. Sem verificação de dono, o sistema entrega os dados de outra pessoa. Depois, tente uma operação de administrador.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 17px;">
+            <h4>O interruptor</h4>
+            <p style="font-size:0.66em;">A mesma tela tem <span class="mono">modo seguro</span>. Ligue e repita o mesmo passo: o que muda no código é a verificação que vocês vão escrever hoje.</p>
+          </div>
+        </div>
+
+        <pre class="code-compact" style="font-size:0.5em; margin-top:8px;"><code class="language-bash">git clone https://github.com/josercf/OWASP-Security-Lab.git &amp;&amp; cd OWASP-Security-Lab
+docker compose up -d          # módulo A01, em http://localhost:8080</code></pre>
+
+        <div class="callout" style="margin-top:7px; padding:10px 15px;">
+          <p style="font-size:0.64em; margin:0;"><strong>Repositório separado, com vulnerabilidade intencional.</strong> Nada dele entra na plataforma da LogiTech: existe para ser atacado. A decisão está na <span class="mono">ADR-010</span> do acervo, e o roteiro em <span class="mono">docs/labs/A01-Broken-Access-Control.md</span>.</p>
+        </div>
+
+        <div class="takeaway" style="margin-top:5px; padding-top:8px; padding-bottom:8px;">
+          <span class="takeaway-label">O que isto prepara</span>
+          <p>Quebrar acesso trocando um identificador é o <strong>A01 do OWASP</strong>, a falha mais comum da lista. O 403 que vocês vão implementar daqui a pouco existe exatamente para esse ataque morrer no meio.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Trilha de Ataque</div>
+          <div class="footer-page">23</div>
+        </div>
+      </section>
+
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
           <h2>RBAC: permissão para papel, não para pessoa <a href="#/ref-slide" class="ref-badge">[6]</a></h2>
         </div>
 
@@ -1066,7 +1105,7 @@ grant_type=authorization_code
 
         <div class="slide-footer">
           <div class="footer-bar">14 – RBAC</div>
-          <div class="footer-page">23</div>
+          <div class="footer-page">24</div>
         </div>
       </section>
 
@@ -1110,7 +1149,7 @@ grant_type=authorization_code
 
         <div class="slide-footer">
           <div class="footer-bar">14 – Quiz 3</div>
-          <div class="footer-page">24</div>
+          <div class="footer-page">25</div>
         </div>
       </section>
 
@@ -1157,7 +1196,7 @@ grant_type=authorization_code
 
         <div class="slide-footer">
           <div class="footer-bar">14 – Onde o papel mora</div>
-          <div class="footer-page">25</div>
+          <div class="footer-page">26</div>
         </div>
       </section>
 
@@ -1197,7 +1236,7 @@ grant_type=authorization_code
 
         <div class="slide-footer">
           <div class="footer-bar">14 – O contrato de rotas</div>
-          <div class="footer-page">26</div>
+          <div class="footer-page">27</div>
         </div>
       </section>
 
@@ -1252,7 +1291,7 @@ grant_type=authorization_code
 
         <div class="slide-footer">
           <div class="footer-bar">14 – 401 contra 403</div>
-          <div class="footer-page">27</div>
+          <div class="footer-page">28</div>
         </div>
       </section>
 
@@ -1304,7 +1343,7 @@ grant_type=authorization_code
 
         <div class="slide-footer">
           <div class="footer-bar">14 – /health aberta</div>
-          <div class="footer-page">28</div>
+          <div class="footer-page">29</div>
         </div>
       </section>
 
@@ -1336,7 +1375,7 @@ grant_type=authorization_code
 
         <div class="slide-footer">
           <div class="footer-bar">14 – O interruptor</div>
-          <div class="footer-page">29</div>
+          <div class="footer-page">30</div>
         </div>
       </section>
 
@@ -1395,7 +1434,7 @@ grant_type=authorization_code
 
         <div class="slide-footer">
           <div class="footer-bar">14 – O issuer divergente</div>
-          <div class="footer-page">30</div>
+          <div class="footer-page">31</div>
         </div>
       </section>
 
@@ -1432,7 +1471,7 @@ grant_type=authorization_code
 
         <div class="slide-footer">
           <div class="footer-bar">14 – O conserto do issuer</div>
-          <div class="footer-page">31</div>
+          <div class="footer-page">32</div>
         </div>
       </section>
 
@@ -1478,7 +1517,7 @@ grant_type=authorization_code
 
         <div class="slide-footer">
           <div class="footer-bar">14 – Realm de arquivo</div>
-          <div class="footer-page">32</div>
+          <div class="footer-page">33</div>
         </div>
       </section>
 
@@ -1537,7 +1576,7 @@ grant_type=authorization_code
 
         <div class="slide-footer">
           <div class="footer-bar">14 – Git Worktrees II</div>
-          <div class="footer-page">33</div>
+          <div class="footer-page">34</div>
         </div>
       </section>
 
@@ -1576,7 +1615,7 @@ grant_type=authorization_code
 
         <div class="slide-footer">
           <div class="footer-bar">14 – Worktrees e agentes</div>
-          <div class="footer-page">34</div>
+          <div class="footer-page">35</div>
         </div>
       </section>
 
@@ -1624,7 +1663,7 @@ return Array.isArray(papeis) ? papeis.map(String) : [];
 
         <div class="slide-footer">
           <div class="footer-bar">14 – A mesma decisão, duas vezes</div>
-          <div class="footer-page">35</div>
+          <div class="footer-page">36</div>
         </div>
       </section>
 
@@ -1667,7 +1706,7 @@ return Array.isArray(papeis) ? papeis.map(String) : [];
 
         <div class="slide-footer">
           <div class="footer-bar">14 – O frontend não protege</div>
-          <div class="footer-page">36</div>
+          <div class="footer-page">37</div>
         </div>
       </section>
 
@@ -1705,7 +1744,7 @@ return Array.isArray(papeis) ? papeis.map(String) : [];
 
         <div class="slide-footer">
           <div class="footer-bar">14 – O ambiente de hoje</div>
-          <div class="footer-page">37</div>
+          <div class="footer-page">38</div>
         </div>
       </section>
 
@@ -1742,7 +1781,7 @@ return Array.isArray(papeis) ? papeis.map(String) : [];
 
         <div class="slide-footer">
           <div class="footer-bar">14 – Atividade Prática</div>
-          <div class="footer-page">38</div>
+          <div class="footer-page">39</div>
         </div>
       </section>
 
@@ -1768,7 +1807,7 @@ docker compose logs keycloak | grep -i imported</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">14 – Passo 1</div>
-          <div class="footer-page">39</div>
+          <div class="footer-page">40</div>
         </div>
       </section>
 
@@ -1791,7 +1830,7 @@ docker compose logs keycloak | grep -i imported</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">14 – Passo 2</div>
-          <div class="footer-page">40</div>
+          <div class="footer-page">41</div>
         </div>
       </section>
 
@@ -1819,7 +1858,7 @@ curl -i http://localhost:8080/health             # 200, e continua sem token</co
 
         <div class="slide-footer">
           <div class="footer-bar">14 – Passo 3</div>
-          <div class="footer-page">41</div>
+          <div class="footer-page">42</div>
         </div>
       </section>
 
@@ -1843,7 +1882,7 @@ curl -s -H "Authorization: Bearer $TOKEN" http://localhost:8080/api/v1/pedidos</
 
         <div class="slide-footer">
           <div class="footer-bar">14 – Passo 4</div>
-          <div class="footer-page">42</div>
+          <div class="footer-page">43</div>
         </div>
       </section>
 
@@ -1873,7 +1912,7 @@ curl -i -X PATCH http://localhost:8080/api/v1/pedidos/PED-1042/endereco \
 
         <div class="slide-footer">
           <div class="footer-bar">14 – Passo 5</div>
-          <div class="footer-page">43</div>
+          <div class="footer-page">44</div>
         </div>
       </section>
 
@@ -1901,7 +1940,7 @@ curl -s -o /dev/null -w '%{http_code}\n' -X POST -H "Authorization: Bearer $TOKE
 
         <div class="slide-footer">
           <div class="footer-bar">14 – Passo 6</div>
-          <div class="footer-page">44</div>
+          <div class="footer-page">45</div>
         </div>
       </section>
 
@@ -1928,7 +1967,7 @@ npm run dev                # http://localhost:5173</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">14 – Passo 7</div>
-          <div class="footer-page">45</div>
+          <div class="footer-page">46</div>
         </div>
       </section>
 
@@ -1954,7 +1993,7 @@ git worktree list</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">14 – Passo 8</div>
-          <div class="footer-page">46</div>
+          <div class="footer-page">47</div>
         </div>
       </section>
 
@@ -2004,7 +2043,7 @@ git worktree list</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">14 – Entrega</div>
-          <div class="footer-page">47</div>
+          <div class="footer-page">48</div>
         </div>
       </section>
 
@@ -2039,7 +2078,7 @@ git worktree list</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">14 – A próxima volta</div>
-          <div class="footer-page">48</div>
+          <div class="footer-page">49</div>
         </div>
       </section>
 
@@ -2088,7 +2127,7 @@ git worktree list</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">14 – Bibliografia</div>
-          <div class="footer-page">49</div>
+          <div class="footer-page">50</div>
         </div>
       </section>
 
@@ -2133,7 +2172,7 @@ git worktree list</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">14 – Bibliografia</div>
-          <div class="footer-page">50</div>
+          <div class="footer-page">51</div>
         </div>
       </section>
 
