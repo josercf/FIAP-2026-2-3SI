@@ -31,7 +31,7 @@ escrever.
 | `servicos/ai-gateway/`, o conteúdo novo da aula, com Facade, Strategy, fallback, cache e métricas | O `.env` a partir do `.env.exemplo` |
 | Um `Dockerfile` multi-stage por serviço, com `USER` não-root | Os commits, um por passo |
 | `verificar.py`, a autoavaliação dos cinco critérios | |
-| `gabarito/docker-compose.yml`, a rede de segurança de quem travar | |
+| `resgate/docker-compose.yml`, a rede de segurança de quem travar | |
 
 **Nada em `servicos/` é tarefa.** Não editem aqueles arquivos: o artefato de
 hoje é o YAML. Se um serviço não responde, o problema está no seu
@@ -626,18 +626,18 @@ Um envio por grupo, até o fim da aula.
 
 ---
 
-## O diretório `gabarito/`
+## O diretório `resgate/`
 
 Atividade em passos tem um risco que uma atividade única não tem: travar no
-Passo 2 mata os Passos 3, 4 e 5. `gabarito/docker-compose.yml` é o arquivo
+Passo 2 mata os Passos 3, 4 e 5. `resgate/docker-compose.yml` é o arquivo
 completo, comentado, pronto para copiar:
 
 ```bash
-cp gabarito/docker-compose.yml docker-compose.yml
+cp resgate/docker-compose.yml docker-compose.yml
 docker compose up -d --build
 ```
 
-Quem usar registra `USEI_O_GABARITO` em `docs/EVIDENCIAS.md`, dizendo a
+Quem usar registra `USEI_O_RESGATE` em `docs/EVIDENCIAS.md`, dizendo a
 partir de qual passo. Sem penalidade automática: é informação para a
 correção, não armadilha.
 

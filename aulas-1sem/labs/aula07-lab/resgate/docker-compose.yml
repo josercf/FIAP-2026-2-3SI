@@ -1,5 +1,5 @@
 # =============================================================================
-# GABARITO da Aula 07. Rede de segurança, não atalho.
+# RESGATE da Aula 07. Rede de segurança, não atalho.
 # =============================================================================
 #
 # Este é o docker-compose.yml completo, com as cinco lacunas preenchidas.
@@ -8,25 +8,25 @@
 #
 # Se você usar este arquivo, registre em `docs/EVIDENCIAS.md`:
 #
-#     USEI_O_GABARITO: sim, a partir do Passo N
+#     USEI_O_RESGATE: sim, a partir do Passo N
 #
-# Usar o gabarito não reprova critério nenhum que o verificador consiga
+# Usar o resgate não reprova critério nenhum que o verificador consiga
 # confirmar por máquina. É informação que o professor precisa ter, não
 # armadilha.
 #
 # Para usar, copie sobre o seu arquivo, a partir da raiz do laboratório:
 #
-#     cp gabarito/docker-compose.yml docker-compose.yml
+#     cp resgate/docker-compose.yml docker-compose.yml
 #     docker compose up -d
 #
 # Os caminhos de `build:` são relativos à **raiz do laboratório**, que é onde
-# este arquivo deve rodar. Rodá-lo de dentro de `gabarito/` faria o Compose
-# procurar `gabarito/servicos/`, que não existe.
+# este arquivo deve rodar. Rodá-lo de dentro de `resgate/` faria o Compose
+# procurar `resgate/servicos/`, que não existe.
 #
 # =============================================================================
 
 # `name:` fixa o nome do projeto. Sem ele, o Compose usa o nome do diretório,
-# e rodar o gabarito criaria uma segunda plataforma chamada "gabarito",
+# e rodar o resgate criaria uma segunda plataforma chamada "resgate",
 # duplicando os oito containers e disputando as mesmas portas do host.
 #
 # Nenhum serviço declara `container_name`: o Compose já nomeia cada container

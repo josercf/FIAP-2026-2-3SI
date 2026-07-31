@@ -11,7 +11,7 @@ qualquer máquina, inclusive na correção.
 
 O que ela deliberadamente não cobre: os cinco critérios ponta a ponta. Eles
 dependem de oito containers de pé e são validados nos dois sentidos à mão
-(reprovando o esqueleto, aprovando o gabarito), como registrado no README.
+(reprovando o esqueleto, aprovando o resgate), como registrado no README.
 """
 
 import unittest

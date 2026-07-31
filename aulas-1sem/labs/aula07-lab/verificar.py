@@ -10,7 +10,7 @@ biblioteca padrão.
 Uso:
     python3 verificar.py                       # roda os cinco critérios
     python3 verificar.py --criterio 3          # roda só o critério 3
-    python3 verificar.py --compose gabarito/docker-compose.yml
+    python3 verificar.py --compose resgate/docker-compose.yml
     python3 verificar.py --sem-saude           # pula a checagem de /health
 
 Saída: 0 quando tudo que foi pedido passa, 1 quando algum critério falha.
@@ -162,7 +162,7 @@ def config(arquivo):
     mensagem que o aluno veria no `up`.
 
     `--project-directory` fixa a raiz do laboratório como origem dos caminhos
-    relativos de `build:`, para que o gabarito, que mora em `gabarito/`,
+    relativos de `build:`, para que o resgate, que mora em `resgate/`,
     resolva `./servicos/...` no mesmo lugar que o arquivo da raiz.
     """
     if arquivo in _config_em_cache:

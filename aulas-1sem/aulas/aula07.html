@@ -2049,7 +2049,7 @@ docker compose ps -a                      # pedidos: Exited (1)
 docker compose logs pedidos               # copie a linha [FATAL] para as evidencias</code></pre>
           <p style="margin:0 0 6px; font-size:0.63em;">Registre <span class="mono">PEDIDOS_SEM_HEALTHCHECK</span> em <span class="mono">docs/EVIDENCIAS.md</span>. Depois preencha <span class="mono">TODO-1a</span> (o <span class="mono">healthcheck</span> com <span class="mono">pg_isready</span>) e <span class="mono">TODO-1b</span> (o <span class="mono">depends_on</span> com <span class="mono">condition: service_healthy</span>), suba de novo e compare.</p>
           <pre style="margin:0 0 6px; font-size:0.48em;"><code class="language-bash">docker compose up -d && python3 verificar.py --criterio 1</code></pre>
-          <p style="margin:0; font-size:0.62em; border-top:1px solid rgba(255,255,255,0.2); padding-top:6px;"><strong style="color:var(--fiap-pink);">Travou?</strong> <span class="mono">gabarito/docker-compose.yml</span> tem o arquivo completo. Registre <span class="mono">USEI_O_GABARITO</span> e siga: os passos 2 a 5 dependem deste. Commit: <span class="mono">feat(passo-1): healthcheck do banco e depends_on com condição</span>.</p>
+          <p style="margin:0; font-size:0.62em; border-top:1px solid rgba(255,255,255,0.2); padding-top:6px;"><strong style="color:var(--fiap-pink);">Travou?</strong> <span class="mono">resgate/docker-compose.yml</span> tem o arquivo completo. Registre <span class="mono">USEI_O_RESGATE</span> e siga: os passos 2 a 5 dependem deste. Commit: <span class="mono">feat(passo-1): healthcheck do banco e depends_on com condição</span>.</p>
         </div>
 
         <div class="slide-footer">
@@ -2338,7 +2338,7 @@ curl -s -X POST localhost:8080/api/v1/pedidos -H 'Content-Type: application/json
             <tr><td>6</td><td><span class="mono">docs/EVIDENCIAS.md</span> com os 12 marcadores, incluindo <span class="mono">ONDE_MEDI</span></td><td>critérios 1 a 5</td></tr>
             <tr><td>7</td><td>Um pedido com <span class="mono">jornada</span> em <span class="mono">ok</span> nas quatro etapas</td><td>critério 5</td></tr>
             <tr><td>8</td><td>Um commit por passo, <span class="mono">feat(passo-N)</span>, visível no histórico</td><td>correção do professor</td></tr>
-            <tr><td>9</td><td>Usou o gabarito? <span class="mono">USEI_O_GABARITO</span> preenchido, sem penalidade automática</td><td>correção do professor</td></tr>
+            <tr><td>9</td><td>Usou o resgate? <span class="mono">USEI_O_RESGATE</span> preenchido, sem penalidade automática</td><td>correção do professor</td></tr>
           </tbody>
         </table>
 

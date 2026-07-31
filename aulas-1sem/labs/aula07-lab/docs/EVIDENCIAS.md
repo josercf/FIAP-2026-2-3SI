@@ -144,15 +144,15 @@ ONDE_MEDI: PREENCHER
 
 ---
 
-## Uso do gabarito
+## Uso do resgate
 
-Preencha em qualquer momento em que tiver copiado `gabarito/docker-compose.yml`
-para a raiz do laboratório, em vez de escrever o seu. Usar o gabarito não
+Preencha em qualquer momento em que tiver copiado `resgate/docker-compose.yml`
+para a raiz do laboratório, em vez de escrever o seu. Usar o resgate não
 reprova nenhum critério que o `verificar.py` consiga confirmar por máquina,
 mas é informação que o professor precisa ter na correção.
 
 ```
-USEI_O_GABARITO: PREENCHER
+USEI_O_RESGATE: PREENCHER
 ```
 
-Se você não usou o gabarito em passo nenhum, escreva `USEI_O_GABARITO: não`.
+Se você não usou o resgate em passo nenhum, escreva `USEI_O_RESGATE: não`.
