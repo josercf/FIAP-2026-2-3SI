@@ -61,7 +61,7 @@ CRITICAL do laboratório. É de propósito, e é o argumento do Passo 5.
 
 ## Pré-requisitos
 
-- Fork do repositório `josercf/mwe-2026-2-lab15-seguranca-ai` (nunca clone direto).
+- Fork do repositório `josercf/mwe-2026-2-lab15-owasp-llm` (nunca clone direto).
 - GitHub Codespaces, ou Docker Desktop local.
 - Ollama no ar, com `qwen2.5:1.5b`.
 - A rede `logitech-net`, herdada da Aula 03. Se não existir:

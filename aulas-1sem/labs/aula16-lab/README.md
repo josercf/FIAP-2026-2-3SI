@@ -63,7 +63,7 @@ seu `docker-compose.yml` ou no ambiente, não no código dele.
 
 ## Pré-requisitos
 
-- Fork de `josercf/mwe-2026-2-lab16-integracao` (nunca clone direto).
+- Fork de `josercf/mwe-2026-2-lab16-integracao-e2e` (nunca clone direto).
 - Docker com **pelo menos 4 GB** livres para a VM. Na medição de preparação os
   treze containers consumiram 806 MiB em repouso, mas os `mem_limit` somam
   3.056 MiB e o build precisa de folga.
@@ -349,7 +349,7 @@ devolvendo um número de status.
 
 ## Como entregar
 
-1. Fork de `josercf/mwe-2026-2-lab16-integracao`.
+1. Fork de `josercf/mwe-2026-2-lab16-integracao-e2e`.
 2. Um commit por frente, em Conventional Commits:
    `fix(compose): corrige o healthcheck do frete, que resolvia para IPv6`.
 3. `docs/EVIDENCIAS.md`, `docs/EXCECOES.md` e `docs/ROTEIRO-BANCA.md`
