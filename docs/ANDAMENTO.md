@@ -15,7 +15,9 @@ Estado do trabalho para retomar em uma sessão nova. Atualize este arquivo ao fi
 Push do acervo **exige a chave do josercf**, senão o GitHub autentica como `canaldoovidio` e nega:
 
 ```bash
-GIT_SSH_COMMAND='ssh -i ~/.ssh/id_ed25519_josercf -o IdentitiesOnly=yes' git push
+# O -F /dev/null nao e enfeite: sem ele o ~/.ssh/config manda o github.com para a
+# outra identidade e o push falha com "denied to canaldoovidio", mesmo com -i.
+GIT_SSH_COMMAND='ssh -i ~/.ssh/id_ed25519_josercf -o IdentitiesOnly=yes -F /dev/null' git push
 ```
 
 ---

@@ -31,7 +31,9 @@ LABS_OUT=/tmp/labs python3 tools/scaffold_labs.py
 
 # Push como josercf (o ssh-agent tem várias identidades e o GitHub autentica
 # primeiro como canaldoovidio, que não tem permissão de escrita neste repo)
-GIT_SSH_COMMAND='ssh -i ~/.ssh/id_ed25519_josercf -o IdentitiesOnly=yes' git push
+# O -F /dev/null e obrigatorio: sem ele o ~/.ssh/config mapeia github.com para a
+# outra identidade e o push falha com "denied to canaldoovidio", mesmo com -i.
+GIT_SSH_COMMAND='ssh -i ~/.ssh/id_ed25519_josercf -o IdentitiesOnly=yes -F /dev/null' git push
 ```
 
 Deploy: `.github/workflows/static.yml` publica **o repositório inteiro** no GitHub Pages a cada push em `main`. Qualquer arquivo commitado fica público.
