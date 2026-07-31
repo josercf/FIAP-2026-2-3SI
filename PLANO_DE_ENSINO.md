@@ -148,7 +148,7 @@ graph TD
     - **Repository Pattern:** Abstração da camada de persistência com JPA/Hibernate (Java) e EF Core (C#).
     - **Singleton:** Gerenciador global de configurações/pools de conexão.
   - *Construção Guiada (Live Coding):* Desenvolvimento da API de Pedidos em **Java (Spring Boot 3)** e Faturamento em **C# (.NET 8)** aplicando SOLID e Patterns.
-- **Entregável:** Duas APIs RESTful em Java e C# aplicando SOLID e Design Patterns com persistência relacional.
+- **Entregável:** Os serviços de Pedidos (Java) e Faturamento (C#) com SOLID, Repository, Factory Method e Singleton thread-safe, persistindo em PostgreSQL, com testes de unidade verdes nas duas stacks.
 
 #### Aula 06 (08/09/2026) - Design Patterns Estruturais & Comportamentais em Node.js & Python
 - **Espiral & Conexão:** **Recupera Aulas 02, 03 e 05** (Expandindo o backend poliglota com microsserviços assíncronos).
@@ -159,7 +159,7 @@ graph TD
     - **Decorator Pattern:** Adição de logging e métricas de execução sem alterar as classes core.
     - **Strategy Pattern:** Seleção dinâmica de algoritmos de cálculo de frete (Frete Expresso, Normal, Internacional).
   - *Construção Guiada (Live Coding):* Implementar a API em **Python (FastAPI)** com o Strategy Pattern e a API em **Node.js (TypeScript)** com o Decorator Pattern.
-- **Entregável:** APIs em FastAPI e Node.js documentadas no Swagger e estruturadas com Design Patterns.
+- **Entregável:** Os serviços de Frete (FastAPI, Strategy) e Notificações (Node/TS, Adapter e Decorator), documentados em OpenAPI e com testes de unidade verdes.
 
 #### Aula 07 (15/09/2026) - Docker Compose Multi-Serviço & AI Gateways (Strategy Pattern)
 - **Espiral & Conexão:** **Recupera Aulas 03, 05 e 06** (Orquestrando todos os serviços poliglotas e inserindo a camada de IA).
@@ -168,7 +168,7 @@ graph TD
   - *AI Gateway & Patterns:* O padrão **Strategy** aplicado ao roteamento de LLMs (GPT-4, Claude 3.5, Llama 3 local) por custo/latência, com **Facade Pattern** ocultando a complexidade dos provedores.
   - *Docker Compose:* Redes, variáveis de ambiente, volumes e dependências de boot (`depends_on`).
   - *Construção Guiada (Live Coding):* Escrita do `docker-compose.yml` integrando os 4 microsserviços, PostgreSQL e o LiteLLM AI Gateway.
-- **Entregável:** Ambiente multi-serviços rodando via Docker Compose com AI Gateway funcional.
+- **Entregável:** A plataforma inteira orquestrada por um `docker-compose.yml`, com healthcheck, limites de memória e um AI Gateway (Facade e Strategy) com fallback real entre provedor remoto e modelo local.
 
 #### Aula 08 (22/09/2026) - Orquestração de Agentes (Command Pattern) & Git Worktrees I
 - **Espiral & Conexão:** **Recupera Aulas 06 e 07** (Permitindo que a IA execute ações reais e introduzindo Git Worktrees para execução paralela de Agentes).
@@ -178,7 +178,7 @@ graph TD
   - *Function Calling:* Exposição de endpoints OpenAPI como ferramentas (*tools*) para LLMs e resposta em JSON estruturado (*JSON Schema Enforcement*).
   - *Git Worktrees no Desenvolvimento com IA:* Por que o fluxo tradicional de `git checkout` falha ao rodar múltiplos agentes de IA paralelos; Como criar e isolar múltiplos diretórios de trabalho ligados ao mesmo repositório com `git worktree add`.
   - *Construção Guiada (Live Coding):* Criar worktrees paralelas para desenvolver o agente de pedidos e o agente de suporte simultaneamente.
-- **Entregável:** Worktrees configuradas e agente de atendimento invocando funções do backend via Function Calling.
+- **Entregável:** Agente de atendimento executando ações reais na API de Pedidos por Function Calling, com cada ação validada por JSON Schema e auditada, e duas Git Worktrees rodando agentes em paralelo.
 
 #### Aula 09 (29/09/2026) - CHECKPOINT 2 (CP2)
 - **Escopo:** Avaliação prática acumulativa (POO, SOLID, Design Patterns, Backend Poliglota, Docker Compose e Agentes).

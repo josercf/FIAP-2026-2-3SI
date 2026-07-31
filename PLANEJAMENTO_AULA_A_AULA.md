@@ -136,7 +136,7 @@
      *Resposta Esperada:* Serve para delegar a instanciação de objetos para subclasses ou métodos especializados. É aplicado para criar dinamicamente diferentes conectores de gateway de pagamento/faturamento com base no tipo de cliente.
   3. *Pergunta 3:* Qual o risco de utilizar o padrão Singleton incorretamente em ambientes multithreaded?  
      *Resposta Esperada:* Pode causar condições de corrida (*race conditions*) ou gargalos de concorrência se a instância compartilhada mantiver estado mutável sem o devido controle de sincronização.
-- **Entregável Prático:** Duas APIs funcionais em Java e C# aplicando SOLID e Design Patterns.
+- **Entregável Prático:** Os serviços `pedidos` (Java) e `faturamento` (C#) respondendo em `/health`, com as 6 lacunas preenchidas, `mvn test` e `dotnet test` verdes, e `docs/EVIDENCIAS.md` provando a race condition do Singleton antes e depois da correção.
 
 ---
 
@@ -160,7 +160,7 @@
      *Resposta Esperada:* Ele atua como um tradutor entre a interface esperada pela nossa aplicação e a interface incompatível da API externa, evitando que mudanças de terceiros quebrem nosso sistema.
   3. *Pergunta 3:* O que é o Decorator Pattern e como ele adiciona funcionalidades a um objeto em tempo de execução?  
      *Resposta Esperada:* É um padrão estrutural que envolve o objeto original em uma nova classe "decoradora", adicionando comportamentos antes ou depois da execução do objeto base sem alterar sua classe.
-- **Entregável Prático:** APIs em FastAPI e Node.js documentadas no Swagger e construídas com Design Patterns.
+- **Entregável Prático:** Os serviços `frete` (FastAPI) e `notificacoes` (Node/TS) com as 6 lacunas preenchidas, `pytest` e `vitest` verdes, e uma modalidade nova de frete acrescentada sem modificar a rota, provada por `git diff`.
 
 ---
 
@@ -184,7 +184,7 @@
      *Resposta Esperada:* Ele fornece uma interface única e simplificada para a aplicação consumidora, ocultando a complexidade de integração, autenticação e formato de payload de múltiplos provedores de IA diferentes.
   3. *Pergunta 3:* O que é o Caching Semântico em um AI Gateway e como ele reduz custos operacionais?  
      *Resposta Esperada:* É um cache que armazena respostas de LLMs com base na similaridade de significado (vetores) das perguntas, evitando fazer novas chamadas pagas à API do provedor para perguntas conceitualmente idênticas.
-- **Entregável Prático:** Arquivo `docker-compose.yml` funcional rodando a aplicação poliglota e o AI Gateway.
+- **Entregável Prático:** `docker-compose.yml` com os 8 serviços da plataforma, `docker compose ps` mostrando todos saudáveis, o fallback do AI Gateway acionado de verdade no log, e o painel de telemetria lendo do coletor por HTTP, sem o arquivo compartilhado.
 
 ---
 
@@ -208,7 +208,7 @@
      *Resposta Esperada:* Ele converte a intenção da IA em um objeto de comando bem definido e validado por um JSON Schema estrito, permitindo interceptar, autorizar, registrar e até desfazer a ação antes de executá-la no banco.
   3. *Pergunta 3:* Qual o comando Git para criar um novo diretório de trabalho ligado à branch `feature/agent-tools` sem sair da pasta atual?  
      *Resposta Esperada:* `git worktree add ../pasta-worktree feature/agent-tools`.
-- **Entregável Prático:** Repositório com suporte a Git Worktrees e código do Agente invocando rotas de backend via Function Calling.
+- **Entregável Prático:** Agente com as 5 lacunas preenchidas, `docs/AUDITORIA.md` com no mínimo 3 execuções autorizadas e 1 recusa registrada, `pytest` verde, e `git worktree list` mostrando as duas worktrees com os dois agentes rodando em paralelo.
 
 ---
 
