@@ -1,7 +1,7 @@
 # ADR-001: Votação ao vivo nos quizzes em serviço apartado
 
 - **Data:** 2026-07-30
-- **Status:** Proposta
+- **Status:** Aceita
 - **Decisores:** Prof. José Romualdo da Costa Filho
 
 ## Contexto
@@ -75,11 +75,14 @@ Hospedagem no `home01` (Ubuntu 24.04, 4 vCPU, 7,7 GB RAM), aproveitando o que j�
 
 ## Estado da implementação
 
-Nesta data foi entregue apenas a parte que não depende do serviço:
+O serviço foi implementado no repositório <https://github.com/josercf/pulso> e roda em
+`vote.jrcf.dev`. A aula 01 já consome a votação ao vivo; as demais recebem o
+`data-quiz-key` e o script conforme forem revisadas.
 
-- `assets/js/fiap-quiz.js` passou a reconhecer o padrão `<li data-correct>` usado pelos decks, com feedback vindo de `data-correct-msg` / `data-incorrect-msg`.
-- `assets/css/fiap-theme.css` ganhou os estilos de `.quiz-container`, `.quiz-question`, `.quiz-options li`, `.option-letter` e os estados de resposta, que eram referenciados pelos decks e nunca existiram.
-- Timer regressivo de 60 segundos com botão de play em cada quiz, unificado em `startTimer(elementId, segundos)`.
-- Área de votação com QR placeholder, pronta para receber o `data-quiz-session`.
+No acervo, o que sustenta o modo local continua valendo:
 
-O serviço em si permanece como trabalho futuro.
+- `assets/js/fiap-quiz.js` reconhece o padrão `<li data-correct>`, com feedback vindo de
+  `data-correct-msg` e `data-incorrect-msg`.
+- `assets/css/fiap-theme.css` traz os estilos de `.quiz-container` e os estados de resposta,
+  mais as classes `.pulso-*` que o cliente do serviço injeta.
+- Timer regressivo de 60 segundos com botão de play em cada quiz.
