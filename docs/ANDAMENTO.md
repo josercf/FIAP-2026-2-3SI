@@ -2,7 +2,7 @@
 
 Estado do trabalho para retomar em uma sessão nova. Atualize este arquivo ao fim de cada sessão.
 
-**Última atualização:** 31/07/2026
+**Última atualização:** 31/07/2026 (Módulo II construído)
 
 ---
 
@@ -154,6 +154,49 @@ Armadilhas fechadas nesta construção: o instalador do Ollama passou a exigir
 antes); e os curls de download ganharam `--connect-timeout`/`--max-time`,
 porque execuções anteriores travaram em curl sem timeout contra o GitHub.
 
+### Módulo II completo: Aulas 05 a 08 (31/07/2026)
+
+As quatro aulas de setembro foram construídas na mesma sessão, em paralelo, e é
+a primeira vez que aulas do acervo **dependem umas das outras**: a 07 orquestra
+o que a 05 e a 06 constroem, e a 08 chama a API de Pedidos da 05. Por isso o
+contrato veio antes do conteúdo, na `ADR-006`.
+
+| Aula | Deck | Laboratório |
+|---|---|---|
+| 05, POO e SOLID | 51 slides, 17 figuras (10 animadas) | Pedidos em Spring Boot 3 e Faturamento em .NET 8, seis lacunas, verificador com 11 critérios |
+| 06, Padrões estruturais | 57 slides, 11 figuras animadas | Frete em FastAPI e Notificações em Node/TS, seis lacunas, 8 critérios, 33 testes |
+| 07, Compose e AI Gateway | 53 slides, 9 animações | Oito serviços orquestrados, AI Gateway com Facade e Strategy, 5 critérios |
+| 08, Function Calling | 52 slides, 9 animações | Agente com Command e JSON Schema, worktrees, 9 critérios, 42 testes |
+
+**Números medidos, não estimados.** Race condition do Singleton na Aula 05: 35,
+41 e 44 notas fiscais duplicadas em três execuções no Mac, 19 num contêiner com
+dois núcleos. Compose da Aula 07: 11,9 s até os oito serviços saudáveis e 228 MB
+somados em repouso, contra 1632 MB de teto declarado, em arm64 com 10 núcleos.
+Tool calling do modelo local na Aula 08: 6 de 6 acertos com descrição boa da
+ferramenta, 0 de 3 com a descrição enfraquecida.
+
+**Defeitos reais encontrados durante a construção**, todos corrigidos e a maioria
+virando conteúdo: healthcheck com `localhost` deixava 4 dos 8 serviços
+`unhealthy`, porque no Alpine ele resolve primeiro para IPv6 (`ADR-007`); o
+numerador de notas reiniciava a cada boot e colidia com o índice único; conexão
+JDBC única expirava depois de 45 minutos ociosa; seis animações da Aula 07 tinham
+`keyTimes` que não terminavam em 1 e eram descartadas pelo navegador; o
+verificador da Aula 08 aprovava por engano quando outro serviço ocupava a 8080.
+
+**O que a revisão independente pegou e foi corrigido.** Na Aula 06: código do
+decorator que não compilava com `strict`, bloco de comandos que quebrava se
+colado inteiro, saída do verificador **editada passando por real** no slide que
+se vende como a régua pública, ligaduras da JetBrains Mono projetando `<=` como
+`≤` em slides onde o aluno digita a sintaxe, e caminhos de arquivo subindo para
+maiúscula por causa do `text-transform` do tema.
+
+**Decisão pedagógica que custa e está registrada** (`ADR-007`): o Compose da
+Aula 07 orquestra serviços **mínimos** por padrão, porque conteinerizar Spring
+Boot e .NET colocaria build de Maven e NuGet dentro de um laboratório de 60
+minutos. O kit traz um caminho de troca testado, com Dockerfiles multi-stage
+para os serviços reais, para quem completou as Aulas 05 e 06 subir a própria
+implementação.
+
 ### Saneamento do acervo (30/07/2026)
 
 - **Os 13 decks passam no `check_slides.py`.** Havia 5 slides de hands-on estourando
@@ -185,8 +228,11 @@ porque execuções anteriores travaram em curl sem timeout contra o GitHub.
 
 ### Técnicas
 
-- [ ] **Aulas 05 a 16 ainda são rasas.** Decks de ~140 a ~370 linhas, sem figura, quizzes genéricos. Cada uma precisa passar pelo `construtor-aulas`. **A próxima é a Aula 05** (POO e SOLID, 01/09).
-- [ ] **Labs 05 a 16 têm só o esqueleto.** Devcontainer e README funcionam; falta o conteúdo de cada laboratório.
+- [ ] **Aulas 10 a 16 ainda são rasas.** Decks de ~140 a ~370 linhas, sem figura, quizzes genéricos. Cada uma precisa passar pelo `construtor-aulas`. **A próxima é a Aula 10** (testes e React, 06/10).
+- [ ] **Labs 10 a 16 têm só o esqueleto.** Devcontainer e README funcionam; falta o conteúdo de cada laboratório.
+- [ ] **Criar os quatro formulários de entrega do Módulo II** no Microsoft Forms. Os slides das Aulas 05 a 08 estão com marcador visível no lugar do iframe, à espera da URL.
+- [ ] **Promover ao `fiap-theme.css`** as regras que hoje vivem locais nos decks 06 e 08: desligar as ligaduras da JetBrains Mono e impedir que o `text-transform` do tema suba caminho de arquivo para maiúscula. Vale para os treze decks; revalidar todos depois.
+- [ ] **Cronometrar os laboratórios do Módulo II na primeira aplicação.** Nenhum foi medido com turma; a ordem de corte de cada um está declarada no README.
 - [ ] **Validar com o professor a minutagem nova da Aula 03.** A revisão moveu os Quizzes 2 e 3 para depois dos Ciclos 4 e 5 (o planejamento antigo dava toda a teoria antes do Quiz 1). Deck, planejamento e plano de ensino já estão alinhados entre si; falta o aceite explícito.
 - [ ] **Avisar a turma antes de 18/08:** conta no Docker Hub criada e verificada por e-mail é pré-requisito da Aula 03 (a etapa 7 publica imagem, e a verificação custa 5 a 10 minutos).
 - [ ] **Cronometrar os sete ciclos da Aula 03 na primeira aplicação.** Ordem de corte registrada no spec: primeiro o Ciclo 6 vira demonstração, depois a segunda metade do Ciclo 5; o Ciclo 7 e as Agent Skills nunca saem.
