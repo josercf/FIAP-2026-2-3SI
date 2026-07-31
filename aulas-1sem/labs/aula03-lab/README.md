@@ -85,7 +85,7 @@ resumo; o roteiro completo mora no arquivo de cada etapa.
 
 Suba um `alpine` comum e compare o PID do mesmo processo visto de dentro do
 container e visto do host (`docker inspect -f '{{.State.Pid}}' ...`).
-Registre `PID_DENTRO`, `PID_FORA`, `HOSTNAME_DENTRO` e `MOUNTS_DENTRO` no
+Registre `PID_DENTRO`, `PID_FORA`, `HOSTNAME_DENTRO` e `ENTRADAS_PROC_DENTRO` no
 próprio `RESPOSTAS.md` da etapa.
 
 ### Etapa 2, Imagem, camadas e efemeridade (`etapas/02-imagem/`)
@@ -174,7 +174,7 @@ confiando no que você escreveu.
 
 | Etapa | Verificado por máquina | Declarado por você (sem checagem de máquina possível) |
 |---|---|---|
-| 1. Isolamento de processos | `PID_DENTRO` e `PID_FORA` são números, diferentes entre si e plausíveis (`PID_DENTRO` até 50, `PID_FORA` a partir de 100); `HOSTNAME_DENTRO` tem o formato de hostname que o Docker gera sozinho (12 caracteres hexadecimais) | Que os valores vieram de um container real: o container já não existe quando o verificador roda. `MOUNTS_DENTRO` só confere presença de um valor não vazio, sem checagem de formato |
+| 1. Isolamento de processos | `PID_DENTRO` e `PID_FORA` são números, diferentes entre si e plausíveis (`PID_DENTRO` até 50, `PID_FORA` a partir de 100); `HOSTNAME_DENTRO` tem o formato de hostname que o Docker gera sozinho (12 caracteres hexadecimais) | Que os valores vieram de um container real: o container já não existe quando o verificador roda. `ENTRADAS_PROC_DENTRO` só confere presença de um valor não vazio, sem checagem de formato |
 | 2. Imagem, camadas e efemeridade | Que a imagem `python:3.12-alpine` está presente localmente, via `docker image inspect` de verdade; `ARQUIVO_APOS_RM` é `sumiu` ou `ausente`; `CONTAINER_ID` tem formato hexadecimal | Que o `CONTAINER_ID` citado corresponde de fato ao container que gerou aquela evidência, e que a prova de efemeridade é verdadeira e não só bem formatada: o container já foi destruído quando o verificador roda |
 | 3. Dockerfile e build | `Dockerfile.coletor` builda de verdade via `docker build` | - |
 | 4. Multi-stage | `Dockerfile.coletor` e `Dockerfile.gateway` têm ao menos 2 instruções `FROM` e `USER` não-root cada um; os dois buildam de verdade | Os percentuais `REDUCAO_COLETOR`/`REDUCAO_GATEWAY`: o verificador confere que são números maiores ou iguais a 80%, mas não mede o tamanho de imagem sozinho, confia no que você mediu e registrou |

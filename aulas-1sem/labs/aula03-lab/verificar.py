@@ -117,12 +117,12 @@ def etapa_1():
     ser plausivelmente diferente do PID visto de fora (não só diferente:
     baixo dentro, alto fora, como um container recém-criado de verdade
     produz), e o hostname precisa ter o formato que o Docker gera sozinho.
-    MOUNTS_DENTRO continua sem checagem de máquina possível: ver a tabela
+    ENTRADAS_PROC_DENTRO continua sem checagem de máquina possível: ver a tabela
     de limites no relatório da Tarefa 4."""
     txt = ler("etapas/01-isolamento/RESPOSTAS.md")
     if not txt:
         return False, "etapas/01-isolamento/RESPOSTAS.md não existe."
-    marcadores = ("PID_DENTRO", "PID_FORA", "HOSTNAME_DENTRO", "MOUNTS_DENTRO")
+    marcadores = ("PID_DENTRO", "PID_FORA", "HOSTNAME_DENTRO", "ENTRADAS_PROC_DENTRO")
     valores = {m: _valor_preenchido(m, txt) for m in marcadores}
     faltando = [m for m, v in valores.items() if v is None]
     if faltando:

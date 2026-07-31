@@ -30,7 +30,7 @@ docker inspect -f '{{.State.Pid}}' isolado
 | `PID_DENTRO` | A saída de `echo "PID_DENTRO=$$"` no Terminal 1. Vai ser um número baixo. |
 | `PID_FORA` | A saída de `docker inspect -f '{{.State.Pid}}' isolado` no Terminal 2. Vai ser um número bem mais alto, o PID real no host. |
 | `HOSTNAME_DENTRO` | A saída de `hostname` no Terminal 1: o Docker gera um hostname sozinho, do tamanho do início do ID do container. |
-| `MOUNTS_DENTRO` | A saída de `ls /proc \| wc -l` no Terminal 1. |
+| `ENTRADAS_PROC_DENTRO` | A saída de `ls /proc \| wc -l` no Terminal 1. |
 
 **Não use `ps aux \| grep -c .` para `PID_FORA`.** Isso conta processos do
 host, não é um PID de coisa nenhuma, e o verificador espera o PID real do
@@ -45,5 +45,5 @@ Terminal 1 (o `--rm` já cuida da limpeza).
 PID_DENTRO: PREENCHER
 PID_FORA: PREENCHER
 HOSTNAME_DENTRO: PREENCHER
-MOUNTS_DENTRO: PREENCHER
+ENTRADAS_PROC_DENTRO: PREENCHER
 ```

@@ -63,8 +63,8 @@
             <tr><td>19h40</td><td><strong>Ciclo 1</strong> Isolamento de processos + Atividade 1 · <strong>Ciclo 2</strong> Imagem, camadas e efemeridade + Atividade 2 · <strong>Ciclo 3</strong> Dockerfile e build + Atividade 3</td></tr>
             <tr><td>20h40</td><td>Quiz 1</td></tr>
             <tr><td>20h50</td><td>Intervalo (30 minutos)</td></tr>
-            <tr><td>21h20</td><td>Quizzes 2 e 3</td></tr>
-            <tr><td>21h35</td><td><strong>Ciclo 4</strong> Multi-stage + Atividade 4 · <strong>Ciclo 5</strong> Volumes + Atividade 5 · <strong>Ciclo 6</strong> Network e observação + Atividade 6 · <strong>Ciclo 7</strong> Registry e Docker Hub + Atividade 7</td></tr>
+            <tr><td>21h20</td><td><strong>Ciclo 4</strong> Multi-stage + Atividade 4 e Quiz 2 · <strong>Ciclo 5</strong> Volumes + Atividade 5 e Quiz 3</td></tr>
+            <tr><td>22h13</td><td><strong>Ciclo 6</strong> Network e observação + Atividade 6 · <strong>Ciclo 7</strong> Registry e Docker Hub + Atividade 7</td></tr>
             <tr><td>22h35</td><td>Agent Skills: conceito e demonstração</td></tr>
             <tr><td>22h42</td><td>Entrega no formulário</td></tr>
           </tbody>
@@ -339,7 +339,7 @@ docker run --rm hello-world</code></pre>
               </rect>
             </g>
 
-            <g font-size="13" fill="#555">
+            <g font-size="13" fill="#555" stroke="#fff" stroke-width="4" paint-order="stroke">
               <text x="560" y="140" opacity="0">pid: vira o PID 1 do seu próprio mundo
                 <animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.1;0.2;1" dur="8s" repeatCount="indefinite"/>
               </text>
@@ -570,7 +570,7 @@ docker run --rm --name isolado alpine sh -c 'echo "PID_DENTRO=$$"; hostname; ls 
 
 # Terminal 2: o MESMO processo, agora visto do host
 docker inspect -f '{{.State.Pid}}' isolado</code></pre>
-          <p style="margin:0; font-size:0.66em;">Registre em <span class="mono">etapas/01-isolamento/RESPOSTAS.md</span>: <span class="mono">PID_DENTRO</span> (o número baixo do Terminal 1), <span class="mono">PID_FORA</span> (o número alto do Terminal 2), <span class="mono">HOSTNAME_DENTRO</span> e <span class="mono">MOUNTS_DENTRO</span> (a contagem de <span class="mono">/proc</span>). Depois: <span class="mono">python3 verificar.py --etapa 1</span> e o commit <span class="mono">feat(etapa-1): isolamento de processos</span>.</p>
+          <p style="margin:0; font-size:0.66em;">Registre em <span class="mono">etapas/01-isolamento/RESPOSTAS.md</span>: <span class="mono">PID_DENTRO</span> (o número baixo do Terminal 1), <span class="mono">PID_FORA</span> (o número alto do Terminal 2), <span class="mono">HOSTNAME_DENTRO</span> e <span class="mono">ENTRADAS_PROC_DENTRO</span> (a contagem de <span class="mono">/proc</span>). Depois: <span class="mono">python3 verificar.py --etapa 1</span> e o commit <span class="mono">feat(etapa-1): isolamento de processos</span>.</p>
           <p style="margin:8px 0 0; font-size:0.62em; border-top:1px solid rgba(255,255,255,0.2); padding-top:8px;"><strong style="color:var(--fiap-pink);">O que você acabou de provar:</strong> O mesmo processo tem PID 1 dentro do container e um PID alto no host: o namespace de PID existindo diante dos seus olhos. Container é processo, não máquina.</p>
         </div>
 
@@ -721,16 +721,22 @@ docker inspect -f '{{.State.Pid}}' isolado</code></pre>
               <rect x="540" y="90" width="160" height="50" rx="8" fill="#f2f2f2" stroke="#999" stroke-width="2"/><text x="620" y="120" text-anchor="middle" fill="#555">stopped</text>
               <rect x="760" y="90" width="110" height="50" rx="8" fill="#333"/><text x="815" y="120" text-anchor="middle" fill="#fff">fim</text>
             </g>
-            <g stroke="#555" stroke-width="2" fill="none" marker-end="none">
-              <path d="M 200 105 L 290 105"/>
-              <path d="M 450 105 L 540 105"/>
-              <path d="M 540 125 C 500 165 420 165 450 130" />
-              <path d="M 700 105 L 760 105"/>
+            <defs>
+              <marker id="seta" viewBox="0 0 10 10" refX="9" refY="5"
+                      markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#555"/>
+              </marker>
+            </defs>
+            <g stroke="#555" stroke-width="2" fill="none" marker-end="url(#seta)">
+              <path d="M 200 105 L 286 105"/>
+              <path d="M 450 105 L 536 105"/>
+              <path d="M 590 140 C 560 185 480 185 420 144"/>
+              <path d="M 700 105 L 756 105"/>
             </g>
             <g font-size="12" fill="#555">
               <text x="245" y="95" text-anchor="middle">start</text>
               <text x="495" y="95" text-anchor="middle">stop</text>
-              <text x="485" y="175" text-anchor="middle">start de novo: os dados da camada gravável ainda estão lá</text>
+              <text x="500" y="200" text-anchor="middle">start de novo: os dados da camada gravável ainda estão lá</text>
               <text x="730" y="95" text-anchor="middle">rm</text>
               <text x="120" y="70" text-anchor="middle">docker create / run</text>
               <text x="815" y="70" text-anchor="middle">camada gravável destruída</text>
@@ -792,7 +798,7 @@ docker inspect -f '{{.State.Pid}}' isolado</code></pre>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Atividade 2 de 7: o coletor sem Dockerfile, e a prova da efemeridade</h2>
+          <h2>Atividade 2 de 7: a prova da efemeridade</h2>
         </div>
 
         <div class="exercise-container" style="padding:16px 22px;">
@@ -1057,16 +1063,16 @@ python3 verificar.py --etapa 3</code></pre>
         </div>
 
         <div class="quiz-container" data-quiz-key="aula03-quiz1">
-          <div class="quiz-question">Qual a principal vantagem do build multi-stage no Dockerfile para ambientes corporativos?</div>
+          <div class="quiz-question">O que acontece com os dados salvos dentro do sistema de arquivos de um container quando ele é destruído sem o uso de volumes?</div>
           <ul class="quiz-options">
-            <li data-correct="false"><span class="option-letter">A</span> Executar o build em paralelo usando todos os núcleos da máquina, encurtando o tempo de compilação.</li>
-            <li data-correct="true"><span class="option-letter">B</span> Separar o ambiente de compilação do ambiente de execução final: a imagem de produção sai sem compilador, sem gerenciador de pacotes e sem código-fonte desnecessário, mais leve e mais segura.</li>
-            <li data-correct="false"><span class="option-letter">C</span> Permitir que vários processos rodem dentro do mesmo container, um por estágio.</li>
-            <li data-correct="false"><span class="option-letter">D</span> Dispensar o registry, porque cada estágio já embute a imagem final no host.</li>
+            <li data-correct="false"><span class="option-letter">A</span> O Docker move os dados automaticamente para uma área de backup no host antes de remover o container.</li>
+            <li data-correct="false"><span class="option-letter">B</span> Os dados são gravados de volta na imagem e reaparecem no próximo docker run.</li>
+            <li data-correct="false"><span class="option-letter">C</span> Nada acontece: o sistema de arquivos do container mora no host e sobrevive à remoção.</li>
+            <li data-correct="true"><span class="option-letter">D</span> Todos os dados da camada gravável são perdidos permanentemente, porque o container é efêmero por natureza.</li>
           </ul>
           <div class="quiz-feedback"
-               data-correct-msg="Correto. O estágio builder compila e resolve dependências; o runtime leva só o artefato pronto. É assim que a imagem do coletor deixa de carregar 1,6 GB de ferramental."
-               data-incorrect-msg="Incorreto. Multi-stage não é sobre paralelismo nem sobre processos: é sobre o que entra na imagem final. Build separado da execução, imagem leve, superfície de ataque menor.">
+               data-correct-msg="Correto. Foi a prova da Atividade 2: o arquivo escrito na camada gravável não existia mais depois do docker rm. Dado que importa mora em volume."
+               data-incorrect-msg="Incorreto. Não existe backup automático e a imagem nunca é alterada por um container. A camada gravável morre com o rm, como a Atividade 2 mostrou.">
           </div>
 
           <div class="quiz-toolbar">
@@ -1112,104 +1118,6 @@ python3 verificar.py --etapa 3</code></pre>
         </div>
       </section>
 
-      <!-- ==================== 30: QUIZ 2 ==================== -->
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div>
-        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area">
-          <div class="accent-bar"></div>
-          <h2>Quiz de Verificação</h2>
-        </div>
-
-        <div class="quiz-container" data-quiz-key="aula03-quiz2">
-          <div class="quiz-question">Qual a diferença entre um volume Docker e um bind mount, e quando usar cada um?</div>
-          <ul class="quiz-options">
-            <li data-correct="false"><span class="option-letter">A</span> O bind mount é mais rápido porque copia os arquivos para dentro da imagem no momento do build.</li>
-            <li data-correct="false"><span class="option-letter">B</span> Não há diferença prática: são dois nomes para o mesmo mecanismo de persistência.</li>
-            <li data-correct="true"><span class="option-letter">C</span> O volume é criado e gerenciado pelo Docker dentro do host, ideal para dados de produção; o bind mount mapeia uma pasta escolhida por você, ideal para o ciclo de desenvolvimento local.</li>
-            <li data-correct="false"><span class="option-letter">D</span> O volume só funciona em Linux, enquanto o bind mount funciona em qualquer sistema operacional.</li>
-          </ul>
-          <div class="quiz-feedback"
-               data-correct-msg="Correto. Volume: o Docker administra o ciclo de vida, como o logitech-telemetria da Atividade 5. Bind mount: você aponta a pasta, como o código-fonte na Atividade 2."
-               data-incorrect-msg="Incorreto. Nenhum dos dois copia para a imagem, e eles não são equivalentes: volume é gerenciado pelo Docker para dados; bind mount espelha uma pasta sua para desenvolvimento.">
-          </div>
-
-          <div class="quiz-toolbar">
-            <div class="quiz-vote">
-              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
-                <rect width="100" height="100" rx="6" fill="#fff"/>
-                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
-                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
-                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
-              </svg>
-              <div class="quiz-vote-text">
-                Aponte a câmera para votar
-                <span>Votação ao vivo ainda não publicada</span>
-              </div>
-            </div>
-
-            <div class="quiz-timer-box">
-              <button class="quiz-timer-btn" onclick="startTimer('quiz2Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
-              <span id="quiz2Timer">01:00</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="slide-footer">
-          <div class="footer-bar">03 – Verificação de Aprendizado</div>
-          <div class="footer-page">30</div>
-        </div>
-      </section>
-
-      <!-- ==================== 31: QUIZ 3 ==================== -->
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div>
-        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area">
-          <div class="accent-bar"></div>
-          <h2>Quiz de Verificação</h2>
-        </div>
-
-        <div class="quiz-container" data-quiz-key="aula03-quiz3">
-          <div class="quiz-question">O que acontece com os dados salvos dentro do sistema de arquivos de um container quando ele é destruído sem o uso de volumes?</div>
-          <ul class="quiz-options">
-            <li data-correct="false"><span class="option-letter">A</span> O Docker move os dados automaticamente para uma área de backup no host antes de remover o container.</li>
-            <li data-correct="false"><span class="option-letter">B</span> Os dados são gravados de volta na imagem e reaparecem no próximo docker run.</li>
-            <li data-correct="false"><span class="option-letter">C</span> Nada acontece: o sistema de arquivos do container mora no host e sobrevive à remoção.</li>
-            <li data-correct="true"><span class="option-letter">D</span> Todos os dados da camada gravável são perdidos permanentemente, porque o container é efêmero por natureza.</li>
-          </ul>
-          <div class="quiz-feedback"
-               data-correct-msg="Correto. Foi a prova da Atividade 2: o arquivo escrito na camada gravável não existia mais depois do docker rm. Dado que importa mora em volume."
-               data-incorrect-msg="Incorreto. Não existe backup automático e a imagem nunca é alterada por um container. A camada gravável morre com o rm, como a Atividade 2 mostrou.">
-          </div>
-
-          <div class="quiz-toolbar">
-            <div class="quiz-vote">
-              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
-                <rect width="100" height="100" rx="6" fill="#fff"/>
-                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
-                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
-                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
-              </svg>
-              <div class="quiz-vote-text">
-                Aponte a câmera para votar
-                <span>Votação ao vivo ainda não publicada</span>
-              </div>
-            </div>
-
-            <div class="quiz-timer-box">
-              <button class="quiz-timer-btn" onclick="startTimer('quiz3Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
-              <span id="quiz3Timer">01:00</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="slide-footer">
-          <div class="footer-bar">03 – Verificação de Aprendizado</div>
-          <div class="footer-page">31</div>
-        </div>
-      </section>
-
       <!-- ==================== 32: O PROBLEMA DO TAMANHO ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
@@ -1247,7 +1155,7 @@ python3 verificar.py --etapa 3</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">03 – Multi-Stage</div>
-          <div class="footer-page">32</div>
+          <div class="footer-page">30</div>
         </div>
       </section>
 
@@ -1301,7 +1209,7 @@ python3 verificar.py --etapa 3</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">03 – Multi-Stage</div>
-          <div class="footer-page">33</div>
+          <div class="footer-page">31</div>
         </div>
       </section>
 
@@ -1337,7 +1245,7 @@ python3 verificar.py --etapa 3</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">03 – Multi-Stage</div>
-          <div class="footer-page">34</div>
+          <div class="footer-page">32</div>
         </div>
       </section>
 
@@ -1380,7 +1288,7 @@ CMD ["python", "server_telemetry.py"]</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">03 – Multi-Stage</div>
-          <div class="footer-page">35</div>
+          <div class="footer-page">33</div>
         </div>
       </section>
 
@@ -1412,10 +1320,60 @@ docker image ls --format '{{.Repository}}:{{.Tag}}  {{.Size}}' | grep -E 'coleto
 
         <div class="slide-footer">
           <div class="footer-bar">03 – Atividade 4</div>
-          <div class="footer-page">36</div>
+          <div class="footer-page">34</div>
         </div>
       </section>
 
+      <!-- ==================== QUIZ 2 (após a Atividade 4) ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container" data-quiz-key="aula03-quiz2">
+          <div class="quiz-question">Qual a principal vantagem do build multi-stage no Dockerfile para ambientes corporativos?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> Executar o build em paralelo usando todos os núcleos da máquina, encurtando o tempo de compilação.</li>
+            <li data-correct="true"><span class="option-letter">B</span> Separar o ambiente de compilação do ambiente de execução final: a imagem de produção sai sem compilador, sem gerenciador de pacotes e sem código-fonte desnecessário, mais leve e mais segura.</li>
+            <li data-correct="false"><span class="option-letter">C</span> Permitir que vários processos rodem dentro do mesmo container, um por estágio.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Dispensar o registry, porque cada estágio já embute a imagem final no host.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. O estágio builder compila e resolve dependências; o runtime leva só o artefato pronto. É assim que a imagem do coletor deixa de carregar 1,6 GB de ferramental."
+               data-incorrect-msg="Incorreto. Multi-stage não é sobre paralelismo nem sobre processos: é sobre o que entra na imagem final. Build separado da execução, imagem leve, superfície de ataque menor.">
+          </div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz2Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz2Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Verificação de Aprendizado</div>
+          <div class="footer-page">35</div>
+        </div>
+      </section>
+
+      
       <!-- ==================== 37: ONDE OS DADOS MORREM ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
@@ -1430,7 +1388,7 @@ docker image ls --format '{{.Repository}}:{{.Tag}}  {{.Size}}' | grep -E 'coleto
         <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:13px; margin-top:10px;">
           <div class="concept-card" style="padding:13px 16px;">
             <h4>Não é bug do Docker</h4>
-            <p style="font-size:0.66em;">É o comportamento de projeto que a Atividade 2 provou e o Quiz 3 acabou de revisar. Efemeridade é o padrão.</p>
+            <p style="font-size:0.66em;">É o comportamento de projeto que a Atividade 2 provou e o Quiz 1 revisou antes do intervalo. Efemeridade é o padrão.</p>
           </div>
           <div class="concept-card" style="padding:13px 16px;">
             <h4>É decisão de arquitetura</h4>
@@ -1449,7 +1407,7 @@ docker image ls --format '{{.Repository}}:{{.Tag}}  {{.Size}}' | grep -E 'coleto
 
         <div class="slide-footer">
           <div class="footer-bar">03 – Volumes</div>
-          <div class="footer-page">37</div>
+          <div class="footer-page">36</div>
         </div>
       </section>
 
@@ -1500,7 +1458,7 @@ docker image ls --format '{{.Repository}}:{{.Tag}}  {{.Size}}' | grep -E 'coleto
 
         <div class="slide-footer">
           <div class="footer-bar">03 – Volumes</div>
-          <div class="footer-page">38</div>
+          <div class="footer-page">37</div>
         </div>
       </section>
 
@@ -1535,7 +1493,7 @@ docker volume prune                               # remove os órfãos, com conf
 
         <div class="slide-footer">
           <div class="footer-bar">03 – Volumes</div>
-          <div class="footer-page">39</div>
+          <div class="footer-page">38</div>
         </div>
       </section>
 
@@ -1568,10 +1526,60 @@ docker run --rm -v logitech-telemetria:/dados alpine \
 
         <div class="slide-footer">
           <div class="footer-bar">03 – Atividade 5</div>
+          <div class="footer-page">39</div>
+        </div>
+      </section>
+
+      <!-- ==================== QUIZ 3 (após a Atividade 5) ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container" data-quiz-key="aula03-quiz3">
+          <div class="quiz-question">Qual a diferença entre um volume Docker e um bind mount, e quando usar cada um?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> O bind mount é mais rápido porque copia os arquivos para dentro da imagem no momento do build.</li>
+            <li data-correct="false"><span class="option-letter">B</span> Não há diferença prática: são dois nomes para o mesmo mecanismo de persistência.</li>
+            <li data-correct="true"><span class="option-letter">C</span> O volume é criado e gerenciado pelo Docker dentro do host, ideal para dados de produção; o bind mount mapeia uma pasta escolhida por você, ideal para o ciclo de desenvolvimento local.</li>
+            <li data-correct="false"><span class="option-letter">D</span> O volume só funciona em Linux, enquanto o bind mount funciona em qualquer sistema operacional.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. Volume: o Docker administra o ciclo de vida, como o logitech-telemetria que você acabou de criar na Atividade 5. Bind mount: você aponta a pasta, como o código-fonte na Atividade 2."
+               data-incorrect-msg="Incorreto. Nenhum dos dois copia para a imagem, e eles não são equivalentes: volume é gerenciado pelo Docker para dados; bind mount espelha uma pasta sua para desenvolvimento.">
+          </div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz3Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz3Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">03 – Verificação de Aprendizado</div>
           <div class="footer-page">40</div>
         </div>
       </section>
 
+      
       <!-- ==================== 41: REDES ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>

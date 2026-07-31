@@ -102,14 +102,14 @@ class TestePreencherReprova(TesteBase):
             "PID_DENTRO: PREENCHER\n"
             "PID_FORA: PREENCHER\n"
             "HOSTNAME_DENTRO: PREENCHER\n"
-            "MOUNTS_DENTRO: PREENCHER\n"
+            "ENTRADAS_PROC_DENTRO: PREENCHER\n"
         ))
         passou, motivo = verificar.etapa_1()
         self.assertFalse(passou)
         self.assertIn("PID_DENTRO", motivo)
         self.assertIn("PID_FORA", motivo)
         self.assertIn("HOSTNAME_DENTRO", motivo)
-        self.assertIn("MOUNTS_DENTRO", motivo)
+        self.assertIn("ENTRADAS_PROC_DENTRO", motivo)
 
     def test_etapa_2_reprova_com_container_id_preencher(self):
         self.escreve("etapas/02-imagem/RESPOSTAS.md", (
@@ -135,7 +135,7 @@ class TestePidDentroFora(TesteBase):
             "PID_DENTRO: 500\n"
             "PID_FORA: 500\n"
             "HOSTNAME_DENTRO: 0f19603ad7f1\n"
-            "MOUNTS_DENTRO: 22\n"
+            "ENTRADAS_PROC_DENTRO: 22\n"
         ))
         passou, motivo = verificar.etapa_1()
         self.assertFalse(passou)
@@ -146,7 +146,7 @@ class TestePidDentroFora(TesteBase):
             "PID_DENTRO: 7\n"
             "PID_FORA: 731\n"
             "HOSTNAME_DENTRO: 0f19603ad7f1\n"
-            "MOUNTS_DENTRO: 22\n"
+            "ENTRADAS_PROC_DENTRO: 22\n"
         ))
         passou, motivo = verificar.etapa_1()
         self.assertTrue(passou, motivo)
@@ -158,7 +158,7 @@ class TestePidDentroFora(TesteBase):
             "PID_DENTRO: 1\n"
             "PID_FORA: 2\n"
             "HOSTNAME_DENTRO: meucontainer\n"
-            "MOUNTS_DENTRO: 22\n"
+            "ENTRADAS_PROC_DENTRO: 22\n"
         ))
         passou, motivo = verificar.etapa_1()
         self.assertFalse(passou)

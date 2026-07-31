@@ -108,6 +108,26 @@
       var msg = fb.dataset.correctMsg || '';
       fb.innerHTML = '<strong>Resposta:</strong> ' + msg;
     });
+
+    // Congela as animações SMIL num quadro em que tudo está visível.
+    // Sem isso, o PDF captura o instante da impressão e camadas com
+    // opacity 0 no início do ciclo podem sair invisíveis ou parciais.
+    var svgs = document.querySelectorAll('svg');
+    svgs.forEach(function (svg) {
+      if (typeof svg.pauseAnimations !== 'function') return;
+      var animados = svg.querySelectorAll('animate, animateTransform, animateMotion');
+      if (!animados.length) return;
+      var maiorDur = 0;
+      animados.forEach(function (an) {
+        var dur = parseFloat(an.getAttribute('dur')) || 0;
+        if (dur > maiorDur) maiorDur = dur;
+      });
+      try {
+        svg.pauseAnimations();
+        // 92% do ciclo: depois do último keyTime de entrada, antes do reinício
+        svg.setCurrentTime(maiorDur > 0 ? maiorDur * 0.92 : 0);
+      } catch (e) { /* SVG sem timeline: segue sem congelar */ }
+    });
   }
 
   /**
