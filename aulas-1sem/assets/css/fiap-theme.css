@@ -1066,3 +1066,57 @@
   color: #eee;
 }
 
+/* Votação ao vivo (serviço Pulso). Injetado por client.js. */
+.pulso-area {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.pulso-qr {
+  width: 110px;
+  height: 110px;
+  border-radius: 8px;
+  background: #fff;
+  padding: 6px;
+}
+
+.pulso-texto {
+  font-size: 15px;
+  font-weight: 600;
+  color: #444;
+}
+
+.pulso-contador {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--fiap-pink, #ED145B);
+}
+
+.quiz-options li {
+  position: relative;
+  overflow: hidden;
+}
+
+.pulso-barra {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(237, 20, 91, 0.16);
+  transition: width 420ms ease-out;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.pulso-percentual {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--fiap-pink, #ED145B);
+  z-index: 1;
+}
+
