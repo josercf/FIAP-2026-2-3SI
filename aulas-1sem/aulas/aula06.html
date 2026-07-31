@@ -652,7 +652,7 @@ class EstrategiaFrete(Protocol):
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Uma classe por algoritmo, com a tabela de preços da LogiTech <a href="#/ref-slide" class="ref-badge" title="Ver referências">[3]</a></h2>
+          <h2>Uma classe por algoritmo, com os preços da LogiTech <a href="#/ref-slide" class="ref-badge" title="Ver referências">[3]</a></h2>
         </div>
 
         <pre class="code-compact" style="margin-top:4px;"><code class="language-python">class FreteExpresso:
@@ -1179,7 +1179,7 @@ export class AdaptadorRastreioLegado {
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Quatro padrões que embrulham objetos, com fins diferentes <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+          <h2>Quatro padrões que embrulham objetos <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
         </div>
 
         <table class="compact-table">
@@ -1311,7 +1311,7 @@ export class AdaptadorRastreioLegado {
           <h2>O primeiro decorador: <span class="mono">ComLog</span> <a href="#/ref-slide" class="ref-badge" title="Ver referências">[4]</a></h2>
         </div>
 
-        <pre class="code-compact" style="margin-top:4px;"><code class="language-typescript">export class ComLog implements Enviador {
+        <pre class="code-compact" style="margin-top:3px; font-size:0.46em;"><code class="language-typescript">export class ComLog implements Enviador {
   constructor(private readonly interno: Enviador,
               private readonly log: Registrador) {}
 
@@ -1331,7 +1331,7 @@ export class AdaptadorRastreioLegado {
   }
 }</code></pre>
 
-        <div class="takeaway" style="margin-top:6px;">
+        <div class="takeaway" style="margin-top:3px; padding-top:6px; padding-bottom:6px;">
           <span class="takeaway-label">As duas linhas que separam decorador de remendo</span>
           <p><span class="mono">return resultado</span> sem alterar nada, e <span class="mono">throw erro</span> em vez de engolir. Decorador <strong>observa</strong> e acrescenta; quem decide o que fazer com a falha é a camada de cima. O <span class="mono">instanceof Error</span> não é enfeite: com <span class="mono">strict</span> ligado, o TypeScript tipa o capturado como <span class="mono">unknown</span> e recusa <span class="mono">erro.message</span> direto.</p>
         </div>
@@ -1987,7 +1987,7 @@ TODO-6  notificacoes      ComRetentativa empilhável sobre o ComLog</code></pre>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Passo 0: os três serviços de pé, antes de escrever qualquer linha</h2>
+          <h2>Passo 0: os três serviços de pé, antes de codar</h2>
         </div>
 
         <div class="exercise-container" style="padding:16px 22px;">
@@ -2182,9 +2182,9 @@ git commit -am "feat(todo-5): ComLog ao redor do enviador"</code></pre>
           <h2>Passo 6, <span class="mono">TODO-6</span>: <span class="mono">ComRetentativa</span> por fora do log</h2>
         </div>
 
-        <div class="exercise-container" style="padding:16px 22px;">
+        <div class="exercise-container" style="padding:11px 18px;">
           <h3>Mesmo arquivo · 10 minutos · é a prova da aula</h3>
-          <pre style="margin:0 0 8px; font-size:0.48em;"><code class="language-typescript">let ultimoErro: unknown;
+          <pre style="margin:0 0 8px; font-size:0.44em;"><code class="language-typescript">let ultimoErro: unknown;
 for (let tentativa = 1; tentativa &lt;= this.maxTentativas; tentativa += 1) {
   try {
     const resultado = await this.interno.enviar(notificacao);
@@ -2195,10 +2195,10 @@ for (let tentativa = 1; tentativa &lt;= this.maxTentativas; tentativa += 1) {
   }
 }
 throw ____________;</code></pre>
-          <pre style="margin:0 0 8px; font-size:0.48em;"><code class="language-bash">cd servicos/notificacoes && npx vitest run tests/empilhamento.test.ts && cd ../..
+          <pre style="margin:0 0 8px; font-size:0.44em;"><code class="language-bash">cd servicos/notificacoes && npx vitest run tests/empilhamento.test.ts && cd ../..
 python3 verificar.py --criterio 6
 git commit -am "feat(todo-6): ComRetentativa empilhavel"</code></pre>
-          <p style="margin:0; font-size:0.6em;">O teste lê <span class="mono">enviadores.ts</span> do disco e reprova se aparecer log ou retentativa lá dentro. Copiem as quatro linhas de log para <span class="mono">docs/EVIDENCIAS.md</span>.</p>
+          <p style="margin:0; font-size:0.55em;">O teste lê <span class="mono">enviadores.ts</span> do disco e reprova se aparecer log ou retentativa lá dentro. Copiem as quatro linhas de log para <span class="mono">docs/EVIDENCIAS.md</span>.</p>
           <p class="fecho"><strong>O contraste que importa:</strong> duas camadas empilhadas, quatro linhas de log, e <span class="mono">enviadores.ts</span> com a mesma impressão digital do início da noite.</p>
         </div>
 

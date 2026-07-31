@@ -678,7 +678,7 @@ pedido.setEnderecoEntrega("");</code></pre>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>S · Responsabilidade Única: quantas pessoas mandam nesta classe? <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+          <h2>S · Responsabilidade Única: quem manda nesta classe? <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
         </div>
 
         <figure class="slide-figure">
@@ -1408,7 +1408,7 @@ public class ConectorFaturamentoFactory {
           <p style="font-size:0.62em; margin:0;">Repare no que a fábrica <strong>não</strong> tem: nenhum <span class="mono">if</span>, nenhum nome de tipo de cliente escrito no código dela. Quem sabe qual tipo atende é cada conector, no seu próprio arquivo.</p>
         </div>
 
-        <div class="takeaway">
+        <div class="takeaway" style="margin-top:4px; padding-top:7px; padding-bottom:7px;">
           <span class="takeaway-label">Takeaway</span>
           <p>Factory Method resolve uma pergunta só: quem tem o direito de decidir qual implementação usar. Tirar essa decisão da regra de negócio é o que a torna fechada para modificação.</p>
         </div>
@@ -1992,7 +1992,7 @@ public FaturaService(IFaturaRepository r) { }</code></pre>
           <h2>Passo 1 de 8: banco de pé e os dois serviços respondendo</h2>
         </div>
 
-        <div class="exercise-container" style="padding:16px 22px;">
+        <div class="exercise-container" style="padding:11px 18px;">
           <h3>O PostgreSQL sobe do jeito que vocês aprenderam na Aula 03</h3>
           <pre style="margin:0 0 9px; font-size:0.46em;"><code class="language-bash">docker network create logitech-net 2>/dev/null || true
 
