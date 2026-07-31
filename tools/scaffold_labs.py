@@ -93,8 +93,8 @@ LABS = [
         "aula": "Aula 07 - Docker Compose e AI Gateways (Strategy e Facade)",
         "data": "15/09/2026",
         "missao": "Orquestrar os oito servicos da plataforma LogiTech com Docker Compose e construir um AI Gateway (Facade e Strategy) com fallback real entre provedor remoto e modelo local.",
-        "entrega": ["docker-compose.yml", "servicos/ai-gateway/", "docs/EVIDENCIAS.md"],
-        "ports": [3000, 3001, 4000, 5080, 8000, 8080, 5432],
+        "entrega": ["docker-compose.yml", "docs/EVIDENCIAS.md"],
+        "ports": [3000, 3001, 4000, 5080, 8000, 8080, 8082],
     },
     {
         "n": "08", "slug": "agentes-worktrees", "img": "python", "docker": True,
