@@ -125,7 +125,12 @@ Consequência prática: **um conceito por slide**. Quando o conteúdo não coube
 </section>
 ```
 
-Classes disponíveis em `assets/css/fiap-theme.css`: `cover-slide`, `title-slide`, `content-slide`, `section-slide`, `break-slide`, `quiz-slide`, `exercise-slide`. Blocos: `concept-cards`/`concept-card`, `figure-split`, `slide-figure`, `timeline`, `takeaway`, `callout`, `side-by-side`, `flow-diagram`, `ref-badge`. Cor da marca: `--fiap-pink: #ED145B`.
+Classes disponíveis em `assets/css/fiap-theme.css`: `cover-slide`, `title-slide`, `content-slide`, `section-slide`, `break-slide`, `quiz-slide`, `exercise-slide`.
+
+**`exercise-slide` sozinha não herda o enquadramento do conteúdo:** o tema define
+título, rodapé e espaçamentos em `.content-slide`. Use sempre
+`class="exercise-slide content-slide"`, senão o slide estoura os 720px por falta
+das margens que o tema aplica. Isso custou uma rodada de correção na Aula 03. Blocos: `concept-cards`/`concept-card`, `figure-split`, `slide-figure`, `timeline`, `takeaway`, `callout`, `side-by-side`, `flow-diagram`, `ref-badge`. Cor da marca: `--fiap-pink: #ED145B`.
 
 ### Renumerar os rodapés
 
@@ -234,7 +239,24 @@ O `id` do timer precisa ser único por slide (`quiz1Timer`, `quiz2Timer`, `quiz3
 
 **Enunciado direto.** "Para que servem os Conventional Commits?" e não "Qual é a finalidade corporativa primordial de se implementar Conventional Commits em um pipeline de Engenharia de Software?".
 
-O QR é placeholder até o serviço de votação existir (ver `docs/adrs/ADR-001`). Nunca gere um QR que aponte para nada.
+### Votação ao vivo: o serviço Pulso está no ar
+
+Desde 31/07/2026 os quizzes se ligam à votação ao vivo (ADR-001, serviço em
+<https://vote.jrcf.dev>). São **dois acréscimos obrigatórios** em todo deck novo:
+
+1. No container de cada quiz, uma chave única por pergunta:
+   `<div class="quiz-container" data-quiz-key="aulaNN-quizN">`
+2. Antes de `</body>`, depois dos outros scripts:
+   `<script defer src="https://vote.jrcf.dev/client.js"></script>`
+
+O bloco do QR placeholder **continua no markup**: ele é o fallback quando o
+serviço está fora do ar, e o cliente o substitui quando responde. Nunca gere um
+QR estático apontando para nada.
+
+**O quiz vem depois do conteúdo que ele cobra.** Parece óbvio e já escapou: a
+revisão da Aula 03 encontrou dois quizzes perguntando sobre matéria que só
+seria dada depois do intervalo, porque a agenda tinha sido reordenada e os
+quizzes ficaram no lugar antigo. Ao mover conteúdo, confira cada quiz.
 
 ---
 
@@ -247,12 +269,20 @@ Estrutura, gerada por `tools/scaffold_labs.py`:
 ```
 .devcontainer/
   devcontainer.json    imagem oficial da stack + features
-  post-create.sh       dependências, instala Ollama, baixa qwen2.5:1.5b
+  post-create.sh       dependências, instala zstd + Ollama, baixa o modelo do lab
   post-start.sh        religa o Ollama a cada boot
-ai/ask.py              GitHub Models (GITHUB_TOKEN do Codespaces) -> Ollama local
+ai/ask.py              cliente do Ollama local (backend único, ADR-005)
 docs/
 README.md
 ```
+
+O **GitHub Models foi retirado em 30/07/2026** (ADR-005): o Ollama local do
+devcontainer é o único backend de IA, com modelo por laboratório definido em
+`tools/scaffold_labs.py`. Nunca escreva material que mande o aluno exportar
+`GITHUB_TOKEN` para usar IA.
+
+Todo `curl` de provisionamento leva `--connect-timeout` e `--max-time`: sessões
+inteiras já travaram em download sem timeout contra releases do GitHub.
 
 ### Entregáveis com número
 
@@ -268,7 +298,13 @@ Todo README de lab termina com: critérios de aceitação em tabela, como entreg
 
 Um slide por passo, não um slide com quatro cards. O aluno acompanha o slide enquanto executa; ele precisa da tela inteira dedicada ao passo em que está.
 
-Link de entrega da Aula 01: `https://forms.cloud.microsoft/r/sy6dHWsBHJ`.
+Formulários de entrega já publicados: Aula 01 `https://forms.cloud.microsoft/r/sy6dHWsBHJ`,
+Aula 02 `https://forms.cloud.microsoft/r/ykGYKsPAj7`, Aula 03 `https://forms.cloud.microsoft/r/LnU2cEXXHQ`.
+
+Quando o formulário da aula **ainda não existir**, monte o slide de entrega com o
+mesmo layout, trocando o `<iframe>` por um marcador visível dizendo que a URL
+será publicada antes da aula, e registre a pendência no relatório final. Não
+invente URL de formulário e não reaproveite a de outra aula.
 
 ---
 
