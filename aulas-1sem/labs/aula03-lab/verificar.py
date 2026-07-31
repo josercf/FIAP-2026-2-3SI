@@ -152,10 +152,20 @@ def etapa_1():
 
 def etapa_2():
     """Imagem, camadas e efemeridade: exige o ID real do container (não uma
-    frase qualquer) e a linha de 'docker image ls' mostrando a imagem base,
-    porque quando o aluno roda o verificador o container já foi destruído
-    de propósito (a etapa é sobre isso) e não há mais estado para reabrir e
-    conferir. É o limite descrito na tabela do relatório da Tarefa 4."""
+    frase qualquer) e confere de verdade, via 'docker image inspect', que a
+    imagem base foi de fato baixada. A imagem NÃO é destruída nesta etapa,
+    só o container é (é o próprio assunto da etapa), então isso é
+    verificável por máquina, ao contrário do container em si.
+
+    Antes desta correção a checagem da imagem base lia texto colado de
+    'docker image ls' num formato fixo de colunas. O Docker 29 mudou esse
+    formato (coluna única 'IMAGE' com repositório:tag já colados, em vez de
+    'REPOSITORY'/'TAG' separados), e a checagem passou a reprovar quem
+    colou a saída real e não editada do próprio terminal. Chamar
+    'docker image inspect' resolve isso na raiz: não depende de nenhum
+    formato de exibição, e ainda fecha um buraco que só ficava declarado
+    (a existência real da imagem, que não precisava ficar só no texto do
+    aluno)."""
     txt = ler("etapas/02-imagem/RESPOSTAS.md")
     if not txt:
         return False, "etapas/02-imagem/RESPOSTAS.md não existe."
@@ -164,12 +174,15 @@ def etapa_2():
             "Registre CONTAINER_ID em etapas/02-imagem/RESPOSTAS.md com o ID "
             "hexadecimal real do container (de docker ps ou docker inspect), "
             "não uma frase solta.")
-    if not re.search(r"^\s*python\s+3\.12-alpine\s+[0-9a-f]{6,64}",
-                      txt, re.M | re.I):
+    cod, _, erro = docker("image", "inspect", "python:3.12-alpine")
+    if cod == 124:
+        return False, erro
+    if cod != 0:
         return False, (
-            "Cole a linha de docker image ls mostrando a imagem "
-            "python:3.12-alpine (repositório, tag e IMAGE ID), não só o "
-            "nome da imagem citado em texto corrido.")
+            "A imagem python:3.12-alpine não está presente localmente "
+            "(docker image inspect falhou); rode o container da etapa 2 "
+            "com essa imagem antes de preencher o RESPOSTAS.md. Detalhe do "
+            "Docker:\n%s" % _ultimas_linhas(erro))
     if not re.search(r"ARQUIVO_APOS_RM:\s*(sumiu|ausente)", txt, re.I):
         return False, ("Falta a prova da efemeridade: ARQUIVO_APOS_RM deve "
                         "dizer que o arquivo sumiu depois do docker rm.")
