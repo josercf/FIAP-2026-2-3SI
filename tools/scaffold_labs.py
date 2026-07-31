@@ -28,6 +28,17 @@ def modelo_do_lab(lab):
     """Modelo local do laboratório, com o global como padrão."""
     return lab.get("modelo", MODELO_SLM)
 
+
+def embedding_do_lab(lab):
+    """Modelo de embedding, quando o laboratório precisar de um.
+
+    Só a Aula 12 precisa hoje: modelo de geração não produz vetor de busca. A
+    escolha está fixada na ADR-008 do acervo, junto com a dimensão da coluna,
+    porque trocar de modelo com dimensão diferente obriga a recriar a coluna e
+    reindexar.
+    """
+    return lab.get("embedding")
+
 # Imagens oficiais de devcontainer da Microsoft
 IMG = {
     "python": "mcr.microsoft.com/devcontainers/python:1-3.12-bookworm",
@@ -130,30 +141,56 @@ LABS = [
     },
     {
         "n": "10", "slug": "testes-react", "img": "node", "docker": False,
+        "preparo": (
+            '# O portal sobe com dependencias instaladas: npm install dentro do bloco\n'
+            '# pratico de 60 minutos custaria o que a aula tem de mais escasso.\n'
+            'if [ -f portal/package-lock.json ]; then npm ci --prefix portal || true; fi\n'
+            'pip install --user pytest >/dev/null 2>&1 || true'
+        ),
+        "extras": ["python"],
         "titulo": "Testes de Unidade (TDD e Mocks) e Frontend React",
         "aula": "Aula 10 - Testes de Unidade e Frontend Enterprise I",
         "data": "06/10/2026",
-        "missao": "Desenvolver a SPA de rastreamento da LogiTech em React com TypeScript, guiada por testes (Vitest e Testing Library).",
-        "entrega": ["src/", "src/__tests__/"],
-        "ports": [5173],
+        "missao": "Escrever a suite de testes de unidade das regras de frete da LogiTech, com Stub, Mock e Spy, e construir o Portal do Cliente em React com TypeScript.",
+        "entrega": ["portal/src/", "servicos/frete/tests/", "docs/EVIDENCIAS.md"],
+        "ports": [5173, 8000, 8080],
     },
     {
         "n": "11", "slug": "angular-rxjs", "img": "node", "docker": False,
+        "preparo": (
+            '# Angular e .NET pre-aquecidos: sem isto o bloco pratico comeca com a\n'
+            '# turma olhando barra de progresso.\n'
+            'if [ -f painel-admin/package-lock.json ]; then npm ci --prefix painel-admin || true; fi\n'
+            'if [ -d servicos/faturamento ]; then dotnet build servicos/faturamento || true; fi\n'
+            'pip install --user pytest >/dev/null 2>&1 || true'
+        ),
+        "extras": ["python", "dotnet"],
         "titulo": "Frontend Angular com Observer Pattern e RxJS",
         "aula": "Aula 11 - Frontend Enterprise II: Angular",
         "data": "13/10/2026",
-        "missao": "Construir o dashboard administrativo da LogiTech em Angular, consumindo a telemetria em tempo real com RxJS (Observer Pattern).",
-        "entrega": ["src/app/"],
-        "ports": [4200],
+        "missao": "Construir o painel administrativo da LogiTech em Angular, com a frota em tempo real e o faturamento em dois fluxos concorrentes, aplicando o Observer Pattern com RxJS.",
+        "entrega": ["painel-admin/src/app/", "docs/EVIDENCIAS.md"],
+        "ports": [3000, 4200, 5080, 8082],
     },
     {
         "n": "12", "slug": "rag-mcp", "img": "python", "docker": True,
-        "titulo": "Persistencia Vetorial com pgvector, RAG e MCP",
-        "aula": "Aula 12 - pgvector, RAG e Model Context Protocol",
+        "preparo": (
+            '# A imagem do Postgres aqui e a pgvector: a extensao precisa existir\n'
+            '# para o CREATE EXTENSION do Passo 1 ter o que ativar.\n'
+            'if [ -f .env.exemplo ] && [ ! -f .env ]; then cp .env.exemplo .env; fi\n'
+            'pip install --user pytest >/dev/null 2>&1 || true'
+        ),
+        "extras": ["node"],
+        "embedding": "paraphrase-multilingual",
+        "titulo": "PostgreSQL do relacional ao vetorial: SQL, pgvector, RAG e MCP",
+        "aula": "Aula 12 - PostgreSQL: do relacional ao vetorial",
         "data": "20/10/2026",
-        "missao": "Indexar os contratos de frete da LogiTech em pgvector, montar um pipeline RAG e expor a busca como um servidor MCP.",
-        "entrega": ["src/rag_pgvector.py", "src/mcp_server.py"],
-        "ports": [5432, 8000],
+        "missao": "Abrir no psql o banco que os servicos do Modulo II vinham usando por ORM, escrever a DDL do acervo de contratos a mao, indexar em pgvector, montar o pipeline RAG com citacao da fonte e expor a plataforma por um servidor MCP.",
+        "entrega": [
+            "sql/02-conhecimento.sql", "sql/03-consultas.sql", "sql/05-indice.sql",
+            "rag/busca.py", "mcp-logitech/src/servidor.ts", "docs/EVIDENCIAS.md",
+        ],
+        "ports": [5432, 8010],
     },
     {
         "n": "14", "slug": "oauth-jwt", "img": "node", "docker": True,
@@ -339,6 +376,25 @@ def devcontainer(lab):
     return json.dumps(cfg, indent=2, ensure_ascii=False) + "\n"
 
 
+def bloco_embedding(lab):
+    """Trecho do post-create que baixa o modelo de embedding, quando houver.
+
+    Fica vazio para os doze laboratórios que não fazem busca vetorial, para o
+    post-create deles não carregar passo morto.
+    """
+    modelo = embedding_do_lab(lab)
+    if not modelo:
+        return ""
+    return (
+        '\n# --- Modelo de embedding ---------------------------------------------------\n'
+        '# Modelo de geracao nao produz vetor de busca: sao dois modelos, com papeis\n'
+        '# diferentes. A escolha e a dimensao estao fixadas na ADR-008 do acervo.\n'
+        'echo "==> Baixando o modelo de embedding {m} (uso unico, fica em cache)"\n'
+        'ollama pull {m} \\\n'
+        '  || echo "    AVISO: falha ao baixar. Rode \'ollama pull {m}\' manualmente."\n'
+    ).format(m=modelo)
+
+
 POST_CREATE = r'''#!/usr/bin/env bash
 # Preparacao do ambiente do laboratorio. Roda uma vez, na criacao do container.
 set -euo pipefail
@@ -375,7 +431,7 @@ done
 
 echo "==> Baixando o modelo {modelo} (uso unico, fica em cache)"
 ollama pull {modelo} || echo "    AVISO: falha ao baixar o modelo. Rode 'ollama pull {modelo}' manualmente."
-
+{embedding}
 # --- Verificacao do backend de IA -----------------------------------------
 if curl -sf --connect-timeout 5 http://localhost:11434/api/tags >/dev/null 2>&1 \
    && ollama list 2>/dev/null | grep -q "{modelo}"; then
@@ -640,6 +696,7 @@ def main():
                 nome=nome, stack=STACK_CMDS[lab["img"]],
                 preparo=("\n" + lab["preparo"]) if lab.get("preparo") else "",
                 modelo=modelo_do_lab(lab),
+                embedding=bloco_embedding(lab),
             ),
             executable=True,
         )
