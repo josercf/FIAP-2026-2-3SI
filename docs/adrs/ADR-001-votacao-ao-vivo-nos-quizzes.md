@@ -1,7 +1,7 @@
 # ADR-001: Votação ao vivo nos quizzes em serviço apartado
 
 - **Data:** 2026-07-30
-- **Status:** Proposta
+- **Status:** Aceita
 - **Decisores:** Prof. José Romualdo da Costa Filho
 
 ## Contexto
@@ -71,15 +71,27 @@ Hospedagem no `home01` (Ubuntu 24.04, 4 vCPU, 7,7 GB RAM), aproveitando o que j�
 **Negativas**
 - Dois repositórios para manter e uma integração para versionar entre eles.
 - O contrato da API vira uma dependência externa dos decks; mudança quebrando exige tocar nos 13.
-- Enquanto o serviço não existir, os slides exibem um QR placeholder, que precisa ser claramente identificado como tal para não frustrar a turma.
+- Enquanto o serviço não estiver publicado em `vote.jrcf.dev`, os slides exibem um QR placeholder, que precisa ser claramente identificado como tal para não frustrar a turma.
 
 ## Estado da implementação
 
-Nesta data foi entregue apenas a parte que não depende do serviço:
+O serviço está implementado e testado no repositório próprio
+<https://github.com/josercf/pulso>. O deck da aula 01 já está com o
+`data-quiz-key` nos três quizzes e com o script do cliente, e a integração foi
+verificada de ponta a ponta contra uma instância local do serviço (contador ao
+vivo sem revelar distribuição, revelação com as barras percentuais, e
+degradação limpa com o serviço fora do ar).
 
-- `assets/js/fiap-quiz.js` passou a reconhecer o padrão `<li data-correct>` usado pelos decks, com feedback vindo de `data-correct-msg` / `data-incorrect-msg`.
-- `assets/css/fiap-theme.css` ganhou os estilos de `.quiz-container`, `.quiz-question`, `.quiz-options li`, `.option-letter` e os estados de resposta, que eram referenciados pelos decks e nunca existiram.
-- Timer regressivo de 60 segundos com botão de play em cada quiz, unificado em `startTimer(elementId, segundos)`.
-- Área de votação com QR placeholder, pronta para receber o `data-quiz-session`.
+O que falta é a publicação: o subdomínio `vote.jrcf.dev` ainda não está no ar
+no `home01`. Até essa publicação acontecer, a aula 01 roda em produção no modo
+local de sempre, com o QR placeholder, exatamente como qualquer outra aula sem
+o `data-quiz-key`. As demais aulas recebem o `data-quiz-key` e o script
+conforme forem revisadas.
 
-O serviço em si permanece como trabalho futuro.
+No acervo, o que sustenta o modo local continua valendo:
+
+- `assets/js/fiap-quiz.js` reconhece o padrão `<li data-correct>`, com feedback vindo de
+  `data-correct-msg` e `data-incorrect-msg`.
+- `assets/css/fiap-theme.css` traz os estilos de `.quiz-container` e os estados de resposta,
+  mais as classes `.pulso-*` que o cliente do serviço injeta.
+- Timer regressivo de 60 segundos com botão de play em cada quiz.

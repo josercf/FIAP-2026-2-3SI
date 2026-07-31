@@ -1066,7 +1066,7 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
           <h2>Quiz de Verificação</h2>
         </div>
 
-        <div class="quiz-container">
+        <div class="quiz-container" data-quiz-key="aula01-quiz1">
           <div class="quiz-question">Para que servem os Conventional Commits?</div>
           <ul class="quiz-options">
             <li data-correct="false"><span class="option-letter">A</span> Aumentar a velocidade física de upload para os servidores da nuvem.</li>
@@ -1362,7 +1362,7 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
           <h2>Quiz de Verificação</h2>
         </div>
 
-        <div class="quiz-container">
+        <div class="quiz-container" data-quiz-key="aula01-quiz2">
           <div class="quiz-question">O que define um Bounded Context?</div>
           <ul class="quiz-options">
             <li data-correct="false"><span class="option-letter">A</span> O limite quantitativo de memória alocada por um container corporativo no Kubernetes.</li>
@@ -1411,7 +1411,7 @@ git commit -m "docs(api): atualiza o payload no Swagger"</code></pre>
           <h2>Quiz de Verificação</h2>
         </div>
 
-        <div class="quiz-container">
+        <div class="quiz-container" data-quiz-key="aula01-quiz3">
           <div class="quiz-question">Por que usar UDP, e não TCP, na telemetria de um rastreador GPS?</div>
           <ul class="quiz-options">
             <li data-correct="false"><span class="option-letter">A</span> Porque o protocolo UDP inclui funcionalidades extras de criptografia de ponta a ponta intrínsecas ao pacote.</li>
@@ -1842,5 +1842,9 @@ git push origin main</code></pre>
     });
     // startTimer(elementId, segundos) vem de ../assets/js/fiap-quiz.js
   </script>
+  <!-- Cliente do serviço Pulso: liga os quizzes com data-quiz-key à votação ao vivo.
+       Carregamento assíncrono (defer) e opcional: se o host estiver fora do ar
+       ou o script falhar, o quiz continua funcionando no modo local de sempre. -->
+  <script defer src="https://vote.jrcf.dev/client.js"></script>
 </body>
 </html>
