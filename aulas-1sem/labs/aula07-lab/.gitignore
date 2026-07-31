@@ -9,3 +9,4 @@ dados/
 node_modules/
 bin/
 obj/
+.pytest_cache/
