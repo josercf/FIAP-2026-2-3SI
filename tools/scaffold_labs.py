@@ -308,6 +308,14 @@ echo "==> Configurando o laboratorio {nome}"
 # --- Ollama: SLM rodando dentro do proprio container -----------------------
 # Backend único de IA dos laboratórios, decisão registrada na ADR-005 do
 # acervo: o GitHub Models foi retirado do ar em 30/07/2026.
+# O instalador do Ollama extrai com zstd, que a imagem base não traz.
+if ! command -v zstd >/dev/null 2>&1; then
+  echo "==> Instalando o zstd, exigido pelo instalador do Ollama"
+  SUDO=""; command -v sudo >/dev/null 2>&1 && SUDO=sudo
+  $SUDO apt-get update -y >/dev/null 2>&1 || true
+  $SUDO apt-get install -y zstd \
+    || echo "    AVISO: não consegui instalar o zstd; o Ollama pode falhar."
+fi
 if ! command -v ollama >/dev/null 2>&1; then
   echo "==> Instalando o Ollama"
   curl -fsSL --connect-timeout 10 --max-time 600 https://ollama.com/install.sh | sh
