@@ -1,0 +1,9 @@
+# Versões herdadas da Aula 07, congeladas em dezembro de 2024.
+#
+# TODO-5b: o Trivy tem opinião sobre estas linhas. Não mexa antes de rodar a
+# varredura do Passo 5: o exercício é ver o relatório primeiro e mudar depois,
+# e não o contrário.
+fastapi==0.115.6
+uvicorn==0.34.0
+pydantic==2.10.4
+httpx==0.28.1

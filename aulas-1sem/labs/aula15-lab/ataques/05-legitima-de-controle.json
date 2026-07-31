@@ -1,0 +1,8 @@
+{
+  "messages": [
+    {
+      "role": "user",
+      "content": "Qual é o prazo para o cliente reclamar avaria em carga fracionada?"
+    }
+  ]
+}

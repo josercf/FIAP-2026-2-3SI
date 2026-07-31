@@ -1,0 +1,31 @@
+# GABARITO do TODO-5b, para `servicos/ai-gateway/requirements.txt` e
+# `servicos/rag/requirements.txt`.
+#
+#     cp resgate/requirements.txt servicos/ai-gateway/requirements.txt
+#     cp resgate/requirements.txt servicos/rag/requirements.txt
+#
+# O que o Trivy apontou nas duas imagens Python, na varredura de preparação
+# (30/07/2026):
+#
+#   CVE-2025-62727  HIGH  starlette 0.41.3  -> corrigida em 0.49.1
+#   CVE-2026-48818  HIGH  starlette 0.41.3  -> corrigida em 1.1.0
+#   CVE-2026-54283  HIGH  starlette 0.41.3  -> corrigida em 1.3.1
+#
+# Nenhuma delas está no `requirements.txt` que você recebeu, e é esse o ponto:
+# `starlette` é dependência **transitiva**, puxada pelo `fastapi`. Você nunca a
+# escolheu, e mesmo assim ela é sua.
+#
+# Por isso `pip install fastapi==0.115.6 && pip install -U starlette` não é a
+# correção: o `fastapi` 0.115.6 declara `starlette>=0.40.0,<0.42.0`, e forçar a
+# versão nova quebra a resolução de dependência. Quem manda na transitiva é
+# quem a declara. Subir o `fastapi` é o que libera a `starlette` corrigida:
+# o 0.141.1 declara `starlette>=0.46.0`, e o pip resolve para a 1.3.1.
+#
+# Medido depois da troca: **0 HIGH e 0 CRITICAL** nas duas imagens Python.
+#
+# `pydantic` sobe junto porque a versão 2.10.4 não roda com o `pydantic-core`
+# que o ecossistema novo instala.
+fastapi==0.141.1
+uvicorn==0.40.0
+pydantic==2.13.4
+httpx==0.28.1

@@ -1,0 +1,13 @@
+# Segredos
+.env
+
+# Artefatos de execução
+__pycache__/
+*.pyc
+node_modules/
+.pytest_cache/
+
+# Relatórios do Trivy: são gerados por `./varrer.sh` e podem ter dezenas de
+# milhares de linhas. O que entra no Git é o `docs/EXCECOES.md` e os números
+# de `docs/EVIDENCIAS.md`, que são a leitura humana do relatório.
+relatorios/*.json
