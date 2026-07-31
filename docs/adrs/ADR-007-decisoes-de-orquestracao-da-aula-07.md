@@ -71,7 +71,10 @@ mínimos, o build dos sete serviços leva 31,7 s e a plataforma fica saudável e
 O custo é real e não se esconde: a promessa da espiral é o aluno orquestrar **o
 que ele mesmo construiu**. Por isso o kit traz um **caminho de troca testado**:
 Dockerfiles multi-stage para os quatro serviços reais e um
-`docker-compose.override.yml` que os coloca no lugar dos mínimos. Quem completou
+`compose.reais.yml` que os coloca no lugar dos mínimos, composto por um segundo
+`-f`. O nome **não** é `docker-compose.override.yml` de propósito: com aquele
+nome o Compose o leria sozinho e o caminho padrão deixaria de ser o padrão, com
+o build longo caindo dentro da aula de quem não fez as Aulas 05 e 06. Quem completou
 as Aulas 05 e 06 troca e vê a própria implementação subir; quem não completou
 segue com os mínimos e não fica travado.
 

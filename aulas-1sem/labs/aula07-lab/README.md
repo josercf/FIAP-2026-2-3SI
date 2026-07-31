@@ -37,6 +37,12 @@ escrever.
 hoje é o YAML. Se um serviço não responde, o problema está no seu
 `docker-compose.yml`, não no código dele.
 
+> Os quatro serviços das Aulas 05 e 06 que estão em `servicos/` são **versões
+> mínimas**, escritas para caber no tempo desta aula. Os que vocês construíram
+> de verdade também sobem aqui, e o caminho está pronto e medido em
+> [Trocando pelos serviços reais das Aulas 05 e 06](#trocando-pelos-serviços-reais-das-aulas-05-e-06).
+> É leitura de depois do Passo 5: fora do tempo de aula.
+
 ---
 
 ## Pré-requisitos
@@ -288,6 +294,249 @@ Tamanho das imagens construídas:
 | `logitech-notificacoes` | 229 MB |
 | `logitech-painel` | 229 MB |
 | `logitech-pedidos` | 287 MB |
+
+---
+
+## Trocando pelos serviços reais das Aulas 05 e 06
+
+Esta seção é **opcional** e fica fora do tempo de aula. Leia depois do Passo 5.
+
+### Por que o kit vem com serviços mínimos
+
+Os quatro serviços em `servicos/pedidos/`, `servicos/faturamento/`,
+`servicos/frete/` e `servicos/notificacoes/` obedecem ao contrato da ADR-006
+(mesmas portas, mesmas rotas, mesmo `/health`), mas são **versões mínimas**,
+escritas para esta aula. Não têm o Factory Method da Aula 05, nem o Strategy e
+o Decorator da Aula 06.
+
+A razão é uma só, e é medida: **tempo de build**. Os serviços reais trazem
+Maven, Spring Boot, NuGet e `npm ci`. Construir os quatro do zero, nesta
+máquina, levou **1 min 56 s**, e num Codespace de dois núcleos passa disso com
+folga. O laboratório tem 60 minutos e cinco passos; um build de dois a cinco
+minutos antes do Passo 1 come o Passo 5 inteiro.
+
+Os mínimos constroem em segundos e deixam a aula ser sobre o que ela é: o YAML.
+
+### Como ligar os reais
+
+O caminho de troca existe, está testado, e são quatro Dockerfiles multi-stage
+em `docker/` mais o arquivo `compose.reais.yml`.
+
+Ele **não** se chama `compose.reais.yml` de propósito: esse nome o
+Compose leria sozinho, e quem não fizesse nada cairia nos serviços reais sem
+saber, com o build longo no meio da aula. Aqui a troca é sempre explícita, com
+dois `-f`, que é como se compõe arquivo de Compose no mundo real.
+
+```bash
+# 1. Diga onde estão os laboratórios anteriores, no seu .env
+echo 'LOGITECH_SRC_AULA05=../aula05-lab' >> .env
+echo 'LOGITECH_SRC_AULA06=../aula06-lab' >> .env
+
+# 2. Suba compondo os dois arquivos
+docker compose -f docker-compose.yml -f compose.reais.yml up -d --build
+
+# 3. Confira qual caminho está valendo
+docker compose -f docker-compose.yml -f compose.reais.yml config | grep -A2 "  pedidos:"
+#    context: .../aula05-lab/pedidos    -> serviço real
+docker compose config | grep -A2 "  pedidos:"
+#    context: .../servicos/pedidos      -> serviço mínimo, o padrão
+```
+
+Os caminhos são relativos a este diretório, e os valores acima são o padrão:
+servem para quem tem os três laboratórios lado a lado. Quem fez fork de
+repositórios separados troca pelos caminhos dos seus forks, e nesse caso
+precisa ajustar também o `dockerfile:` de cada serviço no `compose.reais.yml`: ele é
+relativo ao `context`, e os `../` de lá contam os níveis até `docker/`.
+Caminho absoluto resolve de vez quando os laboratórios não são vizinhos.
+
+Para **voltar aos mínimos**, basta omitir o segundo `-f`:
+
+```bash
+docker compose up -d --build
+```
+
+> **Atenção, é o mesmo nome de imagem.** Os dois caminhos constroem
+> `logitech-pedidos`, `logitech-faturamento`, `logitech-frete` e
+> `logitech-notificacoes`. Subir com os reais sobrescreve as imagens mínimas, e
+> desligar sobrescreve as reais. Por isso o `--build` nas duas direções: sem
+> ele, o Compose sobe a imagem que ficou da última vez.
+
+### Quanto custa, medido
+
+Mesma máquina e mesma metodologia dos números da seção anterior: arm64, macOS,
+Docker Desktop com 10 núcleos e 7,75 GiB para a VM.
+
+**Build do zero**, com `--no-cache`, uma imagem por vez:
+
+| Imagem real | Tempo | Onde o tempo vai |
+|---|---|---|
+| `faturamento` (.NET 8) | 8 s | `dotnet restore` 4,9 s, `dotnet publish` 1,9 s |
+| `frete` (FastAPI) | 12 s | `pip install` 4,4 s |
+| `pedidos` (Spring Boot) | 22 s | `mvn package` 19,5 s, com o `~/.m2` vazio |
+| `notificacoes` (Node 22) | 74 s | `npm ci` 70,7 s, 58 pacotes |
+| **Soma** | **1 min 56 s** | |
+
+Com o cache do BuildKit quente, um `docker compose build` que não muda nada
+volta em **1 a 2 s**. O `Dockerfile.pedidos` usa `--mount=type=cache` para o
+`~/.m2`: o repositório de artefatos do Maven fica fora da imagem e sobrevive
+entre builds, e é o que evita rebaixar 200 MB de Spring Boot a cada `--build`.
+
+**Tamanho das imagens:**
+
+| Imagem | Mínima | Real | Diferença |
+|---|---|---|---|
+| `logitech-frete` | 100 MB | 129 MB | +29 MB |
+| `logitech-faturamento` | 166 MB | 176 MB | +10 MB |
+| `logitech-notificacoes` | 229 MB | 252 MB | +23 MB |
+| `logitech-pedidos` | 287 MB | 373 MB | +86 MB |
+| **Soma dos quatro** | **782 MB** | **930 MB** | **+148 MB** |
+
+**Subida e memória**, com as imagens já construídas e o volume do banco zerado.
+Os números dos mínimos foram remedidos na mesma sessão, para a comparação ser
+justa:
+
+| Medida | Mínimos | Reais |
+|---|---|---|
+| `up -d --wait` até os oito `healthy` | 11,6 s e 11,7 s | 12,2 s e 12,3 s |
+| Memória somada dos oito, em repouso | 226 MB | 388 MB |
+| Maior consumidor | `pedidos`, 49 MB | `pedidos`, 158 MB |
+
+O tempo de subida quase não muda, e isso surpreende menos do que parece: os
+oito containers sobem em paralelo, e a JVM do Spring Boot leva 2,5 s para
+chegar ao `Tomcat started`, dentro da janela em que os outros ainda estão
+subindo. Quem paga a conta é a **memória**: +72 % no total, e a diferença mora
+quase toda no `pedidos`, que sai de 49 MB para 158 MB. Os `mem_limit` do
+`docker-compose.yml` continuam servindo, mas o `pedidos` passa a rodar a metade
+do teto de 320 MB em vez de a um sexto dele.
+
+### O que muda no comportamento observável
+
+Trocar os quatro não é neutro. Estas são as diferenças que se veem de fora,
+todas verificadas com a plataforma de pé:
+
+| O que | Mínimo | Real |
+|---|---|---|
+| `GET /health` do `pedidos` | `{"status":"ok","servico":"pedidos","uptime_s":28,"banco":"conectado"}` | `{"status":"ok","servico":"pedidos"}` |
+| `POST /api/v1/pedidos`, entrada | `{cliente, origem, destino, pesoKg, modalidade}` | `{cliente, tipoCliente, origem, destino, enderecoEntrega, pesoKg, valor}` |
+| `POST /api/v1/pedidos`, saída | tem o campo `jornada` com as quatro etapas | `{id, cliente, tipoCliente, ..., status, numeroNotaFiscal}`, sem `jornada` |
+| `POST /api/v1/frete/cotacao`, origem e destino | cidade ou CEP, `"Guarulhos-SP"` | só o código de três letras do CD, `"GRU"` |
+| `POST /api/v1/frete/cotacao`, modalidades | `economico`, `expresso`, `refrigerado` | `economico`, `expresso`, `padrao` |
+| Schema `pedidos` no PostgreSQL | criado pelo próprio serviço, na subida | precisa ser criado de fora |
+| Serviços declarados | 8 | 9, com o `prepara-schemas` |
+
+As três primeiras linhas são a mesma decisão vista de ângulos diferentes: o
+serviço mínimo foi escrito para **esta** aula e devolve o que esta aula quer
+provar (o banco conectado, a jornada percorrendo a plataforma); o real foi
+escrito para a Aula 05 e devolve o contrato da ADR-006, nada além.
+
+A quinta linha é a que dá mais trabalho. O `pedidos` real usa
+`hibernate.default_schema=pedidos` com `ddl-auto=update`: o Hibernate cria as
+**tabelas**, mas não cria o **schema** que as abriga. Na Aula 05 o schema
+nasceu de um `psql -c "CREATE SCHEMA IF NOT EXISTS pedidos"` rodado à mão. O
+`compose.reais.yml` traduz aquele comando para YAML, no serviço efêmero `prepara-schemas`,
+que roda antes do `pedidos` e morre. É a única peça que a troca acrescenta,
+e ela existe porque a regra deste laboratório é não tocar no código das aulas
+anteriores.
+
+Sem ela o sintoma é o pior possível: o container fica `healthy` e o serviço não
+funciona, com `ERROR: schema "pedidos" does not exist` enterrado no log.
+
+### O que o `verificar.py` passa a acusar
+
+O verificador foi escrito para o caminho padrão. Com os reais no lugar, **os
+critérios 1 e 5 reprovam**, e reprovam por motivo legítimo:
+
+- **Critério 1** exige `banco: "conectado"` no `/health` do `pedidos`. O
+  serviço real não expõe esse campo.
+- **Critério 5** exige exatamente os oito serviços da ADR-006 e um
+  `POST /api/v1/pedidos` devolvendo `jornada` com quatro etapas em `ok`. Com o
+  caminho dos reais há nove serviços, e o real não devolve `jornada`.
+
+Os critérios 2, 3 e 4 continuam válidos: o DNS interno, a dívida da ADR-002 e o
+AI Gateway não dependem de qual das duas versões está no ar.
+
+**Entregue o laboratório pelo caminho padrão.** A troca é para depois, e o que
+ela prova está no parágrafo seguinte.
+
+### O que a troca prova
+
+Com os reais no lugar, a plataforma sobe inteira e um pedido atravessa dois
+serviços em duas linguagens diferentes:
+
+```bash
+curl -s --connect-timeout 5 --max-time 20 -X POST http://localhost:8080/api/v1/pedidos \
+  -H 'content-type: application/json' \
+  -d '{"cliente":"ana@logitech.com.br","tipoCliente":"PADRAO","origem":"GRU",
+       "destino":"CNF","enderecoEntrega":"Av. Amazonas 1000, Betim-MG",
+       "pesoKg":820,"valor":15400.00}'
+# {"id":"5e047ac2-...","status":"FATURADO","numeroNotaFiscal":"NF-000001", ...}
+
+curl -s --connect-timeout 5 --max-time 15 http://localhost:5080/api/v1/faturas
+# [{"pedidoId":"5e047ac2-...","numeroNotaFiscal":"NF-000001","meioPagamento":"BOLETO", ...}]
+```
+
+O Java gravou no schema `pedidos`, chamou o C# pelo nome `faturamento` na rede
+interna, o C# gravou no schema `faturamento` e devolveu a nota fiscal. É a
+promessa do módulo inteiro em duas chamadas.
+
+Duas advertências:
+
+- `tipoCliente` só aceita `PADRAO` e `OURO`. Qualquer outro valor devolve
+  `400`, porque é o `ConectorFaturamento` da Aula 05 que decide.
+- Se o **TODO-2 da Aula 05** ainda estiver em aberto no seu fork, o
+  `POST /api/v1/pedidos` devolve `400` com a mensagem da fábrica não
+  implementada. A troca só entrega a jornada completa depois que aquele
+  laboratório estiver fechado, e isso é proposital: é a espiral cobrando o que
+  ficou para trás.
+
+### Os quatro Dockerfiles
+
+Ficam em `docker/`, um por serviço, e seguem as mesmas regras que a **Aula 03**
+cobrou: dois estágios nomeados, base alpine no estágio final, usuário não-root
+com UID acima de 10000, nunca `COPY . .`, `EXPOSE` com a porta do contrato.
+Vale abrir os quatro: cada um resolve o mesmo problema numa stack diferente.
+
+| Arquivo | Estágio de build | Estágio final | Usuário |
+|---|---|---|---|
+| `Dockerfile.pedidos` | `maven:3.9-eclipse-temurin-21` | `eclipse-temurin:21-jre-alpine` | `logitech`, UID 10001 |
+| `Dockerfile.faturamento` | `mcr.microsoft.com/dotnet/sdk:8.0-alpine` | `mcr.microsoft.com/dotnet/aspnet:8.0-alpine` | `logitech`, UID 10002 |
+| `Dockerfile.frete` | `python:3.12-alpine` | `python:3.12-alpine` | `logitech`, UID 10003 |
+| `Dockerfile.notificacoes` | `node:22-alpine` | `node:22-alpine` | `logitech`, UID 10004 |
+
+Quatro decisões que só ficam claras lendo o arquivo, e que valem como conteúdo:
+
+- **`pedidos`**: o estágio de build **não** é alpine, e é de propósito. A regra
+  pede base enxuta no estágio final, que é o que vai para o registro; o estágio
+  de compilação é descartado e pode ser gordo.
+- **`faturamento`**: `tests/` e `Faturamento.sln` ficam de fora do `COPY`, e é
+  por isso que o `restore` e o `publish` apontam para o `.csproj` direto. A
+  solução referencia o projeto de teste, e teste não entra em imagem.
+- **`frete`**: a base **precisa** ser alpine. O `healthcheck` que vocês
+  escreveram usa `wget`, que vem no BusyBox do alpine e não existe em
+  `python:3.12-slim`. Trocar a base deixa o serviço respondendo e o container
+  eternamente `unhealthy`.
+- **`notificacoes`**: o `tsx` sobrevive ao estágio final, contrariando a regra
+  de não levar ferramenta de desenvolvimento. Não é descuido: `src/servidor.ts`
+  importa `./adaptador` sem extensão, o apagador de tipos nativo do Node 22 não
+  reescreve caminho de importação, e o servidor só escuta se `process.argv[1]`
+  terminar em `servidor.ts`. Compilar para `.js` deixaria o container `Up` para
+  sempre, sem nunca aceitar conexão.
+
+### Se o build do `pedidos` falhar por rede
+
+Sintoma inconfundível: dezenas de
+`Connect to repo.maven.apache.org:443 failed: Connection refused` em menos de
+dois segundos, com a mesma máquina baixando o mesmo arquivo por `wget` sem
+reclamar. O Maven baixa artefatos em cinco conexões simultâneas, e há VPN,
+proxy e antivírus que recusam a segunda conexão simultânea para o mesmo
+destino. O `Dockerfile.pedidos` deixa a válvula pronta:
+
+```bash
+docker compose build --build-arg MAVEN_THREADS_ARTEFATO=1 pedidos
+```
+
+O build fica mais lento e passa. Foi assim que os números desta seção foram
+medidos.
 
 ---
 
