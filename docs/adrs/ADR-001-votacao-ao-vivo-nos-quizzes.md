@@ -82,11 +82,11 @@ verificada de ponta a ponta contra uma instância local do serviço (contador ao
 vivo sem revelar distribuição, revelação com as barras percentuais, e
 degradação limpa com o serviço fora do ar).
 
-O que falta é a publicação: o subdomínio `vote.jrcf.dev` ainda não está no ar
-no `home01`. Até essa publicação acontecer, a aula 01 roda em produção no modo
-local de sempre, com o QR placeholder, exatamente como qualquer outra aula sem
-o `data-quiz-key`. As demais aulas recebem o `data-quiz-key` e o script
-conforme forem revisadas.
+A publicação aconteceu em 31/07/2026: `vote.jrcf.dev` está no ar no `home01`
+e o `client.js` responde. As aulas 01, 02 e 03 carregam o cliente e ligam os
+quizzes por `data-quiz-key`; o QR placeholder permanece no markup como
+fallback para quando o serviço estiver fora do ar. As demais aulas recebem o
+`data-quiz-key` e o script conforme forem revisadas.
 
 No acervo, o que sustenta o modo local continua valendo:
 

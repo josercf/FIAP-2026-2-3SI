@@ -1245,7 +1245,7 @@ $(cat /tmp/pr.diff)"</code></pre>
           <h2>Quiz de Verificação</h2>
         </div>
 
-        <div class="quiz-container">
+        <div class="quiz-container" data-quiz-key="aula02-quiz1">
           <div class="quiz-question">Como a multiplexação do HTTP/2 resolve o Head-of-Line blocking do HTTP/1.1?</div>
           <ul class="quiz-options">
             <li data-correct="false"><span class="option-letter">A</span> Abrindo uma conexão TCP nova para cada arquivo pedido pela página.</li>
@@ -1310,7 +1310,7 @@ $(cat /tmp/pr.diff)"</code></pre>
           <h2>Quiz de Verificação</h2>
         </div>
 
-        <div class="quiz-container">
+        <div class="quiz-container" data-quiz-key="aula02-quiz2">
           <div class="quiz-question">Por que o SSE é mais simples que o WebSocket para a telemetria da LogiTech?</div>
           <ul class="quiz-options">
             <li data-correct="false"><span class="option-letter">A</span> Porque o SSE é bidirecional e dispensa o HTTP como transporte.</li>
@@ -1359,7 +1359,7 @@ $(cat /tmp/pr.diff)"</code></pre>
           <h2>Quiz de Verificação</h2>
         </div>
 
-        <div class="quiz-container">
+        <div class="quiz-container" data-quiz-key="aula02-quiz3">
           <div class="quiz-question">Qual a diferença prática entre comitar direto na main e usar branch com Pull Request?</div>
           <ul class="quiz-options">
             <li data-correct="false"><span class="option-letter">A</span> Nenhuma: o Pull Request só deixa o histórico mais bonito.</li>
@@ -1801,5 +1801,9 @@ $(git diff main...origin/feature/http-telemetry)"</code></pre>
     });
     // startTimer(elementId, segundos) vem de ../assets/js/fiap-quiz.js
   </script>
+  <!-- Cliente do serviço Pulso: liga os quizzes com data-quiz-key à votação ao vivo.
+       Carregamento assíncrono (defer) e opcional: se o host estiver fora do ar
+       ou o script falhar, o quiz continua funcionando no modo local de sempre. -->
+  <script defer src="https://vote.jrcf.dev/client.js"></script>
 </body>
 </html>
