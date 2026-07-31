@@ -342,17 +342,49 @@ em Linux é binário do GitHub Releases com symlink em
 `~/.docker/cli-plugins/docker-agent`. O `post-create.sh` do lab03 passa a
 instalá-lo.
 
-### Provedor de modelo: a decidir por teste
+### Provedor de modelo: resultado do smoke test
 
-**Nada aqui está verificado ainda.** A ordem de tentativa, com o resultado a ser
-registrado neste spec antes de o deck ser escrito:
+**Verificado em 2026-07-30** (detalhe completo em
+`.superpowers/sdd/2026-07-30-aula03-docker/task-2-report.md`). O
+`docker-agent` v1.119.0 tem asset `linux-amd64` no release, então o
+Codespaces do aluno (amd64) tem binário; a imagem do devcontainer do lab03
+não traz o CLI do Docker, então o `docker-agent` é usado como **executável
+standalone** (`docker-agent run agente.yaml`), não como plugin de
+`docker agent`.
 
-1. **GitHub Models** pelo endpoint compatível com OpenAI, usando o `GITHUB_TOKEN`
-   que o Codespaces injeta. É o mesmo caminho que o `ai/ask.py` já usa.
-2. **Ollama local** com `qwen3.5:2b`, pelo endpoint compatível com OpenAI em
-   `http://localhost:11434/v1`.
-3. **Copilot do Codespaces** lendo o mesmo `SKILL.md`. Caminho garantido, sem
-   `docker agent`, usado se 1 e 2 falharem.
+1. **GitHub Models falhou.** O endpoint `models.github.ai/inference`
+   respondeu `HTTP 410: GitHub Models is temporarily unavailable as part of
+   a scheduled retirement brownout` em duas tentativas e também a um `curl`
+   direto fora do `docker-agent`, com o mesmo `GITHUB_TOKEN`. Não é um
+   problema do `agente.yaml`: o serviço está em processo de aposentadoria e
+   não responde nenhuma chamada agora. Pode voltar a funcionar (ou ser
+   desligado de vez); vale reconferir antes de escrever os slides 48-50.
+2. **Ollama local com `qwen3.5:2b` funciona mecanicamente, mas o conteúdo é
+   inconsistente.** Em três execuções do mesmo prompt
+   (`Escreva o Dockerfile do coletor Python usando a skill`), a skill foi
+   carregada sob demanda nas três (o ponto pedagógico central do slide 50),
+   nenhuma chamada de ferramenta saiu malformada e nenhuma execução entrou
+   em loop; os tempos foram 2:00, 1:39 e 1:12, todos dentro do critério de
+   3 minutos e longe do patamar de 8 minutos que reprovaria por si só. Mas
+   o Dockerfile só saiu com dois estágios reais e `USER` não-root em **uma**
+   das três execuções, e mesmo essa teve o arquivo salvo no caminho errado
+   (`logs/Dockerfile.log`) e um glitch de idioma no fim da resposta. Nas
+   outras duas, o modelo produziu um único estágio, base não-alpine, e em
+   um dos casos ainda descreveu a própria escolha errada como se estivesse
+   certa ("Base Alpine (`ubuntu:22.04`)").
+3. **Decisão:** como o caminho A está indisponível por um fato externo (não
+   é uma escolha entre dois caminhos que funcionam) e o caminho B nunca
+   violou o critério de reprovação por tempo ou loop malformado, o
+   `agente.yaml` padrão do lab usa **Ollama com `qwen3.5:2b`**, mantendo a
+   regra de que a etapa bônus feita em casa não deve depender de
+   `GITHUB_TOKEN` nem de cota. GitHub Models fica documentado como
+   alternativa **a reconferir**, não como alternativa pronta, até o
+   `410` deixar de acontecer.
+4. **Mitigação de risco para a demonstração ao vivo:** o professor ensaia o
+   prompt antes da aula; se o resultado não vier com dois estágios e `USER`
+   não-root, repete o `docker-agent run` (custo de 1 a 2 minutos, cabe no
+   ciclo) ou usa `--record`/`--fake` do próprio `docker-agent` para ter uma
+   sessão gravada como plano B, sem depender da sorte do modelo ao vivo.
 
 ---
 
@@ -392,8 +424,8 @@ regenerar e ressincronizar 13 repositórios, e os alunos que já forkaram os lab
 
 | Risco | Mitigação |
 |---|---|
-| O `docker agent` pode não falar com o GitHub Models no devcontainer | Smoke test antes de escrever o deck, com dois níveis de fallback definidos na seção 7 |
-| O `qwen3.5:2b` pode não sustentar o loop de tool calling | Mesmo smoke test; se falhar, a demonstração vai no Copilot e o `agente.yaml` fica documentado como exercício de casa |
+| O GitHub Models está em brownout de aposentadoria e responde `410` para qualquer chamada | **Confirmado, risco materializado.** Smoke test de 2026-07-30 (seção 7). GitHub Models não entra no deck como caminho funcional agora; reconferir antes de escrever os slides 48-50 |
+| O `qwen3.5:2b` carrega a skill mas erra o conteúdo do Dockerfile em parte das execuções (2 de 3 no smoke test) | **Parcialmente materializado.** Não entra em loop nem estoura tempo, então não cai para o Copilot, mas a demonstração ao vivo precisa de ensaio prévio e, se possível, uma sessão gravada com `--record`/`--fake` como plano B (seção 7) |
 | A redução de 80% pode não se confirmar na medição real | **Risco fechado.** Medição real em arm64 confirmou 95,2% de redução no coletor e 86,2% no gateway, os dois acima do mínimo de 80%. Detalhe na tabela da seção 6, "Por que o entregável muda em relação ao plano" |
 | Sete atividades em 3,5 h é apertado | Ordem de corte definida na seção 3; cronometrar na primeira aplicação |
 | Aluno sem conta no Docker Hub trava no ciclo 7 | Pré-requisito anunciado pelo professor antes da aula, repetido no slide 5 e no README |
