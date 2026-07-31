@@ -193,31 +193,59 @@ LABS = [
         "ports": [5432, 8010],
     },
     {
-        "n": "14", "slug": "oauth-jwt", "img": "node", "docker": True,
+        "n": "14", "slug": "oauth-jwt", "img": "python", "docker": True,
+        "extras": ["java", "node"],
+        "preparo": (
+            'docker network create logitech-net 2>/dev/null || true\n'
+            'if [ -f .env.exemplo ] && [ ! -f .env ]; then cp .env.exemplo .env; fi\n'
+            'if [ -f portal/package.json ]; then (cd portal && npm ci); fi\n'
+            'pip install --user pytest >/dev/null 2>&1 || true\n'
+            '# O Keycloak sozinho pede quase 500 MB: baixa a imagem antes da aula.\n'
+            'docker pull quay.io/keycloak/keycloak:26.0 >/dev/null 2>&1 || true'
+        ),
         "titulo": "Seguranca Enterprise: OAuth 2.0, OIDC, JWT e RBAC",
         "aula": "Aula 14 - Seguranca Web Enterprise e Git Worktrees II",
         "data": "03/11/2026",
         "missao": "Proteger as APIs da LogiTech com Keycloak: fluxo OIDC, validacao de JWT e autorizacao por papel (RBAC).",
-        "entrega": ["app.js", "docker-compose.yml"],
-        "ports": [3000, 8080],
+        "entrega": ["docker-compose.yml", "docs/EVIDENCIAS.md"],
+        "ports": [8090, 8080, 3001, 5173, 5199],
     },
     {
         "n": "15", "slug": "owasp-llm", "img": "python", "docker": True,
+        "preparo": (
+            'docker network create logitech-net 2>/dev/null || true\n'
+            'if [ -f .env.exemplo ] && [ ! -f .env ]; then cp .env.exemplo .env; fi\n'
+            'pip install --user pytest >/dev/null 2>&1 || true\n'
+            '# O Trivy e a ferramenta central do laboratorio.\n'
+            'curl -fsSL --connect-timeout 10 --max-time 300 '
+            'https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh '
+            '| sh -s -- -b /usr/local/bin || echo "    AVISO: instale o Trivy manualmente."'
+        ),
         "titulo": "Seguranca AI-First (OWASP Top 10 for LLMs) e Trivy",
         "aula": "Aula 15 - Seguranca AI-First e Container Scan",
         "data": "10/11/2026",
         "missao": "Defender o AI Gateway da LogiTech contra Prompt Injection e escanear as imagens Docker com Trivy, corrigindo as vulnerabilidades encontradas.",
-        "entrega": ["llm_defense.py", "Dockerfile.vulnerable"],
-        "ports": [8000],
+        "entrega": ["servicos/ai-gateway/", "docs/EXCECOES.md", "docs/EVIDENCIAS.md"],
+        "ports": [4000, 8010, 3001],
     },
     {
         "n": "16", "slug": "integracao-e2e", "img": "universal", "docker": True,
+        "preparo": (
+            'docker network create logitech-net 2>/dev/null || true\n'
+            'docker volume create logitech-telemetria >/dev/null 2>&1 || true\n'
+            'if [ -f .env.exemplo ] && [ ! -f .env ]; then cp .env.exemplo .env; fi\n'
+            'pip install --user pytest >/dev/null 2>&1 || true\n'
+            '# Sao treze containers mais o Ollama: o roteiro sobe por grupos.\n'
+            'curl -fsSL --connect-timeout 10 --max-time 300 '
+            'https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh '
+            '| sh -s -- -b /usr/local/bin || echo "    AVISO: instale o Trivy manualmente."'
+        ),
         "titulo": "Integracao Enterprise End-to-End e Simulado da Global Solution",
         "aula": "Aula 16 - Integracao End-to-End e Simulado GS",
         "data": "17/11/2026",
         "missao": "Integrar toda a plataforma LogiTech: frontends, servicos poliglotas, gateway de IA e autenticacao, orquestrados por Docker Compose.",
-        "entrega": ["docker-compose.yml", "ai-service/", "auth-service/"],
-        "ports": [3000, 8000, 8080],
+        "entrega": ["docker-compose.yml", "docs/EVIDENCIAS.md", "docs/ROTEIRO-BANCA.md"],
+        "ports": [3000, 3001, 4000, 4200, 5080, 5173, 8000, 8010, 8080, 8090],
     },
 ]
 

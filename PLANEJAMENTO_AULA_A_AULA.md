@@ -327,7 +327,7 @@
      *Resposta Esperada:* É um fluxo seguro onde a aplicação SPA não lida nem armazena segredos de cliente (*client secret*). O PKCE gera um par de códigos dinâmicos (*code verifier* e *code challenge*) impedindo ataques de interceptação do código de autorização em clientes públicos.
   3. *Pergunta 3:* Como o modelo RBAC (Role-Based Access Control) organiza a autorização de usuários no sistema?  
      *Resposta Esperada:* Ele associa permissões a papéis (*roles*, ex: `ADMIN`, `DRIVER`, `CUSTOMER`) e atribui esses papéis aos usuários. O código verifica se o usuário possui a *role* necessária para acessar determinado recurso.
-- **Entregável Prático:** Repositório com rotas de API protegidas por JWT e Keycloak configurado no Docker Compose.
+- **Entregável Prático:** As 6 lacunas preenchidas; `curl` sem token devolvendo 401 e com papel errado devolvendo 403, os dois registrados; `PAPEIS_NO_TOKEN` copiado de `realm_access.roles`; `git worktree list` com as duas worktrees; e as suítes verdes nas quatro stacks.
 
 ---
 
@@ -351,7 +351,7 @@
      *Resposta Esperada:* O Trivy analisa a imagem Docker procurando por vulnerabilidades conhecidas (CVEs) tanto no sistema operacional de base quanto nas bibliotecas de dependências (npm, pip, maven), permitindo barrar imagens inseguras na esteira de CI.
   3. *Pergunta 3:* Qual a estratégia recomendada para evitar que um modelo de IA exiba informações sensíveis (PII / Sensitive Information Disclosure)?  
      *Resposta Esperada:* Aplicar filtros de sanitização de entrada e saída (Guardrails), mascarar dados sensíveis (ex: CPF, cartão) antes de enviar o prompt ao provedor de LLM e utilizar modelos locais para dados estritamente confidenciais.
-- **Entregável Prático:** Imagens Docker validadas pelo Trivy e filtro de segurança contra Prompt Injection ativo no AI Gateway.
+- **Entregável Prático:** As 6 lacunas preenchidas; `INJECAO_ANTES` e `INJECAO_DEPOIS` registrados; `CVES_CRITICAL_DEPOIS` igual a zero com a data da varredura; `docs/EXCECOES.md` com cada HIGH aceita, justificada e datada; e a formulação que furou o próprio filtro registrada.
 
 ---
 
@@ -369,7 +369,7 @@
   1. *Pergunta 1:* Todos os microsserviços sobem automaticamente via `docker-compose up` sem a necessidade de intervenção manual? (Sim/Não - Verificação de scripts e variáveis).
   2. *Pergunta 2:* A autenticação via Keycloak está protegendo adequadamente tanto as rotas de backend quanto os guardas de rotas no frontend React/Angular? (Validação via Token JWT).
   3. *Pergunta 3:* O AI Gateway e o servidor MCP estão integrados e respondendo corretamente às chamadas de Function Calling e busca semântica RAG? (Validação funcional).
-- **Entregável Prático:** Repositório do projeto 100% integrado, documentado e rodando via Docker.
+- **Entregável Prático:** As 5 frentes verdes no `verificar.py`; `TEMPO_ATE_TODOS_SAUDAVEIS_S` e `MEMORIA_TOTAL_MIB` medidos na máquina do grupo; o roteiro de apresentação de 10 minutos escrito, com quem fala o quê; e o repositório subindo a plataforma do zero.
 
 ---
 

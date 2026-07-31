@@ -272,6 +272,45 @@ Apareceu em dois dos três decks novos e só foi visto porque um revisor abriu o
 slide no navegador. A checagem compara as caixas de **linha** do título, não a
 caixa do `h2`, que costuma ser larga e vazia à direita.
 
+### Módulo IV completo: Aulas 14 a 16 (31/07/2026)
+
+Este módulo **não acrescenta serviço**: muda o comportamento dos doze que já
+existem. O risco deixou de ser nome que não casa e passou a ser papel lido de
+dois lugares diferentes, que faz a autorização funcionar numa stack e falhar em
+outra com o mesmo token. Por isso a `ADR-009` veio antes do conteúdo.
+
+| Aula | Deck | Laboratório |
+|---|---|---|
+| 14, OAuth2 e RBAC | 51 slides, 8 animações | Keycloak com realm versionado, PKCE, JWKS em Java e Node, 6 lacunas |
+| 15, OWASP LLM e Trivy | 55 slides, 11 animações | Guardrails no gateway, injeção direta e indireta, Trivy até zero CRITICAL, 6 lacunas |
+| 16, integração e GS | 51 slides, 11 animações | Treze serviços, seis falhas plantadas, cinco frentes e o ensaio da banca |
+
+**Medido, não estimado.** Aula 14: token de 300 s e 1266 caracteres, com
+`resource_access` **vazio**, que é a prova empírica de por que o contrato lê de
+`realm_access.roles`. Aula 15: injeção indireta pelo RAG comprometeu 6 de 6 com
+composição ingênua, 2 de 6 com delimitador e 0 de 6 com sanitização; o Trivy foi
+de 9 CRITICAL para zero. Aula 16: os treze serviços sobem em 35,3 s na primeira
+vez e 28 depois, ocupando 806 MiB contra 3.056 de teto, num M4 de 16 GB com
+8 GB para a VM.
+
+**A construção corrigiu a própria ADR.** A `ADR-009` mandava esperar
+`keycloak:8090` no `LOGITECH_OIDC_ISSUER`, e isso derruba toda validação: o `iss`
+gravado no token é o endereço pelo qual o **navegador** falou com o Keycloak. As
+Aulas 14 e 16 descobriram executando, cada uma por conta própria. A emenda está
+datada na ADR, junto com a propagação do token do usuário entre serviços e a
+divergência declarada do direct access grant entre as Aulas 14 e 16.
+
+**Achados de revisão que valeram a pena.** Na 14, dois slides anunciavam como
+medido um token cujo `iat` era de outro ano, e descreviam a assinatura como texto
+legível. Na 15, um bloco rotulado "trecho literal" cortava justamente a instrução
+maliciosa do contrato envenenado. Na 16, a escolha de ligar o direct access grant
+não estava declarada em nenhum slide, contrariando a própria ADR.
+
+**As ligaduras da JetBrains Mono foram desligadas no tema**, e não mais deck a
+deck: a fonte fundia `->` numa seta e `==` num glifo único justamente onde o
+aluno digita a sintaxe. Sem ligadura o monoespaçado fica mais largo, e oito
+slides das Aulas 05 e 06 precisaram de ajuste. Os treze decks foram revalidados.
+
 ### Saneamento do acervo (30/07/2026)
 
 - **Os 13 decks passavam no `check_slides.py` nesta data.** Em 31/07/2026 isso
@@ -314,7 +353,7 @@ caixa do `h2`, que costuma ser larga e vazia à direita.
 - [ ] **Cadastrar as nove perguntas do Módulo III no Pulso** (`aula10-quiz1|2|3`, `aula11-...`, `aula12-...`). O placeholder de QR continua no markup como fallback.
 - [ ] **Cronometrar os três laboratórios do Módulo III na primeira aplicação.** Nenhum foi medido com turma. A ordem de corte de cada um está declarada no README, e a da Aula 12 é a mais apertada, porque são seis passos em 53 minutos.
 - [ ] Cosmético, mas rastro de manutenção: os comentários HTML de navegação interna do `aula12.html` ficaram fora de sincronia com a posição real a partir do slide 12, resultado da inserção do slide 22 em duas etapas. Não afeta nada renderizado.
-- [ ] **Criar os quatro formulários de entrega do Módulo II** no Microsoft Forms. Os slides das Aulas 05 a 08 estão com marcador visível no lugar do iframe, à espera da URL.
+- [ ] **Criar os formulários de entrega dos Módulos II, III e IV** no Microsoft Forms. Os slides das Aulas 05 a 08 estão com marcador visível no lugar do iframe, à espera da URL.
 - [ ] **Promover ao `fiap-theme.css`** as regras que hoje vivem locais nos decks 06 e 08: desligar as ligaduras da JetBrains Mono e impedir que o `text-transform` do tema suba caminho de arquivo para maiúscula. Vale para os treze decks; revalidar todos depois.
 - [ ] **Cronometrar os laboratórios do Módulo II na primeira aplicação.** Nenhum foi medido com turma; a ordem de corte de cada um está declarada no README.
 - [ ] **Validar com o professor a minutagem nova da Aula 03.** A revisão moveu os Quizzes 2 e 3 para depois dos Ciclos 4 e 5 (o planejamento antigo dava toda a teoria antes do Quiz 1). Deck, planejamento e plano de ensino já estão alinhados entre si; falta o aceite explícito.
