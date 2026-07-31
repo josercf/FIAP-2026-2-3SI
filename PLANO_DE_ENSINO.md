@@ -41,7 +41,8 @@ Os tópicos técnicos foram integrados em camadas dentro da espiral pedagógica,
 | **Testes de Unidade, TDD & Mocks** | **Aula 10** (06/10) | Cobertura das regras de negócio do backend (JUnit, xUnit, PyTest, Vitest). |
 | **Frontend React (Hooks, Componentes)** | **Aula 10** (06/10) | Interface SPA conectada às APIs REST/SSE conteinerizadas. |
 | **Frontend Angular (Modules, Services, RxJS)** | **Aula 11** (13/10) | Dashboard administrativo reativo utilizando o **Observer Pattern** (RxJS). |
-| **Persistência Vetorial (`pgvector`), RAG & MCP** | **Aula 12** (20/10) | Busca semântica RAG + Servidor Model Context Protocol exposto para IAs. |
+| **SQL Relacional (DDL, `JOIN`, Índices, `EXPLAIN`)** | **Aula 12** (20/10) | **Nova Adição:** Abertura do banco que os serviços das Aulas 05 e 06 vinham usando por meio de ORM. Pré-requisito da persistência vetorial, registrado na `ADR-008`. |
+| **Persistência Vetorial (`pgvector`), RAG & MCP** | **Aula 12** (20/10) | Busca semântica como extensão da SQL relacional recém-aprendida + Servidor Model Context Protocol exposto para IAs. |
 | **Segurança OAuth2, OIDC, JWT & RBAC** | **Aula 14** (03/11) | Proteção de todas as rotas do backend e frontend com provedor Keycloak. |
 | **OWASP Top 10 for LLMs & Trivy Scan** | **Aula 15** (10/11) | Hardening de Prompt Injection no AI Gateway e varredura de segurança em imagens Docker. |
 | **Integração End-to-End (Mock GS)** | **Aula 16** (17/11) | Hackathon de integração do ecossistema completo da *LogiTech Enterprise*. |
@@ -54,7 +55,7 @@ Os tópicos técnicos foram integrados em camadas dentro da espiral pedagógica,
 graph TD
     subgraph S1["1º Semestre (2026-2): Eng. de Requisitos, Redes, Docker, POO, Patterns, Frontend & AI-First"]
         F1["Fase 1: PRD/SDD, DDD, Git, Redes (OSI/TCP/HTTP) & Docker"] --> F2["Fase 2: Backend Poliglota (Java/C#/Node/Python), POO/SOLID & Design Patterns"]
-        F2 --> F3["Fase 3: Frontend Enterprise (React/Angular), TDD/Unidade & RAG/MCP"]
+        F2 --> F3["Fase 3: Frontend Enterprise (React/Angular), TDD/Unidade, SQL & RAG/MCP"]
         F3 --> F4["Fase 4: Git Worktrees, Segurança (OAuth2/JWT/OWASP LLM), Hardening & GS1"]
         F4 --> GS1["Global Solution (GS1)"]
     end
@@ -88,8 +89,8 @@ graph TD
 | **29/09** | **CP2** | **CHECKPOINT 2** | **Aulas 05, 06, 07 e 08** | Avaliação Prática de POO/SOLID, Patterns, Compose e Agentes |
 | **06/10** | **Aula 10** | **Testes de Unidade (TDD / Mocks)** & Frontend **React** | **Recupera Aulas 05 e 06** (Testando as regras de negócio das APIs) | TDD em serviços core + Portal do Cliente em React (TypeScript) |
 | **13/10** | **Aula 11** | Frontend Enterprise II: **Angular (RxJS / Observer)** | **Recupera Aulas 05, 06 e 10** (SPAs, Patterns & APIs) | Painel Administrativo em Angular com RxJS (Observer Pattern) |
-| **20/10** | **Aula 12** | Persistência Vetorial (`pgvector`), **RAG** & **MCP** | **Recupera Aulas 06, 07, 08 e 10** (Python + Compose + AI) | Engine RAG de busca semântica em contratos + Servidor MCP |
-| **27/10** | **CP3** | **CHECKPOINT 3** | **Aulas 10, 11 e 12** | Avaliação Prática de Testes de Unidade, Frontend e RAG/MCP |
+| **20/10** | **Aula 12** | **PostgreSQL: do relacional ao vetorial** (SQL, `pgvector`, **RAG** & **MCP**) | **Recupera Aulas 05, 06, 07, 08 e 10** (o banco por baixo do ORM + Python + Compose + AI) | Schema criado em SQL escrita pelo aluno + Engine RAG com citação da fonte + Servidor MCP |
+| **27/10** | **CP3** | **CHECKPOINT 3** | **Aulas 10, 11 e 12** | Avaliação Prática de Testes de Unidade, Frontend, SQL relacional e RAG/MCP |
 | **03/11** | **Aula 14** | Segurança Web & **Git Worktrees Avançado (AI Coding)** | **Recupera Aulas 05, 06, 08, 10, 11 e Worktrees** | Proteção JWT + Ambientes isolados em Worktrees para Agentes de IA |
 | **10/11** | **Aula 15** | Segurança AI-First (**OWASP LLM**) & **Trivy Container Scan** | **Recupera Aulas 03, 07, 12 e 14** (Docker + AI Gateway + Auth) | Guardrails de Prompt Injection e Varredura de Imagens Docker |
 | **17/11** | **Aula 16** | Integração Enterprise End-to-End (Mock GS) | **Recupera Aulas 01 a 15** (Toda a Espiral do Semestre) | Hackathon de integração do sistema *LogiTech Enterprise* |
@@ -185,7 +186,7 @@ graph TD
 
 ---
 
-### Módulo III: Testes de Unidade, Frontend Enterprise, RAG & MCP (Outubro)
+### Módulo III: Testes de Unidade, Frontend Enterprise, SQL, RAG & MCP (Outubro)
 
 #### Aula 10 (06/10/2026) - Testes de Unidade (TDD / Mocks) & Frontend Enterprise I (React)
 - **Espiral & Conexão:** **Recupera Aulas 05 e 06** (Testando as regras de negócio do backend e construindo a UI).
@@ -198,24 +199,27 @@ graph TD
 
 #### Aula 11 (13/10/2026) - Frontend Enterprise II: Angular (Observer Pattern & RxJS)
 - **Espiral & Conexão:** **Recupera Aulas 05, 06 e 10** (Padrões de frontend e gerenciamento reativo de estado).
-- **Desafio do Mini Mundo:** Construir o painel administrativo de logística para a equipe interna da *LogiTech*.
+- **Desafio do Mini Mundo:** Construir o painel administrativo de logística para a equipe interna da *LogiTech*, acompanhando a frota em tempo real e o faturamento em dois fluxos assíncronos concorrentes (escopo fixado na `ADR-008`).
 - **Conteúdo Expositivo & Prático:**
   - *Observer Pattern:* Reatividade com **RxJS** (`Observables`, `Subjects`, `BehaviorSubjects`, `map`, `filter`, `switchMap`).
   - *Angular:* Estrutura de módulos, Standalone Components, Injeção de Dependência e `HttpClient`.
   - *Construção Guiada (Live Coding):* Desenvolvimento do dashboard em **Angular** consumindo os serviços da API C#/.NET.
 - **Entregável:** Dashboard administrativo em Angular estruturado com RxJS e Injeção de Dependência.
 
-#### Aula 12 (20/10/2026) - Persistência Vetorial (`pgvector`), RAG & Model Context Protocol (MCP)
-- **Espiral & Conexão:** **Recupera Aulas 06, 07, 08 e 10** (Conectando a busca inteligente ao portal do cliente).
-- **Desafio do Mini Mundo:** Permitir busca semântica em contratos de frete e expor dados da empresa via protocolo MCP.
+#### Aula 12 (20/10/2026) - PostgreSQL: do relacional ao vetorial (SQL, `pgvector`, RAG & MCP)
+- **Espiral & Conexão:** **Recupera Aulas 05, 06, 07, 08 e 10** (Abrindo o banco que os serviços do Módulo II vinham usando por meio de ORM e conectando a busca inteligente ao portal do cliente).
+- **Desafio do Mini Mundo:** Consultar diretamente o banco da plataforma, permitir busca semântica em contratos de frete e expor dados da empresa via protocolo MCP.
 - **Conteúdo Expositivo & Prático:**
-  - *Vetores & RAG:* Embeddings, busca por similaridade de cosseno com `pgvector` no PostgreSQL, pipeline RAG (Chunking, Retrieval, Generation).
+  - *SQL relacional:* O que o ORM escreveu por você. `psql` no contêiner, inspeção de schemas e tabelas, DDL à mão com chave estrangeira e restrições, `SELECT`, `JOIN`, `ORDER BY` e `LIMIT`, índices e leitura de plano de execução com `EXPLAIN`.
+  - *Vetores & RAG:* Embeddings, busca por similaridade de cosseno com `pgvector` no PostgreSQL, pipeline RAG (Chunking, Retrieval, Generation). A busca semântica entra como mais um `ORDER BY`, sobre distância.
   - *Model Context Protocol (MCP):* Padrão aberto de integração entre LLMs e fontes de dados corporativas (MCP Servers, Resources, Prompts, Tools).
-  - *Construção Guiada (Live Coding):* Pipeline RAG em Python com `pgvector` + Servidor MCP em TypeScript conectado à API de Pedidos.
-- **Entregável:** Servidor MCP funcional e pipeline RAG realizando busca por similaridade em documentos.
+  - *Construção Guiada (Live Coding):* SQL à mão no PostgreSQL em contêiner, pipeline RAG em Python com `pgvector` + Servidor MCP em TypeScript conectado à API de Pedidos.
+- **Entregável:** Schema relacional criado e consultado por SQL escrita pelo aluno, pipeline RAG realizando busca por similaridade com citação da fonte, e servidor MCP funcional.
+
+> Registrado na `ADR-008`: até o Módulo II o aluno persistia em PostgreSQL sem escrever uma linha de SQL, porque o schema nascia do `ddl-auto` do Hibernate e do `ModelBuilder` do EF Core. Esta aula fecha essa lacuna antes de pedir `pgvector`, e o servidor MCP passa a ocupar o último terço do bloco prático.
 
 #### Aula 13 (27/10/2026) - CHECKPOINT 3 (CP3)
-- **Escopo:** Avaliação prática acumulativa (Testes de Unidade, Frontend React/Angular, RAG e MCP).
+- **Escopo:** Avaliação prática acumulativa (Testes de Unidade, Frontend React/Angular, SQL relacional, `pgvector`, RAG e MCP).
 
 ---
 

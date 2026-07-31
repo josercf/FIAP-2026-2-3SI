@@ -219,7 +219,7 @@
 
 ---
 
-## Módulo III: Testes de Unidade, Frontend Enterprise, RAG & MCP (Outubro)
+## Módulo III: Testes de Unidade, Frontend Enterprise, SQL, RAG & MCP (Outubro)
 
 ### Aula 10 (06/10/2026) - Testes de Unidade (TDD / Mocks) & Frontend Enterprise I: React (TypeScript)
 - **Objetivos de Aprendizagem:** Aplicar a camada de testes de unidade com TDD/Mocks nas regras de negócio e desenvolver uma interface SPA reativa em React (TypeScript).
@@ -248,7 +248,9 @@
 ### Aula 11 (13/10/2026) - Frontend Enterprise II: Angular (Observer Pattern & RxJS)
 - **Objetivos de Aprendizagem:** Desenvolver o painel administrativo em Angular aplicando Injeção de Dependência, Módulos/Services e o padrão **Observer** com **RxJS**.
 - **Espiral Pedagógica:** **Recupera Aulas 05, 06 e 10** (Comparando a abordagem da biblioteca React com a arquitetura opinada do framework Angular).
-- **Desafio do Mini Mundo:** Construir o dashboard operacional em Angular para a equipe interna gerenciar frotas e motoristas da *LogiTech*.
+- **Desafio do Mini Mundo:** Construir o dashboard operacional em Angular para a equipe interna da *LogiTech* acompanhar a frota em tempo real e consultar o faturamento, em dois fluxos assíncronos concorrentes.
+
+> Escopo ajustado pela `ADR-008`: o painel consome a telemetria que o serviço `painel` já expõe desde a Aula 02 e o `faturamento` em .NET da Aula 05, em vez de um cadastro de motoristas que não existe no contrato da plataforma. A escolha é o que dá dois fluxos contínuos e concorrentes ao painel, que é o caso que justifica RxJS e dá lastro à Pergunta de Verificação 3.
 - **Agenda em Minutos:**
   - `19h20 - 19h35`: **Resgate da Espiral:** Comparando a flexibilidade do React (Aula 10) com a estrutura opinada do Angular.
   - `19h35 - 19h55`: Desafio: Criar um painel corporativo complexo com múltiplos fluxos reativos de dados.
@@ -269,34 +271,37 @@
 
 ---
 
-### Aula 12 (20/10/2026) - Persistência Vetorial (`pgvector`), RAG & Model Context Protocol (MCP)
-- **Objetivos de Aprendizagem:** Configurar busca vetorial com `pgvector` no PostgreSQL, construir um pipeline RAG e desenvolver um servidor **Model Context Protocol (MCP)** em TypeScript.
-- **Espiral Pedagógica:** **Recupera Aulas 06, 07, 08 e 10** (Expandindo a inteligência da aplicação com busca semântica em contratos).
-- **Desafio do Mini Mundo:** Permitir que motoristas e clientes consultem dúvidas sobre contratos complexos de transporte via busca semântica RAG e expor serviços da empresa para agentes parceiros via MCP.
+### Aula 12 (20/10/2026) - PostgreSQL: do relacional ao vetorial (SQL, `pgvector`, RAG & MCP)
+- **Objetivos de Aprendizagem:** Consultar e modelar diretamente em SQL o banco relacional que os serviços da plataforma vinham usando por meio de ORM, configurar busca vetorial com `pgvector`, construir um pipeline RAG e desenvolver um servidor **Model Context Protocol (MCP)** em TypeScript.
+- **Espiral Pedagógica:** **Recupera Aulas 05, 06, 07, 08 e 10** (Abrindo o banco por baixo do Repository Pattern e expandindo a inteligência da aplicação com busca semântica em contratos).
+- **Desafio do Mini Mundo:** Consultar diretamente a base da plataforma, permitir que motoristas e clientes tirem dúvidas sobre contratos complexos de transporte via busca semântica RAG, e expor serviços da empresa para agentes parceiros via MCP.
 - **Agenda em Minutos:**
-  - `19h20 - 19h35`: **Resgate da Espiral:** Conectando a infraestrutura do Docker Compose (Aula 07) e o agente (Aula 08) à camada de dados vetoriais.
-  - `19h35 - 19h55`: Desafio: Resolver buscas em documentos não estruturados e padronizar o contexto para IAs via protocolo MCP.
-  - `19h55 - 20h35`: Teoria: Embeddings, distância de cosseno, busca por similaridade semântica com `pgvector` no PostgreSQL. Pipeline RAG (Chunking, Ingestion, Retrieval). Especificação do **Model Context Protocol (MCP)** (Servers, Resources, Prompts, Tools).
+  - `19h20 - 19h35`: **Resgate da Espiral:** O banco que sempre esteve lá. Abrir no `psql` as tabelas que o Hibernate e o EF Core criaram nas Aulas 05 e 06, e constatar que ninguém da turma escreveu aquela SQL.
+  - `19h35 - 19h50`: Desafio: Consultar dados que o ORM não modela e resolver buscas em documentos não estruturados.
+  - `19h50 - 20h35`: Teoria: SQL relacional (DDL, chave estrangeira e restrições, `SELECT`, `JOIN`, `ORDER BY`, `LIMIT`, índices e leitura de plano de execução com `EXPLAIN`). Sobre essa base, embeddings, distância de cosseno e busca por similaridade com `pgvector`, apresentada como mais um `ORDER BY`. Pipeline RAG (Chunking, Ingestion, Retrieval).
   - `20h35 - 20h50`: **Pergunta de Verificação #1** + Tira-dúvidas.
   - `20h50 - 21h20`: ☕ **INTERVALO (30 min)**.
-  - `21h20 - 21h35`: **Perguntas de Verificação #2 e #3**.
-  - `21h35 - 22h35`: **Atividade Prática em Dupla:** Ativar a extensão `pgvector` no PostgreSQL do Compose, implementar o pipeline RAG em Python e criar um servidor MCP simples em TypeScript que expõe a API de Pedidos.
-  - `22h35 - 22h50`: Teste de consultas semânticas e do servidor MCP + Commit no Git.
+  - `21h20 - 21h32`: **Perguntas de Verificação #2 e #3**.
+  - `21h32 - 21h42`: Teoria, bloco curto: especificação do **Model Context Protocol (MCP)** (Servers, Resources, Tools, Prompts) e o transporte `stdio`.
+  - `21h42 - 22h35`: **Atividade Prática em Dupla:** Inspecionar os schemas existentes no `psql`, escrever a DDL do schema `conhecimento` à mão, consultar com `JOIN`, ativar a extensão `pgvector`, implementar o pipeline RAG em Python, criar o índice e comparar o `EXPLAIN`, e expor a API de Pedidos por um servidor MCP em TypeScript.
+  - `22h35 - 22h50`: Teste de consultas semânticas com citação da fonte e do servidor MCP + Commit no Git.
 - **Sessão de Perguntas de Verificação:**
   1. *Pergunta 1:* Qual a diferença entre uma busca tradicional por palavra-chave (keyword search) e uma busca por similaridade de vetores (embeddings)?  
      *Resposta Esperada:* A busca por palavras-chaves exige a correspondência exata dos termos buscados. A busca por vetores compara o significado semântico do texto no espaço vetorial, encontrando resultados relevantes mesmo se usarem palavras diferentes (sinônimos/conceitos).
   2. *Pergunta 2:* O que é o Model Context Protocol (MCP) e qual problema de integração ele resolve entre aplicações e LLMs?  
      *Resposta Esperada:* O MCP é um protocolo aberto que padroniza como as aplicações fornecem contexto (dados, ferramentas e prompts) para os modelos de IA, substituindo integrações customizadas e proprietárias por uma interface universal reutilizável.
-  3. *Pergunta 3:* Quais são os 3 conceitos fundamentais que um servidor MCP pode expor para um cliente de IA?  
-     *Resposta Esperada:* **Resources** (dados de leitura, arquivos/tabelas), **Tools** (funções executáveis que realizam ações) e **Prompts** (modelos de instruções pré-configurados).
-- **Entregável Prático:** Pipeline RAG funcional no PostgreSQL (`pgvector`) e servidor MCP em TypeScript commitado no Git.
+  3. *Pergunta 3:* A busca por similaridade já devolve o resultado certo antes de existir qualquer índice. Então por que criar um índice vetorial, e o que muda no `EXPLAIN`?  
+     *Resposta Esperada:* Sem índice o PostgreSQL faz varredura sequencial e calcula a distância linha a linha, o que é exato mas cresce com o tamanho da tabela. Com um índice vetorial como o `hnsw` o plano passa a usar busca por índice e o tempo deixa de crescer na mesma proporção. A contrapartida é que esse índice é **aproximado**: ele troca uma parcela de precisão na recuperação por velocidade, ao contrário do índice B-tree de uma coluna comum.
+- **Entregável Prático:** Schema relacional criado e consultado por SQL escrita pelo aluno, pipeline RAG funcional no PostgreSQL (`pgvector`) devolvendo o trecho certo com citação do contrato de origem, e servidor MCP em TypeScript commitado no Git.
+
+> **Mudança registrada na `ADR-008`, em 31/07/2026.** A aula ganhou SQL relacional porque o levantamento mostrou que não havia um único arquivo `.sql` no acervo: o aluno persistia em PostgreSQL o semestre inteiro sem escrever SQL. A Pergunta de Verificação 3 deixou de cobrar a lista de conceitos do MCP, que passou a ser conteúdo do bloco curto de teoria, e passou a cobrar índice e plano de execução. O bloco prático encolheu de 60 para 53 minutos; a ordem de corte está declarada no README do laboratório e começa pelo `EXPLAIN` comparativo, que vira demonstração do professor.
 
 ---
 
 ### Aula 13 (27/10/2026) - CHECKPOINT 3 (CP3)
 - **Formato:** Avaliação Prática Individual em Laboratório (19h20 às 22h50 com intervalo às 20h50).
-- **Escopo Integrado:** Testes de Unidade (TDD/Mocks), Frontend Enterprise (React/Angular), Persistência Vetorial (`pgvector`), Arquitetura RAG e Servidores MCP.
-- **Entregável:** Aplicação Frontend integrada ao Backend com suporte a testes de unidade e funcionalidade de RAG ou MCP.
+- **Escopo Integrado:** Testes de Unidade (TDD/Mocks), Frontend Enterprise (React/Angular), SQL relacional (DDL, `JOIN`, índices), Persistência Vetorial (`pgvector`), Arquitetura RAG e Servidores MCP.
+- **Entregável:** Aplicação Frontend integrada ao Backend com suporte a testes de unidade e funcionalidade de RAG ou MCP, apoiada em schema criado e consultado por SQL escrita pelo aluno.
 
 ---
 
