@@ -9,10 +9,11 @@ exatamente para tornar isso possível. Duas rodadas de revisão encontraram,
 à mão, seis defeitos que invertiam veredito neste arquivo; esta suíte
 existe para que a próxima vez que algo quebrar apareça aqui primeiro.
 
-Rodar de dentro deste diretório:
-    python3 -m unittest verificar_test -v
-ou:
+Rodar de dentro deste diretório, sem flag nenhuma (o nome do arquivo casa
+o padrão de descoberta padrão do unittest, 'test*.py', de propósito):
     python3 -m unittest
+ou, nomeando o módulo explicitamente:
+    python3 -m unittest test_verificar -v
 """
 import os
 import shutil
