@@ -68,6 +68,13 @@ LABS = [
     },
     {
         "n": "05", "slug": "solid-patterns", "img": "java", "docker": True,
+        "preparo": (
+            '# Pre-aquece as duas stacks: sem isto a turma perde minutos baixando\n'
+            '# Spring Boot e Npgsql no comeco da aula.\n'
+            'if [ -f pedidos/pom.xml ]; then mvn -B -q -f pedidos/pom.xml dependency:go-offline || true; fi\n'
+            'if [ -f faturamento/Faturamento.sln ]; then dotnet restore faturamento/Faturamento.sln || true; fi\n'
+            'pip install --user pytest >/dev/null 2>&1 || true'
+        ),
         "extras": ["dotnet"],
         "titulo": "POO, SOLID e Design Patterns em Java e C#",
         "aula": "Aula 05 - POO, Principios SOLID e Design Patterns",
@@ -78,6 +85,10 @@ LABS = [
     },
     {
         "n": "06", "slug": "apis-patterns", "img": "python", "docker": False,
+        "preparo": (
+            'if [ -f servicos/frete/requirements.txt ]; then pip install --user -r servicos/frete/requirements.txt; fi\n'
+            'if [ -f servicos/notificacoes/package.json ]; then (cd servicos/notificacoes && npm ci); fi'
+        ),
         "extras": ["node"],
         "titulo": "Adapter, Decorator e Strategy em APIs Node.js e Python",
         "aula": "Aula 06 - Design Patterns Estruturais e Comportamentais",
@@ -88,6 +99,14 @@ LABS = [
     },
     {
         "n": "07", "slug": "compose-gateway", "img": "python", "docker": True,
+        "preparo": (
+            '# A rede e o volume vem da Aula 03 e entram no Compose como external:\n'
+            '# sem eles o compose up falha com mensagem obscura.\n'
+            'docker network create logitech-net 2>/dev/null || true\n'
+            'docker volume create logitech-telemetria >/dev/null 2>&1 || true\n'
+            'if [ -f .env.exemplo ] && [ ! -f .env ]; then cp .env.exemplo .env; fi\n'
+            'pip install --user pytest >/dev/null 2>&1 || true'
+        ),
         "extras": ["node"],
         "titulo": "Docker Compose Multi-Servico e AI Gateway",
         "aula": "Aula 07 - Docker Compose e AI Gateways (Strategy e Facade)",
@@ -98,6 +117,9 @@ LABS = [
     },
     {
         "n": "08", "slug": "agentes-worktrees", "img": "python", "docker": True,
+        "preparo": (
+            'pip install --user pytest >/dev/null 2>&1 || true'
+        ),
         "modelo": "qwen3.5:2b",
         "titulo": "Function Calling, Command Pattern e Git Worktrees",
         "aula": "Aula 08 - Orquestracao de Agentes e Git Worktrees I",
@@ -324,7 +346,7 @@ set -euo pipefail
 echo "==> Configurando o laboratorio {nome}"
 
 # --- Dependencias da stack -------------------------------------------------
-{stack}
+{stack}{preparo}
 
 # --- Ollama: SLM rodando dentro do proprio container -----------------------
 # Backend único de IA dos laboratórios, decisão registrada na ADR-005 do
@@ -615,7 +637,9 @@ def main():
         write(
             os.path.join(root, ".devcontainer", "post-create.sh"),
             POST_CREATE.format(
-                nome=nome, stack=STACK_CMDS[lab["img"]], modelo=modelo_do_lab(lab)
+                nome=nome, stack=STACK_CMDS[lab["img"]],
+                preparo=("\n" + lab["preparo"]) if lab.get("preparo") else "",
+                modelo=modelo_do_lab(lab),
             ),
             executable=True,
         )
