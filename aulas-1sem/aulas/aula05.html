@@ -66,9 +66,10 @@
             <tr><th>Início</th><th>Conteúdo</th></tr>
           </thead>
           <tbody>
-            <tr><td>19h20</td><td>Resgate da espiral: de scripts soltos para serviços com projeto</td></tr>
-            <tr><td>19h35</td><td>Desafio do Mini Mundo: cobrar pelo frete sem prender a regra ao banco</td></tr>
-            <tr><td>19h55</td><td>Teoria: os quatro pilares de POO, os cinco princípios SOLID, Factory Method, Repository e Singleton</td></tr>
+            <tr><td>19h20</td><td>Devolutiva do CP1: os itens mais errados, as confusões que eles revelaram e o desenho do CP2</td></tr>
+            <tr><td>19h35</td><td>Resgate da espiral: de scripts soltos para serviços com projeto</td></tr>
+            <tr><td>19h45</td><td>Desafio do Mini Mundo: cobrar pelo frete sem prender a regra ao banco</td></tr>
+            <tr><td>20h00</td><td>Teoria: os quatro pilares de POO, os cinco princípios SOLID, Factory Method, Repository e Singleton</td></tr>
             <tr><td>20h35</td><td>Quiz 1 e tira-dúvidas</td></tr>
             <tr><td>20h50</td><td>Intervalo (30 minutos)</td></tr>
             <tr><td>21h20</td><td>Quizzes 2 e 3</td></tr>
@@ -88,7 +89,242 @@
         </div>
       </section>
 
-      <!-- ==================== 4: RESGATE DA ESPIRAL ==================== -->
+      <!-- ==================== 4: CP1 - PANORAMA AGREGADO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O CP1 teve 79% de acerto por item e consumiu 65 dos 110 minutos previstos</h2>
+        </div>
+
+        <div class="side-by-side" style="gap:16px; margin-top:6px;">
+          <div class="side" style="padding:13px 16px;">
+            <h4>Medidas da prova inteira</h4>
+            <table class="compact-table" style="font-size:0.55em; margin:6px 0 0;">
+              <tbody>
+                <tr><td>Acerto médio por item</td><td class="mono">79%</td></tr>
+                <tr><td>Respostas registradas</td><td class="mono">576 de 576</td></tr>
+                <tr><td>Tempo mediano até a entrega</td><td class="mono">65 min</td></tr>
+                <tr><td>Última entrega</td><td class="mono">108 min</td></tr>
+                <tr><td>Janela sem uso</td><td class="mono">72 min</td></tr>
+                <tr><td>Confiabilidade interna (KR-20)</td><td class="mono">0,92</td></tr>
+                <tr><td>Correlação entre tempo gasto e acerto</td><td class="mono">-0,08</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="side" style="padding:13px 16px;">
+            <h4>Alunos por faixa de acerto</h4>
+            <table class="compact-table" style="font-size:0.55em; margin:6px 0 0;">
+              <thead><tr><th>Faixa</th><th>Alunos</th><th>Participação</th></tr></thead>
+              <tbody>
+                <tr><td>21 a 24 acertos</td><td class="mono">12</td><td class="mono">50%</td></tr>
+                <tr><td>17 a 20 acertos</td><td class="mono">6</td><td class="mono">25%</td></tr>
+                <tr><td>14 a 16 acertos</td><td class="mono">2</td><td class="mono">8%</td></tr>
+                <tr><td>10 a 13 acertos</td><td class="mono">0</td><td class="mono">0%</td></tr>
+                <tr><td>Até 9 acertos</td><td class="mono">4</td><td class="mono">17%</td></tr>
+              </tbody>
+            </table>
+            <p style="font-size:0.58em; line-height:1.45; margin:7px 0 0; color:#6b6b6b;">
+              A faixa de 10 a 13 acertos ficou vazia. Os acertos da turma formaram dois blocos separados por um vão de quatro itens.
+            </p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Leitura agregada</span>
+          <p>Metade da sala ficou acima do que estes 24 itens conseguem ordenar, então o CP1 deixou de medir nesse grupo. Ficar mais tempo no formulário também não melhorou o acerto, e a janela terminou com 72 minutos sem uso.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Devolutiva do CP1</div>
+          <div class="footer-page">4</div>
+        </div>
+      </section>
+
+      <!-- ==================== 5: CP1 - OS ITENS MAIS ERRADOS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Seis itens ficaram em 71% de acerto ou menos</h2>
+        </div>
+
+        <table class="compact-table" style="font-size:0.53em; margin-top:6px;">
+          <thead>
+            <tr><th style="width:6%;">Item</th><th style="width:24%;">Tema</th><th style="width:8%;">Acerto</th><th style="width:9%;">Discrim.</th><th>Para onde foram as marcações erradas</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono">C6</td><td>Duas definições de "entrega"</td><td class="mono">67%</td><td class="mono">0,71</td><td>Quatro marcações escolheram renomear o termo no sistema inteiro, tratando a linguagem ubíqua como exigência de vocabulário único.</td></tr>
+            <tr><td class="mono">D1</td><td>Restaurar o cache de camadas</td><td class="mono">67%</td><td class="mono">0,75</td><td>Quatro marcações foram para o <span class="mono">--no-cache-dir</span>, que é o cache do pip e não o cache de camadas do build.</td></tr>
+            <tr><td class="mono">A1</td><td>Camada OSI do defeito</td><td class="mono">71%</td><td class="mono">0,57</td><td>As sete marcações erradas ficaram todas na mesma alternativa: a causa em L4 porque a porta 8081 é conceito de transporte.</td></tr>
+            <tr><td class="mono">B5</td><td>Revisão do endpoint SSE</td><td class="mono">71%</td><td class="mono">0,71</td><td>Quatro apontaram o <span class="mono">Content-Type</span> e três trocaram o GET por POST. O vazamento do <span class="mono">setInterval</span> passou despercebido.</td></tr>
+            <tr><td class="mono">B6</td><td>Reproduzir o defeito no container</td><td class="mono">71%</td><td class="mono">0,71</td><td>Os erros se dividiram entre <span class="mono">attach</span>, <span class="mono">exec</span> e <span class="mono">run ... sh</span>, três comandos que parecem sinônimos sem prática de terminal.</td></tr>
+            <tr><td class="mono">D5</td><td>Memória sem teto e <span class="mono">ps</span> isolado</td><td class="mono">71%</td><td class="mono">0,71</td><td>Quatro marcações atribuíram ao cgroup também a visibilidade de processos, que é responsabilidade do namespace.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">O que isso diz do instrumento</span>
+          <p>Nenhum item caiu abaixo de 66% de acerto, então a prova não chegou a ter um degrau difícil. Estes seis são os que mais separaram a turma, com discriminação entre 0,57 e 0,75. No outro extremo, quatro itens passaram de 86% de acerto e um deles discriminou apenas 0,14, ou seja, quase não distinguiu quem domina o assunto.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Devolutiva do CP1</div>
+          <div class="footer-page">5</div>
+        </div>
+      </section>
+
+      <!-- ==================== 6: CP1 - AS CONFUSÕES DIAGNOSTICADAS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Seis alternativas erradas atraíram quem foi bem</h2>
+        </div>
+
+        <p style="font-size:0.6em; line-height:1.5; margin:2px 0 0;">
+          Alternativas escolhidas por três alunos ou mais em que a maioria de quem marcou ficou acima de 6,0. Uma confusão que atravessa níveis de desempenho volta ao quadro, em vez de ficar por conta do estudo individual.
+        </p>
+
+        <table class="compact-table" style="font-size:0.53em; margin-top:7px;">
+          <thead>
+            <tr><th style="width:6%;">Item</th><th style="width:36%;">A confusão que a alternativa revela</th><th style="width:8%;">Marcações</th><th>A correção</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono">A1</td><td>Porta é sinônimo de camada de transporte</td><td class="mono">7</td><td>A porta identifica o serviço em L4, e ainda assim a perda de quadro no cabo continua sendo L1 e L2. O item pergunta pela causa, e a causa está abaixo do transporte.</td></tr>
+            <tr><td class="mono">C6</td><td>Linguagem ubíqua exige um termo único no sistema inteiro</td><td class="mono">4</td><td>Dois bounded contexts podem manter a mesma palavra com modelos diferentes, desde que exista tradução explícita na fronteira.</td></tr>
+            <tr><td class="mono">B5</td><td>SSE precisa do <span class="mono">Content-Type</span> de uma API JSON</td><td class="mono">4</td><td>SSE responde <span class="mono">text/event-stream</span>. O defeito do endpoint estava no <span class="mono">setInterval</span> que nunca é limpo quando o cliente desconecta.</td></tr>
+            <tr><td class="mono">B6</td><td><span class="mono">docker attach</span> abre um shell no container</td><td class="mono">3</td><td><span class="mono">attach</span> liga o terminal ao processo principal já em execução. Para um shell novo é <span class="mono">docker exec -it</span>.</td></tr>
+            <tr><td class="mono">D3</td><td>O argumento do <span class="mono">run</span> substitui o último parâmetro do <span class="mono">ENTRYPOINT</span></td><td class="mono">3</td><td>O argumento do <span class="mono">run</span> substitui o <span class="mono">CMD</span> inteiro e é acrescentado ao <span class="mono">ENTRYPOINT</span>. Por isso os dois aparecem combinados.</td></tr>
+            <tr><td class="mono">A6</td><td><span class="mono">docker rm</span> remove a imagem junto com o container</td><td class="mono">3</td><td><span class="mono">rm</span> descarta a camada gravável do container. A imagem permanece, e o arquivo se perdeu porque nunca esteve em volume.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Destino destas seis confusões</span>
+          <p>Cada uma vira distrator da faixa central do CP2, reescrita com o mesmo texto que capturou a turma agora. Quem entender a correção da coluna da direita já sabe o que a prova de 29/09 vai cobrar.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Devolutiva do CP1</div>
+          <div class="footer-page">6</div>
+        </div>
+      </section>
+
+      <!-- ==================== 7: CP1 - LEITURA DE EVIDÊNCIA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Leitura de evidência abre 69 pontos entre os extremos, a maior distância da prova</h2>
+        </div>
+
+        <div class="side-by-side" style="gap:16px; margin-top:6px; align-items:start;">
+          <div class="side" style="padding:13px 16px;">
+            <h4>Acerto por grupo de conteúdo</h4>
+            <table class="compact-table" style="font-size:0.52em; margin:6px 0 0;">
+              <thead><tr><th>Grupo</th><th>Itens</th><th>Turma</th><th>Distância entre extremos</th></tr></thead>
+              <tbody>
+                <tr><td>Leitura de evidência</td><td class="mono">4</td><td class="mono">74%</td><td class="mono">69 pontos</td></tr>
+                <tr><td>Docker: build</td><td class="mono">3</td><td class="mono">76%</td><td class="mono">63 pontos</td></tr>
+                <tr><td>Docker: runtime</td><td class="mono">4</td><td class="mono">76%</td><td class="mono">52 pontos</td></tr>
+                <tr><td>Documentação e DDD</td><td class="mono">2</td><td class="mono">81%</td><td class="mono">50 pontos</td></tr>
+                <tr><td>SSE e tempo real</td><td class="mono">2</td><td class="mono">85%</td><td class="mono">50 pontos</td></tr>
+                <tr><td>Git</td><td class="mono">4</td><td class="mono">81%</td><td class="mono">41 pontos</td></tr>
+                <tr><td>Redes e HTTP</td><td class="mono">5</td><td class="mono">82%</td><td class="mono">36 pontos</td></tr>
+              </tbody>
+            </table>
+            <p style="font-size:0.55em; line-height:1.45; margin:6px 0 0; color:#6b6b6b;">
+              Distância entre o grupo de menor acerto e o de maior acerto, apurada por agrupamento sobre o padrão de erros.
+            </p>
+          </div>
+          <div class="side" style="padding:13px 16px;">
+            <h4>Os itens que falham juntos não dividem tópico</h4>
+            <p style="font-size:0.6em; line-height:1.5; margin:6px 0 0;">
+              <span class="mono">B5</span> pede a revisão de um endpoint SSE em código. <span class="mono">C3</span> pede o que a saída de <span class="mono">curl -v</span> prova. Assuntos diferentes, e mesmo assim quem erra um erra o outro em 90% dos casos.
+            </p>
+            <p style="font-size:0.6em; line-height:1.5; margin:8px 0 0;">
+              A operação é a mesma nos dois: ler um artefato técnico e extrair dele apenas o que ele prova. A habilidade atravessa Docker, Git e HTTP, e nenhuma aula a tratou de forma direta até aqui.
+            </p>
+            <table class="compact-table" style="font-size:0.52em; margin:8px 0 0;">
+              <thead><tr><th>Par de itens</th><th>Coincidência do erro</th></tr></thead>
+              <tbody>
+                <tr><td class="mono">B5 e C3</td><td class="mono">0,90</td></tr>
+                <tr><td class="mono">C5 e D3</td><td class="mono">0,75</td></tr>
+                <tr><td class="mono">D1 e D5</td><td class="mono">0,71</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Consequência no plano de aulas</span>
+          <p>A semana 2 ganha uma sessão dedicada a interpretar saída de ferramenta: <span class="mono">curl -v</span>, <span class="mono">docker logs</span>, <span class="mono">docker inspect</span> e <span class="mono">git log</span>, sempre com a mesma pergunta, o que esta saída prova e o que ela não prova.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Devolutiva do CP1</div>
+          <div class="footer-page">7</div>
+        </div>
+      </section>
+
+      <!-- ==================== 8: CP1 - O QUE MUDA NO CP2 ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O CP2 troca itens fáceis por itens de execução</h2>
+        </div>
+
+        <div class="side-by-side" style="gap:16px; margin-top:6px; align-items:start;">
+          <div class="side" style="padding:13px 16px;">
+            <h4>Composição da prova de 29/09</h4>
+            <table class="compact-table" style="font-size:0.52em; margin:6px 0 0;">
+              <thead><tr><th>Bloco</th><th>Itens</th><th>Acerto alvo</th></tr></thead>
+              <tbody>
+                <tr><td>Âncoras vindas do CP1</td><td class="mono">6</td><td class="mono">75% a 90%</td></tr>
+                <tr><td>Faixa central, com distratores reescritos</td><td class="mono">12 a 14</td><td class="mono">40% a 70%</td></tr>
+                <tr><td>Teto com execução em terminal</td><td class="mono">4</td><td class="mono">abaixo de 40%</td></tr>
+              </tbody>
+            </table>
+            <p style="font-size:0.58em; line-height:1.5; margin:8px 0 0;">
+              No bloco de execução o aluno roda o comando ou a suíte de testes e lê a saída antes de marcar. É o bloco que ordena o topo, que hoje empata, e é o que usa os 72 minutos de janela que ficaram ociosos.
+            </p>
+          </div>
+          <div class="side" style="padding:13px 16px;">
+            <h4>Metas de comparação entre as duas provas</h4>
+            <table class="compact-table" style="font-size:0.52em; margin:6px 0 0;">
+              <thead><tr><th>Métrica</th><th>CP1</th><th>Meta CP2</th></tr></thead>
+              <tbody>
+                <tr><td>Acerto médio por item</td><td class="mono">79%</td><td class="mono">60% a 70%</td></tr>
+                <tr><td>Tempo mediano de prova</td><td class="mono">65 min</td><td class="mono">90 min ou mais</td></tr>
+                <tr><td>Alternativas sem nenhuma marcação</td><td class="mono">14</td><td class="mono">até 4</td></tr>
+                <tr><td>Confiabilidade (KR-20)</td><td class="mono">0,92</td><td class="mono">0,85 ou mais</td></tr>
+              </tbody>
+            </table>
+            <p style="font-size:0.58em; line-height:1.5; margin:8px 0 0;">
+              Os 14 itens do CP1 que já estavam na faixa alvo entregam, sozinhos, KR-20 de 0,88, então endurecer a prova não derruba a medida.
+            </p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">As quatro semanas até o CP2</span>
+          <p>Semana 1, devolutiva pelas confusões dos distratores. Semana 2, laboratório de leitura de evidência. Semana 3, revisões dirigidas por padrão de erro, com redes e HTTP de um lado e Docker do outro. Semana 4, simulado curto de dez itens para calibrar a dificuldade antes da prova.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Devolutiva do CP1</div>
+          <div class="footer-page">8</div>
+        </div>
+      </section>
+
+      <!-- ==================== 9: RESGATE DA ESPIRAL ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -119,11 +355,11 @@
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Resgate da Espiral</div>
-          <div class="footer-page">4</div>
+          <div class="footer-page">9</div>
         </div>
       </section>
 
-      <!-- ==================== 5: A PLATAFORMA HOJE (ANIMAÇÃO 1) ==================== -->
+      <!-- ==================== 10: A PLATAFORMA HOJE (ANIMAÇÃO 1) ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -178,11 +414,11 @@
 
         <div class="slide-footer">
           <div class="footer-bar">05 – A Plataforma Hoje</div>
-          <div class="footer-page">5</div>
+          <div class="footer-page">10</div>
         </div>
       </section>
 
-      <!-- ==================== 6: DESAFIO DO MINI MUNDO ==================== -->
+      <!-- ==================== 11: DESAFIO DO MINI MUNDO ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -215,11 +451,11 @@
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Desafio do Mini Mundo</div>
-          <div class="footer-page">6</div>
+          <div class="footer-page">11</div>
         </div>
       </section>
 
-      <!-- ==================== 7: O CUSTO DA MUDANÇA (ANIMAÇÃO 2) ==================== -->
+      <!-- ==================== 12: O CUSTO DA MUDANÇA (ANIMAÇÃO 2) ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -281,11 +517,11 @@
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Por que Projeto Importa</div>
-          <div class="footer-page">7</div>
+          <div class="footer-page">12</div>
         </div>
       </section>
 
-      <!-- ==================== 8: O CONTRATO DA PLATAFORMA ==================== -->
+      <!-- ==================== 13: O CONTRATO DA PLATAFORMA ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -318,11 +554,11 @@
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Contrato da Plataforma</div>
-          <div class="footer-page">8</div>
+          <div class="footer-page">13</div>
         </div>
       </section>
 
-      <!-- ==================== 9: OS QUATRO PILARES DE POO ==================== -->
+      <!-- ==================== 14: OS QUATRO PILARES DE POO ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -383,11 +619,11 @@
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Pilares de POO</div>
-          <div class="footer-page">9</div>
+          <div class="footer-page">14</div>
         </div>
       </section>
 
-      <!-- ==================== 10: ENCAPSULAMENTO EM CÓDIGO ==================== -->
+      <!-- ==================== 15: ENCAPSULAMENTO EM CÓDIGO ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -441,11 +677,11 @@ pedido.setEnderecoEntrega("");</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Encapsulamento</div>
-          <div class="footer-page">10</div>
+          <div class="footer-page">15</div>
         </div>
       </section>
 
-      <!-- ==================== 11: ABSTRAÇÃO (ANIMAÇÃO 3) ==================== -->
+      <!-- ==================== 16: ABSTRAÇÃO (ANIMAÇÃO 3) ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -507,11 +743,11 @@ pedido.setEnderecoEntrega("");</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Abstração</div>
-          <div class="footer-page">11</div>
+          <div class="footer-page">16</div>
         </div>
       </section>
 
-      <!-- ==================== 12: HERANÇA X COMPOSIÇÃO ==================== -->
+      <!-- ==================== 17: HERANÇA X COMPOSIÇÃO ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -557,11 +793,11 @@ pedido.setEnderecoEntrega("");</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Herança x Composição</div>
-          <div class="footer-page">12</div>
+          <div class="footer-page">17</div>
         </div>
       </section>
 
-      <!-- ==================== 13: POLIMORFISMO (ANIMAÇÃO 4) ==================== -->
+      <!-- ==================== 18: POLIMORFISMO (ANIMAÇÃO 4) ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -615,11 +851,11 @@ pedido.setEnderecoEntrega("");</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Polimorfismo</div>
-          <div class="footer-page">13</div>
+          <div class="footer-page">18</div>
         </div>
       </section>
 
-      <!-- ==================== 14: SOLID É O PORQUÊ ==================== -->
+      <!-- ==================== 19: SOLID É O PORQUÊ ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -668,11 +904,11 @@ pedido.setEnderecoEntrega("");</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – SOLID e os Padrões</div>
-          <div class="footer-page">14</div>
+          <div class="footer-page">19</div>
         </div>
       </section>
 
-      <!-- ==================== 15: SRP, FIGURA (ANIMAÇÃO 5) ==================== -->
+      <!-- ==================== 20: SRP, FIGURA (ANIMAÇÃO 5) ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -741,11 +977,11 @@ pedido.setEnderecoEntrega("");</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – SOLID: SRP</div>
-          <div class="footer-page">15</div>
+          <div class="footer-page">20</div>
         </div>
       </section>
 
-      <!-- ==================== 16: SRP EM CÓDIGO ==================== -->
+      <!-- ==================== 21: SRP EM CÓDIGO ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -810,11 +1046,11 @@ public class PedidoService {
 
         <div class="slide-footer">
           <div class="footer-bar">05 – SOLID: SRP</div>
-          <div class="footer-page">16</div>
+          <div class="footer-page">21</div>
         </div>
       </section>
 
-      <!-- ==================== 17: OCP, FIGURA (ANIMAÇÃO 6) ==================== -->
+      <!-- ==================== 22: OCP, FIGURA (ANIMAÇÃO 6) ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -875,11 +1111,11 @@ public class PedidoService {
 
         <div class="slide-footer">
           <div class="footer-bar">05 – SOLID: OCP</div>
-          <div class="footer-page">17</div>
+          <div class="footer-page">22</div>
         </div>
       </section>
 
-      <!-- ==================== 18: OCP EM CÓDIGO ==================== -->
+      <!-- ==================== 23: OCP EM CÓDIGO ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -935,11 +1171,11 @@ public class ConectorFaturaMensal
 
         <div class="slide-footer">
           <div class="footer-bar">05 – SOLID: OCP</div>
-          <div class="footer-page">18</div>
+          <div class="footer-page">23</div>
         </div>
       </section>
 
-      <!-- ==================== 19: LSP, FIGURA ==================== -->
+      <!-- ==================== 24: LSP, FIGURA ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -992,11 +1228,11 @@ public class ConectorFaturaMensal
 
         <div class="slide-footer">
           <div class="footer-bar">05 – SOLID: LSP</div>
-          <div class="footer-page">19</div>
+          <div class="footer-page">24</div>
         </div>
       </section>
 
-      <!-- ==================== 20: LSP EM CÓDIGO ==================== -->
+      <!-- ==================== 25: LSP EM CÓDIGO ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1057,11 +1293,11 @@ public Pedido criar(NovoPedido novo) {
 
         <div class="slide-footer">
           <div class="footer-bar">05 – SOLID: LSP</div>
-          <div class="footer-page">20</div>
+          <div class="footer-page">25</div>
         </div>
       </section>
 
-      <!-- ==================== 21: ISP, FIGURA (ANIMAÇÃO 7) ==================== -->
+      <!-- ==================== 26: ISP, FIGURA (ANIMAÇÃO 7) ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1121,11 +1357,11 @@ public Pedido criar(NovoPedido novo) {
 
         <div class="slide-footer">
           <div class="footer-bar">05 – SOLID: ISP</div>
-          <div class="footer-page">21</div>
+          <div class="footer-page">26</div>
         </div>
       </section>
 
-      <!-- ==================== 22: ISP EM CÓDIGO ==================== -->
+      <!-- ==================== 27: ISP EM CÓDIGO ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1182,11 +1418,11 @@ public interface RelatorioDePedidos {
 
         <div class="slide-footer">
           <div class="footer-bar">05 – SOLID: ISP</div>
-          <div class="footer-page">22</div>
+          <div class="footer-page">27</div>
         </div>
       </section>
 
-      <!-- ==================== 23: DIP, FIGURA (ANIMAÇÃO 8) ==================== -->
+      <!-- ==================== 28: DIP, FIGURA (ANIMAÇÃO 8) ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1236,11 +1472,11 @@ public interface RelatorioDePedidos {
 
         <div class="slide-footer">
           <div class="footer-bar">05 – SOLID: DIP</div>
-          <div class="footer-page">23</div>
+          <div class="footer-page">28</div>
         </div>
       </section>
 
-      <!-- ==================== 24: DIP EM CÓDIGO ==================== -->
+      <!-- ==================== 29: DIP EM CÓDIGO ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1299,11 +1535,11 @@ static class RepositorioEmMemoria
 
         <div class="slide-footer">
           <div class="footer-bar">05 – SOLID: DIP</div>
-          <div class="footer-page">24</div>
+          <div class="footer-page">29</div>
         </div>
       </section>
 
-      <!-- ==================== 25: FACTORY METHOD, FIGURA (ANIMAÇÃO 9) ==================== -->
+      <!-- ==================== 30: FACTORY METHOD, FIGURA (ANIMAÇÃO 9) ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1370,11 +1606,11 @@ static class RepositorioEmMemoria
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Factory Method</div>
-          <div class="footer-page">25</div>
+          <div class="footer-page">30</div>
         </div>
       </section>
 
-      <!-- ==================== 26: FACTORY METHOD EM CÓDIGO ==================== -->
+      <!-- ==================== 31: FACTORY METHOD EM CÓDIGO ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1415,11 +1651,11 @@ public class ConectorFaturamentoFactory {
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Factory Method</div>
-          <div class="footer-page">26</div>
+          <div class="footer-page">31</div>
         </div>
       </section>
 
-      <!-- ==================== 27: REPOSITORY, FIGURA ==================== -->
+      <!-- ==================== 32: REPOSITORY, FIGURA ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1469,11 +1705,11 @@ public class ConectorFaturamentoFactory {
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Repository</div>
-          <div class="footer-page">27</div>
+          <div class="footer-page">32</div>
         </div>
       </section>
 
-      <!-- ==================== 28: REPOSITORY NAS DUAS LINGUAGENS ==================== -->
+      <!-- ==================== 33: REPOSITORY NAS DUAS LINGUAGENS ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1530,11 +1766,11 @@ public FaturaService(IFaturaRepository r) { }</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Repository nas Duas Stacks</div>
-          <div class="footer-page">28</div>
+          <div class="footer-page">33</div>
         </div>
       </section>
 
-      <!-- ==================== 29: SINGLETON, O QUE RESOLVE ==================== -->
+      <!-- ==================== 34: SINGLETON, O QUE RESOLVE ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1586,11 +1822,11 @@ public FaturaService(IFaturaRepository r) { }</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Singleton</div>
-          <div class="footer-page">29</div>
+          <div class="footer-page">34</div>
         </div>
       </section>
 
-      <!-- ==================== 30: A CORRIDA (ANIMAÇÃO 10) ==================== -->
+      <!-- ==================== 35: A CORRIDA (ANIMAÇÃO 10) ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1666,11 +1902,11 @@ public FaturaService(IFaturaRepository r) { }</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Singleton e Concorrência</div>
-          <div class="footer-page">30</div>
+          <div class="footer-page">35</div>
         </div>
       </section>
 
-      <!-- ==================== 31: SINGLETON THREAD-SAFE EM CÓDIGO ==================== -->
+      <!-- ==================== 36: SINGLETON THREAD-SAFE EM CÓDIGO ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1733,11 +1969,11 @@ public FaturaService(IFaturaRepository r) { }</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Singleton Thread-Safe</div>
-          <div class="footer-page">31</div>
+          <div class="footer-page">36</div>
         </div>
       </section>
 
-      <!-- ==================== 32: PIRÂMIDE DE TESTES ==================== -->
+      <!-- ==================== 37: PIRÂMIDE DE TESTES ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1783,11 +2019,11 @@ public FaturaService(IFaturaRepository r) { }</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Pirâmide de Testes</div>
-          <div class="footer-page">32</div>
+          <div class="footer-page">37</div>
         </div>
       </section>
 
-      <!-- ==================== 33: QUIZ 1 ==================== -->
+      <!-- ==================== 38: QUIZ 1 ==================== -->
       <section class="quiz-slide content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1831,11 +2067,11 @@ public FaturaService(IFaturaRepository r) { }</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Verificação de Aprendizado</div>
-          <div class="footer-page">33</div>
+          <div class="footer-page">38</div>
         </div>
       </section>
 
-      <!-- ==================== 34: INTERVALO ==================== -->
+      <!-- ==================== 39: INTERVALO ==================== -->
       <section class="content-slide" style="text-align:center; background:transparent;"
                data-background-image="../assets/img/coffee-relax.jpg"
                data-background-size="cover"
@@ -1851,7 +2087,7 @@ public FaturaService(IFaturaRepository r) { }</code></pre>
         </div>
       </section>
 
-      <!-- ==================== 35: QUIZ 2 ==================== -->
+      <!-- ==================== 40: QUIZ 2 ==================== -->
       <section class="quiz-slide content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1895,11 +2131,11 @@ public FaturaService(IFaturaRepository r) { }</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Verificação de Aprendizado</div>
-          <div class="footer-page">35</div>
+          <div class="footer-page">40</div>
         </div>
       </section>
 
-      <!-- ==================== 36: QUIZ 3 ==================== -->
+      <!-- ==================== 41: QUIZ 3 ==================== -->
       <section class="quiz-slide content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1943,11 +2179,11 @@ public FaturaService(IFaturaRepository r) { }</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Verificação de Aprendizado</div>
-          <div class="footer-page">36</div>
+          <div class="footer-page">41</div>
         </div>
       </section>
 
-      <!-- ==================== 37: ATIVIDADE, ABERTURA ==================== -->
+      <!-- ==================== 42: ATIVIDADE, ABERTURA ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -1979,11 +2215,11 @@ public FaturaService(IFaturaRepository r) { }</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Atividade Prática</div>
-          <div class="footer-page">37</div>
+          <div class="footer-page">42</div>
         </div>
       </section>
 
-      <!-- ==================== 38: PASSO 1 ==================== -->
+      <!-- ==================== 43: PASSO 1 ==================== -->
       <section class="exercise-slide content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -2017,11 +2253,11 @@ python3 verificar.py --criterio 7</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Passo 1</div>
-          <div class="footer-page">38</div>
+          <div class="footer-page">43</div>
         </div>
       </section>
 
-      <!-- ==================== 39: PASSO 2 ==================== -->
+      <!-- ==================== 44: PASSO 2 ==================== -->
       <section class="exercise-slide content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -2042,11 +2278,11 @@ git commit -am "feat(todo-1): inverte a dependência do repositório de pedidos"
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Passo 2</div>
-          <div class="footer-page">39</div>
+          <div class="footer-page">44</div>
         </div>
       </section>
 
-      <!-- ==================== 40: PASSO 3 ==================== -->
+      <!-- ==================== 45: PASSO 3 ==================== -->
       <section class="exercise-slide content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -2067,11 +2303,11 @@ git commit -am "feat(todo-2): factory method dos conectores de faturamento"</cod
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Passo 3</div>
-          <div class="footer-page">40</div>
+          <div class="footer-page">45</div>
         </div>
       </section>
 
-      <!-- ==================== 41: PASSO 4 ==================== -->
+      <!-- ==================== 46: PASSO 4 ==================== -->
       <section class="exercise-slide content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -2093,11 +2329,11 @@ python3 ../verificar.py --criterio 3</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Passo 4</div>
-          <div class="footer-page">41</div>
+          <div class="footer-page">46</div>
         </div>
       </section>
 
-      <!-- ==================== 42: PASSO 5 ==================== -->
+      <!-- ==================== 47: PASSO 5 ==================== -->
       <section class="exercise-slide content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -2120,11 +2356,11 @@ git commit -am "feat(todo-4): repository e injeção por construtor no faturamen
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Passo 5</div>
-          <div class="footer-page">42</div>
+          <div class="footer-page">47</div>
         </div>
       </section>
 
-      <!-- ==================== 43: PASSO 6 ==================== -->
+      <!-- ==================== 48: PASSO 6 ==================== -->
       <section class="exercise-slide content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -2146,11 +2382,11 @@ git commit -am "feat(todo-4): repository e injeção por construtor no faturamen
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Passo 6</div>
-          <div class="footer-page">43</div>
+          <div class="footer-page">48</div>
         </div>
       </section>
 
-      <!-- ==================== 44: PASSO 7 ==================== -->
+      <!-- ==================== 49: PASSO 7 ==================== -->
       <section class="exercise-slide content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -2175,11 +2411,11 @@ git commit -am "fix(todo-5): singleton thread-safe do numerador de nota fiscal"<
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Passo 7</div>
-          <div class="footer-page">44</div>
+          <div class="footer-page">49</div>
         </div>
       </section>
 
-      <!-- ==================== 45: PASSO 8 ==================== -->
+      <!-- ==================== 50: PASSO 8 ==================== -->
       <section class="exercise-slide content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -2207,11 +2443,11 @@ python3 verificar.py             # os onze critérios</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Passo 8</div>
-          <div class="footer-page">45</div>
+          <div class="footer-page">50</div>
         </div>
       </section>
 
-      <!-- ==================== 46: CRITÉRIOS E ORDEM DE CORTE ==================== -->
+      <!-- ==================== 51: CRITÉRIOS E ORDEM DE CORTE ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -2250,11 +2486,11 @@ python3 verificar.py             # os onze critérios</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Critérios de Aceitação</div>
-          <div class="footer-page">46</div>
+          <div class="footer-page">51</div>
         </div>
       </section>
 
-      <!-- ==================== 47: ARMADILHAS ==================== -->
+      <!-- ==================== 52: ARMADILHAS ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -2289,11 +2525,11 @@ python3 verificar.py             # os onze critérios</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Armadilhas Conhecidas</div>
-          <div class="footer-page">47</div>
+          <div class="footer-page">52</div>
         </div>
       </section>
 
-      <!-- ==================== 48: ENTREGA ==================== -->
+      <!-- ==================== 53: ENTREGA ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -2334,11 +2570,11 @@ python3 verificar.py             # os onze critérios</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Entrega da Atividade</div>
-          <div class="footer-page">48</div>
+          <div class="footer-page">53</div>
         </div>
       </section>
 
-      <!-- ==================== 49: O QUE VEM ==================== -->
+      <!-- ==================== 54: O QUE VEM ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -2369,11 +2605,11 @@ python3 verificar.py             # os onze critérios</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Próximos Passos</div>
-          <div class="footer-page">49</div>
+          <div class="footer-page">54</div>
         </div>
       </section>
 
-      <!-- ==================== 50: REFERÊNCIAS ==================== -->
+      <!-- ==================== 55: REFERÊNCIAS ==================== -->
       <section id="ref-slide" class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -2423,11 +2659,11 @@ python3 verificar.py             # os onze critérios</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Bibliografia da Aula</div>
-          <div class="footer-page">50</div>
+          <div class="footer-page">55</div>
         </div>
       </section>
 
-      <!-- ==================== 51: ENCERRAMENTO ==================== -->
+      <!-- ==================== 56: ENCERRAMENTO ==================== -->
       <section class="end-slide">
         <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" style="max-width:350px;">
         <div class="copyright">
