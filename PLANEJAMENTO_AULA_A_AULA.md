@@ -121,9 +121,10 @@
 - **Espiral Pedagógica:** **Recupera Aulas 02 e 03** (Construindo as APIs RESTful corporativas que rodam conteinerizadas no Docker).
 - **Desafio do Mini Mundo:** Desenvolver o Bounded Context de Pedidos (Java/Spring Boot) e Faturamento (C#/.NET) com alta manutenibilidade e desacoplamento.
 - **Agenda em Minutos:**
-  - `19h20 - 19h35`: **Resgate da Espiral:** Evoluindo de scripts simples (Aulas 01-03) para arquiteturas robustas em linguagens fortamente tipadas.
-  - `19h35 - 19h55`: Desafio de Negócio: Modelar a regra de Pedidos e Faturamento da *LogiTech* sem criar acoplamento.
-  - `19h55 - 20h35`: Teoria: Os 5 princípios SOLID (SRP, OCP, LSP, ISP, DIP). Padrões de Projeto: Factory Method, Repository Pattern e Singleton.
+  - `19h20 - 19h35`: **Devolutiva do CP1:** Panorama agregado da prova, os seis itens de menor acerto, os seis distratores que capturaram também quem foi bem, a lacuna de leitura de evidência e o desenho do CP2. Nenhuma nota individual e nenhum nome vão ao slide; toda análise é por questão ou por grupo.
+  - `19h35 - 19h45`: **Resgate da Espiral:** Evoluindo de scripts simples (Aulas 01-03) para arquiteturas robustas em linguagens fortamente tipadas.
+  - `19h45 - 20h00`: Desafio de Negócio: Modelar a regra de Pedidos e Faturamento da *LogiTech* sem criar acoplamento.
+  - `20h00 - 20h35`: Teoria: Os 5 princípios SOLID (SRP, OCP, LSP, ISP, DIP). Padrões de Projeto: Factory Method, Repository Pattern e Singleton.
   - `20h35 - 20h50`: **Pergunta de Verificação #1** + Tira-dúvidas.
   - `20h50 - 21h20`: ☕ **INTERVALO (30 min)**.
   - `21h20 - 21h35`: **Perguntas de Verificação #2 e #3**.
