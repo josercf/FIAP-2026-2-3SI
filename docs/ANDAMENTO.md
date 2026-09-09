@@ -344,6 +344,10 @@ slides das Aulas 05 e 06 precisaram de ajuste. Os treze decks foram revalidados.
 
 ### Técnicas
 
+- [ ] **Acervo e repositórios publicados divergem nos labs 10 e 14.** O `aulas-1sem/labs/aula10-lab` e o `aula14-lab` declaram `python:1-3.12-bookworm`, e os repositórios que os alunos forkam, `mwe-2026-2-lab10-testes-react` e `mwe-2026-2-lab14-oauth-jwt`, declaram `typescript-node:1-22-bookworm`. Descoberto em 08/09/2026 ao corrigir a chave GPG do Yarn: os dois repositórios publicados escaparam do defeito justamente por usarem a outra imagem, e por isso ficaram intocados. Decidir qual das duas é a verdade e alinhar, porque hoje o kit do aluno roda sobre uma base diferente da referência do professor.
+- [ ] **O lab 01 não tem devcontainer no acervo, mas o repositório publicado tem.** `mwe-2026-2-lab01-requisitos` declara `python:1-3.12-bookworm` e foi corrigido direto no repositório em 08/09/2026, sem contrapartida em `aulas-1sem/labs/aula01-lab`. Mesma decisão pendente do item acima.
+- [ ] **Rodar `tools/check_devcontainers.py --build` antes de cada aula com laboratório.** As duas primeiras checagens levam segundos e pegam a classe de falha que derrubou a Aula 05 em sala; a terceira constrói de verdade e é a única que pega ferramenta ausente, como o Maven que faltava na imagem de Java. Ver ADR-011.
+
 - [ ] **REGRESSÃO NAS AULAS 05 E 06.** O validador acusa, de forma reprodutível, 4 estouros e 4 colisões de título com o logo, uma delas com 18px de sobreposição real (Aula 05, slide 14). Os arquivos estão intocados desde o commit: ninguém rodou o validador depois das últimas edições daquelas aulas. Detalhe: `aula05` slides 14, 25 e 37; `aula06` slides 14, 23, 26, 41 e 47. **As Aulas 10, 11 e 12 passam nas três checagens.** Corrigir antes de 01/09, que é quando a Aula 05 é dada.
 - [ ] **Aulas 14, 15 e 16 ainda são rasas.** Decks de ~345 a ~370 linhas, sem figura, quizzes genéricos. Cada uma precisa passar pelo `construtor-aulas`. **A próxima é a Aula 14** (segurança, OAuth 2.0 e JWT, 03/11).
 - [ ] **Labs 14, 15 e 16 têm só o esqueleto.** Devcontainer e README funcionam; falta o conteúdo de cada laboratório.
