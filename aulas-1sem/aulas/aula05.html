@@ -2219,7 +2219,39 @@ public FaturaService(IFaturaRepository r) { }</code></pre>
         </div>
       </section>
 
-      <!-- ==================== 43: PASSO 1 ==================== -->
+      <!-- ==================== 43: RECUPERACAO DO AMBIENTE ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Recuperação do ambiente: sincronizar o fork e reconstruir o container</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:10px 18px;">
+          <p style="margin:0 0 8px; font-size:0.6em;">A imagem base do devcontainer traz o repositório apt do Yarn, e a chave de assinatura dele expirou. Todo recurso do devcontainer começa por um <span class="mono">apt-get update</span>, que passou a falhar: o build caiu inteiro e o Codespaces entregou um container de recuperação, sem Docker, sem Java e sem .NET. A correção já está no repositório do professor.</p>
+
+          <pre style="margin:0 0 8px; font-size:0.44em;"><code class="language-bash"># 1. proteger o que já foi feito, antes de mexer no ambiente
+git add -A &amp;&amp; git commit -m "wip: lacunas em andamento" &amp;&amp; git push
+
+# 2. trazer a correção do repositório do professor para o fork de vocês
+git remote add upstream https://github.com/josercf/mwe-2026-2-lab05-solid-patterns.git
+git fetch upstream
+git merge upstream/main     # entra limpo: a correção mexe só em .devcontainer/
+git push</code></pre>
+
+          <p style="margin:0 0 7px; font-size:0.58em;">Depois: <span class="mono">Ctrl+Shift+P</span> e <strong>Codespaces: Full Rebuild Container</strong>. O rebuild lê o arquivo do disco, por isso o passo 2 vem antes. A pasta <span class="mono">/workspaces</span> é volume persistente e sobrevive ao rebuild; excluir e recriar o Codespace é plano B, e descarta o que não foi enviado no passo 1.</p>
+
+          <p style="margin:0; font-size:0.58em; border-top:1px solid rgba(255,255,255,0.2); padding-top:7px;"><strong style="color:var(--fiap-pink);">O que isto tem a ver com a aula:</strong> nenhuma linha do laboratório mudou. O que apodreceu foi uma dependência transitiva da imagem base, fora do repositório e fora do alcance de quem escreveu o código. O mesmo tipo de dependência transitiva não fixada pode derrubar um pipeline de produção. A defesa é a que vale para as seis lacunas de hoje: fixar a versão do que se depende e validar o ambiente antes de confiar nele.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">05 – Recuperação do Ambiente</div>
+          <div class="footer-page">43</div>
+        </div>
+      </section>
+
+      <!-- ==================== 44: PASSO 1 ==================== -->
       <section class="exercise-slide content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -2253,11 +2285,11 @@ python3 verificar.py --criterio 7</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Passo 1</div>
-          <div class="footer-page">43</div>
+          <div class="footer-page">44</div>
         </div>
       </section>
 
-      <!-- ==================== 44: PASSO 2 ==================== -->
+      <!-- ==================== 45: PASSO 2 ==================== -->
       <section class="exercise-slide content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -2278,11 +2310,11 @@ git commit -am "feat(todo-1): inverte a dependência do repositório de pedidos"
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Passo 2</div>
-          <div class="footer-page">44</div>
+          <div class="footer-page">45</div>
         </div>
       </section>
 
-      <!-- ==================== 45: PASSO 3 ==================== -->
+      <!-- ==================== 46: PASSO 3 ==================== -->
       <section class="exercise-slide content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -2303,11 +2335,11 @@ git commit -am "feat(todo-2): factory method dos conectores de faturamento"</cod
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Passo 3</div>
-          <div class="footer-page">45</div>
+          <div class="footer-page">46</div>
         </div>
       </section>
 
-      <!-- ==================== 46: PASSO 4 ==================== -->
+      <!-- ==================== 47: PASSO 4 ==================== -->
       <section class="exercise-slide content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -2329,11 +2361,11 @@ python3 ../verificar.py --criterio 3</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Passo 4</div>
-          <div class="footer-page">46</div>
+          <div class="footer-page">47</div>
         </div>
       </section>
 
-      <!-- ==================== 47: PASSO 5 ==================== -->
+      <!-- ==================== 48: PASSO 5 ==================== -->
       <section class="exercise-slide content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -2356,11 +2388,11 @@ git commit -am "feat(todo-4): repository e injeção por construtor no faturamen
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Passo 5</div>
-          <div class="footer-page">47</div>
+          <div class="footer-page">48</div>
         </div>
       </section>
 
-      <!-- ==================== 48: PASSO 6 ==================== -->
+      <!-- ==================== 49: PASSO 6 ==================== -->
       <section class="exercise-slide content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -2382,11 +2414,11 @@ git commit -am "feat(todo-4): repository e injeção por construtor no faturamen
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Passo 6</div>
-          <div class="footer-page">48</div>
+          <div class="footer-page">49</div>
         </div>
       </section>
 
-      <!-- ==================== 49: PASSO 7 ==================== -->
+      <!-- ==================== 50: PASSO 7 ==================== -->
       <section class="exercise-slide content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -2411,11 +2443,11 @@ git commit -am "fix(todo-5): singleton thread-safe do numerador de nota fiscal"<
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Passo 7</div>
-          <div class="footer-page">49</div>
+          <div class="footer-page">50</div>
         </div>
       </section>
 
-      <!-- ==================== 50: PASSO 8 ==================== -->
+      <!-- ==================== 51: PASSO 8 ==================== -->
       <section class="exercise-slide content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -2443,11 +2475,11 @@ python3 verificar.py             # os onze critérios</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Passo 8</div>
-          <div class="footer-page">50</div>
+          <div class="footer-page">51</div>
         </div>
       </section>
 
-      <!-- ==================== 51: CRITÉRIOS E ORDEM DE CORTE ==================== -->
+      <!-- ==================== 52: CRITÉRIOS E ORDEM DE CORTE ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -2486,11 +2518,11 @@ python3 verificar.py             # os onze critérios</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Critérios de Aceitação</div>
-          <div class="footer-page">51</div>
+          <div class="footer-page">52</div>
         </div>
       </section>
 
-      <!-- ==================== 52: ARMADILHAS ==================== -->
+      <!-- ==================== 53: ARMADILHAS ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -2525,11 +2557,11 @@ python3 verificar.py             # os onze critérios</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Armadilhas Conhecidas</div>
-          <div class="footer-page">52</div>
+          <div class="footer-page">53</div>
         </div>
       </section>
 
-      <!-- ==================== 53: ENTREGA ==================== -->
+      <!-- ==================== 54: ENTREGA ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -2570,11 +2602,11 @@ python3 verificar.py             # os onze critérios</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Entrega da Atividade</div>
-          <div class="footer-page">53</div>
+          <div class="footer-page">54</div>
         </div>
       </section>
 
-      <!-- ==================== 54: O QUE VEM ==================== -->
+      <!-- ==================== 55: O QUE VEM ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -2605,11 +2637,11 @@ python3 verificar.py             # os onze critérios</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Próximos Passos</div>
-          <div class="footer-page">54</div>
+          <div class="footer-page">55</div>
         </div>
       </section>
 
-      <!-- ==================== 55: REFERÊNCIAS ==================== -->
+      <!-- ==================== 56: REFERÊNCIAS ==================== -->
       <section id="ref-slide" class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
@@ -2659,11 +2691,11 @@ python3 verificar.py             # os onze critérios</code></pre>
 
         <div class="slide-footer">
           <div class="footer-bar">05 – Bibliografia da Aula</div>
-          <div class="footer-page">55</div>
+          <div class="footer-page">56</div>
         </div>
       </section>
 
-      <!-- ==================== 56: ENCERRAMENTO ==================== -->
+      <!-- ==================== 57: ENCERRAMENTO ==================== -->
       <section class="end-slide">
         <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" style="max-width:350px;">
         <div class="copyright">
