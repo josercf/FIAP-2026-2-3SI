@@ -15,6 +15,13 @@ RUN rm -f /etc/apt/sources.list.d/yarn.list \
  && apt-get update \
  && rm -rf /var/lib/apt/lists/*
 
+# A imagem base traz apenas o Python mínimo (python3-minimal), sem a biblioteca
+# padrão: falta o módulo json, entre outros. O verificar.py, que é como o aluno
+# confere os onze critérios de aceitação, importa json e não roda sem isto.
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends python3 \
+ && rm -rf /var/lib/apt/lists/*
+
 # A imagem base não traz o Maven, e o Passo 1 do laboratório roda
 # "mvn spring-boot:run". Instalado aqui a partir do tarball oficial, e não
 # pelo feature java do devcontainer: aquele feature reaponta o JAVA_HOME para
