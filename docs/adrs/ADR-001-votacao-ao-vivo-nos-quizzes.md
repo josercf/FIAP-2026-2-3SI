@@ -47,7 +47,7 @@ Hospedagem no `home01` (Ubuntu 24.04, 4 vCPU, 7,7 GB RAM), aproveitando o que j�
 - **Transporte da apuração:** SSE (`text/event-stream`), não WebSocket. O fluxo é unidirecional servidor para cliente, que é exatamente o caso de uso do SSE, e o tema já é ensinado na Aula 02. Reconexão automática vem de graça.
 - **Voto:** `POST` simples com o identificador da sessão e a alternativa. Sem login: a granularidade desejada é a turma, não o aluno.
 - **Estado:** sessões e votos na instância PostgreSQL existente, com expiração automática. Não há dado pessoal e nada precisa sobreviver ao semestre.
-- **Integração no deck:** o cliente lê um `data-quiz-session` no `.quiz-container`. Ausente o atributo, ou falhando a conexão, o slide segue no comportamento local.
+- **Integração no deck:** o cliente lê um `data-quiz-key` no `.quiz-container`. Ausente o atributo, ou falhando a conexão, o slide segue no comportamento local.
 
 ## Riscos conhecidos
 
