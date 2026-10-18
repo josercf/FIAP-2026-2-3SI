@@ -1,0 +1,105 @@
+# Plataforma LogiTech, recorte da Aula 15.
+#
+# Três serviços, escolhidos por um critério só: são os que a noite endurece.
+#
+#   ai-gateway     ganha os guardrails de entrada e de saída  (TODO-1 a TODO-3)
+#   rag            ganha a sanitização do trecho recuperado   (TODO-4)
+#   notificacoes   não muda uma linha de código, e mesmo assim é o serviço
+#                  com a CVE CRITICAL do laboratório          (TODO-5a)
+#
+# O `notificacoes` estar aqui **é** o conteúdo do Passo 5: o código dele é o
+# mesmo desde a Aula 06, ninguém o alterou, e ele apodreceu parado. Segurança
+# de cadeia de suprimentos não depende de você mexer no código.
+#
+# O Ollama roda no host, como desde a Aula 07 (ADR-005). Daí o `extra_hosts`:
+# de dentro de um container, `localhost` é o próprio container.
+
+name: logitech-aula15
+
+services:
+
+  ai-gateway:
+    build:
+      context: ./servicos/ai-gateway
+    image: logitech-ai-gateway:aula15
+    container_name: logitech-ai-gateway
+    environment:
+      # A estratégia é `somente-local`, e não `preferir-remoto` como na Aula
+      # 07. Não é detalhe de laboratório: é a política de conformidade da
+      # ADR-007 valendo. Prompt com cláusula de contrato e CPF de cliente não
+      # sai da rede da empresa.
+      LOGITECH_IA_ESTRATEGIA: somente-local
+      LOGITECH_IA_OLLAMA_URL: http://host.docker.internal:11434
+      LOGITECH_IA_MODELO_LOCAL: ${LOGITECH_MODELO:-qwen2.5:1.5b}
+      # O interruptor da ADR-009. O Passo 2 manda desligar para ver o ataque
+      # funcionar; o Passo 3 religa. Padrão `true`.
+      LOGITECH_GUARDRAILS_ATIVOS: ${LOGITECH_GUARDRAILS_ATIVOS:-true}
+      # 5 por minuto, e não 30: com o limite alto, dá para tentar a mesma
+      # injeção vinte vezes seguidas sem que nada reclame. Limite de taxa é a
+      # defesa mais antiga contra força bruta, e vale para prompt também.
+      LOGITECH_IA_LIMITE_POR_MINUTO: ${LOGITECH_IA_LIMITE_POR_MINUTO:-20}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "4000:4000"
+    networks:
+      - logitech-net
+    mem_limit: 256m
+    healthcheck:
+      # 127.0.0.1 e não localhost: em base Alpine, `localhost` pode resolver
+      # para ::1 antes de 127.0.0.1, e o healthcheck falha com o serviço no ar.
+      # A armadilha é da Aula 07 e continua valendo.
+      test: ["CMD-SHELL", "python -c \"import urllib.request;urllib.request.urlopen('http://127.0.0.1:4000/health',timeout=3)\""]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+
+  rag:
+    build:
+      # A raiz, e não ./servicos/rag: o Dockerfile precisa de `contratos/`.
+      context: .
+      dockerfile: servicos/rag/Dockerfile
+    image: logitech-rag:aula15
+    container_name: logitech-rag
+    environment:
+      LOGITECH_GATEWAY_URL: http://ai-gateway:4000
+      LOGITECH_GUARDRAILS_ATIVOS: ${LOGITECH_GUARDRAILS_ATIVOS:-true}
+    ports:
+      - "8010:8010"
+    networks:
+      - logitech-net
+    mem_limit: 256m
+    depends_on:
+      ai-gateway:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request;urllib.request.urlopen('http://127.0.0.1:8010/health',timeout=3)\""]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+
+  notificacoes:
+    build:
+      context: ./servicos/notificacoes
+    image: logitech-notificacoes:aula15
+    container_name: logitech-notificacoes
+    environment:
+      LOGITECH_PORTA: 3001
+    ports:
+      - "3001:3001"
+    networks:
+      - logitech-net
+    mem_limit: 192m
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:3001/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+
+networks:
+  logitech-net:
+    # A mesma rede criada à mão na Aula 03 e usada desde a Aula 07.
+    external: true

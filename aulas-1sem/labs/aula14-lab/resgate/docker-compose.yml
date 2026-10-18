@@ -1,0 +1,133 @@
+# =============================================================================
+# LogiTech Enterprise AI Platform - RESGATE do docker-compose.yml
+# Aula 14, 03/11/2026
+# =============================================================================
+#
+# Esta e a versao COM as lacunas TODO-1a, TODO-1b e TODO-1c preenchidas.
+#
+# Use quando travar, e nao como atalho:
+#     cp resgate/docker-compose.yml docker-compose.yml
+#     docker compose up -d --build
+# Registre `USEI_O_RESGATE: sim` em `docs/EVIDENCIAS.md` e siga: os passos
+# seguintes dependem deste.
+#
+# =============================================================================
+
+name: logitech
+
+x-saude: &saude
+  interval: 10s
+  timeout: 4s
+  retries: 10
+  start_period: 20s
+
+services:
+
+  # =====================================================================
+  # PASSO 1: o provedor de identidade (era o TODO-1a)
+  # =====================================================================
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0
+    command: ["start-dev", "--import-realm", "--http-port=8090"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${LOGITECH_KEYCLOAK_ADMIN_PASSWORD:?defina no arquivo .env}
+      # Sem esta variavel a porta 9000 nao serve /health/ready e o
+      # healthcheck abaixo nunca fica verde.
+      KC_HEALTH_ENABLED: "true"
+    volumes:
+      # O realm e um arquivo versionado, lido na primeira subida.
+      - ./keycloak:/opt/keycloak/data/import:ro
+    ports:
+      - "8090:8090"
+    networks:
+      - logitech-net
+    mem_limit: 768m
+    healthcheck:
+      <<: *saude
+      # A imagem do Keycloak nao tem curl nem wget. O que sobra e o /dev/tcp
+      # do shell, falando HTTP na unha contra a porta de gerenciamento.
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/9000; echo -e 'GET /health/ready HTTP/1.1\nHost: localhost\nConnection: close\n\n' >&3; grep -q '\"status\": \"UP\"' <&3"]
+
+  # =====================================================================
+  # PASSO 2 e 3: os dois servicos que voce protege
+  # =====================================================================
+  #
+  # Os dois ja estao declarados e ja sobem. O que falta esta DENTRO deles:
+  # `Seguranca.java` (TODO-2 e TODO-3) e `seguranca.mjs` (TODO-4).
+
+  pedidos:
+    build: ./servicos/pedidos
+    environment:
+      # O interruptor da ADR-009. Padrao `false` no codigo, e ligado AQUI:
+      # e este laboratorio que liga seguranca na plataforma. Com ele
+      # desligado, os laboratorios das Aulas 05 a 12 continuam passando.
+      LOGITECH_AUTH_ATIVA: "true"
+
+      # Duas variaveis, dois enderecos do MESMO Keycloak. Nao e redundancia.
+      #
+      #   JWKS_URL  e por onde ESTE CONTAINER alcanca o Keycloak. Dentro da
+      #             rede do Compose, o nome do servico e o DNS: `keycloak`.
+      #
+      #   ISSUER    e o que vem escrito dentro do token, no campo `iss`, e
+      #             quem escreveu foi o Keycloak, usando o endereco pelo qual
+      #             o NAVEGADOR falou com ele: `localhost:8090`.
+      #
+      # Era o TODO-1b: os DOIS enderecos do mesmo Keycloak sao aceitos como
+      # emissor. O token que veio do navegador diz `localhost:8090`; um token
+      # obtido de dentro da rede diria `keycloak:8090`. O mesmo realm, o mesmo
+      # par de chaves, dois nomes.
+      LOGITECH_OIDC_JWKS_URL: http://keycloak:8090/realms/logitech/protocol/openid-connect/certs
+      LOGITECH_OIDC_ISSUER: http://keycloak:8090/realms/logitech,http://localhost:8090/realms/logitech
+
+      LOGITECH_CORS_ORIGINS: http://localhost:5173,http://localhost:4200
+    ports:
+      - "8080:8080"
+    networks:
+      - logitech-net
+    mem_limit: 320m
+    depends_on:
+      # Era o TODO-1c: esperar o Keycloak ficar SAUDAVEL, e nao so existir.
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      <<: *saude
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/health"]
+
+  notificacoes:
+    build: ./servicos/notificacoes
+    environment:
+      LOGITECH_AUTH_ATIVA: "true"
+      LOGITECH_OIDC_JWKS_URL: http://keycloak:8090/realms/logitech/protocol/openid-connect/certs
+      # A mesma linha do `pedidos`, byte a byte. Os dois servicos leem o papel
+      # do mesmo lugar e confiam nos mesmos emissores: e isso que faz o mesmo
+      # token valer nas duas stacks.
+      LOGITECH_OIDC_ISSUER: http://keycloak:8090/realms/logitech,http://localhost:8090/realms/logitech
+    ports:
+      - "3001:3001"
+    networks:
+      - logitech-net
+    mem_limit: 128m
+    depends_on:
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      <<: *saude
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:3001/health"]
+
+# -------------------------------------------------------------------------
+# Rede
+# -------------------------------------------------------------------------
+#
+# Nenhum volume: o Keycloak em `start-dev` guarda o realm num banco embutido
+# efemero, e os dois servicos mantem o estado em memoria. E deliberado: um
+# `docker compose down -v` devolve o ambiente ao zero, e o realm volta do
+# arquivo versionado. Reproduzir o ambiente inteiro custa um comando.
+
+networks:
+  logitech-net:
+    # A mesma rede criada a mao na Aula 03 e usada nas Aulas 07 e 12.
+    # `external: true` diz ao Compose para usar a que ja existe.
+    # Se o `up` reclamar que ela nao existe: docker network create logitech-net
+    external: true

@@ -41,7 +41,8 @@ Os tópicos técnicos foram integrados em camadas dentro da espiral pedagógica,
 | **Testes de Unidade, TDD & Mocks** | **Aula 10** (06/10) | Cobertura das regras de negócio do backend (JUnit, xUnit, PyTest, Vitest). |
 | **Frontend React (Hooks, Componentes)** | **Aula 10** (06/10) | Interface SPA conectada às APIs REST/SSE conteinerizadas. |
 | **Frontend Angular (Modules, Services, RxJS)** | **Aula 11** (13/10) | Dashboard administrativo reativo utilizando o **Observer Pattern** (RxJS). |
-| **Persistência Vetorial (`pgvector`), RAG & MCP** | **Aula 12** (20/10) | Busca semântica RAG + Servidor Model Context Protocol exposto para IAs. |
+| **SQL Relacional (DDL, `JOIN`, Índices, `EXPLAIN`)** | **Aula 12** (20/10) | **Nova Adição:** Abertura do banco que os serviços das Aulas 05 e 06 vinham usando por meio de ORM. Pré-requisito da persistência vetorial, registrado na `ADR-008`. |
+| **Persistência Vetorial (`pgvector`), RAG & MCP** | **Aula 12** (20/10) | Busca semântica como extensão da SQL relacional recém-aprendida + Servidor Model Context Protocol exposto para IAs. |
 | **Segurança OAuth2, OIDC, JWT & RBAC** | **Aula 14** (03/11) | Proteção de todas as rotas do backend e frontend com provedor Keycloak. |
 | **OWASP Top 10 for LLMs & Trivy Scan** | **Aula 15** (10/11) | Hardening de Prompt Injection no AI Gateway e varredura de segurança em imagens Docker. |
 | **Integração End-to-End (Mock GS)** | **Aula 16** (17/11) | Hackathon de integração do ecossistema completo da *LogiTech Enterprise*. |
@@ -54,7 +55,7 @@ Os tópicos técnicos foram integrados em camadas dentro da espiral pedagógica,
 graph TD
     subgraph S1["1º Semestre (2026-2): Eng. de Requisitos, Redes, Docker, POO, Patterns, Frontend & AI-First"]
         F1["Fase 1: PRD/SDD, DDD, Git, Redes (OSI/TCP/HTTP) & Docker"] --> F2["Fase 2: Backend Poliglota (Java/C#/Node/Python), POO/SOLID & Design Patterns"]
-        F2 --> F3["Fase 3: Frontend Enterprise (React/Angular), TDD/Unidade & RAG/MCP"]
+        F2 --> F3["Fase 3: Frontend Enterprise (React/Angular), TDD/Unidade, SQL & RAG/MCP"]
         F3 --> F4["Fase 4: Git Worktrees, Segurança (OAuth2/JWT/OWASP LLM), Hardening & GS1"]
         F4 --> GS1["Global Solution (GS1)"]
     end
@@ -88,8 +89,8 @@ graph TD
 | **29/09** | **CP2** | **CHECKPOINT 2** | **Aulas 05, 06, 07 e 08** | Avaliação Prática de POO/SOLID, Patterns, Compose e Agentes |
 | **06/10** | **Aula 10** | **Testes de Unidade (TDD / Mocks)** & Frontend **React** | **Recupera Aulas 05 e 06** (Testando as regras de negócio das APIs) | TDD em serviços core + Portal do Cliente em React (TypeScript) |
 | **13/10** | **Aula 11** | Frontend Enterprise II: **Angular (RxJS / Observer)** | **Recupera Aulas 05, 06 e 10** (SPAs, Patterns & APIs) | Painel Administrativo em Angular com RxJS (Observer Pattern) |
-| **20/10** | **Aula 12** | Persistência Vetorial (`pgvector`), **RAG** & **MCP** | **Recupera Aulas 06, 07, 08 e 10** (Python + Compose + AI) | Engine RAG de busca semântica em contratos + Servidor MCP |
-| **27/10** | **CP3** | **CHECKPOINT 3** | **Aulas 10, 11 e 12** | Avaliação Prática de Testes de Unidade, Frontend e RAG/MCP |
+| **20/10** | **Aula 12** | **PostgreSQL: do relacional ao vetorial** (SQL, `pgvector`, **RAG** & **MCP**) | **Recupera Aulas 05, 06, 07, 08 e 10** (o banco por baixo do ORM + Python + Compose + AI) | Schema criado em SQL escrita pelo aluno + Engine RAG com citação da fonte + Servidor MCP |
+| **27/10** | **CP3** | **CHECKPOINT 3** | **Aulas 10, 11 e 12** | Avaliação Prática de Testes de Unidade, Frontend, SQL relacional e RAG/MCP |
 | **03/11** | **Aula 14** | Segurança Web & **Git Worktrees Avançado (AI Coding)** | **Recupera Aulas 05, 06, 08, 10, 11 e Worktrees** | Proteção JWT + Ambientes isolados em Worktrees para Agentes de IA |
 | **10/11** | **Aula 15** | Segurança AI-First (**OWASP LLM**) & **Trivy Container Scan** | **Recupera Aulas 03, 07, 12 e 14** (Docker + AI Gateway + Auth) | Guardrails de Prompt Injection e Varredura de Imagens Docker |
 | **17/11** | **Aula 16** | Integração Enterprise End-to-End (Mock GS) | **Recupera Aulas 01 a 15** (Toda a Espiral do Semestre) | Hackathon de integração do sistema *LogiTech Enterprise* |
@@ -127,9 +128,9 @@ graph TD
 - **Espiral & Conexão:** **Recupera Aulas 01 e 02** (Empacotando o projeto em containers seguindo a arquitetura descrita no SDD).
 - **Desafio do Mini Mundo:** Padronizar a execução dos serviços de telemetria (Python) e API HTTP (Node.js) para evitar falhas de ambiente.
 - **Conteúdo Expositivo & Prático:**
-  - *Docker:* Daemon, Imagens, `Dockerfile` Multi-Stage para builds limpos de produção, Volumes e Networks.
-  - *Construção Guiada (Live Coding):* Criação de `Dockerfile` multi-stage otimizado (<100MB) para os serviços de Python e Node.js.
-- **Entregável:** Imagens Docker compiladas e rodando em containers isolados.
+  - *Docker:* Daemon, Imagens, `Dockerfile` Multi-Stage para builds limpos de produção, Volumes, Networks e Agent Skills (`SKILL.md`).
+  - *Prática progressiva em sete ciclos:* `Dockerfile` multi-stage para os serviços de Python e Node.js, com redução mínima de 80% sobre a baseline ingênua e imagem final do coletor abaixo de 100 MB.
+- **Entregável:** Fork individual com um commit por etapa, os sete critérios do `verificar.py` atendidos e a imagem do coletor pública no Docker Hub.
 
 #### Aula 04 (25/08/2026) - CHECKPOINT 1 (CP1)
 - **Escopo:** Avaliação prática individual (PRD/SDD, Git Workflow, Sockets TCP/UDP, HTTP e Docker).
@@ -148,7 +149,7 @@ graph TD
     - **Repository Pattern:** Abstração da camada de persistência com JPA/Hibernate (Java) e EF Core (C#).
     - **Singleton:** Gerenciador global de configurações/pools de conexão.
   - *Construção Guiada (Live Coding):* Desenvolvimento da API de Pedidos em **Java (Spring Boot 3)** e Faturamento em **C# (.NET 8)** aplicando SOLID e Patterns.
-- **Entregável:** Duas APIs RESTful em Java e C# aplicando SOLID e Design Patterns com persistência relacional.
+- **Entregável:** Os serviços de Pedidos (Java) e Faturamento (C#) com SOLID, Repository, Factory Method e Singleton thread-safe, persistindo em PostgreSQL, com testes de unidade verdes nas duas stacks.
 
 #### Aula 06 (08/09/2026) - Design Patterns Estruturais & Comportamentais em Node.js & Python
 - **Espiral & Conexão:** **Recupera Aulas 02, 03 e 05** (Expandindo o backend poliglota com microsserviços assíncronos).
@@ -159,7 +160,7 @@ graph TD
     - **Decorator Pattern:** Adição de logging e métricas de execução sem alterar as classes core.
     - **Strategy Pattern:** Seleção dinâmica de algoritmos de cálculo de frete (Frete Expresso, Normal, Internacional).
   - *Construção Guiada (Live Coding):* Implementar a API em **Python (FastAPI)** com o Strategy Pattern e a API em **Node.js (TypeScript)** com o Decorator Pattern.
-- **Entregável:** APIs em FastAPI e Node.js documentadas no Swagger e estruturadas com Design Patterns.
+- **Entregável:** Os serviços de Frete (FastAPI, Strategy) e Notificações (Node/TS, Adapter e Decorator), documentados em OpenAPI e com testes de unidade verdes.
 
 #### Aula 07 (15/09/2026) - Docker Compose Multi-Serviço & AI Gateways (Strategy Pattern)
 - **Espiral & Conexão:** **Recupera Aulas 03, 05 e 06** (Orquestrando todos os serviços poliglotas e inserindo a camada de IA).
@@ -168,7 +169,7 @@ graph TD
   - *AI Gateway & Patterns:* O padrão **Strategy** aplicado ao roteamento de LLMs (GPT-4, Claude 3.5, Llama 3 local) por custo/latência, com **Facade Pattern** ocultando a complexidade dos provedores.
   - *Docker Compose:* Redes, variáveis de ambiente, volumes e dependências de boot (`depends_on`).
   - *Construção Guiada (Live Coding):* Escrita do `docker-compose.yml` integrando os 4 microsserviços, PostgreSQL e o LiteLLM AI Gateway.
-- **Entregável:** Ambiente multi-serviços rodando via Docker Compose com AI Gateway funcional.
+- **Entregável:** A plataforma inteira orquestrada por um `docker-compose.yml`, com healthcheck, limites de memória e um AI Gateway (Facade e Strategy) com fallback real entre provedor remoto e modelo local.
 
 #### Aula 08 (22/09/2026) - Orquestração de Agentes (Command Pattern) & Git Worktrees I
 - **Espiral & Conexão:** **Recupera Aulas 06 e 07** (Permitindo que a IA execute ações reais e introduzindo Git Worktrees para execução paralela de Agentes).
@@ -178,14 +179,14 @@ graph TD
   - *Function Calling:* Exposição de endpoints OpenAPI como ferramentas (*tools*) para LLMs e resposta em JSON estruturado (*JSON Schema Enforcement*).
   - *Git Worktrees no Desenvolvimento com IA:* Por que o fluxo tradicional de `git checkout` falha ao rodar múltiplos agentes de IA paralelos; Como criar e isolar múltiplos diretórios de trabalho ligados ao mesmo repositório com `git worktree add`.
   - *Construção Guiada (Live Coding):* Criar worktrees paralelas para desenvolver o agente de pedidos e o agente de suporte simultaneamente.
-- **Entregável:** Worktrees configuradas e agente de atendimento invocando funções do backend via Function Calling.
+- **Entregável:** Agente de atendimento executando ações reais na API de Pedidos por Function Calling, com cada ação validada por JSON Schema e auditada, e duas Git Worktrees rodando agentes em paralelo.
 
 #### Aula 09 (29/09/2026) - CHECKPOINT 2 (CP2)
 - **Escopo:** Avaliação prática acumulativa (POO, SOLID, Design Patterns, Backend Poliglota, Docker Compose e Agentes).
 
 ---
 
-### Módulo III: Testes de Unidade, Frontend Enterprise, RAG & MCP (Outubro)
+### Módulo III: Testes de Unidade, Frontend Enterprise, SQL, RAG & MCP (Outubro)
 
 #### Aula 10 (06/10/2026) - Testes de Unidade (TDD / Mocks) & Frontend Enterprise I (React)
 - **Espiral & Conexão:** **Recupera Aulas 05 e 06** (Testando as regras de negócio do backend e construindo a UI).
@@ -198,24 +199,27 @@ graph TD
 
 #### Aula 11 (13/10/2026) - Frontend Enterprise II: Angular (Observer Pattern & RxJS)
 - **Espiral & Conexão:** **Recupera Aulas 05, 06 e 10** (Padrões de frontend e gerenciamento reativo de estado).
-- **Desafio do Mini Mundo:** Construir o painel administrativo de logística para a equipe interna da *LogiTech*.
+- **Desafio do Mini Mundo:** Construir o painel administrativo de logística para a equipe interna da *LogiTech*, acompanhando a frota em tempo real e o faturamento em dois fluxos assíncronos concorrentes (escopo fixado na `ADR-008`).
 - **Conteúdo Expositivo & Prático:**
   - *Observer Pattern:* Reatividade com **RxJS** (`Observables`, `Subjects`, `BehaviorSubjects`, `map`, `filter`, `switchMap`).
   - *Angular:* Estrutura de módulos, Standalone Components, Injeção de Dependência e `HttpClient`.
   - *Construção Guiada (Live Coding):* Desenvolvimento do dashboard em **Angular** consumindo os serviços da API C#/.NET.
 - **Entregável:** Dashboard administrativo em Angular estruturado com RxJS e Injeção de Dependência.
 
-#### Aula 12 (20/10/2026) - Persistência Vetorial (`pgvector`), RAG & Model Context Protocol (MCP)
-- **Espiral & Conexão:** **Recupera Aulas 06, 07, 08 e 10** (Conectando a busca inteligente ao portal do cliente).
-- **Desafio do Mini Mundo:** Permitir busca semântica em contratos de frete e expor dados da empresa via protocolo MCP.
+#### Aula 12 (20/10/2026) - PostgreSQL: do relacional ao vetorial (SQL, `pgvector`, RAG & MCP)
+- **Espiral & Conexão:** **Recupera Aulas 05, 06, 07, 08 e 10** (Abrindo o banco que os serviços do Módulo II vinham usando por meio de ORM e conectando a busca inteligente ao portal do cliente).
+- **Desafio do Mini Mundo:** Consultar diretamente o banco da plataforma, permitir busca semântica em contratos de frete e expor dados da empresa via protocolo MCP.
 - **Conteúdo Expositivo & Prático:**
-  - *Vetores & RAG:* Embeddings, busca por similaridade de cosseno com `pgvector` no PostgreSQL, pipeline RAG (Chunking, Retrieval, Generation).
+  - *SQL relacional:* O que o ORM escreveu por você. `psql` no contêiner, inspeção de schemas e tabelas, DDL à mão com chave estrangeira e restrições, `SELECT`, `JOIN`, `ORDER BY` e `LIMIT`, índices e leitura de plano de execução com `EXPLAIN`.
+  - *Vetores & RAG:* Embeddings, busca por similaridade de cosseno com `pgvector` no PostgreSQL, pipeline RAG (Chunking, Retrieval, Generation). A busca semântica entra como mais um `ORDER BY`, sobre distância.
   - *Model Context Protocol (MCP):* Padrão aberto de integração entre LLMs e fontes de dados corporativas (MCP Servers, Resources, Prompts, Tools).
-  - *Construção Guiada (Live Coding):* Pipeline RAG em Python com `pgvector` + Servidor MCP em TypeScript conectado à API de Pedidos.
-- **Entregável:** Servidor MCP funcional e pipeline RAG realizando busca por similaridade em documentos.
+  - *Construção Guiada (Live Coding):* SQL à mão no PostgreSQL em contêiner, pipeline RAG em Python com `pgvector` + Servidor MCP em TypeScript conectado à API de Pedidos.
+- **Entregável:** Schema relacional criado e consultado por SQL escrita pelo aluno, pipeline RAG realizando busca por similaridade com citação da fonte, e servidor MCP funcional.
+
+> Registrado na `ADR-008`: até o Módulo II o aluno persistia em PostgreSQL sem escrever uma linha de SQL, porque o schema nascia do `ddl-auto` do Hibernate e do `ModelBuilder` do EF Core. Esta aula fecha essa lacuna antes de pedir `pgvector`, e o servidor MCP passa a ocupar o último terço do bloco prático.
 
 #### Aula 13 (27/10/2026) - CHECKPOINT 3 (CP3)
-- **Escopo:** Avaliação prática acumulativa (Testes de Unidade, Frontend React/Angular, RAG e MCP).
+- **Escopo:** Avaliação prática acumulativa (Testes de Unidade, Frontend React/Angular, SQL relacional, `pgvector`, RAG e MCP).
 
 ---
 

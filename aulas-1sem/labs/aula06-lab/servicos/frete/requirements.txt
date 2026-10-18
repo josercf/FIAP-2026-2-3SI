@@ -1,0 +1,8 @@
+# Dependências do serviço de frete da LogiTech.
+# Versões com piso mínimo: o devcontainer instala a mais recente da linha.
+fastapi>=0.115
+uvicorn[standard]>=0.32
+pydantic>=2.9
+# Teste e cliente HTTP usados pelo TestClient do FastAPI
+pytest>=8.3
+httpx>=0.27

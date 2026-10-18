@@ -1,0 +1,4 @@
+# Material de correcao dos checkpoints: contem nome e nota individual de aluno.
+# O workflow static.yml publica o repositorio inteiro no GitHub Pages, entao nada
+# desta pasta pode ser commitado.
+cps/

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aula 08 – Orquestração de Agentes (Command Pattern / Function Calling) & Git Worktrees I | FIAP</title>
+  <title>Aula 08 – Orquestração de Agentes: Command Pattern e Git Worktrees I | FIAP</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
@@ -11,131 +11,2106 @@
   <link rel="stylesheet" href="../assets/css/fiap-print.css">
   <script>if(/print-pdf/gi.test(window.location.search)){var link=document.createElement('link');link.rel='stylesheet';link.href='https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/css/print/pdf.css';document.head.appendChild(link);}</script>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* Tabelas compactas, mesmo padrão das Aulas 02 e 03 */
+    .reveal table.compact-table { font-size: 0.62em; margin: 8px 0; }
+    .reveal table.compact-table th { padding: 7px 12px; }
+    .reveal table.compact-table td { padding: 7px 12px; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    /* A JetBrains Mono projeta <= como um único glifo e -> como seta. Num deck
+       que mostra sintaxe, isso muda o que o aluno lê. Desligado só aqui, e não
+       no fiap-theme.css, que é compartilhado por todos os decks. */
+    .reveal pre code, .reveal .mono { font-variant-ligatures: none; }
+    /* Figuras com animação SVG: altura controlada para nunca estourar os 720px */
+    .reveal .slide-figure { margin: 6px 0 0; }
+    .reveal .slide-figure svg { width: 100%; }
+    .reveal .slide-figure figcaption { font-size: 0.57em; line-height: 1.4; color: #6b6b6b; margin-top: 4px; }
+    .reveal .marcador-pendente {
+      border: 2px dashed var(--fiap-pink); border-radius: 8px;
+      padding: 26px 24px; text-align: center; background: #fff5f8;
+    }
+  </style>
 </head>
 <body>
   <div class="reveal">
     <div class="slides">
-      <section class="cover-slide"><img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" class="fiap-logo-full"></section>
-      <section class="title-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="title-card"><div class="accent-bar"></div><h1>Sistemas de Informação</h1><h2>Microservice and Web Engineering & IT Services</h2><h3>Prof. José Romualdo</h3></div>
-        <div class="lesson-bar">AULA 08 – Orquestração de Agentes & Git Worktrees I</div>
+
+      <!-- ==================== 1: CAPA ==================== -->
+      <section class="cover-slide">
+        <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" class="fiap-logo-full">
       </section>
+
+      <!-- ==================== 2: TÍTULO ==================== -->
+      <section class="title-slide" data-background-image="../assets/img/microservices-bg.jpg" data-background-opacity="0.3">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="title-card">
+          <div class="accent-bar"></div>
+          <h1>Sistemas de Informação</h1>
+          <h2>Microservice and Web Engineering &amp; IT Services</h2>
+          <h3>Prof. José Romualdo</h3>
+        </div>
+        <div class="lesson-bar">AULA 08 – Orquestração de Agentes: Command Pattern e Git Worktrees I</div>
+      </section>
+
+      <!-- ==================== 3: AGENDA ==================== -->
       <section class="content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Agenda do Encontro</h2></div>
-        <table>
-          <thead><tr><th>Bloco</th><th>Horário</th><th>Conteúdo & Atividades</th></tr></thead>
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Agenda do Encontro de Hoje</h2>
+        </div>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>Início</th><th>Conteúdo</th></tr>
+          </thead>
           <tbody>
-            <tr><td><strong>Bloco 1</strong></td><td>19h20 – 20h50</td><td>LLM Function Calling + Command Pattern + Quiz #1</td></tr>
-            <tr><td><strong>Intervalo</strong></td><td>20h50 – 21h20</td><td>☕ Pausa para Café e Networking (30 min)</td></tr>
-            <tr><td><strong>Bloco 2</strong></td><td>21h20 – 22h50</td><td>Quizzes #2 e #3 + Git Worktrees + Lab Agentes</td></tr>
+            <tr><td>19h20</td><td>Resgate da espiral: as APIs das Aulas 05 e 06 e o gateway da Aula 07</td></tr>
+            <tr><td>19h35</td><td>Desafio do Mini Mundo: o agente executando ação real, sem acesso solto ao sistema</td></tr>
+            <tr><td>19h55</td><td>Teoria: Function Calling, JSON Schema como contrato, Command Pattern e Git Worktrees</td></tr>
+            <tr><td>20h35</td><td>Quiz 1 e tira-dúvidas</td></tr>
+            <tr><td>20h50</td><td>Intervalo (30 minutos)</td></tr>
+            <tr><td>21h20</td><td>Quizzes 2 e 3</td></tr>
+            <tr><td>21h35</td><td>Atividade prática em dupla: os oito passos do laboratório</td></tr>
+            <tr><td>22h35</td><td>Validação das chamadas de função, commit e entrega</td></tr>
           </tbody>
         </table>
-        <div class="slide-footer"><div class="footer-bar">08 – Agentes & Worktrees</div><div class="footer-page">3</div></div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Entregável de hoje</span>
+          <p>O fork da dupla com as cinco lacunas preenchidas, <span class="mono">verificar.py</span> imprimindo 9 de 9, a trilha em <span class="mono">docs/AUDITORIA.md</span> com uma recusa registrada e as duas worktrees em <span class="mono">git worktree list</span>.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Agenda do Encontro</div>
+          <div class="footer-page">3</div>
+        </div>
       </section>
+
+      <!-- ==================== 4: RESGATE DA ESPIRAL ==================== -->
       <section class="content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>LLMs como Agentes (Function Calling)</h2></div>
-        <div class="concept-cards">
-          <div class="concept-card"><h4>Function Calling</h4><p>Capacidade de um LLM de decidir quando e com quais parâmetros chamar uma função determinística (ferramenta).</p></div>
-          <div class="concept-card"><h4>Git Worktree</h4><p>Trabalhar em múltiplas branches simultaneamente em diretórios separados, sem precisar de stashes frequentes.</p></div>
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Resgate da Espiral: o que já está de pé</h2>
         </div>
-        <div class="slide-footer"><div class="footer-bar">08 – Agentes & Worktrees</div><div class="footer-page">4</div></div>
-      </section>
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Quiz #1 (Fixação do Bloco 1)</h2></div>
-        <div class="quiz-container">
-          <div class="quiz-question">No contexto de Agentes IA, o que é o Function Calling?</div>
-          <ul class="quiz-options">
-            <li data-correct="false"><span class="option-letter">A</span>Uma função que chama a si mesma recursivamente.</li>
-            <li data-correct="true"><span class="option-letter">B</span>A IA retorna um JSON estruturado para o sistema invocar uma API ou função.</li>
-            <li data-correct="false"><span class="option-letter">C</span>Um telefone físico para suporte.</li>
-            <li data-correct="false"><span class="option-letter">D</span>A IA executa o código diretamente no kernel.</li>
-          </ul>
-          <div class="quiz-feedback" data-correct-msg="Certo! O LLM não executa; ele infere a intenção e os argumentos." data-incorrect-msg="O LLM apenas sugere a assinatura e os argumentos; o sistema invoca a função."></div>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:13px; margin-top:8px;">
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Aulas 05 e 06: as APIs</h4>
+            <p style="font-size:0.66em;">Pedidos com <span class="mono">GET /api/v1/pedidos/{id}/status</span> e <span class="mono">PATCH .../endereco</span>, e o contrato descrito em OpenAPI. São <strong>essas duas rotas</strong> que o agente de hoje vai chamar.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Aula 07: a plataforma orquestrada</h4>
+            <p style="font-size:0.66em;">Docker Compose subindo os serviços e o <strong>AI Gateway</strong> escondendo os provedores de modelo atrás de uma fachada. O agente não conhece provedor: conhece endereço, vindo de variável.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Aula 03: a IA escreveu um arquivo</h4>
+            <p style="font-size:0.66em;">A Agent Skill produziu um <span class="mono">Dockerfile</span> para vocês conferirem. Hoje a mesma IA deixa de escrever texto e passa a <strong>executar uma ação</strong> no sistema.</p>
+          </div>
         </div>
-        <div class="slide-footer"><div class="footer-bar">08 – Agentes & Worktrees</div><div class="footer-page">5</div></div>
-      </section>
-      <section class="content-slide" style="text-align:center;">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div style="margin-top:100px;">
-          <h2 style="font-size:2.5em; color:var(--fiap-pink);">☕ Pausa para Café</h2>
-          <h3 style="font-size:1.5em; color:var(--fiap-gray-light); margin-top:20px;">20h50 – 21h20 (30 minutos)</h3>
-          <p style="margin-top:40px; font-size:1.1em;">Na volta: Quizzes #2 e #3 + Hands-on Lab!</p>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A espiral em uma frase</span>
+          <p>Ninguém escreve API nova hoje. As rotas são as de sempre; o que muda é quem as chama, e quanta engenharia existe entre a intenção do modelo e a chamada.</p>
         </div>
-        <div class="slide-footer"><div class="footer-page">6</div></div>
-      </section>
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Quiz #2 (Retorno do Intervalo)</h2></div>
-        <div class="quiz-container">
-          <div class="quiz-question">Qual Design Pattern melhor representa a abstração de uma ferramenta (Tool) para um Agente IA?</div>
-          <ul class="quiz-options">
-            <li data-correct="false"><span class="option-letter">A</span>Singleton</li>
-            <li data-correct="false"><span class="option-letter">B</span>Observer</li>
-            <li data-correct="true"><span class="option-letter">C</span>Command Pattern</li>
-            <li data-correct="false"><span class="option-letter">D</span>Flyweight</li>
-          </ul>
-          <div class="quiz-feedback" data-correct-msg="Exato! O Command encapsula a ação e seus argumentos como um objeto executável." data-incorrect-msg="Command encapsula uma requisição como um objeto (a ferramenta/função)."></div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Resgate da Espiral</div>
+          <div class="footer-page">4</div>
         </div>
-        <div class="slide-footer"><div class="footer-bar">08 – Agentes & Worktrees</div><div class="footer-page">7</div></div>
       </section>
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Quiz #3</h2></div>
-        <div class="quiz-container">
-          <div class="quiz-question">O comando 'git worktree add' serve para:</div>
-          <ul class="quiz-options">
-            <li data-correct="true"><span class="option-letter">A</span>Fazer checkout de uma branch em uma pasta separada, mantendo o mesmo repositório local.</li>
-            <li data-correct="false"><span class="option-letter">B</span>Adicionar um novo repositório remoto.</li>
-            <li data-correct="false"><span class="option-letter">C</span>Criar um arquivo zip do projeto.</li>
-            <li data-correct="false"><span class="option-letter">D</span>Deletar arquivos temporários.</li>
-          </ul>
-          <div class="quiz-feedback" data-correct-msg="Perfeito! Muito útil para revisar um PR urgente sem perder o contexto atual." data-incorrect-msg="Worktree permite múltiplas branches em diretórios físicos diferentes."></div>
-        </div>
-        <div class="slide-footer"><div class="footer-bar">08 – Agentes & Worktrees</div><div class="footer-page">8</div></div>
-      </section>
+
+      <!-- ==================== 5: DESAFIO DO MINI MUNDO ==================== -->
       <section class="content-slide">
-        <div class="top-bar"></div><img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area"><div class="accent-bar"></div><h2>Hands-on Lab: LogiTech Enterprise</h2></div>
-        <div class="concept-cards">
-          <div class="concept-card"><h4>Missão</h4><p>Implementar o Command Pattern simulando as ferramentas de um Agente IA de Logística.</p></div>
-          <div class="concept-card"><h4>Passo a Passo</h4><p>1. Criar interface `ToolCommand`<br>2. Implementar `RastrearPedidoCommand`<br>3. Invocar baseado no JSON simulado.</p></div>
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Desafio do Mini Mundo: duas perguntas, o dia inteiro</h2>
         </div>
-        <pre class="code-compact"><code class="language-python"># agent.py
-class Command:
-    def execute(self, **kwargs):
-        pass
 
-class RastrearPedido(Command):
-    def execute(self, **kwargs):
-        pedido_id = kwargs.get("pedido_id")
-        return f"Pedido {pedido_id} está em trânsito."
+        <p style="font-size:0.72em; margin-bottom:0;">O atendimento da LogiTech responde à mão, o dia inteiro, às duas perguntas abaixo. As duas já existem como rota na API de Pedidos. O agente pode resolver as duas sozinho, <strong>desde que não ganhe acesso solto ao sistema</strong>.</p>
 
-# Simulando resposta do LLM
-llm_response = {"tool": "rastrear", "args": {"pedido_id": "LOG-1234"}}
+        <div class="side-by-side" style="margin-top:12px;">
+          <div class="concept-card" style="padding:15px 19px;">
+            <h4>"Onde está o meu pedido?"</h4>
+            <p style="font-size:0.68em;">Leitura pura. Se o agente errar o identificador, devolve o pedido errado, e o cliente percebe na hora. Custo do erro: baixo, reversível.</p>
+          </div>
+          <div class="concept-card" style="padding:15px 19px;">
+            <h4>"Muda o endereço de entrega."</h4>
+            <p style="font-size:0.68em;">Escrita. Se o agente errar, um caminhão de 12 toneladas vai para o lugar errado, com o frete já pago. Custo do erro: alto, e nem sempre reversível.</p>
+          </div>
+        </div>
 
-tools = {"rastrear": RastrearPedido()}
-comando = tools.get(llm_response["tool"])
-if comando:
-    print(comando.execute(**llm_response["args"]))</code></pre>
-        <div class="slide-footer"><div class="footer-bar">08 – Agentes & Worktrees</div><div class="footer-page">9</div></div>
+        <div class="callout" style="margin-top:11px; padding:12px 17px;">
+          <p style="font-size:0.68em; margin:0;">A pergunta de engenharia da noite não é "o modelo consegue?". É: <strong>o que impede o modelo de fazer a coisa errada</strong>, e o que sobra registrado quando ele tenta.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Desafio do Mini Mundo</div>
+          <div class="footer-page">5</div>
+        </div>
       </section>
+
+      <!-- ==================== 6: DO ARQUIVO PARA A AÇÃO (ANIMAÇÃO 1) ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O salto de hoje: da IA que escreve para a IA que age</h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 250" style="max-height:340px;" role="img" aria-label="Comparação entre a IA que gera um arquivo e a IA que executa uma ação no sistema">
+            <g font-size="12.5">
+              <text x="20" y="24" font-weight="700" fill="#666">AULA 03</text>
+              <rect x="20" y="34" width="150" height="46" rx="8" fill="#f2f2f2" stroke="#aaa"/>
+              <text x="95" y="62" text-anchor="middle" fill="#333">modelo</text>
+              <rect x="250" y="34" width="180" height="46" rx="8" fill="#f2f2f2" stroke="#aaa"/>
+              <text x="340" y="55" text-anchor="middle" fill="#333">Dockerfile no disco</text>
+              <text x="340" y="71" text-anchor="middle" fill="#777" font-size="11">humano lê antes de usar</text>
+              <line x1="172" y1="57" x2="246" y2="57" stroke="#999" stroke-width="2"/>
+              <circle cx="200" cy="57" r="6" fill="#999">
+                <animate attributeName="cx" values="176;244;244;176" keyTimes="0;0.35;0.9;1" dur="8s" repeatCount="indefinite"/>
+              </circle>
+              <text x="470" y="62" fill="#2e7d32" font-weight="700" opacity="0.25">nada aconteceu no sistema
+                <animate attributeName="opacity" values="0.25;0.25;1;1;0.25" keyTimes="0;0.35;0.45;0.9;1" dur="8s" repeatCount="indefinite"/>
+              </text>
+
+              <line x1="20" y1="105" x2="880" y2="105" stroke="#ddd" stroke-width="1"/>
+
+              <text x="20" y="140" font-weight="700" fill="#ED145B">AULA 08</text>
+              <rect x="20" y="150" width="150" height="46" rx="8" fill="#f2f2f2" stroke="#aaa"/>
+              <text x="95" y="178" text-anchor="middle" fill="#333">modelo</text>
+              <rect x="250" y="150" width="180" height="46" rx="8" fill="#fff" stroke="#ED145B" stroke-width="2"/>
+              <text x="340" y="171" text-anchor="middle" fill="#ED145B" font-weight="700">API de Pedidos</text>
+              <text x="340" y="187" text-anchor="middle" fill="#777" font-size="11">PATCH .../endereco</text>
+              <rect x="510" y="150" width="170" height="46" rx="8" fill="#fff" stroke="#aaa"/>
+              <text x="595" y="171" text-anchor="middle" fill="#333">banco de dados</text>
+              <text x="595" y="187" text-anchor="middle" fill="#777" font-size="11">endereço alterado</text>
+              <line x1="172" y1="173" x2="246" y2="173" stroke="#ED145B" stroke-width="2"/>
+              <line x1="432" y1="173" x2="506" y2="173" stroke="#ED145B" stroke-width="2"/>
+              <circle cx="200" cy="173" r="6" fill="#ED145B">
+                <animate attributeName="cx" values="176;432;510;676;676" keyTimes="0;0.3;0.42;0.62;1" dur="8s" repeatCount="indefinite"/>
+              </circle>
+              <text x="700" y="178" fill="#c62828" font-weight="700" opacity="0.25">o mundo mudou
+                <animate attributeName="opacity" values="0.25;0.25;1;1;0.25" keyTimes="0;0.62;0.7;0.95;1" dur="8s" repeatCount="indefinite"/>
+              </text>
+              <text x="20" y="232" fill="#555" font-size="12.5">Mesmo modelo. Mesma qualidade de saída. Consequência completamente diferente.</text>
+            </g>
+          </svg>
+          <figcaption>
+            Sequência do ciclo de 8 segundos: na faixa de cima, a saída do modelo vira um arquivo no disco e o resultado é "nada aconteceu no sistema", porque um humano ainda lê antes de usar. Na faixa de baixo, a mesma saída atravessa a API de Pedidos e chega ao banco: o endereço muda, e a frase que aparece é "o mundo mudou". O que separa as duas faixas não é a inteligência do modelo, é a existência de uma ação irreversível no fim do caminho.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:6px;">
+          <span class="takeaway-label">O que muda tecnicamente</span>
+          <p>Nada, no modelo. Tudo, na sua aplicação: a partir de hoje existe uma camada sua entre a saída do modelo e o sistema, e é ela que decide se a ação acontece.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Escrever x Agir</div>
+          <div class="footer-page">6</div>
+        </div>
+      </section>
+
+      <!-- ==================== 7: FUNCTION CALLING (ANIMAÇÃO 2) ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Function Calling: o modelo devolve intenção, não comando <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 215" style="max-height:340px;" role="img" aria-label="O modelo recebe as ferramentas declaradas e devolve uma intenção de chamada, que não executa nada sozinha">
+            <g font-size="12.5">
+              <rect x="20" y="28" width="200" height="150" rx="8" fill="#f7f7f7" stroke="#aaa"/>
+              <text x="120" y="50" text-anchor="middle" font-weight="700" fill="#333">A sua aplicação</text>
+              <text x="120" y="76" text-anchor="middle" fill="#555">conversa do cliente</text>
+              <text x="120" y="96" text-anchor="middle" fill="#555">+ ferramentas declaradas</text>
+              <text x="120" y="132" text-anchor="middle" fill="#555">recebe a intenção</text>
+              <text x="120" y="152" text-anchor="middle" fill="#555">e decide o que fazer</text>
+
+              <rect x="640" y="53" width="230" height="100" rx="8" fill="#fff" stroke="#ED145B" stroke-width="2"/>
+              <text x="755" y="86" text-anchor="middle" font-weight="700" fill="#ED145B">Modelo</text>
+              <text x="755" y="110" text-anchor="middle" fill="#555">não tem rede</text>
+              <text x="755" y="130" text-anchor="middle" fill="#555">não tem banco</text>
+
+              <line x1="225" y1="80" x2="635" y2="80" stroke="#999" stroke-width="2"/>
+              <text x="430" y="70" text-anchor="middle" fill="#666" font-size="11.5">mensagens + tools</text>
+              <circle cx="240" cy="80" r="6" fill="#999">
+                <animate attributeName="cx" values="230;630;630;230;230" keyTimes="0;0.32;0.34;0.34;1" dur="7s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="1;1;0;0;0" keyTimes="0;0.32;0.34;0.99;1" dur="7s" repeatCount="indefinite"/>
+              </circle>
+
+              <line x1="225" y1="130" x2="635" y2="130" stroke="#ED145B" stroke-width="2"/>
+              <text x="430" y="152" text-anchor="middle" fill="#ED145B" font-size="11.5" font-weight="700">tool_calls: um pedido, em JSON</text>
+              <circle cx="620" cy="130" r="6" fill="#ED145B" opacity="0">
+                <animate attributeName="cx" values="630;630;230;230" keyTimes="0;0.4;0.85;1" dur="7s" repeatCount="indefinite"/>
+                <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.4;0.45;0.85;0.9" dur="7s" repeatCount="indefinite"/>
+              </circle>
+
+              <text x="430" y="197" text-anchor="middle" fill="#c62828" font-weight="700" font-size="13" opacity="0.25">
+                O modelo nunca executa nada. Quem executa é você.
+                <animate attributeName="opacity" values="0.25;0.25;1;1" keyTimes="0;0.6;0.7;1" dur="7s" repeatCount="indefinite"/>
+              </text>
+            </g>
+          </svg>
+          <figcaption>
+            Sequência do ciclo de 7 segundos: a aplicação envia ao modelo a conversa e a lista de ferramentas declaradas, e o ponto cinza percorre a linha de ida; o modelo devolve, na linha de volta em rosa, um objeto <span class="mono">tool_calls</span> com o nome da função e os argumentos escolhidos; a frase final fixa o ponto, porque o modelo não tem rede, não tem banco e não executa nada. Function Calling é o modelo preenchendo um formulário que você entregou a ele, e devolvendo o formulário preenchido.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:6px;">
+          <span class="takeaway-label">Guarde esta frase</span>
+          <p>Function Calling não dá poder ao modelo. Dá <strong>vocabulário</strong>. O poder continua todo do lado de cá, com quem executa a chamada.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Function Calling</div>
+          <div class="footer-page">7</div>
+        </div>
+      </section>
+
+      <!-- ==================== 8: O QUE O MODELO ENXERGA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O que o modelo enxerga: a declaração da ferramenta <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <p style="font-size:0.7em; margin:0 0 6px;">O modelo nunca vê o seu código: vê este JSON, e é só dele que tira qual função chamar e com quais argumentos. O exemplo é a ferramenta de <strong>localizar caminhão</strong>, que não é tarefa do laboratório.</p>
+
+        <pre class="code-compact" style="font-size:0.5em; margin:0;"><code class="language-json">{
+  "type": "function",
+  "function": {
+    "name": "localizar_caminhao",
+    "description": "Devolve a última posição conhecida de um caminhão da frota da LogiTech.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "placa": { "type": "string",
+                    "description": "Placa do caminhão, no padrão Mercosul, como BRA2E19",
+                    "pattern": "^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$" }
+      },
+      "required": ["placa"],
+      "additionalProperties": false
+    }
+  }
+}</code></pre>
+
+        <div class="takeaway" style="margin-top:8px;">
+          <span class="takeaway-label">Três campos, três papéis</span>
+          <p><span class="mono">name</span> volta na resposta. <span class="mono">description</span> ensina o modelo a escolher. <span class="mono">parameters</span> é o JSON Schema que o seu código usa para validar. Os três são código, não comentário.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Declaração da Ferramenta</div>
+          <div class="footer-page">8</div>
+        </div>
+      </section>
+
+      <!-- ==================== 9: O QUE O MODELO DEVOLVE ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O que o modelo devolve, medido no ensaio desta aula <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <p style="font-size:0.7em; margin:0 0 6px;">Resposta real do <span class="mono">qwen3.5:2b</span> local à pergunta <em>"Onde está o pedido PED-1042?"</em>, com a ferramenta <span class="mono">consultar_status_pedido</span> declarada. Saída literal, com um único corte: o campo <span class="mono">thinking</span> continuava por mais seis linhas.</p>
+
+        <pre class="code-compact" style="font-size:0.5em; margin:0;"><code class="language-json">{
+  "role": "assistant",
+  "content": "",
+  "thinking": "The user is asking about the status of a specific order (PED-1042)...",
+  "tool_calls": [
+    { "id": "call_ll7liylu",
+      "function": { "name": "consultar_status_pedido",
+                     "arguments": { "pedido_id": "PED-1042" } } }
+  ]
+}</code></pre>
+
+        <div class="callout" style="margin-top:9px; padding:11px 16px;">
+          <p style="font-size:0.65em; margin:0;">Três coisas para reparar. <strong>1)</strong> <span class="mono">content</span> vem vazio: o modelo não respondeu ao cliente, ele pediu uma ferramenta. <strong>2)</strong> <span class="mono">arguments</span> chega como objeto no Ollama e como <strong>string com JSON dentro</strong> na API compatível com OpenAI: o laço do laboratório aceita os dois. <strong>3)</strong> Nada disso é um comando ainda. É texto que se parece com um comando.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – A Resposta do Modelo</div>
+          <div class="footer-page">9</div>
+        </div>
+      </section>
+
+      <!-- ==================== 10: O LAÇO DE CONVERSA (ANIMAÇÃO 3) ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O laço de conversa, rodada a rodada <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 215" style="max-height:340px;" role="img" aria-label="O laço de quatro etapas entre modelo, despachante e resposta final">
+            <g font-size="12">
+              <rect x="30" y="35" width="180" height="58" rx="8" fill="#f2f2f2" stroke="#999" stroke-width="1">
+                <animate attributeName="stroke" values="#ED145B;#999;#999;#999;#ED145B" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite"/>
+                <animate attributeName="stroke-width" values="3;1;1;1;3" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite"/>
+              </rect>
+              <text x="120" y="59" text-anchor="middle" font-weight="700" fill="#333">1. pergunta + tools</text>
+              <text x="120" y="79" text-anchor="middle" fill="#666">vão ao modelo</text>
+
+              <rect x="250" y="35" width="180" height="58" rx="8" fill="#f2f2f2" stroke="#999" stroke-width="1">
+                <animate attributeName="stroke" values="#999;#ED145B;#999;#999;#999" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite"/>
+                <animate attributeName="stroke-width" values="1;3;1;1;1" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite"/>
+              </rect>
+              <text x="340" y="59" text-anchor="middle" font-weight="700" fill="#333">2. tool_calls</text>
+              <text x="340" y="79" text-anchor="middle" fill="#666">a intenção volta</text>
+
+              <rect x="470" y="35" width="180" height="58" rx="8" fill="#fff" stroke="#ED145B" stroke-width="2">
+                <animate attributeName="fill" values="#fff;#fff;#ffe9f0;#fff;#fff" keyTimes="0;0.4;0.55;0.8;1" dur="8s" repeatCount="indefinite"/>
+              </rect>
+              <text x="560" y="59" text-anchor="middle" font-weight="700" fill="#ED145B">3. Despachante</text>
+              <text x="560" y="79" text-anchor="middle" fill="#666">valida, executa, audita</text>
+
+              <rect x="690" y="35" width="180" height="58" rx="8" fill="#f2f2f2" stroke="#999" stroke-width="1">
+                <animate attributeName="stroke" values="#999;#999;#999;#ED145B;#999" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite"/>
+                <animate attributeName="stroke-width" values="1;1;1;3;1" keyTimes="0;0.25;0.5;0.75;1" dur="8s" repeatCount="indefinite"/>
+              </rect>
+              <text x="780" y="59" text-anchor="middle" font-weight="700" fill="#333">4. resultado</text>
+              <text x="780" y="79" text-anchor="middle" fill="#666">volta à conversa</text>
+
+              <g stroke="#999" stroke-width="2" fill="none">
+                <line x1="212" y1="64" x2="246" y2="64"/>
+                <line x1="432" y1="64" x2="466" y2="64"/>
+                <line x1="652" y1="64" x2="686" y2="64"/>
+              </g>
+
+              <path d="M780 95 L780 140 L120 140 L120 97" stroke="#ED145B" stroke-width="2" fill="none" stroke-dasharray="6,5"/>
+              <text x="450" y="160" text-anchor="middle" fill="#ED145B" font-size="12" font-weight="700">o laço volta ao passo 1 até o modelo responder em texto</text>
+              <circle cx="780" cy="140" r="5" fill="#ED145B" opacity="0">
+                <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.78;0.82;0.97;1" dur="8s" repeatCount="indefinite"/>
+                <animate attributeName="cx" values="780;780;120;120" keyTimes="0;0.8;0.97;1" dur="8s" repeatCount="indefinite"/>
+              </circle>
+
+              <text x="450" y="198" text-anchor="middle" fill="#555" font-size="12.5">Limite de rodadas não é decoração: sem ele, um modelo teimoso gira para sempre.</text>
+            </g>
+          </svg>
+          <figcaption>
+            Sequência do ciclo de 8 segundos: a moldura acesa percorre as quatro etapas na ordem. A pergunta e as ferramentas vão ao modelo; a intenção volta em <span class="mono">tool_calls</span>; o Despachante valida, executa e audita, e a caixa dele pisca em rosa para marcar que é o único ponto com permissão de agir; o resultado volta para a conversa. A seta tracejada mostra o retorno ao passo 1, que se repete até o modelo responder em texto ou até estourar o limite de rodadas.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:6px;">
+          <span class="takeaway-label">O que é seu neste laço</span>
+          <p>As etapas 1, 2 e 4 são encanamento e vêm prontas no laboratório. A etapa 3 é a engenharia da aula, e é onde estão as cinco lacunas que vocês preenchem.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – O Laço de Conversa</div>
+          <div class="footer-page">10</div>
+        </div>
+      </section>
+
+      <!-- ==================== 11: UM CONTRATO, TRÊS TRANSPORTES ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O mesmo formato em três lugares <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>Onde</th><th>Como declara a ferramenta</th><th>Onde vocês encontram</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Ollama, local</td><td><span class="mono">tools: [{type, function{name, description, parameters}}]</span></td><td>O laboratório de hoje</td></tr>
+            <tr><td>API compatível com OpenAI</td><td>O mesmo objeto; <span class="mono">arguments</span> volta como string JSON</td><td>O AI Gateway da Aula 07</td></tr>
+            <tr><td>MCP, Model Context Protocol</td><td><span class="mono">inputSchema</span>, também JSON Schema, servido por um processo separado</td><td>A Aula 12</td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Por que isso importa hoje</span>
+          <p>O contrato é o mesmo nos três mundos: <strong>JSON Schema</strong>. Quem aprende a escrever o schema direito hoje troca de provedor, de gateway e até de protocolo sem reescrever a camada de comandos. Muda o transporte, não o contrato.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Um Contrato, Três Transportes</div>
+          <div class="footer-page">11</div>
+        </div>
+      </section>
+
+      <!-- ==================== 12: O CAMINHO INGÊNUO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O erro que a integração ingênua comete</h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 235" style="max-height:340px;" role="img" aria-label="Comparação entre chamar a API direto a partir da saída do modelo e passar por uma camada de comandos">
+            <g font-size="12">
+              <rect x="15" y="18" width="420" height="200" rx="10" fill="#fff5f5" stroke="#e57373"/>
+              <text x="225" y="42" text-anchor="middle" font-weight="700" fill="#c62828">Ingênuo: a saída do modelo vira chamada</text>
+              <rect x="45" y="58" width="120" height="42" rx="7" fill="#fff" stroke="#aaa"/>
+              <text x="105" y="84" text-anchor="middle" fill="#333">tool_calls</text>
+              <rect x="285" y="58" width="120" height="42" rx="7" fill="#fff" stroke="#aaa"/>
+              <text x="345" y="84" text-anchor="middle" fill="#333">API</text>
+              <line x1="167" y1="79" x2="282" y2="79" stroke="#c62828" stroke-width="2"/>
+              <text x="225" y="72" text-anchor="middle" fill="#c62828" font-size="11">chamada direta</text>
+              <text x="45" y="130" fill="#c62828" font-size="11.5">Nada valida os argumentos</text>
+              <text x="45" y="152" fill="#c62828" font-size="11.5">Nada autoriza a ação</text>
+              <text x="45" y="174" fill="#c62828" font-size="11.5">Nada registra quem pediu o quê</text>
+              <text x="45" y="196" fill="#c62828" font-size="11.5">Nada consegue desfazer</text>
+
+              <rect x="465" y="18" width="420" height="200" rx="10" fill="#f3f9f4" stroke="#66bb6a"/>
+              <text x="675" y="42" text-anchor="middle" font-weight="700" fill="#2e7d32">Com camada: a intenção vira comando</text>
+              <rect x="487" y="58" width="100" height="42" rx="7" fill="#fff" stroke="#aaa"/>
+              <text x="537" y="84" text-anchor="middle" fill="#333">tool_calls</text>
+              <rect x="627" y="58" width="110" height="42" rx="7" fill="#fff" stroke="#ED145B" stroke-width="2"/>
+              <text x="682" y="78" text-anchor="middle" fill="#ED145B" font-weight="700">Command</text>
+              <text x="682" y="93" text-anchor="middle" fill="#777" font-size="10">valida, audita</text>
+              <rect x="777" y="58" width="90" height="42" rx="7" fill="#fff" stroke="#aaa"/>
+              <text x="822" y="84" text-anchor="middle" fill="#333">API</text>
+              <line x1="589" y1="79" x2="624" y2="79" stroke="#2e7d32" stroke-width="2"/>
+              <line x1="739" y1="79" x2="774" y2="79" stroke="#2e7d32" stroke-width="2"/>
+              <text x="495" y="130" fill="#2e7d32" font-size="11.5">JSON Schema recusa o malformado</text>
+              <text x="495" y="152" fill="#2e7d32" font-size="11.5">Autorização num ponto único</text>
+              <text x="495" y="174" fill="#2e7d32" font-size="11.5">Trilha em docs/AUDITORIA.md</text>
+              <text x="495" y="196" fill="#2e7d32" font-size="11.5">O comando guarda como desfazer</text>
+            </g>
+          </svg>
+          <figcaption>
+            À esquerda, o atalho que aparece em quase todo tutorial: ler <span class="mono">tool_calls</span> e chamar a API na linha seguinte. Funciona na demonstração e não sobrevive à auditoria, porque as quatro perguntas de um incidente ficam sem resposta. À direita, a mesma chamada atravessando um objeto de comando, que é onde validação, autorização, registro e desfazimento passam a existir.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:6px;">
+          <span class="takeaway-label">As quatro perguntas de um incidente</span>
+          <p>Quem pediu? Com quais argumentos? Quem autorizou? Como desfazer? À esquerda nenhuma tem resposta. À direita, as quatro estão na trilha de auditoria.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Integração x Engenharia</div>
+          <div class="footer-page">12</div>
+        </div>
+      </section>
+
+      <!-- ==================== 13: JSON SCHEMA COMO CONTRATO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>JSON Schema: contrato executável, não documentação <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <p style="font-size:0.71em; margin:0 0 8px;">O mesmo objeto tem dois leitores, e é isso que o torna um contrato: o <strong>modelo</strong> o lê para saber o que preencher, e o <strong>seu código</strong> o lê para decidir se aceita o que veio preenchido.</p>
+
+        <div class="concept-cards" style="grid-template-columns: 1fr 1fr; gap:16px; margin-top:4px;">
+          <div class="concept-card" style="padding:15px 19px;">
+            <h4>Leitor 1: o modelo</h4>
+            <p style="font-size:0.67em;">Serializado no prompt. Nomes de campo, tipos, formatos e descrições guiam a escolha. Schema vago produz argumento vago.</p>
+          </div>
+          <div class="concept-card" style="padding:15px 19px;">
+            <h4>Leitor 2: o seu validador</h4>
+            <p style="font-size:0.67em;">O mesmo dicionário, agora como regra executável. No laboratório, <span class="mono">agente/validacao.py</span> percorre <span class="mono">required</span>, <span class="mono">type</span> e <span class="mono">pattern</span> e devolve a lista de erros.</p>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:11px; padding:12px 17px;">
+          <p style="font-size:0.67em; margin:0;">O anti-padrão mais comum: declarar um schema rico para o modelo e validar com um <span class="mono">if</span> frouxo no código. Declarar bonito e validar frouxo <strong>não protege ninguém</strong>. O que protege é o mesmo objeto servir aos dois leitores.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – JSON Schema</div>
+          <div class="footer-page">13</div>
+        </div>
+      </section>
+
+      <!-- ==================== 14: AS PALAVRAS-CHAVE ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>As palavras-chave que fazem o trabalho <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>Palavra-chave</th><th>O que impede</th><th>No caso da LogiTech</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="mono">required</span></td><td>Campo obrigatório ausente</td><td>Alterar endereço sem CEP</td></tr>
+            <tr><td><span class="mono">type</span></td><td>Tipo errado</td><td><span class="mono">pedido_id</span> chegando como número</td></tr>
+            <tr><td><span class="mono">pattern</span></td><td>Formato errado</td><td><span class="mono">"1042"</span> em vez de <span class="mono">"PED-1042"</span>; UF com três letras</td></tr>
+            <tr><td><span class="mono">enum</span></td><td>Valor fora da lista</td><td>Modalidade de frete que não existe</td></tr>
+            <tr><td><span class="mono">additionalProperties: false</span></td><td>Campo que ninguém pediu</td><td>Um <span class="mono">"forcar": true</span> contrabandeado no payload</td></tr>
+            <tr><td><span class="mono">minimum</span> / <span class="mono">maximum</span></td><td>Faixa absurda</td><td>Peso negativo numa cotação de frete</td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Regra prática</span>
+          <p>Todo campo que, ausente ou errado, causa dano tem que estar em <span class="mono">required</span> e com <span class="mono">pattern</span>. Se a sua reação for "mas o modelo sempre manda certo", esse é exatamente o campo que precisa de regra.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Palavras-chave do Schema</div>
+          <div class="footer-page">14</div>
+        </div>
+      </section>
+
+      <!-- ==================== 15: O SCHEMA BARRANDO (ANIMAÇÃO 4) ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O schema barrando a chamada malformada <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 230" style="max-height:340px;" role="img" aria-label="Uma chamada sem CEP batendo na barreira do schema e voltando como recusa">
+            <g font-size="12">
+              <rect x="20" y="50" width="185" height="95" rx="8" fill="#f7f7f7" stroke="#aaa"/>
+              <text x="112" y="73" text-anchor="middle" font-weight="700" fill="#333">intenção do modelo</text>
+              <text x="112" y="95" text-anchor="middle" fill="#555" font-size="11">logradouro, numero,</text>
+              <text x="112" y="113" text-anchor="middle" fill="#555" font-size="11">cidade, uf</text>
+              <text x="112" y="134" text-anchor="middle" fill="#c62828" font-size="11.5" font-weight="700">sem cep</text>
+
+              <rect x="395" y="22" width="26" height="158" rx="4" fill="#ED145B" opacity="0.85"/>
+              <text x="408" y="198" text-anchor="middle" fill="#ED145B" font-size="11.5" font-weight="700">JSON Schema</text>
+              <text x="408" y="214" text-anchor="middle" fill="#777" font-size="10.5">required: [..., "cep"]</text>
+
+              <rect x="620" y="50" width="250" height="95" rx="8" fill="#fff" stroke="#aaa"/>
+              <text x="745" y="75" text-anchor="middle" font-weight="700" fill="#333">PATCH .../pedidos/{id}/endereco</text>
+              <text x="745" y="99" text-anchor="middle" fill="#777" font-size="11">o serviço nunca é chamado</text>
+              <text x="745" y="123" text-anchor="middle" fill="#777" font-size="11">o log dele fica limpo</text>
+
+              <line x1="425" y1="97" x2="615" y2="97" stroke="#ccc" stroke-width="2" stroke-dasharray="7,6"/>
+
+              <circle cx="215" cy="97" r="9" fill="#666">
+                <animate attributeName="cx" values="215;385;385;300;215;215" keyTimes="0;0.3;0.36;0.5;0.62;1" dur="7s" repeatCount="indefinite"/>
+                <animate attributeName="fill" values="#666;#666;#c62828;#c62828;#c62828;#666" keyTimes="0;0.3;0.36;0.5;0.62;1" dur="7s" repeatCount="indefinite"/>
+              </circle>
+
+              <text x="408" y="16" text-anchor="middle" fill="#c62828" font-size="19" font-weight="700" opacity="0.25">x
+                <animate attributeName="opacity" values="0.25;0.25;1;1;0.25;0.25" keyTimes="0;0.32;0.38;0.55;0.62;1" dur="7s" repeatCount="indefinite"/>
+              </text>
+
+              <text x="120" y="172" fill="#c62828" font-size="12" font-weight="700" opacity="0.25">RECUSADO: falta o campo obrigatório 'cep'
+                <animate attributeName="opacity" values="0.25;0.25;1;1;0.25" keyTimes="0;0.42;0.5;0.9;1" dur="7s" repeatCount="indefinite"/>
+              </text>
+            </g>
+          </svg>
+          <figcaption>
+            Sequência do ciclo de 7 segundos: a intenção sem CEP sai do modelo, avança até a barreira rosa do schema, é marcada com o "x" e volta em vermelho para a origem, publicando a linha "RECUSADO: falta o campo obrigatório 'cep'". A linha tracejada à direita nunca chega a ser percorrida: o serviço de Pedidos não é chamado, e é por isso que, no laboratório, o log dele continua sem nenhum <span class="mono">PATCH</span> no instante da recusa.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:6px;">
+          <span class="takeaway-label">O teste que prova isso</span>
+          <p>No laboratório: <span class="mono">assert api.chamadas == []</span>. A prova não é que o agente respondeu bonito, é que o dublê da API <strong>não recebeu nada</strong>.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – O Schema Barrando</div>
+          <div class="footer-page">15</div>
+        </div>
+      </section>
+
+      <!-- ==================== 16: A DESCRIÇÃO É INTERFACE ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A descrição é interface, não comentário</h2>
+        </div>
+
+        <p style="font-size:0.7em; margin:0 0 8px;">Ensaio feito na construção deste laboratório, com o <span class="mono">qwen3.5:2b</span> local, a mesma família de modelo que roda no Codespace de vocês. Duas versões da <strong>mesma</strong> ferramenta, mudando só o texto da descrição:</p>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>Versão da descrição</th><th>Pergunta feita</th><th>O que o modelo fez</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Completa, avisando que o CEP é obrigatório</td><td>"Onde está o pedido PED-1042?"</td><td>Chamou a ferramenta certa, com o argumento certo, em <strong>3 de 3</strong> execuções</td></tr>
+            <tr><td>Completa</td><td>Mudar endereço <strong>sem informar o CEP</strong></td><td>Não chamou a ferramenta: pediu o CEP ao cliente, em <strong>3 de 3</strong> execuções</td></tr>
+            <tr><td>Enfraquecida: "Altera o endereço de entrega de um pedido."</td><td>A mesma, sem CEP</td><td>Não produziu chamada nenhuma: gastou o orçamento de tokens raciocinando e devolveu resposta <strong>vazia em 3 de 3</strong> execuções</td></tr>
+          </tbody>
+        </table>
+
+        <p style="font-size:0.6em; color:#777; margin:6px 0 0;">Condições da terceira linha, para o número ser reproduzível: <span class="mono">temperature 0.1</span>, <span class="mono">num_predict 400</span> e <span class="mono">num_ctx 8192</span>. Sem limite de tokens, duas execuções da mesma pergunta não retornaram em 600 e em 900 segundos, e foram descartadas como inconclusivas.</p>
+
+        <div class="takeaway" style="margin-top:8px;">
+          <span class="takeaway-label">A leitura honesta desses números</span>
+          <p>Descrição boa melhora muito o comportamento, e ainda assim <strong>não é garantia</strong>: com a descrição enfraquecida o modelo não ficou perigoso, ficou inútil. Prompt é otimização; schema é garantia. Só uma das duas você consegue provar em teste.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Descrição de Ferramenta</div>
+          <div class="footer-page">16</div>
+        </div>
+      </section>
+
+      <!-- ==================== 17: ONDE VALIDAR (ANIMAÇÃO 5) ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Onde validar: antes de sair, e não só no servidor</h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 230" style="max-height:340px;" role="img" aria-label="Validar no agente antes de chamar, comparado com deixar o servidor recusar">
+            <g font-size="11.5">
+              <text x="20" y="24" font-weight="700" fill="#2e7d32">Validando no agente</text>
+              <rect x="20" y="34" width="120" height="40" rx="7" fill="#fff" stroke="#aaa"/>
+              <text x="80" y="59" text-anchor="middle" fill="#333">agente</text>
+              <rect x="215" y="34" width="120" height="40" rx="7" fill="#fff" stroke="#ED145B" stroke-width="2"/>
+              <text x="275" y="59" text-anchor="middle" fill="#ED145B" font-weight="700">schema</text>
+              <rect x="410" y="34" width="150" height="40" rx="7" fill="#f7f7f7" stroke="#ccc"/>
+              <text x="485" y="59" text-anchor="middle" fill="#999">serviço, intocado</text>
+              <line x1="142" y1="54" x2="212" y2="54" stroke="#999" stroke-width="2"/>
+              <line x1="337" y1="54" x2="407" y2="54" stroke="#ddd" stroke-width="2" stroke-dasharray="6,5"/>
+              <circle cx="150" cy="54" r="7" fill="#2e7d32">
+                <animate attributeName="cx" values="150;212;212;150;150" keyTimes="0;0.25;0.32;0.45;1" dur="8s" repeatCount="indefinite"/>
+              </circle>
+              <text x="590" y="50" fill="#2e7d32" font-weight="700" opacity="0.25">recusa em milissegundos
+                <animate attributeName="opacity" values="0.25;0.25;1;1;0.25" keyTimes="0;0.32;0.4;0.9;1" dur="8s" repeatCount="indefinite"/>
+              </text>
+              <text x="590" y="68" fill="#555" opacity="0.25">nenhum efeito colateral no sistema
+                <animate attributeName="opacity" values="0.25;0.25;1;1;0.25" keyTimes="0;0.32;0.4;0.9;1" dur="8s" repeatCount="indefinite"/>
+              </text>
+
+              <line x1="20" y1="100" x2="880" y2="100" stroke="#ddd"/>
+
+              <text x="20" y="130" font-weight="700" fill="#c62828">Deixando só o servidor recusar</text>
+              <rect x="20" y="140" width="120" height="40" rx="7" fill="#fff" stroke="#aaa"/>
+              <text x="80" y="165" text-anchor="middle" fill="#333">agente</text>
+              <rect x="215" y="140" width="120" height="40" rx="7" fill="#f7f7f7" stroke="#ddd"/>
+              <text x="275" y="165" text-anchor="middle" fill="#bbb">sem schema</text>
+              <rect x="410" y="140" width="150" height="40" rx="7" fill="#fff" stroke="#c62828" stroke-width="2"/>
+              <text x="485" y="165" text-anchor="middle" fill="#c62828" font-weight="700">serviço: 400</text>
+              <line x1="142" y1="160" x2="212" y2="160" stroke="#999" stroke-width="2"/>
+              <line x1="337" y1="160" x2="407" y2="160" stroke="#c62828" stroke-width="2"/>
+              <circle cx="150" cy="160" r="7" fill="#c62828">
+                <animate attributeName="cx" values="150;407;407;150;150" keyTimes="0;0.45;0.55;0.72;1" dur="8s" repeatCount="indefinite"/>
+              </circle>
+              <text x="590" y="156" fill="#c62828" font-weight="700" opacity="0.25">chamada malformada saiu do agente
+                <animate attributeName="opacity" values="0.25;0.25;1;1;0.25" keyTimes="0;0.5;0.58;0.9;1" dur="8s" repeatCount="indefinite"/>
+              </text>
+              <text x="590" y="174" fill="#555" opacity="0.25">latência, log sujo e o servidor de guardião
+                <animate attributeName="opacity" values="0.25;0.25;1;1;0.25" keyTimes="0;0.5;0.58;0.9;1" dur="8s" repeatCount="indefinite"/>
+              </text>
+
+              <text x="450" y="216" text-anchor="middle" fill="#555" font-size="12.5">O serviço validar também é obrigatório. O que não pode é ser o único a validar.</text>
+            </g>
+          </svg>
+          <figcaption>
+            Sequência do ciclo de 8 segundos: na faixa de cima o ponto verde sai do agente, é parado pelo schema e volta, sem que a linha tracejada até o serviço chegue a ser usada, e a recusa custa milissegundos. Na faixa de baixo o ponto vermelho atravessa tudo e só é barrado pelo serviço, que responde 400: a chamada malformada saiu do agente, gastou rede e sujou o log de quem não errou. Validar dos dois lados é o correto; deixar o servidor ser o único guardião é o defeito.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:6px;">
+          <span class="takeaway-label">Defesa em profundidade, na ordem certa</span>
+          <p>O agente valida porque conhece o contrato da ferramenta. O serviço valida porque não confia em cliente nenhum. Quem tira a primeira camada transforma o servidor em detector de bug do agente.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Onde Validar</div>
+          <div class="footer-page">17</div>
+        </div>
+      </section>
+
+      <!-- ==================== 18: COMMAND PATTERN ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Command Pattern: a intenção vira objeto <a href="#/ref-slide" class="ref-badge" title="Ver referências">[3]</a></h2>
+        </div>
+
+        <p style="font-size:0.71em; margin:0 0 8px;">O padrão comportamental do GoF que <strong>encapsula uma requisição como objeto</strong>. Quando a requisição vira objeto, ela pode ser guardada, inspecionada, enfileirada, autorizada, registrada e desfeita. Uma chamada de função direta não pode nada disso.</p>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(2, 1fr); gap:14px; margin-top:4px;">
+          <div class="concept-card" style="padding:14px 18px;">
+            <h4>O que o padrão dá a um agente</h4>
+            <p style="font-size:0.66em;"><strong>Autorização</strong> num ponto único, <strong>auditoria</strong> automática de tudo o que passa, <strong>desfazimento</strong> quando o comando sabe voltar atrás, e <strong>teste</strong> sem modelo nenhum na jogada.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 18px;">
+            <h4>O sinal de que falta o padrão</h4>
+            <p style="font-size:0.66em;">Quando alguém pergunta "quem mandou alterar aquele endereço às 3h da manhã?" e a resposta é procurar no log do servidor web, que não sabe que havia uma IA no meio.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A frase que resume a aula</span>
+          <p>Function Calling é o <strong>como o modelo pede</strong>. Command Pattern é o <strong>como o sistema decide</strong>. Sem o segundo, o primeiro é só uma chamada de API com um intermediário probabilístico no meio.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Command Pattern</div>
+          <div class="footer-page">18</div>
+        </div>
+      </section>
+
+      <!-- ==================== 19: AS PEÇAS DO PADRÃO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>As peças do padrão no agente da LogiTech <a href="#/ref-slide" class="ref-badge" title="Ver referências">[3]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 235" style="max-height:340px;" role="img" aria-label="Mapa das classes do Command Pattern no agente do laboratório">
+            <g font-size="11.5">
+              <rect x="20" y="28" width="180" height="62" rx="8" fill="#f7f7f7" stroke="#aaa"/>
+              <text x="110" y="50" text-anchor="middle" font-weight="700" fill="#333">Cliente</text>
+              <text x="110" y="68" text-anchor="middle" fill="#666">agente/laco.py</text>
+              <text x="110" y="83" text-anchor="middle" fill="#999" font-size="10.5">traduz tool_calls</text>
+
+              <rect x="245" y="28" width="180" height="62" rx="8" fill="#fff" stroke="#ED145B" stroke-width="2"/>
+              <text x="335" y="50" text-anchor="middle" font-weight="700" fill="#ED145B">Invoker</text>
+              <text x="335" y="68" text-anchor="middle" fill="#666">Despachante</text>
+              <text x="335" y="83" text-anchor="middle" fill="#999" font-size="10.5">valida, autoriza, audita</text>
+
+              <rect x="470" y="14" width="200" height="45" rx="8" fill="#f7f7f7" stroke="#aaa"/>
+              <text x="570" y="32" text-anchor="middle" font-weight="700" fill="#333">ConsultarStatusPedido</text>
+              <text x="570" y="48" text-anchor="middle" fill="#999" font-size="10.5">Command de leitura</text>
+
+              <rect x="470" y="70" width="200" height="45" rx="8" fill="#f7f7f7" stroke="#aaa"/>
+              <text x="570" y="88" text-anchor="middle" font-weight="700" fill="#333">AlterarEnderecoEntrega</text>
+              <text x="570" y="104" text-anchor="middle" fill="#999" font-size="10.5">Command de escrita</text>
+
+              <rect x="715" y="41" width="165" height="62" rx="8" fill="#fff" stroke="#aaa"/>
+              <text x="797" y="63" text-anchor="middle" font-weight="700" fill="#333">Receiver</text>
+              <text x="797" y="81" text-anchor="middle" fill="#666">API de Pedidos</text>
+              <text x="797" y="96" text-anchor="middle" fill="#999" font-size="10.5">porta 8080</text>
+
+              <g stroke="#999" stroke-width="2" fill="none">
+                <line x1="202" y1="59" x2="242" y2="59"/>
+                <line x1="427" y1="59" x2="467" y2="37"/>
+                <line x1="427" y1="59" x2="467" y2="92"/>
+                <line x1="672" y1="37" x2="712" y2="61"/>
+                <line x1="672" y1="92" x2="712" y2="78"/>
+              </g>
+
+              <rect x="245" y="135" width="180" height="52" rx="8" fill="#1e1e2e"/>
+              <text x="335" y="156" text-anchor="middle" fill="#fff" font-weight="700">docs/AUDITORIA.md</text>
+              <text x="335" y="174" text-anchor="middle" fill="#bbb" font-size="10.5">uma linha por decisão</text>
+              <line x1="335" y1="92" x2="335" y2="132" stroke="#ED145B" stroke-width="2" stroke-dasharray="5,4"/>
+
+              <text x="470" y="155" fill="#555" font-size="12">Acrescentar uma ferramenta nova não muda uma linha do</text>
+              <text x="470" y="175" fill="#555" font-size="12">Despachante: ela entra por composição. É o OCP da Aula 05.</text>
+            </g>
+          </svg>
+          <figcaption>
+            O Cliente é o laço de conversa, que só traduz a resposta do modelo. O Invoker é o Despachante, o único ponto do agente com permissão de agir e o único que escreve na trilha de auditoria. Os Commands concretos são um por ferramenta, e o Receiver é o serviço que executa de fato a operação. Um comando novo entra na lista sem que o Invoker seja editado.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:6px;">
+          <span class="takeaway-label">Como saber que vocês acertaram o desenho</span>
+          <p>Se acrescentar <span class="mono">consultar_frete</span> exigir editar o Despachante, o desenho está errado: a ferramenta nova deveria entrar só na lista de comandos.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – As Peças do Padrão</div>
+          <div class="footer-page">19</div>
+        </div>
+      </section>
+
+      <!-- ==================== 20: O DESPACHANTE (ANIMAÇÃO 6) ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O Despachante: quatro etapas que nunca trocam de ordem <a href="#/ref-slide" class="ref-badge" title="Ver referências">[3]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 205" style="max-height:340px;" role="img" aria-label="Pipeline do despachante: validar, autorizar, executar e auditar">
+            <g font-size="12">
+              <rect x="25" y="40" width="170" height="60" rx="8" fill="#f7f7f7" stroke="#aaa">
+                <animate attributeName="fill" values="#ffe9f0;#f7f7f7;#f7f7f7;#f7f7f7;#ffe9f0" keyTimes="0;0.22;0.5;0.78;1" dur="8s" repeatCount="indefinite"/>
+              </rect>
+              <text x="110" y="65" text-anchor="middle" font-weight="700" fill="#333">1. VALIDAR</text>
+              <text x="110" y="85" text-anchor="middle" fill="#666" font-size="11">contra o JSON Schema</text>
+
+              <rect x="235" y="40" width="170" height="60" rx="8" fill="#f7f7f7" stroke="#aaa">
+                <animate attributeName="fill" values="#f7f7f7;#ffe9f0;#f7f7f7;#f7f7f7;#f7f7f7" keyTimes="0;0.28;0.45;0.78;1" dur="8s" repeatCount="indefinite"/>
+              </rect>
+              <text x="320" y="65" text-anchor="middle" font-weight="700" fill="#333">2. AUTORIZAR</text>
+              <text x="320" y="85" text-anchor="middle" fill="#666" font-size="11">ou recusar, com motivo</text>
+
+              <rect x="445" y="40" width="170" height="60" rx="8" fill="#f7f7f7" stroke="#aaa">
+                <animate attributeName="fill" values="#f7f7f7;#f7f7f7;#ffe9f0;#f7f7f7;#f7f7f7" keyTimes="0;0.45;0.6;0.78;1" dur="8s" repeatCount="indefinite"/>
+              </rect>
+              <text x="530" y="65" text-anchor="middle" font-weight="700" fill="#333">3. EXECUTAR</text>
+              <text x="530" y="85" text-anchor="middle" fill="#666" font-size="11">o Command chama a API</text>
+
+              <rect x="655" y="40" width="170" height="60" rx="8" fill="#1e1e2e" stroke="#ED145B" stroke-width="2"/>
+              <text x="740" y="65" text-anchor="middle" font-weight="700" fill="#fff">4. AUDITAR</text>
+              <text x="740" y="85" text-anchor="middle" fill="#bbb" font-size="11">sempre, nos dois casos</text>
+
+              <g stroke="#999" stroke-width="2" fill="none">
+                <line x1="197" y1="70" x2="232" y2="70"/>
+                <line x1="407" y1="70" x2="442" y2="70"/>
+                <line x1="617" y1="70" x2="652" y2="70"/>
+              </g>
+
+              <path d="M320 102 L320 143 L740 143 L740 103" stroke="#c62828" stroke-width="2" fill="none" stroke-dasharray="6,5"/>
+              <text x="530" y="161" text-anchor="middle" fill="#c62828" font-size="12" font-weight="700">recusa: pula a execução e vai direto para a auditoria</text>
+              <circle cx="320" cy="143" r="6" fill="#c62828" opacity="0">
+                <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.3;0.34;0.44;0.48" dur="8s" repeatCount="indefinite"/>
+                <animate attributeName="cx" values="320;320;740;740" keyTimes="0;0.32;0.44;1" dur="8s" repeatCount="indefinite"/>
+              </circle>
+
+              <circle cx="740" cy="70" r="7" fill="#ED145B" opacity="0">
+                <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.6;0.68;0.95;1" dur="8s" repeatCount="indefinite"/>
+              </circle>
+
+              <text x="450" y="192" text-anchor="middle" fill="#555" font-size="12.5">Nenhuma etapa é opcional, e a auditoria é a única alcançada pelos dois caminhos.</text>
+            </g>
+          </svg>
+          <figcaption>
+            Sequência do ciclo de 8 segundos: a etapa acesa avança de VALIDAR para AUTORIZAR, EXECUTAR e AUDITAR. Quando a autorização recusa, o ponto vermelho segue o desvio tracejado, pula a execução e entra direto na auditoria, porque recusar em silêncio seria tão ruim quanto executar em silêncio. A caixa escura de AUDITAR é a única alcançada pelos dois caminhos.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:6px;">
+          <span class="takeaway-label">A ordem é a garantia</span>
+          <p>Validar depois de executar é auditoria de estrago. Auditar só o sucesso é trilha que mente por omissão. É por isso que a ordem das quatro etapas não é negociável.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – O Despachante</div>
+          <div class="footer-page">20</div>
+        </div>
+      </section>
+
+      <!-- ==================== 21: RECUSA É RESULTADO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Recusa é resultado, não exceção</h2>
+        </div>
+
+        <p style="font-size:0.7em; margin:0 0 6px;">A recusa <strong>volta para a conversa</strong> como resultado da ferramenta. É isso que permite o agente se recuperar sozinho, em vez de travar ou mentir para o cliente.</p>
+
+        <pre class="code-compact" style="font-size:0.49em; margin:0;"><code class="language-python">if erros:
+    motivo = "; ".join(erros)
+    self._auditar(nome, auditoria.RECUSADO, argumentos, motivo)   # registra a tentativa
+    return Resultado(auditoria.RECUSADO, {
+        "erro": "argumentos recusados pela validação",
+        "detalhes": erros,
+        "orientacao": "peça ao cliente os dados que faltaram e chame de novo",
+    }, motivo)                                                     # devolve ao modelo</code></pre>
+
+        <div class="concept-cards" style="grid-template-columns: 1fr 1fr; gap:14px; margin-top:9px;">
+          <div class="concept-card" style="padding:13px 17px;">
+            <h4>O que nunca fazer na recusa</h4>
+            <p style="font-size:0.65em;">Executar mesmo assim; completar o campo faltante com um padrão inventado; devolver sucesso silencioso; ou levantar exceção que derruba a conversa inteira.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 17px;">
+            <h4>O que acontece no laboratório</h4>
+            <p style="font-size:0.65em;">Recusada a tentativa sem CEP, o agente pede o CEP e chama de novo, agora completo. Uma linha <span class="mono">RECUSADO</span> e uma <span class="mono">AUTORIZADO</span>, as duas na trilha.</p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Recusa Auditada</div>
+          <div class="footer-page">21</div>
+        </div>
+      </section>
+
+      <!-- ==================== 22: A TRILHA DE AUDITORIA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A trilha de auditoria, gerada no ensaio desta aula <a href="#/ref-slide" class="ref-badge" title="Ver referências">[5]</a></h2>
+        </div>
+
+        <p style="font-size:0.68em; margin:0 0 6px;">Trecho real de <span class="mono">docs/AUDITORIA.md</span>, escrito pelo próprio agente durante a construção do laboratório. <strong>Saída resumida:</strong> as colunas <span class="mono">Argumentos</span> e <span class="mono">Resultado</span> foram encurtadas para caber na largura do slide; no arquivo elas são bem mais longas.</p>
+
+        <pre class="code-compact" style="font-size:0.5em; margin:0;"><code class="language-text">| Momento             | Ferramenta               | Veredito   | Argumentos                | Resultado             |
+|---------------------|--------------------------|------------|---------------------------|-----------------------|
+| 2026-07-31T01:09:17 | consultar_status_pedido  | AUTORIZADO | {"pedido_id": "PED-1042"} | {"status": "EM_TR..." |
+| 2026-07-31T01:09:17 | alterar_endereco_entrega | RECUSADO   | {"cidade": "São Paulo",...| falta o campo 'cep'   |
+| 2026-07-31T01:09:17 | alterar_endereco_entrega | AUTORIZADO | {"cep": "01415-000", ...  | {"enderecoEntrega":.. |</code></pre>
+
+        <div class="callout" style="margin-top:9px; padding:11px 16px;">
+          <p style="font-size:0.65em; margin:0;">O arquivo é escrito <strong>pelo código</strong>, nunca à mão: <span class="mono">agente/auditoria.py</span> acrescenta uma linha por evento. Trilha de auditoria que o auditado consegue editar não é trilha de auditoria, e é por isso que o laboratório pede que vocês só a leiam.</p>
+        </div>
+
+        <div class="takeaway" style="margin-top:9px;">
+          <span class="takeaway-label">Leia a segunda e a terceira linha juntas</span>
+          <p>Elas contam a história inteira: o agente tentou, foi barrado, entendeu o motivo e voltou correto. Sem a linha do meio, o histórico mentiria por omissão, e ninguém saberia que houve uma tentativa malformada.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Trilha de Auditoria</div>
+          <div class="footer-page">22</div>
+        </div>
+      </section>
+
+      <!-- ==================== 23: OS TRÊS VEREDITOS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Três vereditos, três causas diferentes</h2>
+        </div>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>Veredito</th><th>Quem decidiu</th><th>Executou?</th><th>O que investigar quando aparece demais</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="mono">AUTORIZADO</span></td><td>O schema aceitou</td><td>Sim</td><td>Nada, mas confira se a ferramenta certa está sendo escolhida</td></tr>
+            <tr><td><span class="mono">RECUSADO</span></td><td>O seu agente</td><td><strong>Não</strong></td><td>A descrição da ferramenta ou a instrução de sistema: o modelo não entendeu o contrato</td></tr>
+            <tr><td><span class="mono">FALHOU</span></td><td>O serviço</td><td>Tentou</td><td>O serviço: fora do ar, regra de negócio, pedido inexistente</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout" style="margin-top:11px; padding:12px 17px;">
+          <p style="font-size:0.67em; margin:0;">Misturar <span class="mono">RECUSADO</span> com <span class="mono">FALHOU</span> num único "erro" cega a operação. Uma alta de <span class="mono">RECUSADO</span> é problema de <strong>contrato</strong>, e se resolve com texto. Uma alta de <span class="mono">FALHOU</span> é problema de <strong>infraestrutura ou de regra de negócio</strong>, e se resolve com plantão. São dois times diferentes recebendo o alerta.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Os Três Vereditos</div>
+          <div class="footer-page">23</div>
+        </div>
+      </section>
+
+      <!-- ==================== 24: DESFAZER (ANIMAÇÃO 7) ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Desfazer: o comando que sabe voltar atrás <a href="#/ref-slide" class="ref-badge" title="Ver referências">[3]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 200" style="max-height:340px;" role="img" aria-label="O comando guarda o estado anterior antes de executar e consegue restaurá-lo">
+            <g font-size="11.5">
+              <rect x="30" y="35" width="185" height="70" rx="8" fill="#f7f7f7" stroke="#aaa"/>
+              <text x="122" y="58" text-anchor="middle" font-weight="700" fill="#333">antes de executar</text>
+              <text x="122" y="78" text-anchor="middle" fill="#666">GET do endereço atual</text>
+              <text x="122" y="95" text-anchor="middle" fill="#999" font-size="10.5">CEP 14020-260</text>
+
+              <rect x="290" y="35" width="185" height="70" rx="8" fill="#fff" stroke="#ED145B" stroke-width="2"/>
+              <text x="382" y="58" text-anchor="middle" font-weight="700" fill="#ED145B">executa</text>
+              <text x="382" y="78" text-anchor="middle" fill="#666">PATCH do novo</text>
+              <text x="382" y="95" text-anchor="middle" fill="#999" font-size="10.5">CEP 01311-000</text>
+
+              <rect x="550" y="35" width="185" height="70" rx="8" fill="#f7f7f7" stroke="#aaa"/>
+              <text x="642" y="58" text-anchor="middle" font-weight="700" fill="#333">desfazer</text>
+              <text x="642" y="78" text-anchor="middle" fill="#666">PATCH do guardado</text>
+              <text x="642" y="95" text-anchor="middle" fill="#999" font-size="10.5">14020-260 de volta</text>
+
+              <g stroke="#999" stroke-width="2" fill="none">
+                <line x1="217" y1="70" x2="287" y2="70"/>
+                <line x1="477" y1="70" x2="547" y2="70"/>
+              </g>
+
+              <rect x="290" y="135" width="185" height="42" rx="7" fill="#1e1e2e"/>
+              <text x="382" y="152" text-anchor="middle" fill="#fff" font-size="11">estado anterior guardado</text>
+              <text x="382" y="169" text-anchor="middle" fill="#bbb" font-size="10.5">no próprio objeto Command</text>
+              <line x1="122" y1="107" x2="290" y2="150" stroke="#ED145B" stroke-width="2" stroke-dasharray="5,4"/>
+              <line x1="475" y1="150" x2="620" y2="107" stroke="#ED145B" stroke-width="2" stroke-dasharray="5,4"/>
+
+              <!-- O ponto corre ABAIXO das caixas (cy=120), e não na linha do
+                   meio delas: em cy=70 ele passava por cima do texto de cada
+                   caixa e tapava "GET do endereço atual". -->
+              <circle cx="122" cy="120" r="6" fill="#ED145B">
+                <animate attributeName="cx" values="122;122;382;382;642;642;122" keyTimes="0;0.14;0.3;0.5;0.66;0.9;1" dur="8s" repeatCount="indefinite"/>
+              </circle>
+
+              <text x="765" y="68" fill="#2e7d32" font-weight="700" opacity="0.25">reversível
+                <animate attributeName="opacity" values="0.25;0.25;1;1;0.25" keyTimes="0;0.66;0.72;0.92;1" dur="8s" repeatCount="indefinite"/>
+              </text>
+              <text x="20" y="194" fill="#555" font-size="12.5">Sem o estado anterior guardado, "desfazer" vira um chamado para o time de banco às 3h da manhã.</text>
+            </g>
+          </svg>
+          <figcaption>
+            Sequência do ciclo de 8 segundos: o ponto rosa passa por "antes de executar", onde o comando lê e guarda o endereço atual, segue para "executa", que grava o novo, e chega a "desfazer", que restaura o valor guardado e acende a palavra "reversível". As linhas tracejadas mostram que o estado anterior mora no próprio objeto Command, e é isso que torna o desfazimento uma operação normal do agente em vez de um incidente.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:6px;">
+          <span class="takeaway-label">Quando isso vira requisito</span>
+          <p>No momento em que a ferramenta escreve. Comando de leitura não precisa desfazer; comando de escrita sem desfazimento é uma decisão de projeto que alguém vai cobrar depois.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Desfazer</div>
+          <div class="footer-page">24</div>
+        </div>
+      </section>
+
+      <!-- ==================== 25: TESTAR SEM MODELO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Como se testa um agente sem modelo nenhum</h2>
+        </div>
+
+        <p style="font-size:0.7em; margin:0 0 6px;">Modelo é fonte de <strong>não determinismo</strong>: a mesma pergunta pode produzir saídas diferentes. Teste que depende disso é teste que falha de vez em quando, e teste que falha de vez em quando é ignorado pela equipe em duas semanas.</p>
+
+        <pre class="code-compact" style="font-size:0.47em; margin:0;"><code class="language-python">def test_alteracao_sem_cep_nao_chega_a_api(api, trilha):
+    """O ponto da aula inteira: a chamada malformada não sai do agente."""
+    Despachante(caminho_auditoria=trilha).despachar(
+        "alterar_endereco_entrega", endereco_sem_cep())
+    assert api.chamadas == []          # o dublê da API não recebeu nada</code></pre>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:12px; margin-top:9px;">
+          <div class="concept-card" style="padding:12px 15px;">
+            <h4>O que se testa sem modelo</h4>
+            <p style="font-size:0.63em;">Schema, Command, Despachante, auditoria e o laço. É onde mora a sua engenharia, e é 100% determinístico.</p>
+          </div>
+          <div class="concept-card" style="padding:12px 15px;">
+            <h4>O que se testa com dublê</h4>
+            <p style="font-size:0.63em;">A API de Pedidos, substituída pela <span class="mono">ApiFalsa</span> do <span class="mono">conftest.py</span>. Nenhum socket é aberto na suíte.</p>
+          </div>
+          <div class="concept-card" style="padding:12px 15px;">
+            <h4>O que sobra para a avaliação manual</h4>
+            <p style="font-size:0.63em;">Se o modelo escolhe a ferramenta certa. Isso é medição estatística, não teste de unidade.</p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Testar sem Modelo</div>
+          <div class="footer-page">25</div>
+        </div>
+      </section>
+
+      <!-- ==================== 26: O QUE JAMAIS VIRA FERRAMENTA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O que jamais vira ferramenta <a href="#/ref-slide" class="ref-badge" title="Ver referências">[5]</a></h2>
+        </div>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>Não exponha</th><th>Por quê</th><th>O que expor no lugar</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="mono">executar_sql(consulta)</span></td><td>Qualquer texto vira qualquer operação. Não existe schema que valide intenção arbitrária</td><td>Uma ferramenta por consulta de negócio, com parâmetros tipados</td></tr>
+            <tr><td><span class="mono">rodar_comando(shell)</span></td><td>A mesma razão, agora com acesso ao sistema operacional</td><td>Nada. Isso não é ferramenta de agente de atendimento</td></tr>
+            <tr><td>Operação irreversível sem confirmação</td><td>Cancelar pedido, estornar pagamento, apagar cadastro</td><td>Comando que abre uma solicitação para um humano aprovar</td></tr>
+            <tr><td>Ferramenta que lê dado de outro cliente</td><td>O agente não sabe com quem está falando: quem sabe é a sua sessão</td><td>Escopo aplicado fora do modelo, dentro do Despachante</td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">O critério, em uma pergunta</span>
+          <p>"Se um estagiário do primeiro dia chamasse esta função com os piores argumentos que conseguisse imaginar, qual seria o pior estrago?" Se a resposta for grave, a ferramenta precisa de escopo mais estreito, e não de um aviso na descrição.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Superfície de Ataque</div>
+          <div class="footer-page">26</div>
+        </div>
+      </section>
+
+      <!-- ==================== 27: SEÇÃO GIT WORKTREES ==================== -->
+      <section class="section-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="accent-bar"></div>
+        <h2>Git Worktrees</h2>
+        <p style="font-size:0.8em; color:var(--fiap-gray); margin-top:14px;">Um repositório, vários diretórios de trabalho.<br>O que muda quando duas linhas de trabalho rodam ao mesmo tempo.</p>
+        <div class="slide-footer">
+          <div class="footer-page">27</div>
+        </div>
+      </section>
+
+      <!-- ==================== 28: DOIS AGENTES, UM DIRETÓRIO (ANIMAÇÃO 8) ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Dois agentes, um único diretório de trabalho <a href="#/ref-slide" class="ref-badge" title="Ver referências">[4]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 240" style="max-height:340px;" role="img" aria-label="Dois agentes alternando git checkout no mesmo diretório de trabalho e quebrando a execução um do outro">
+            <g font-size="11.5">
+              <rect x="30" y="25" width="180" height="58" rx="8" fill="#f7f7f7" stroke="#aaa"/>
+              <text x="120" y="48" text-anchor="middle" font-weight="700" fill="#333">Agente A</text>
+              <text x="120" y="68" text-anchor="middle" fill="#666">branch agente/pedidos</text>
+
+              <rect x="30" y="155" width="180" height="58" rx="8" fill="#f7f7f7" stroke="#aaa"/>
+              <text x="120" y="178" text-anchor="middle" font-weight="700" fill="#333">Agente B</text>
+              <text x="120" y="198" text-anchor="middle" fill="#666">branch agente/atendimento</text>
+
+              <rect x="330" y="65" width="250" height="110" rx="10" fill="#fff" stroke="#666" stroke-width="2">
+                <animate attributeName="stroke" values="#666;#2e7d32;#2e7d32;#c62828;#c62828;#666"
+                          keyTimes="0;0.12;0.36;0.44;0.85;1" dur="9s" repeatCount="indefinite"/>
+              </rect>
+              <text x="455" y="93" text-anchor="middle" font-weight="700" fill="#333">diretório de trabalho</text>
+              <text x="455" y="111" text-anchor="middle" fill="#999" font-size="10.5">um só, compartilhado</text>
+              <!-- Os dois rótulos ocupam a MESMA coordenada de propósito: é o
+                   mesmo diretório mudando de conteúdo. Por isso o valor de
+                   repouso aqui é 0, e não 0.25: com 0.25 os dois ficam
+                   pintados ao mesmo tempo em parte do ciclo e o texto sai
+                   embaralhado no projetor. -->
+              <text x="455" y="141" text-anchor="middle" font-size="12.5" font-weight="700" fill="#2e7d32" opacity="0">arquivos da branch de A
+                <animate attributeName="opacity" values="0;1;1;0;0;0" keyTimes="0;0.12;0.36;0.42;0.9;1" dur="9s" repeatCount="indefinite"/>
+              </text>
+              <text x="455" y="141" text-anchor="middle" font-size="12.5" font-weight="700" fill="#c62828" opacity="0">arquivos da branch de B
+                <animate attributeName="opacity" values="0;0;0;1;1;0" keyTimes="0;0.4;0.44;0.5;0.9;1" dur="9s" repeatCount="indefinite"/>
+              </text>
+              <text x="455" y="161" text-anchor="middle" font-size="10.5" fill="#999" opacity="0.25">git checkout trocou tudo
+                <animate attributeName="opacity" values="0.25;0.25;0.25;1;1;0.25" keyTimes="0;0.4;0.44;0.5;0.9;1" dur="9s" repeatCount="indefinite"/>
+              </text>
+
+              <line x1="212" y1="54" x2="327" y2="95" stroke="#2e7d32" stroke-width="2"/>
+              <text x="248" y="77" fill="#2e7d32" font-size="10.5">git checkout</text>
+              <line x1="212" y1="184" x2="327" y2="145" stroke="#c62828" stroke-width="2"/>
+              <text x="248" y="177" fill="#c62828" font-size="10.5">git checkout</text>
+
+              <rect x="640" y="65" width="235" height="110" rx="10" fill="#fff5f5" stroke="#e57373"/>
+              <text x="757" y="89" text-anchor="middle" font-weight="700" fill="#c62828">o Agente A quebra</text>
+              <text x="757" y="113" text-anchor="middle" fill="#c62828" font-size="11" opacity="0.25">import de módulo que sumiu
+                <animate attributeName="opacity" values="0.25;0.25;1;1;0.25" keyTimes="0;0.5;0.6;0.9;1" dur="9s" repeatCount="indefinite"/>
+              </text>
+              <text x="757" y="135" text-anchor="middle" fill="#c62828" font-size="11" opacity="0.25">teste rodando em código alheio
+                <animate attributeName="opacity" values="0.25;0.25;1;1;0.25" keyTimes="0;0.6;0.7;0.9;1" dur="9s" repeatCount="indefinite"/>
+              </text>
+              <text x="757" y="157" text-anchor="middle" fill="#c62828" font-size="11" opacity="0.25">alteração não salva perdida
+                <animate attributeName="opacity" values="0.25;0.25;1;1;0.25" keyTimes="0;0.7;0.8;0.9;1" dur="9s" repeatCount="indefinite"/>
+              </text>
+
+              <text x="450" y="228" text-anchor="middle" fill="#555" font-size="12.5">O repositório aceita as duas branches. O que não existe em dobro é o diretório de trabalho.</text>
+            </g>
+          </svg>
+          <figcaption>
+            Sequência do ciclo de 9 segundos: o Agente A faz <span class="mono">git checkout</span> e o diretório fica verde, com os arquivos da branch dele, enquanto o processo dele roda. O Agente B faz o seu <span class="mono">git checkout</span> no mesmo diretório e o conteúdo é trocado por inteiro, ficando vermelho. A partir daí, o processo do Agente A continua rodando sobre arquivos que já não são os dele, e o quadro da direita lista o estrago em ordem: import de módulo que sumiu, teste executando código alheio e alteração não salva perdida.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:6px;">
+          <span class="takeaway-label">A resposta em uma frase</span>
+          <p>O <span class="mono">git checkout</span> altera o único diretório de trabalho. Dois agentes no mesmo diretório é o mesmo que duas pessoas editando o mesmo arquivo sem saber uma da outra.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – O Problema do Checkout</div>
+          <div class="footer-page">28</div>
+        </div>
+      </section>
+
+      <!-- ==================== 29: POR QUE NÃO CLONAR DUAS VEZES ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>"Então é só clonar duas vezes" <a href="#/ref-slide" class="ref-badge" title="Ver referências">[4]</a></h2>
+        </div>
+
+        <p style="font-size:0.71em; margin:0 0 8px;">Clonar de novo resolve o conflito de diretório e cria cinco problemas novos. Worktree resolve o conflito sem criar nenhum deles.</p>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>&nbsp;</th><th>Dois clones</th><th>Duas worktrees</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Histórico</td><td>Duplicado em disco, e os dois divergem</td><td>Um só, compartilhado</td></tr>
+            <tr><td>Commit feito de um lado</td><td>Só aparece no outro depois de <span class="mono">push</span> e <span class="mono">fetch</span></td><td>Aparece imediatamente: é o mesmo repositório</td></tr>
+            <tr><td>Espaço em disco</td><td>Duas cópias do <span class="mono">.git</span> inteiro</td><td>Um <span class="mono">.git</span>, mais os arquivos de trabalho</td></tr>
+            <tr><td>Configuração, hooks e remotes</td><td>Configurar duas vezes, e manter em dia</td><td>Compartilhados</td></tr>
+            <tr><td>Mesma branch aberta nos dois</td><td>Permitido, e é onde o estrago começa</td><td>O Git <strong>recusa</strong>: uma branch por worktree</td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">O ponto que mais surpreende</span>
+          <p>Worktrees são mais seguras que clones. O Git impede, por desenho, que a mesma branch seja aberta em duas worktrees, e é exatamente esse o erro que dois agentes trabalhando em paralelo cometeriam.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Worktree x Clone</div>
+          <div class="footer-page">29</div>
+        </div>
+      </section>
+
+      <!-- ==================== 30: COMO A WORKTREE FUNCIONA (ANIMAÇÃO 9) ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Um repositório, vários diretórios de trabalho <a href="#/ref-slide" class="ref-badge" title="Ver referências">[4]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 900 235" style="max-height:340px;" role="img" aria-label="Duas worktrees e o diretório principal apontando para o mesmo repositório .git">
+            <g font-size="11.5">
+              <rect x="330" y="18" width="240" height="62" rx="10" fill="#1e1e2e"/>
+              <text x="450" y="42" text-anchor="middle" fill="#fff" font-weight="700">.git, o repositório</text>
+              <text x="450" y="62" text-anchor="middle" fill="#bbb" font-size="10.5">objetos, refs, config e hooks, uma vez só</text>
+
+              <rect x="25" y="135" width="250" height="72" rx="9" fill="#f7f7f7" stroke="#aaa"/>
+              <text x="150" y="158" text-anchor="middle" font-weight="700" fill="#333">mwe-2026-2-lab08-.../</text>
+              <text x="150" y="177" text-anchor="middle" fill="#666">branch main</text>
+              <text x="150" y="195" text-anchor="middle" fill="#999" font-size="10.5">o fork original</text>
+
+              <rect x="325" y="135" width="250" height="72" rx="9" fill="#fff" stroke="#ED145B" stroke-width="2"/>
+              <text x="450" y="158" text-anchor="middle" font-weight="700" fill="#ED145B">../wt-agente-pedidos/</text>
+              <text x="450" y="177" text-anchor="middle" fill="#666">branch agente/pedidos</text>
+              <text x="450" y="195" text-anchor="middle" fill="#999" font-size="10.5">o Agente A roda aqui</text>
+
+              <rect x="625" y="135" width="250" height="72" rx="9" fill="#fff" stroke="#ED145B" stroke-width="2"/>
+              <text x="750" y="158" text-anchor="middle" font-weight="700" fill="#ED145B">../wt-agente-atendimento/</text>
+              <text x="750" y="177" text-anchor="middle" fill="#666">branch agente/atendimento</text>
+              <text x="750" y="195" text-anchor="middle" fill="#999" font-size="10.5">o Agente B roda aqui</text>
+
+              <g stroke="#999" stroke-width="2" fill="none">
+                <line x1="400" y1="82" x2="150" y2="132"/>
+                <line x1="450" y1="82" x2="450" y2="132"/>
+                <line x1="500" y1="82" x2="750" y2="132"/>
+              </g>
+
+              <circle r="6" fill="#ED145B" opacity="0">
+                <animate attributeName="opacity" values="0;1;1;0;0;0" keyTimes="0;0.05;0.28;0.32;0.9;1" dur="9s" repeatCount="indefinite"/>
+                <animate attributeName="cx" values="400;150;150;150" keyTimes="0;0.28;0.32;1" dur="9s" repeatCount="indefinite"/>
+                <animate attributeName="cy" values="82;132;132;132" keyTimes="0;0.28;0.32;1" dur="9s" repeatCount="indefinite"/>
+              </circle>
+              <circle r="6" fill="#ED145B" opacity="0">
+                <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.32;0.36;0.58;0.62;1" dur="9s" repeatCount="indefinite"/>
+                <animate attributeName="cx" values="450;450;450;450" keyTimes="0;0.34;0.58;1" dur="9s" repeatCount="indefinite"/>
+                <animate attributeName="cy" values="82;82;132;132" keyTimes="0;0.34;0.58;1" dur="9s" repeatCount="indefinite"/>
+              </circle>
+              <circle r="6" fill="#ED145B" opacity="0">
+                <animate attributeName="opacity" values="0;0;0;1;1;0" keyTimes="0;0.6;0.64;0.7;0.92;1" dur="9s" repeatCount="indefinite"/>
+                <animate attributeName="cx" values="500;500;500;750;750;750" keyTimes="0;0.6;0.64;0.88;0.92;1" dur="9s" repeatCount="indefinite"/>
+                <animate attributeName="cy" values="82;82;82;132;132;132" keyTimes="0;0.6;0.64;0.88;0.92;1" dur="9s" repeatCount="indefinite"/>
+              </circle>
+
+              <text x="450" y="228" text-anchor="middle" fill="#555" font-size="12.5">Cada diretório tem os seus próprios arquivos e o seu próprio HEAD. O histórico é um só.</text>
+            </g>
+          </svg>
+          <figcaption>
+            Sequência do ciclo de 9 segundos: um ponto rosa sai do bloco escuro do <span class="mono">.git</span> e desce até cada um dos três diretórios de trabalho, um por vez, na ordem diretório principal, worktree de pedidos, worktree de atendimento. Os três compartilham objetos, refs, config e hooks, e cada um mantém o seu próprio conjunto de arquivos e o seu próprio HEAD. Um commit feito em qualquer um deles é imediatamente visível nos outros, porque o repositório é o mesmo.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway" style="margin-top:6px;">
+          <span class="takeaway-label">Por que isso resolve o slide anterior</span>
+          <p>Cada agente ganha o seu próprio diretório e o seu próprio HEAD, sem duplicar histórico. Nenhum <span class="mono">git switch</span> de um lado alcança os arquivos do outro.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Como a Worktree Funciona</div>
+          <div class="footer-page">30</div>
+        </div>
+      </section>
+
+      <!-- ==================== 31: OS COMANDOS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Os comandos que vocês vão usar hoje <a href="#/ref-slide" class="ref-badge" title="Ver referências">[4]</a></h2>
+        </div>
+
+        <pre class="code-compact" style="font-size:0.52em; margin:0;"><code class="language-bash"># criar um diretório de trabalho novo, ligado a uma branch que já existe
+git worktree add ../wt-agente-pedidos agente/pedidos
+
+# criar a branch e a worktree no mesmo comando
+git worktree add -b agente/atendimento ../wt-agente-atendimento
+
+# listar: caminho, commit e branch de cada diretório de trabalho
+git worktree list
+
+# remover quando terminar (a branch continua existindo)
+git worktree remove ../wt-agente-pedidos
+
+# limpar registros de worktrees cujo diretório foi apagado na mão
+git worktree prune</code></pre>
+
+        <div class="callout" style="margin-top:10px; padding:12px 16px;">
+          <p style="font-size:0.66em; margin:0;">A saída de <span class="mono">git worktree list</span> é estável e legível por máquina, ainda mais com <span class="mono">--porcelain</span>. É exatamente por ela que o <span class="mono">verificar.py</span> do laboratório confere o critério das duas worktrees, sem depender de vocês declararem nada.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Comandos de Worktree</div>
+          <div class="footer-page">31</div>
+        </div>
+      </section>
+
+      <!-- ==================== 32: ARMADILHAS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quatro armadilhas de worktree <a href="#/ref-slide" class="ref-badge" title="Ver referências">[4]</a></h2>
+        </div>
+
+        <div class="concept-cards" style="grid-template-columns: 1fr 1fr; gap:14px; margin-top:6px;">
+          <div class="concept-card" style="padding:14px 18px;">
+            <h4>1. Criar a worktree dentro do repositório</h4>
+            <p style="font-size:0.65em;">Ela vira um monte de arquivo não rastreado do próprio projeto, e o <span class="mono">git status</span> fica ilegível. Sempre um nível acima: <span class="mono">../wt-...</span></p>
+          </div>
+          <div class="concept-card" style="padding:14px 18px;">
+            <h4>2. Tentar a mesma branch em duas worktrees</h4>
+            <p style="font-size:0.65em;">O Git recusa com <span class="mono">already checked out</span>. Não é limitação: é a proteção que evita duas escritas concorrentes na mesma linha de trabalho.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 18px;">
+            <h4>3. Apagar o diretório com <span class="mono">rm -rf</span></h4>
+            <p style="font-size:0.65em;">O registro fica órfão em <span class="mono">.git/worktrees</span> e a listagem passa a mentir. Use <span class="mono">git worktree remove</span>, ou conserte depois com <span class="mono">prune</span>.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 18px;">
+            <h4>4. Esquecer que dependência não é compartilhada</h4>
+            <p style="font-size:0.65em;">Arquivo ignorado pelo Git não existe na worktree nova. <span class="mono">node_modules</span>, <span class="mono">.venv</span> e arquivos de ambiente precisam ser recriados em cada uma.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Por que isso é aula de agentes</span>
+          <p>Worktree é a técnica que torna viável rodar dois agentes ao mesmo tempo no mesmo projeto. Sem ela, "paralelizar com IA" termina em dois processos brigando pelos mesmos arquivos.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Armadilhas</div>
+          <div class="footer-page">32</div>
+        </div>
+      </section>
+
+      <!-- ==================== 33: QUIZ 1 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container" data-quiz-key="aula08-quiz1">
+          <div class="quiz-question">Por que o uso tradicional de <span class="mono">git checkout</span> falha quando temos múltiplos agentes de IA trabalhando ao mesmo tempo no mesmo repositório local?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> Porque o Git bloqueia o repositório inteiro durante o checkout, e o segundo agente fica esperando indefinidamente.</li>
+            <li data-correct="true"><span class="option-letter">B</span> Porque o checkout altera o único diretório de trabalho: se um agente modifica os arquivos enquanto o outro executa, aparecem conflitos, arquivos bloqueados e perda de contexto.</li>
+            <li data-correct="false"><span class="option-letter">C</span> Porque o Git não permite mais de uma branch por repositório, e o segundo agente precisaria de um clone.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Porque o checkout apaga o histórico das branches que não estão ativas no momento.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. O repositório aceita quantas branches quiser; o que não existe em dobro é o diretório de trabalho. Foi o que a animação dos dois agentes mostrou, e é o problema que git worktree add resolve."
+               data-incorrect-msg="Incorreto. O Git não bloqueia o repositório, aceita muitas branches e não apaga histórico no checkout. O problema é que o diretório de trabalho é um só, e o checkout troca o conteúdo dele debaixo de quem está executando.">
+          </div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz1Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz1Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Verificação de Aprendizado</div>
+          <div class="footer-page">33</div>
+        </div>
+      </section>
+
+      <!-- ==================== 34: INTERVALO ==================== -->
+      <section class="content-slide" style="text-align:center; background:transparent;"
+               data-background-image="../assets/img/coffee-relax.jpg"
+               data-background-size="cover"
+               data-background-opacity="0.45">
+        <div style="margin-top:150px;">
+          <h2 style="font-size:4em; color:var(--fiap-pink); margin-bottom:10px; text-shadow:0 2px 12px rgba(255,255,255,0.9);">Intervalo</h2>
+          <h3 style="font-size:2.2em; color:var(--fiap-dark); text-shadow:0 2px 10px rgba(255,255,255,0.9);">30 minutos</h3>
+
+          <div class="quiz-timer-box" style="margin:40px auto 0 auto; padding:15px 30px; font-size:1.3em;">
+            <button class="quiz-timer-btn" style="width:40px; height:40px; font-size:1.2em;" onclick="startTimer('breakTimer', 1800)" aria-label="Iniciar cronômetro do intervalo">&#9654;</button>
+            <span id="breakTimer">30:00</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 35: QUIZ 2 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container" data-quiz-key="aula08-quiz2">
+          <div class="quiz-question">Como o Command Pattern garante segurança e auditabilidade quando uma IA executa Function Calling no sistema?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> Ele criptografa os argumentos que o modelo produziu antes de enviá-los à API de destino.</li>
+            <li data-correct="false"><span class="option-letter">B</span> Ele obriga o modelo a devolver a resposta em JSON, o que por si só já impede argumentos inválidos.</li>
+            <li data-correct="true"><span class="option-letter">C</span> Ele converte a intenção da IA em um objeto de comando validado por um JSON Schema estrito, permitindo interceptar, autorizar, registrar e até desfazer a ação antes de executá-la.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Ele limita o número de chamadas de ferramenta por conversa, reduzindo a chance de erro do modelo.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. A intenção vira objeto, e é por virar objeto que ela pode ser inspecionada, autorizada, registrada em docs/AUDITORIA.md e desfeita. Nenhuma dessas quatro coisas existe numa chamada de função direta."
+               data-incorrect-msg="Incorreto. Criptografia, formato JSON e limite de rodadas resolvem outros problemas. O que dá segurança e auditabilidade é a intenção virar um objeto de comando, validado antes de executar.">
+          </div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz2Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz2Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Verificação de Aprendizado</div>
+          <div class="footer-page">35</div>
+        </div>
+      </section>
+
+      <!-- ==================== 36: QUIZ 3 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container" data-quiz-key="aula08-quiz3">
+          <div class="quiz-question">Qual o comando Git para criar um novo diretório de trabalho ligado à branch <span class="mono">feature/agent-tools</span>, sem sair da pasta atual?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> <span class="mono">git clone . ../pasta-worktree &amp;&amp; git checkout feature/agent-tools</span></li>
+            <li data-correct="true"><span class="option-letter">B</span> <span class="mono">git worktree add ../pasta-worktree feature/agent-tools</span></li>
+            <li data-correct="false"><span class="option-letter">C</span> <span class="mono">git branch --worktree ../pasta-worktree feature/agent-tools</span></li>
+            <li data-correct="false"><span class="option-letter">D</span> <span class="mono">git checkout --to ../pasta-worktree feature/agent-tools</span></li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. git worktree add caminho branch cria o diretório novo já com a branch aberta, e o seu terminal continua onde estava. Confira depois com git worktree list."
+               data-incorrect-msg="Incorreto. O comando é git worktree add ../pasta-worktree feature/agent-tools. Clonar duplica o histórico, e as opções C e D não existem no Git.">
+          </div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz3Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz3Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Verificação de Aprendizado</div>
+          <div class="footer-page">36</div>
+        </div>
+      </section>
+
+      <!-- ==================== 37: ATIVIDADE, ABERTURA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Atividade prática em dupla: o que vocês vão construir</h2>
+        </div>
+
+        <p style="font-size:0.71em; margin:0 0 8px;">O agente vem com o laço de conversa pronto e as duas ferramentas declaradas. Vocês preenchem <strong>cinco lacunas</strong> e criam <strong>duas worktrees</strong>, em oito passos.</p>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>Lacuna</th><th>Arquivo</th><th>O que exercita</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="mono">TODO-1</span></td><td><span class="mono">agente/esquemas.py</span></td><td>JSON Schema de <span class="mono">consultar_status_pedido</span></td></tr>
+            <tr><td><span class="mono">TODO-2</span></td><td><span class="mono">agente/esquemas.py</span></td><td>JSON Schema de <span class="mono">alterar_endereco_entrega</span>, com os seis campos obrigatórios</td></tr>
+            <tr><td><span class="mono">TODO-3</span></td><td><span class="mono">agente/comandos.py</span></td><td>Command de leitura, chamando <span class="mono">GET .../status</span></td></tr>
+            <tr><td><span class="mono">TODO-4</span></td><td><span class="mono">agente/comandos.py</span></td><td>Command de escrita, com validação antes do <span class="mono">PATCH</span></td></tr>
+            <tr><td><span class="mono">TODO-5</span></td><td><span class="mono">agente/comandos.py</span></td><td><strong>Recusa auditada:</strong> o que não passa no schema não executa, e fica registrado</td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A lacuna que decide a noite</span>
+          <p>A <span class="mono">TODO-5</span>. Provocar o agente a alterar endereço sem informar o CEP precisa terminar em recusa registrada, e não em chamada malformada chegando ao serviço.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Atividade Prática</div>
+          <div class="footer-page">37</div>
+        </div>
+      </section>
+
+      <!-- ==================== 38: O LAB KIT ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O Lab Kit: o que vem pronto e o que é de vocês <a href="#/ref-slide" class="ref-badge" title="Ver referências">[6]</a></h2>
+        </div>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>Vem pronto, não é tarefa</th><th>Vocês escrevem</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="mono">servicos/pedidos/</span>, o serviço congelado no contrato da plataforma</td><td>As lacunas <span class="mono">TODO-1</span> e <span class="mono">TODO-2</span> em <span class="mono">agente/esquemas.py</span></td></tr>
+            <tr><td><span class="mono">atendente.py</span> e <span class="mono">agente/laco.py</span>, o laço de conversa completo</td><td>As lacunas <span class="mono">TODO-3</span>, <span class="mono">TODO-4</span> e <span class="mono">TODO-5</span> em <span class="mono">agente/comandos.py</span></td></tr>
+            <tr><td><span class="mono">agente/validacao.py</span> e <span class="mono">agente/auditoria.py</span></td><td>As duas worktrees e o roteiro do passo 7</td></tr>
+            <tr><td><span class="mono">agente/llm.py</span>, com o cliente do Ollama e o modo <span class="mono">--simular</span></td><td><span class="mono">docs/EVIDENCIAS.md</span>, com os valores medidos por vocês</td></tr>
+            <tr><td><span class="mono">verificar.py</span>, <span class="mono">tests/</span> e <span class="mono">resgate/</span></td><td>Um commit por passo concluído</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout" style="margin-top:10px; padding:12px 16px;">
+          <p style="font-size:0.65em; margin:0;">O <span class="mono">servicos/pedidos/app.py</span> é a implementação provisória, em Python, do serviço que nasce em Java na Aula 05: <strong>mesmas rotas, mesma porta 8080, mesmos payloads</strong>. Quando a plataforma inteira subir no Compose, o agente de vocês aponta para o serviço Java sem mudar uma linha, porque o endereço vem de <span class="mono">LOGITECH_PEDIDOS_URL</span>.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – O Lab Kit</div>
+          <div class="footer-page">38</div>
+        </div>
+      </section>
+
+      <!-- ==================== 39: PASSO 1 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 1 de 8: subir o serviço e ler o contrato</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>Antes de escrever agente, veja a API recusar sozinha</h3>
+          <pre style="margin:0 0 8px; font-size:0.48em;"><code class="language-bash">python3 servicos/pedidos/app.py     # deixe rodando neste terminal a noite inteira
+
+# em outro terminal
+curl -s http://localhost:8080/health
+curl -s http://localhost:8080/api/v1/pedidos/PED-1042/status
+curl -s -X PATCH http://localhost:8080/api/v1/pedidos/PED-1043/endereco \
+     -H 'Content-Type: application/json' \
+     -d '{"logradouro":"Rua Bela Cintra","numero":"495","cidade":"São Paulo","uf":"SP"}'</code></pre>
+          <p style="margin:0; font-size:0.62em;">A terceira chamada responde <span class="mono">400</span> com a lista dos campos ausentes. <strong>Guardem essa resposta:</strong> o objetivo do laboratório é que o agente de vocês nunca a provoque. Commit <span class="mono">feat(passo-1): contrato do serviço de Pedidos conferido</span>.</p>
+          <p style="margin:9px 0 0; font-size:0.6em; border-top:1px solid rgba(255,255,255,0.2); padding-top:8px;"><strong style="color:var(--fiap-pink);">O que você acabou de provar:</strong> Você acabou de ver a API recusar sozinha, com 400, uma alteração sem CEP. Esse é o erro que o agente de vocês não pode provocar: daqui em diante, quem recusa é o agente, antes de chamar.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Passo 1</div>
+          <div class="footer-page">39</div>
+        </div>
+      </section>
+
+      <!-- ==================== 40: PASSO 2 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 2 de 8: TODO-1, o schema da consulta</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>Em agente/esquemas.py, preencha ESQUEMA_CONSULTAR_STATUS</h3>
+          <pre style="margin:0 0 8px; font-size:0.48em;"><code class="language-python">ESQUEMA_CONSULTAR_STATUS = {
+    "type": "________",                     # objeto
+    "properties": {
+        "pedido_id": {"type": "string",
+                       "description": "____________________",
+                       "pattern": "____________________"},   # PED- e quatro dígitos
+    },
+    "required": [____________],
+    "additionalProperties": _______,
+}</code></pre>
+          <pre style="margin:0 0 8px; font-size:0.48em;"><code class="language-bash">python3 -m pytest tests/test_esquemas.py -q
+python3 verificar.py --criterio 1</code></pre>
+          <p style="margin:0; font-size:0.62em;">Commit <span class="mono">feat(passo-2): schema de consultar_status_pedido</span>.</p>
+          <p style="margin:9px 0 0; font-size:0.6em; border-top:1px solid rgba(255,255,255,0.2); padding-top:8px;"><strong style="color:var(--fiap-pink);">O que você acabou de provar:</strong> Você acabou de provar que schema é contrato executável, e não documentação: o mesmo dicionário que o modelo lê é o que o seu validador executa.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Passo 2</div>
+          <div class="footer-page">40</div>
+        </div>
+      </section>
+
+      <!-- ==================== 41: PASSO 3 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 3 de 8: TODO-2, o schema da alteração</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>Seis campos obrigatórios, e o cep entre eles</h3>
+          <p style="margin:0 0 10px; font-size:0.7em;">Propriedades: <span class="mono">pedido_id</span>, <span class="mono">logradouro</span>, <span class="mono">numero</span>, <span class="mono">cidade</span>, <span class="mono">uf</span>, <span class="mono">cep</span> e <span class="mono">complemento</span>.</p>
+          <ul style="margin:0 0 12px; font-size:0.66em; line-height:1.6; color:#ccc;">
+            <li><span class="mono">uf</span> com <span class="mono">pattern</span> de duas letras maiúsculas; <span class="mono">cep</span> no formato <span class="mono">00000-000</span>.</li>
+            <li><span class="mono">required</span> com <strong>seis</strong> campos. <span class="mono">complemento</span> fica de fora: é opcional no contrato do serviço.</li>
+            <li><span class="mono">additionalProperties: False</span>, para o modelo não contrabandear campo nenhum.</li>
+          </ul>
+          <p style="margin:0; font-size:0.62em;">O <span class="mono">cep</span> em <span class="mono">required</span> é o que faz o passo 6 existir: sem ele aqui, a chamada malformada passa direto e chega ao serviço. Commit <span class="mono">feat(passo-3): schema de alterar_endereco_entrega</span>.</p>
+          <p style="margin:9px 0 0; font-size:0.6em; border-top:1px solid rgba(255,255,255,0.2); padding-top:8px;"><strong style="color:var(--fiap-pink);">O que você acabou de provar:</strong> Você acabou de criar a condição da recusa. O <span class="mono">cep</span> em <span class="mono">required</span> é o único motivo pelo qual o passo 6 vai ter o que provar.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Passo 3</div>
+          <div class="footer-page">41</div>
+        </div>
+      </section>
+
+      <!-- ==================== 42: PASSO 4 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 4 de 8: TODO-3, o Command de leitura</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>Em agente/comandos.py, implemente ConsultarStatusPedido.executar</h3>
+          <pre style="margin:0 0 8px; font-size:0.48em;"><code class="language-python">class ConsultarStatusPedido(Comando):
+    nome = "consultar_status_pedido"
+    esquema = esquemas.ESQUEMA_CONSULTAR_STATUS
+
+    def executar(self, argumentos):
+        pedido_id = ____________________
+        return api_pedidos.____________________(pedido_id)</code></pre>
+          <pre style="margin:0 0 8px; font-size:0.48em;"><code class="language-bash">python3 atendente.py --simular "Onde está o pedido PED-1042?"
+python3 verificar.py --criterio 3</code></pre>
+          <p style="margin:0; font-size:0.62em;">Não validem nada aqui: quando este método roda, o Despachante já validou. Validar duas vezes esconde de quem lê onde a autorização realmente acontece. Commit <span class="mono">feat(passo-4): Command de consulta de status</span>.</p>
+          <p style="margin:9px 0 0; font-size:0.6em; border-top:1px solid rgba(255,255,255,0.2); padding-top:8px;"><strong style="color:var(--fiap-pink);">O que você acabou de provar:</strong> Você acabou de fazer um Command executar de verdade contra a API, e a linha <span class="mono">AUTORIZADO</span> apareceu sozinha em <span class="mono">docs/AUDITORIA.md</span>: ninguém a escreveu à mão.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Passo 4</div>
+          <div class="footer-page">42</div>
+        </div>
+      </section>
+
+      <!-- ==================== 43: PASSO 5 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 5 de 8: TODO-4, o Command de escrita</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>AlterarEnderecoEntrega.executar, e o corpo do PATCH</h3>
+          <pre style="margin:0 0 8px; font-size:0.48em;"><code class="language-python">def executar(self, argumentos):
+    pedido_id = ____________________            # vai na URL, não no corpo
+    endereco = {campo: argumentos[campo]
+                 for campo in self.CAMPOS_DO_ENDERECO
+                 if ____________________}       # complemento pode não vir
+    return api_pedidos.____________________(pedido_id, endereco)</code></pre>
+          <pre style="margin:0 0 8px; font-size:0.46em;"><code class="language-bash">python3 atendente.py --simular "Mudar o endereço do PED-1044 para Avenida Paulista 1106, CEP 01311-000"
+python3 verificar.py --criterio 4</code></pre>
+          <p style="margin:0; font-size:0.62em;">Campo opcional ausente não vira string vazia inventada pelo agente. Registrem <span class="mono">PEDIDO_ALTERADO_ID</span> e <span class="mono">CEP_NOVO</span> em <span class="mono">docs/EVIDENCIAS.md</span>. Commit <span class="mono">feat(passo-5): Command de alteração de endereço</span>.</p>
+          <p style="margin:9px 0 0; font-size:0.6em; border-top:1px solid rgba(255,255,255,0.2); padding-top:8px;"><strong style="color:var(--fiap-pink);">O que você acabou de provar:</strong> Você acabou de provar que o agente muda o mundo: o CEP novo é lido de volta do serviço, e não do que o modelo disse ter feito.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Passo 5</div>
+          <div class="footer-page">43</div>
+        </div>
+      </section>
+
+      <!-- ==================== 44: PASSO 6 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 6 de 8: TODO-5, a recusa auditada</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>Implementem a recusa, e depois provoquem o agente de propósito</h3>
+          <pre style="margin:0 0 8px; font-size:0.48em;"><code class="language-bash">python3 atendente.py --simular --roteiro recusa "Mudar o endereço do PED-1043"</code></pre>
+          <p style="margin:0 0 8px; font-size:0.67em; color:#ccc;">Três coisas precisam acontecer, e vocês conferem as três:</p>
+          <ul style="margin:0 0 11px; font-size:0.65em; line-height:1.6; color:#ccc;">
+            <li>o veredito é <span class="mono">RECUSADO</span> e o comando <strong>não executa</strong>;</li>
+            <li><span class="mono">docs/AUDITORIA.md</span> ganha uma linha <span class="mono">RECUSADO</span> com o motivo;</li>
+            <li><strong>nenhum <span class="mono">PATCH</span> aparece no log do serviço.</strong> Olhem o terminal do passo 1.</li>
+          </ul>
+          <p style="margin:0; font-size:0.62em;">Se aparecer um <span class="mono">PATCH ... 400</span>, a validação aconteceu tarde demais: a chamada saiu do agente e foi o serviço que recusou. Registrem <span class="mono">MOTIVO_DA_RECUSA</span> e <span class="mono">PATCH_CHEGOU_AO_SERVICO</span>. Commit <span class="mono">feat(passo-6): recusa auditada de chamada sem CEP</span>.</p>
+          <p style="margin:9px 0 0; font-size:0.6em; border-top:1px solid rgba(255,255,255,0.2); padding-top:8px;"><strong style="color:var(--fiap-pink);">O que você acabou de provar:</strong> Você acabou de provar a diferença entre integração e engenharia: a chamada malformada não saiu do agente, e a tentativa ficou registrada mesmo assim.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Passo 6</div>
+          <div class="footer-page">44</div>
+        </div>
+      </section>
+
+      <!-- ==================== 45: PASSO 7 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 7 de 8: as duas worktrees, dois agentes ao mesmo tempo</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:15px 22px;">
+          <h3>Duas pessoas, duas linhas de trabalho, um único clone</h3>
+          <pre style="margin:0 0 7px; font-size:0.45em;"><code class="language-bash">git switch -c agente/pedidos && git switch -c agente/atendimento && git switch main
+git worktree add ../wt-agente-pedidos      agente/pedidos
+git worktree add ../wt-agente-atendimento  agente/atendimento
+git worktree list</code></pre>
+          <pre style="margin:0 0 7px; font-size:0.45em;"><code class="language-bash"># terminal A
+cd ../wt-agente-pedidos     && python3 atendente.py --simular "Onde está o PED-1042?"
+# terminal B, ao mesmo tempo
+cd ../wt-agente-atendimento && python3 atendente.py --simular --roteiro recusa "Mudar o endereço do PED-1043"</code></pre>
+          <p style="margin:0; font-size:0.58em;">Os dois apontam para o <strong>mesmo</strong> serviço de Pedidos, e nenhum <span class="mono">git switch</span> de um lado troca os arquivos debaixo do processo do outro. Registrem as duas worktrees, as duas branches e <span class="mono">O_QUE_ACONTECERIA_COM_CHECKOUT</span>. Commit <span class="mono">feat(passo-7): worktrees dos dois agentes</span>.</p>
+          <p style="margin:9px 0 0; font-size:0.6em; border-top:1px solid rgba(255,255,255,0.2); padding-top:8px;"><strong style="color:var(--fiap-pink);">O que você acabou de provar:</strong> Você acabou de provar que dois agentes trabalham em paralelo sem se atropelar: duas branches, dois diretórios de trabalho, um único repositório.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Passo 7</div>
+          <div class="footer-page">45</div>
+        </div>
+      </section>
+
+      <!-- ==================== 46: PASSO 8 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 8 de 8: evidências, verificação e entrega</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:16px 22px;">
+          <h3>A régua é pública, e é a mesma que o professor roda</h3>
+          <pre style="margin:0 0 8px; font-size:0.47em;"><code class="language-bash">python3 -m pytest tests -q    # os 42 testes do laboratório
+python3 verificar.py          # os nove critérios, um por linha
+
+python3 verificar.py --criterio 5   # dá para rodar um critério isolado a qualquer momento</code></pre>
+          <p style="margin:0 0 8px; font-size:0.66em; color:#ccc;">O verificador sobe o serviço de Pedidos sozinho se vocês esqueceram o outro terminal, executa os comandos de verdade e <strong>provoca a recusa ele mesmo</strong>, conferindo depois que o endereço não mudou no serviço.</p>
+          <p style="margin:0; font-size:0.62em;"><span class="mono">python3 verificar.py</span> imprimindo <strong>9 de 9</strong> é o critério de pronto. Commit <span class="mono">feat(passo-8): evidências e verificação final</span>.</p>
+          <p style="margin:9px 0 0; font-size:0.6em; border-top:1px solid rgba(255,255,255,0.2); padding-top:8px;"><strong style="color:var(--fiap-pink);">O que você acabou de provar:</strong> Você acabou de rodar a mesma régua que o professor roda na correção. Nove de nove aqui é nove de nove lá, sem surpresa na devolutiva.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Passo 8</div>
+          <div class="footer-page">46</div>
+        </div>
+      </section>
+
+      <!-- ==================== 47: O MODO SIMULAR ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O modo <span class="mono">--simular</span>, dito na cara</h2>
+        </div>
+
+        <p style="font-size:0.7em; margin:0 0 8px;"><span class="mono">python3 atendente.py --simular ...</span> injeta uma <strong>resposta de modelo já formada</strong>, escrita à mão em <span class="mono">agente/llm.py</span>. Ele existe porque tool calling é justamente a tarefa em que modelo pequeno erra mais, e uma noite de má sorte com o modelo local não pode parar o laboratório por um motivo que não tem nada a ver com o que a aula ensina.</p>
+
+        <div class="side-by-side" style="margin-top:6px;">
+          <div class="concept-card" style="padding:14px 18px;">
+            <h4>Continua real no <span class="mono">--simular</span></h4>
+            <p style="font-size:0.65em;">A validação por JSON Schema, os seus Commands, a chamada HTTP ao serviço, a trilha de auditoria e as worktrees. Tudo o que é avaliado.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 18px;">
+            <h4>Vem pronto no <span class="mono">--simular</span></h4>
+            <p style="font-size:0.65em;">Só a intenção que, no outro modo, sairia do modelo. Nada além disso.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Rodem também com o Ollama, pelo menos uma vez</span>
+          <p>E registrem em <span class="mono">TENTATIVAS_ATE_O_MODELO_ACERTAR</span> quantas tentativas foram necessárias. No ensaio desta aula o modelo acertou de primeira, três vezes seguidas. O número de vocês pode ser outro, e ele é informação útil para a turma inteira.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – O Modo Simular</div>
+          <div class="footer-page">47</div>
+        </div>
+      </section>
+
+      <!-- ==================== 48: CHECKLIST DA ENTREGA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O que vai no repositório de vocês: checklist</h2>
+        </div>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>#</th><th>Evidência</th><th>Confirmado por</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>As 5 lacunas <span class="mono">TODO-1</span> a <span class="mono">TODO-5</span> preenchidas</td><td>Critérios 1, 3, 4 e 5</td></tr>
+            <tr><td>2</td><td><span class="mono">python3 -m pytest -q</span> verde: os 42 testes de <span class="mono">tests/</span></td><td>Critério 9</td></tr>
+            <tr><td>3</td><td><span class="mono">docs/AUDITORIA.md</span> com no mínimo 3 execuções autorizadas e 1 recusa</td><td>Critério 6</td></tr>
+            <tr><td>4</td><td>As 2 worktrees em <span class="mono">git worktree list</span>, cada uma em uma branch</td><td>Critério 7</td></tr>
+            <tr><td>5</td><td><span class="mono">docs/EVIDENCIAS.md</span> com <span class="mono">PEDIDO_ALTERADO_ID</span>, <span class="mono">CEP_NOVO</span>, <span class="mono">MOTIVO_DA_RECUSA</span> e os demais marcadores</td><td>Critério 8</td></tr>
+            <tr><td>6</td><td>Um commit por passo, <span class="mono">feat(passo-N)</span>, visível no histórico</td><td>Correção do professor</td></tr>
+            <tr><td>7</td><td>Usaram o resgate? <span class="mono">USEI_O_RESGATE</span> preenchido, sem penalidade automática</td><td>Correção do professor</td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A régua é pública</span>
+          <p><span class="mono">python3 verificar.py</span> imprimindo 9 de 9 é a mesma régua que o professor roda na correção. Sem surpresa: se passou aí, passou lá.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Entrega</div>
+          <div class="footer-page">48</div>
+        </div>
+      </section>
+
+      <!-- ==================== 49: FORMULÁRIO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Formulário de Entrega</h2>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 600px 1fr; gap:26px; align-items:start; margin-top:4px;">
+          <div class="marcador-pendente" style="height:320px; display:flex; flex-direction:column; justify-content:center;">
+            <p style="font-size:0.88em; font-weight:800; color:var(--fiap-pink); margin:0 0 12px;">URL do formulário ainda não publicada</p>
+            <p style="font-size:0.64em; color:#555; margin:0; line-height:1.55;">O formulário de entrega desta aula será publicado <strong>antes do encontro de 22/09</strong>, e o link aparece aqui e no portal da disciplina.<br><br>Enquanto isso, deixem o fork pronto: o que se envia é a URL do repositório, e ela não muda.</p>
+          </div>
+
+          <div>
+            <div class="concept-cards" style="grid-template-columns:1fr; gap:10px; margin-top:0;">
+              <div class="concept-card" style="padding:11px 16px;">
+                <h4>O que enviar</h4>
+                <p style="font-size:0.64em;">A URL do <strong>fork da dupla</strong>, no formato<br><span class="mono">github.com/usuario/mwe-2026-2-lab08-agentes-worktrees</span></p>
+              </div>
+              <div class="concept-card" style="padding:11px 16px;">
+                <h4>Quem envia</h4>
+                <p style="font-size:0.64em;">Um envio por dupla, com os dois nomes. A atividade de hoje é em dupla.</p>
+              </div>
+              <div class="concept-card" style="padding:11px 16px;">
+                <h4>Até quando</h4>
+                <p style="font-size:0.64em;">Até 22h50, com os commits dos oito passos no fork.</p>
+              </div>
+            </div>
+
+            <div class="callout" style="margin-top:9px; padding:11px 15px;">
+              <p style="font-size:0.62em; margin:0; line-height:1.5;">Critérios de aceitação completos no
+                <a href="https://github.com/josercf/mwe-2026-2-lab08-agentes-worktrees" target="_blank" style="color:var(--fiap-pink); font-weight:700;">README do Lab Kit</a></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Entrega da Atividade</div>
+          <div class="footer-page">49</div>
+        </div>
+      </section>
+
+      <!-- ==================== 50: O QUE VEM ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O que vem: CP2 na semana que vem</h2>
+        </div>
+
+        <div class="concept-cards" style="grid-template-columns: 1fr 1fr; gap:16px; margin-top:8px;">
+          <div class="concept-card" style="padding:16px 20px;">
+            <h4>29/09: Checkpoint 2, avaliação prática</h4>
+            <p style="font-size:0.66em;">Escopo integrado do Módulo II: POO e SOLID, Design Patterns incluindo <strong>Command</strong>, backend poliglota, Docker Compose, AI Gateway e <strong>Function Calling</strong>. O entregável é a aplicação multi-serviço rodando no Compose com suporte a agente de IA. Quem fechou os oito passos de hoje já treinou a parte do agente.</p>
+          </div>
+          <div class="concept-card" style="padding:16px 20px;">
+            <h4>Adiante: RAG, MCP e Worktrees II</h4>
+            <p style="font-size:0.66em;">Na Aula 12 as ferramentas do agente saem do seu processo e passam a ser servidas por um <strong>servidor MCP</strong>, com o mesmo JSON Schema de hoje. Na Aula 14 as worktrees voltam, agora com vários agentes em paralelo de verdade.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A espiral continua</span>
+          <p>A camada de comandos de hoje não é exercício descartável. É a mesma que a Aula 12 vai expor por MCP e que a Global Solution herda. Guardem o fork.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Próximos Passos</div>
+          <div class="footer-page">50</div>
+        </div>
+      </section>
+
+      <!-- ==================== 51: REFERÊNCIAS ==================== -->
+      <section id="ref-slide" class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Referências Bibliográficas e Documentação</h2>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px 28px; font-size:0.6em; line-height:1.5; color:var(--fiap-gray);">
+          <div>
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[1] Function Calling e Tool Calling</strong><br>
+            OLLAMA: <a href="https://ollama.readthedocs.io/en/api/" target="_blank" style="color:var(--fiap-pink);">API reference, chat e tools</a><br>
+            OPENAI: <a href="https://platform.openai.com/docs/guides/function-calling" target="_blank" style="color:var(--fiap-pink);">Function calling guide</a></p>
+
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[2] JSON Schema</strong><br>
+            JSON SCHEMA: <a href="https://json-schema.org/specification" target="_blank" style="color:var(--fiap-pink);">Specification</a><br>
+            JSON SCHEMA: <a href="https://json-schema.org/understanding-json-schema" target="_blank" style="color:var(--fiap-pink);">Understanding JSON Schema</a></p>
+
+            <p style="margin:0;"><strong style="color:var(--fiap-pink);">[3] Command Pattern</strong><br>
+            GAMMA, E. et al. <em>Design Patterns: Elements of Reusable Object-Oriented Software</em>. Addison-Wesley, 1994.<br>
+            REFACTORING GURU: <a href="https://refactoring.guru/design-patterns/command" target="_blank" style="color:var(--fiap-pink);">Command</a></p>
+          </div>
+
+          <div>
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[4] Git Worktrees</strong><br>
+            GIT: <a href="https://git-scm.com/docs/git-worktree" target="_blank" style="color:var(--fiap-pink);">git-worktree</a><br>
+            CHACON, S.; STRAUB, B. <em>Pro Git</em>. 2. ed. Apress, 2014.</p>
+
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[5] Segurança de agentes e auditoria</strong><br>
+            OWASP: <a href="https://genai.owasp.org/llm-top-10/" target="_blank" style="color:var(--fiap-pink);">Top 10 for LLM Applications</a>, em especial <em>Excessive Agency</em><br>
+            NIST: <a href="https://www.nist.gov/itl/ai-risk-management-framework" target="_blank" style="color:var(--fiap-pink);">AI Risk Management Framework</a></p>
+
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[6] Lab Kit e contrato da plataforma</strong><br>
+            LAB KIT: <a href="https://github.com/josercf/mwe-2026-2-lab08-agentes-worktrees" target="_blank" style="color:var(--fiap-pink);">mwe-2026-2-lab08-agentes-worktrees</a><br>
+            MCP: <a href="https://modelcontextprotocol.io/" target="_blank" style="color:var(--fiap-pink);">Model Context Protocol</a>, retomado na Aula 12</p>
+
+            <p style="margin:0;">Os números medidos citados nos slides 9, 16 e 47 vêm de execuções do <span class="mono">qwen3.5:2b</span> local, feitas na construção deste laboratório e reproduzidas no README do Lab Kit.</p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">08 – Bibliografia da Aula</div>
+          <div class="footer-page">51</div>
+        </div>
+      </section>
+
+      <!-- ==================== 52: ENCERRAMENTO ==================== -->
       <section class="end-slide">
         <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" style="max-width:350px;">
-        <div class="copyright">Copyright &copy; 2026<br>Prof.º José Romualdo da Costa Filho<br><br>Todos direitos reservados.</div>
+        <div class="copyright">
+          Copyright &copy; 2026<br>
+          Prof. José Romualdo da Costa Filho<br><br>
+          Todos os direitos reservados. É expressamente proibida a reprodução, divulgação<br>
+          total ou parcial, deste material acadêmico sem autorização formal,<br>
+          por escrito, do Professor autor da ementa.
+        </div>
       </section>
+
     </div>
   </div>
+
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
   <script src="../assets/js/fiap-quiz.js"></script>
   <script src="../assets/js/fiap-zoom.js"></script>
   <script src="../assets/js/fiap-print.js"></script>
   <script>
-    Reveal.initialize({ hash: true, slideNumber: false, width: 1280, height: 720, margin: 0, minScale: 0.2, maxScale: 2.0, center: false, pdfMaxPagesPerSlide: 1, pdfSeparateFragments: false, transition: 'slide', transitionSpeed: 'default', plugins: [RevealHighlight] });
+    Reveal.initialize({
+      hash: true,
+      slideNumber: false,
+      width: 1280,
+      height: 720,
+      margin: 0,
+      minScale: 0.2,
+      maxScale: 2.0,
+      center: false,
+      pdfMaxPagesPerSlide: 1,
+      pdfSeparateFragments: false,
+      transition: 'slide',
+      transitionSpeed: 'default',
+      plugins: [RevealHighlight]
+    });
+    // startTimer(elementId, segundos) vem de ../assets/js/fiap-quiz.js
   </script>
+  <!-- Cliente do serviço Pulso: liga os quizzes com data-quiz-key à votação ao vivo.
+       Carregamento assíncrono (defer) e opcional: se o host estiver fora do ar
+       ou o script falhar, o quiz continua funcionando no modo local de sempre. -->
+  <script defer src="https://vote.jrcf.dev/client.js"></script>
 </body>
 </html>

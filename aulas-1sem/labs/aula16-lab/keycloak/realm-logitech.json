@@ -1,0 +1,133 @@
+{
+  "realm": "logitech",
+  "enabled": true,
+  "displayName": "LogiTech Enterprise",
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": false,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": false,
+  "accessTokenLifespan": 900,
+  "ssoSessionIdleTimeout": 3600,
+  "ssoSessionMaxLifespan": 36000,
+  "roles": {
+    "realm": [
+      {
+        "name": "ADMIN",
+        "description": "Operacao da LogiTech: emite fatura, notifica cliente e le metricas."
+      },
+      {
+        "name": "MOTORISTA",
+        "description": "Motorista da frota: consulta pedidos e telemetria."
+      },
+      {
+        "name": "CLIENTE",
+        "description": "Cliente da LogiTech: cria pedido e altera o proprio endereco de entrega."
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "logitech-portal",
+      "name": "Portal do Cliente (React, porta 5173)",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "protocol": "openid-connect",
+      "rootUrl": "http://localhost:5173",
+      "baseUrl": "/",
+      "redirectUris": [
+        "http://localhost:5173/*"
+      ],
+      "webOrigins": [
+        "http://localhost:5173"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:5173/*"
+      }
+    },
+    {
+      "clientId": "logitech-painel-admin",
+      "name": "Painel administrativo (Angular, porta 4200)",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "protocol": "openid-connect",
+      "rootUrl": "http://localhost:4200",
+      "baseUrl": "/",
+      "redirectUris": [
+        "http://localhost:4200/*"
+      ],
+      "webOrigins": [
+        "http://localhost:4200"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:4200/*"
+      }
+    }
+  ],
+  "users": [
+    {
+      "username": "ana.cliente",
+      "email": "ana@aurora.example",
+      "firstName": "Ana",
+      "lastName": "Ribeiro",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "logitech",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "CLIENTE"
+      ]
+    },
+    {
+      "username": "bruno.motorista",
+      "email": "bruno@logitech.example",
+      "firstName": "Bruno",
+      "lastName": "Tavares",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "logitech",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "MOTORISTA"
+      ]
+    },
+    {
+      "username": "carla.admin",
+      "email": "carla@logitech.example",
+      "firstName": "Carla",
+      "lastName": "Nogueira",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "logitech",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "ADMIN"
+      ]
+    }
+  ]
+}

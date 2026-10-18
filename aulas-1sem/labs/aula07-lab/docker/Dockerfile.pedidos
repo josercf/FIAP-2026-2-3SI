@@ -1,0 +1,99 @@
+# =============================================================================
+# Pedidos, o serviço REAL da Aula 05 (Java 21, Spring Boot 3.3.5, porta 8080)
+# =============================================================================
+#
+# Este Dockerfile não pertence ao serviço: ele vive no laboratório da Aula 07 e
+# aponta para o código da Aula 05 sem tocar nele. O contexto de build é o
+# diretório `pedidos/` daquele laboratório, e quem faz essa amarração é o
+# `docker-compose.override.yml`.
+#
+# As regras aqui são as mesmas que a Aula 03 cobrou na etapa 04 e no bônus:
+# dois estágios nomeados, base alpine no estágio final, usuário não-root com
+# UID acima de 10000, nunca `COPY . .`, `EXPOSE` com a porta real do contrato.
+#
+# Diferença para o serviço mínimo de `servicos/pedidos/`: lá havia um único
+# `Pedidos.java` compilado com `javac`. Aqui há Maven, Spring Boot, JPA e
+# dezenas de dependências transitivas. É por isso que este é o build mais caro
+# dos quatro, e é por isso que o kit não o traz ligado por padrão.
+
+# -----------------------------------------------------------------------------
+# Estágio 1: builder. O JDK, o Maven e o repositório local de artefatos
+# (~/.m2, algumas centenas de megabytes) só existem aqui.
+#
+# A base do builder não é alpine, e isso é deliberado: a regra da Aula 03 pede
+# base enxuta no **estágio final**, que é o que vai para o registro e para
+# produção. O estágio de compilação pode ser gordo à vontade, porque ele é
+# descartado. `maven:3.9-eclipse-temurin-21` é a imagem oficial do Maven com o
+# mesmo Temurin 21 que o runtime usa.
+# -----------------------------------------------------------------------------
+FROM maven:3.9-eclipse-temurin-21 AS builder
+WORKDIR /origem
+
+# O `pom.xml` entra sozinho e primeiro, e o `src/` depois: é a regra de ordem
+# que a Aula 03 ensinou, dependência antes de código.
+#
+# Só que com Maven a regra sozinha não basta. Não existe um "instalar
+# dependências" que termine e vire camada, como o `npm ci` ou o `pip install`:
+# quem resolve o grafo é o mesmo comando que compila. Por isso entra o
+# `--mount=type=cache`, que guarda o `~/.m2` **fora** da imagem, num cache do
+# BuildKit que sobrevive entre builds. O primeiro build baixa o Spring Boot
+# inteiro; os seguintes reaproveitam.
+#
+# Repare no efeito colateral bom: o repositório de artefatos, que passa dos
+# 200 MB, não vira camada nenhuma. O estágio de compilação fica leve mesmo
+# antes de ser descartado.
+COPY pom.xml ./
+COPY src ./src
+
+# `-DskipTests` porque a suíte da Aula 05 exige um PostgreSQL de pé, e build de
+# imagem não é lugar de subir banco. O `src/test` entra no builder porque vive
+# dentro de `src/`, mas não chega ao estágio final: de lá só sai o JAR.
+#
+# `-Dmaven.wagon...retryHandler` é a mesma precaução do serviço mínimo, que
+# baixa o driver JDBC com `wget --tries=3`: repositório de artefatos indisponível
+# é a falha que come uma aula inteira, e o build precisa insistir antes de
+# desistir.
+#
+# `MAVEN_THREADS_ARTEFATO` é a válvula de escape para rede hostil. O Maven baixa
+# artefatos em 5 conexões simultâneas, e há rede corporativa, VPN e proxy que
+# recusam a segunda conexão simultânea para o mesmo destino. O sintoma é
+# inconfundível: dezenas de "Connect to repo.maven.apache.org:443 failed:
+# Connection refused" em menos de dois segundos, com a mesma máquina baixando
+# o mesmo arquivo por `wget` sem reclamar. Nesse caso:
+#
+#     docker compose build --build-arg MAVEN_THREADS_ARTEFATO=1 pedidos
+#
+# O build fica mais lento e passa.
+ARG MAVEN_THREADS_ARTEFATO=5
+RUN --mount=type=cache,target=/root/.m2 \
+    mvn -B -ntp -q -DskipTests \
+        -Dmaven.artifact.threads=${MAVEN_THREADS_ARTEFATO} \
+        -Dmaven.wagon.http.retryHandler.count=5 \
+        -Daether.connector.http.retryHandler.count=5 \
+        package
+
+# -----------------------------------------------------------------------------
+# Estágio 2: runtime. Só o JRE e o JAR.
+# -----------------------------------------------------------------------------
+FROM eclipse-temurin:21-jre-alpine AS runtime
+
+# UID e GID acima de 10000, como a Aula 03 exige. O número alto evita colidir
+# com usuário de sistema do host quando o container monta volume.
+RUN addgroup -g 10001 logitech \
+ && adduser -u 10001 -G logitech -D -H -s /sbin/nologin logitech
+
+WORKDIR /app
+COPY --from=builder /origem/target/pedidos-1.0.0.jar /app/pedidos.jar
+
+USER logitech
+EXPOSE 8080
+
+# `-XX:MaxRAMPercentage` faz a JVM respeitar o `mem_limit` do Compose em vez do
+# total do host. Sem isso, o heap e o limite do container discordam e o serviço
+# morre por OOMKilled sem explicação aparente.
+#
+# `-XX:TieredStopAtLevel=1` desliga o compilador C2. A aplicação sobe mais
+# rápido e usa menos memória, ao custo de desempenho em regime, que não é o que
+# este laboratório mede.
+CMD ["java", "-XX:MaxRAMPercentage=70", "-XX:TieredStopAtLevel=1", \
+     "-jar", "/app/pedidos.jar"]

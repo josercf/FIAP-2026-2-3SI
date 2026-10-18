@@ -1,0 +1,61 @@
+# =============================================================================
+# Faturamento, o serviço REAL da Aula 05 (C#, .NET 8, porta 5080)
+# =============================================================================
+#
+# Contexto de build: o diretório `faturamento/` do laboratório da Aula 05, com
+# `global.json`, `Faturamento.sln`, `src/` e `tests/`. Quem faz a amarração é o
+# `docker-compose.override.yml` deste laboratório.
+#
+# Regras da Aula 03 aplicadas aqui: dois estágios nomeados, base alpine no
+# estágio final, usuário não-root com UID acima de 10000, nunca `COPY . .`,
+# `EXPOSE 5080` como manda a ADR-006.
+
+# -----------------------------------------------------------------------------
+# Estágio 1: builder. O SDK do .NET passa de 900 MB e fica todo aqui.
+# -----------------------------------------------------------------------------
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine AS builder
+WORKDIR /origem
+
+# `global.json` fixa a linha 8.0 do SDK, com `rollForward: latestFeature`.
+# Ele entra antes de tudo porque o `dotnet` o lê antes de qualquer comando.
+COPY global.json ./
+
+# Só o `.csproj` primeiro: enquanto a lista de pacotes não mudar, a camada do
+# `restore` sobrevive no cache e mudar um `.cs` não obriga a baixar o Npgsql
+# de novo. Mesma regra de ordem do serviço de Pedidos.
+COPY src/Faturamento.Api/Faturamento.Api.csproj src/Faturamento.Api/
+RUN dotnet restore src/Faturamento.Api/Faturamento.Api.csproj
+
+# Repare no que **não** entra: `tests/` e `Faturamento.sln` ficam de fora, e é
+# por isso que restauramos e publicamos o `.csproj` diretamente em vez da
+# solução. A solução referencia o projeto de teste, e teste não entra em
+# imagem de produção.
+COPY src/Faturamento.Api/ src/Faturamento.Api/
+RUN dotnet publish src/Faturamento.Api/Faturamento.Api.csproj \
+      -c Release -o /publicado --no-restore
+
+# -----------------------------------------------------------------------------
+# Estágio 2: runtime. Só o runtime do ASP.NET Core e os assemblies publicados.
+# -----------------------------------------------------------------------------
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS runtime
+
+RUN addgroup -g 10002 logitech \
+ && adduser -u 10002 -G logitech -D -H -s /sbin/nologin logitech
+
+WORKDIR /app
+COPY --from=builder /publicado/ ./
+
+# `DOTNET_EnableDiagnostics=0` desliga o servidor de diagnóstico, que abre um
+# socket que ninguém aqui usa. `InvariantGlobalization` já vem ligado no
+# `.csproj` do serviço, e é o que permite rodar em alpine sem o pacote `icu`.
+ENV DOTNET_EnableDiagnostics=0 \
+    ASPNETCORE_ENVIRONMENT=Production \
+    LOGITECH_FATURAMENTO_PORT=5080
+
+USER logitech
+EXPOSE 5080
+
+# O nome do assembly vem do `.csproj` (`AssemblyName=Faturamento.Api`), e não
+# do nome da pasta. Trocar por `Faturamento.dll` faz o container subir e morrer
+# com "could not execute because the specified file was not found".
+CMD ["dotnet", "Faturamento.Api.dll"]

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aula 10 – Testes de Unidade (TDD / Mocks) & Frontend React (TypeScript) | FIAP</title>
+  <title>Aula 10 – Testes de Unidade (TDD / Mocks) e Frontend Enterprise I: React | FIAP</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
@@ -11,212 +11,2327 @@
   <link rel="stylesheet" href="../assets/css/fiap-print.css">
   <script>if(/print-pdf/gi.test(window.location.search)){var link=document.createElement('link');link.rel='stylesheet';link.href='https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/css/print/pdf.css';document.head.appendChild(link);}</script>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* Tabelas compactas, mesmo padrao das Aulas 02, 03 e 07 */
+    .reveal table.compact-table { font-size: 0.62em; margin: 8px 0; }
+    .reveal table.compact-table th { padding: 7px 12px; }
+    .reveal table.compact-table td { padding: 7px 12px; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    /* A JetBrains Mono desenha ligaduras: `=>` some e vira uma seta unica,
+       e esta aula tem `=>` em toda arrow function de React e TypeScript.
+       Desligado aqui, no deck, e nao no tema compartilhado. */
+    .reveal pre code, .reveal code, .reveal .mono {
+      font-variant-ligatures: none;
+      font-feature-settings: "liga" 0, "clig" 0, "calt" 0;
+    }
+    /* E precisa valer dentro do SVG tambem: texto de figura nao e `code`
+       nem `.mono`, e o seletor acima passa reto por ele. Confirmado nesta
+       revisao: o `=>` de `useEffect(() => {` e da funcao de limpeza da
+       corrida virava um unico glifo de seta antes desta regra. */
+    .reveal svg text, .reveal svg tspan {
+      font-variant-ligatures: none;
+      font-feature-settings: "liga" 0, "clig" 0, "calt" 0;
+    }
+    /* Figuras com animacao SVG: altura controlada para nunca estourar os 720px */
+    .reveal .slide-figure { margin: 6px 0 0; }
+    .reveal .slide-figure svg { width: 100%; }
+    .reveal .slide-figure figcaption { font-size: 0.58em; line-height: 1.42; color: #6b6b6b; margin-top: 4px; }
+
+    /* Bloco de fecho compacto.
+       Motivo, registrado para quem editar depois: este deck tem 53 slides e
+       varios deles fecham com `takeaway` depois de tabela ou figura. Com o
+       respiro padrao do tema (padding 11/18, margin-top 12, texto 0.66em) o
+       bloco empurrava quatro slides para fora dos 720px. Apertar o BLOCO, e
+       nao o texto de cada slide, conserta os quatro de uma vez e protege os
+       proximos ajustes editoriais.
+       A regra vive aqui, e nao em assets/css/fiap-theme.css, para nao alterar
+       o espacamento dos decks das outras aulas.
+       Regra editorial que acompanha: o texto do takeaway cabe em ate DUAS
+       linhas nesta largura. Se precisar de tres, o problema e o slide. */
+    .reveal .takeaway { margin-top: 7px; padding: 8px 16px; gap: 12px; }
+    .reveal .takeaway p { font-size: 0.62em; line-height: 1.38; }
+    .reveal .takeaway .takeaway-label { font-size: 0.56em; }
+  </style>
 </head>
 <body>
   <div class="reveal">
     <div class="slides">
 
-      <!-- ==================== SLIDE: CAPA FIAP ==================== -->
+      <!-- ==================== 1: CAPA ==================== -->
       <section class="cover-slide">
         <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" class="fiap-logo-full">
       </section>
 
-      <!-- ==================== SLIDE: TÍTULO DA AULA ==================== -->
-      <section class="title-slide">
+      <!-- ==================== 2: TÍTULO ==================== -->
+      <section class="title-slide" data-background-image="../assets/img/microservices-bg.jpg" data-background-opacity="0.3">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="title-card">
           <div class="accent-bar"></div>
           <h1>Sistemas de Informação</h1>
-          <h2>Microservice and Web Engineering & IT Services</h2>
+          <h2>Microservice and Web Engineering &amp; IT Services</h2>
           <h3>Prof. José Romualdo</h3>
         </div>
-        <div class="lesson-bar">AULA 10 – Testes de Unidade (TDD / Mocks) & Frontend React (TypeScript)</div>
+        <div class="lesson-bar">AULA 10 – Testes de Unidade (TDD / Mocks) e Frontend Enterprise I: React</div>
       </section>
 
-      <!-- ==================== SLIDE: AGENDA ==================== -->
+      <!-- ==================== 3: AGENDA ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Agenda do Encontro</h2>
+          <h2>Agenda do Encontro de Hoje</h2>
         </div>
 
-        <table>
+        <table class="compact-table">
           <thead>
-            <tr><th>Bloco</th><th>Horário</th><th>Conteúdo & Atividades</th></tr>
+            <tr><th>Início</th><th>Conteúdo</th></tr>
           </thead>
           <tbody>
-            <tr><td><strong>Bloco 1</strong></td><td>19h20 – 20h50</td><td>TDD, Mocks/Stubs, Setup Jest/Vitest + Quiz #1</td></tr>
-            <tr><td><strong>Intervalo</strong></td><td>20h50 – 21h20</td><td>☕ Pausa para Café e Networking (30 min)</td></tr>
-            <tr><td><strong>Bloco 2</strong></td><td>21h20 – 22h50</td><td>React com TS, Componentes, Quizzes #2 e #3 + Hands-on Lab (React TDD)</td></tr>
+            <tr><td>19h20</td><td>Resgate da espiral: as regras de negócio das Aulas 05 e 06, sem rede de proteção</td></tr>
+            <tr><td>19h35</td><td>Desafio do Mini Mundo: garantir o cálculo de frete e dar uma tela ao cliente</td></tr>
+            <tr><td>19h55</td><td>Teoria: pirâmide de testes, TDD, cobertura e mutação, Stub, Mock e Spy. React: JSX, Virtual DOM, componentes, <span class="mono">useState</span>, <span class="mono">useEffect</span> e consumo de API</td></tr>
+            <tr><td>20h35</td><td>Quiz 1 e tira-dúvidas</td></tr>
+            <tr><td>20h50</td><td>Intervalo (30 minutos)</td></tr>
+            <tr><td>21h20</td><td>Quizzes 2 e 3</td></tr>
+            <tr><td>21h35</td><td>Atividade prática em dupla: as seis lacunas do laboratório</td></tr>
+            <tr><td>22h35</td><td>Suíte verde, portal no navegador, verificação e commit</td></tr>
           </tbody>
         </table>
 
+        <div class="takeaway">
+          <span class="takeaway-label">Entregável de hoje</span>
+          <p>O seu fork com a suíte de unidade do cotador de frete, o Portal do Cliente em React respondendo no navegador, o <span class="mono">verificar.py</span> imprimindo 8 de 8 e as evidências medidas na sua máquina.</p>
+        </div>
+
         <div class="slide-footer">
-          <div class="footer-bar">10 – Testes de Unidade & Frontend React</div>
+          <div class="footer-bar">10 – Agenda do Encontro</div>
           <div class="footer-page">3</div>
         </div>
       </section>
 
-      <!-- ==================== SLIDE: CONTEÚDO ==================== -->
+      <!-- ==================== 4: RESGATE DA ESPIRAL ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Test-Driven Development (TDD)</h2>
+          <h2>Resgate da Espiral: o que já existe, e o que nunca foi protegido</h2>
         </div>
 
-        <div class="concept-cards">
-          <div class="concept-card">
-            <h4>Red (Vermelho)</h4>
-            <p>Escreva um teste que falha para uma funcionalidade que ainda não existe.</p>
+        <div class="concept-cards" style="grid-template-columns: repeat(4, 1fr); gap:11px; margin-top:8px;">
+          <div class="concept-card" style="padding:13px 15px;">
+            <h4>Aula 05: o núcleo</h4>
+            <p style="font-size:0.64em;"><strong>Pedidos</strong> em Java e <strong>Faturamento</strong> em C#, com SOLID, Repository e Factory. As regras de negócio nasceram aqui.</p>
           </div>
-          <div class="concept-card">
-            <h4>Green (Verde)</h4>
-            <p>Escreva o mínimo de código necessário para o teste passar.</p>
+          <div class="concept-card" style="padding:13px 15px;">
+            <h4>Aula 06: as bordas</h4>
+            <p style="font-size:0.64em;"><strong>Frete</strong> em FastAPI com Strategy, e <strong>Notificações</strong> em Node com Adapter e Decorator. A tabela comercial mora no frete.</p>
           </div>
-          <div class="concept-card">
-            <h4>Refactor (Refatorar)</h4>
-            <p>Melhore o código sem alterar seu comportamento, mantendo os testes passando.</p>
+          <div class="concept-card" style="padding:13px 15px;">
+            <h4>Aula 07: a plataforma</h4>
+            <p style="font-size:0.64em;">Os seis serviços viraram um <span class="mono">docker-compose.yml</span>, com rede, variáveis e <span class="mono">healthcheck</span>.</p>
           </div>
+          <div class="concept-card" style="padding:13px 15px;">
+            <h4>Aula 08: o agente</h4>
+            <p style="font-size:0.64em;">Function Calling e Command Pattern chamando as rotas de Pedidos. A plataforma passou a agir sozinha.</p>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:12px;">
+          <p style="font-size:0.7em; line-height:1.55;">Nas Aulas 05 e 06 <strong>vocês receberam os testes prontos</strong> e escreveram o código que os fazia passar. Hoje a ordem se inverte no primeiro bloco: o código de produção vem congelado e o entregável é o teste. Quem escreve o teste precisa saber o que ele prova, e é disso que a noite trata.</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A espiral em uma frase</span>
+          <p>Nenhum serviço novo nasce hoje. O que nasce é a <strong>rede de proteção</strong> das regras que já existem, e a <strong>primeira tela</strong> que um cliente da LogiTech vai ver.</p>
         </div>
 
         <div class="slide-footer">
-          <div class="footer-bar">10 – Testes de Unidade & Frontend React</div>
+          <div class="footer-bar">10 – Resgate da Espiral</div>
           <div class="footer-page">4</div>
         </div>
       </section>
 
-      <!-- ==================== SLIDE: QUIZ 1 ==================== -->
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div>
-        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area">
-          <div class="accent-bar"></div>
-          <h2>Quiz #1 (Fixação do Bloco 1)</h2>
-        </div>
-
-        <div class="quiz-container">
-          <div class="quiz-question">Qual é o principal objetivo do ciclo Red-Green-Refactor no TDD?</div>
-          <ul class="quiz-options">
-            <li data-correct="false"><span class="option-letter">A</span> Escrever o código de produção antes para depois testar.</li>
-            <li data-correct="true"><span class="option-letter">B</span> Guiar o design do código através de testes escritos previamente.</li>
-            <li data-correct="false"><span class="option-letter">C</span> Automatizar deploy em produção sem revisão.</li>
-            <li data-correct="false"><span class="option-letter">D</span> Eliminar a necessidade de análise de requisitos.</li>
-          </ul>
-          <div class="quiz-feedback"
-               data-correct-msg="Excelente! O TDD ajuda a pensar no design da API e dos componentes antes mesmo da implementação."
-               data-incorrect-msg="Atenção! No TDD escrevemos os testes ANTES da implementação (Red).">
-          </div>
-        </div>
-      </section>
-
-      <!-- ==================== SLIDE: PAUSA ==================== -->
-      <section class="content-slide" style="text-align:center;">
-        <div class="top-bar"></div>
-        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div style="margin-top:100px;">
-          <h2 style="font-size:2.5em; color:var(--fiap-pink);">☕ Pausa para Café</h2>
-          <h3 style="font-size:1.5em; color:var(--fiap-gray-light); margin-top:20px;">20h50 – 21h20 (30 minutos)</h3>
-        </div>
-      </section>
-
-      <!-- ==================== SLIDE: REACT ==================== -->
+      <!-- ==================== 5: O ESTADO DA PLATAFORMA ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>React com TypeScript</h2>
+          <h2>A LogiTech hoje: seis serviços e nenhuma tela</h2>
         </div>
-        <p>A tipagem estática previne erros em tempo de desenvolvimento. Vamos aplicá-la ao case <strong>LogiTech Enterprise</strong>.</p>
-        <pre><code class="language-tsx">interface Props {
-  title: string;
-  onAddToCart: (id: string) => void;
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 940 300" style="max-height:356px;" role="img" aria-label="A plataforma tem seis serviços de backend e nenhum consumidor humano">
+            <rect x="20" y="46" width="560" height="150" rx="10" fill="#fafafa" stroke="#ccc" stroke-width="1.5"/>
+            <text x="300" y="38" text-anchor="middle" font-size="12.5" font-weight="700" fill="#555">a plataforma que vocês construíram, Aulas 02 a 08</text>
+
+            <g font-size="10.5" font-weight="700" fill="#fff">
+              <rect x="42" y="66" width="118" height="42" rx="6" fill="#5b6dcd"/><text x="101" y="86" text-anchor="middle">pedidos</text><text x="101" y="99" text-anchor="middle" font-size="9" font-weight="400">Java, 8080</text>
+              <rect x="174" y="66" width="118" height="42" rx="6" fill="#5b6dcd"/><text x="233" y="86" text-anchor="middle">faturamento</text><text x="233" y="99" text-anchor="middle" font-size="9" font-weight="400">C#, 5080</text>
+              <rect x="306" y="66" width="118" height="42" rx="6" fill="#2e8b8b"/><text x="365" y="86" text-anchor="middle">frete</text><text x="365" y="99" text-anchor="middle" font-size="9" font-weight="400">Python, 8000</text>
+              <rect x="438" y="66" width="118" height="42" rx="6" fill="#2e8b8b"/><text x="497" y="86" text-anchor="middle">notificacoes</text><text x="497" y="99" text-anchor="middle" font-size="9" font-weight="400">Node, 3001</text>
+              <rect x="42" y="126" width="118" height="42" rx="6" fill="#8a8a8a"/><text x="101" y="146" text-anchor="middle">coletor</text><text x="101" y="159" text-anchor="middle" font-size="9" font-weight="400">Python, 8081</text>
+              <rect x="174" y="126" width="118" height="42" rx="6" fill="#8a8a8a"/><text x="233" y="146" text-anchor="middle">painel</text><text x="233" y="159" text-anchor="middle" font-size="9" font-weight="400">Node, 3000</text>
+              <rect x="306" y="126" width="118" height="42" rx="6" fill="#a0722d"/><text x="365" y="146" text-anchor="middle">postgres</text><text x="365" y="159" text-anchor="middle" font-size="9" font-weight="400">5432</text>
+              <rect x="438" y="126" width="118" height="42" rx="6" fill="#a0722d"/><text x="497" y="146" text-anchor="middle">ai-gateway</text><text x="497" y="159" text-anchor="middle" font-size="9" font-weight="400">Python, 4000</text>
+            </g>
+
+            <text x="300" y="188" text-anchor="middle" font-size="10.5" fill="#777">todos falam JSON, todos respondem GET /health</text>
+
+            <path d="M 586 121 L 660 121" stroke="#bbb" stroke-width="2.5" stroke-dasharray="7,5"/>
+            <polygon points="660,116 672,121 660,126" fill="#bbb"/>
+
+            <rect x="690" y="60" width="228" height="122" rx="10" fill="#fdedec" stroke="#c0392b" stroke-width="2" stroke-dasharray="8,5"/>
+            <text x="804" y="98" text-anchor="middle" font-size="13" font-weight="700" fill="#c0392b">o cliente da LogiTech</text>
+            <text x="804" y="124" text-anchor="middle" font-size="11" fill="#a03028">não fala JSON.</text>
+            <text x="804" y="146" text-anchor="middle" font-size="11" fill="#a03028">Ele liga para o atendimento</text>
+            <text x="804" y="164" text-anchor="middle" font-size="11" fill="#a03028">e pergunta onde está a carga.</text>
+
+            <rect x="20" y="226" width="898" height="56" rx="8" fill="#fff8e6" stroke="#e8a33d" stroke-width="2"/>
+            <text x="40" y="250" font-size="12" font-weight="700" fill="#8a5d00">E dentro da caixa cinza há uma segunda ausência, menos visível:</text>
+            <text x="40" y="270" font-size="11.5" fill="#8a5d00">nenhuma dessas regras de negócio tem quem avise, em segundos, que uma mudança quebrou o que já funcionava.</text>
+          </svg>
+          <figcaption>
+            A plataforma responde a máquina, e só a máquina. Faltam as duas pontas: a tela para quem compra e a suíte de testes para quem mantém. As duas nascem hoje, e o laboratório mostra que elas têm mais em comum do que parece.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – O Estado da Plataforma</div>
+          <div class="footer-page">5</div>
+        </div>
+      </section>
+
+      <!-- ==================== 6: DESAFIO 1 ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Desafio: o comercial mudou a tabela na terça de manhã</h2>
+        </div>
+
+        <div class="callout" style="margin-top:6px;">
+          <p style="font-size:0.72em; line-height:1.55;">"Fechamos com a Metalúrgica Ipiranga: carga a partir de 1000 kg passa a ter 8 por cento de desconto. Sobe hoje?"</p>
+        </div>
+
+        <div class="concept-cards" style="grid-template-columns: 1fr 1fr; gap:14px; margin-top:12px;">
+          <div class="concept-card" style="padding:15px 18px;">
+            <h4>Como isso é conferido hoje</h4>
+            <p style="font-size:0.67em;">Sobe o serviço de Pedidos. Sobe o de frete. Manda um <span class="mono">curl</span> com um pedido pesado, olha o número, acha que está certo. Repete para os leves, para ver se não estragou nada. Alguém esquece de repetir para os leves.</p>
+          </div>
+          <div class="concept-card" style="padding:15px 18px;">
+            <h4>O que dá errado, e sempre é a mesma coisa</h4>
+            <p style="font-size:0.67em;">A regra nova funciona. A antiga quebrou em silêncio, e ninguém percebe até o cliente reclamar da fatura. Não é falta de cuidado: é que <strong>conferir à mão não escala</strong> com o número de regras.</p>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:12px; border-left-color:#c0392b; background:#fdedec;">
+          <p style="font-size:0.7em; line-height:1.55;">E há um complicador que este case tem e o exemplo de livro não tem: <strong>para cotar o frete de um pedido, o serviço de frete precisa perguntar o peso ao serviço de Pedidos.</strong> Testar essa regra com os dois serviços no ar é lento, é intermitente, e quando falha ninguém sabe de quem é a culpa.</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">O desafio de hoje, primeira metade</span>
+          <p>Provar que as regras de frete estão certas <strong>sem subir serviço nenhum</strong>, em menos de um segundo, toda vez que alguém salvar um arquivo.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Desafio do Mini Mundo</div>
+          <div class="footer-page">6</div>
+        </div>
+      </section>
+
+      <!-- ==================== 7: DESAFIO 2 ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Desafio: e o cliente ainda liga para saber onde está a carga</h2>
+        </div>
+
+        <p style="font-size:0.76em; margin-top:2px;">A promessa da Aula 01 era acabar com o telefonema. A plataforma já sabe responder, e ninguém consegue perguntar sem um cliente HTTP na mão.</p>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:12px; margin-top:8px;">
+          <div class="concept-card" style="padding:14px 16px;">
+            <h4>Rastrear</h4>
+            <p style="font-size:0.65em;">O cliente escolhe o pedido e vê a situação em português, a rota e o peso. Vem de <span class="mono">GET /api/v1/pedidos/{id}</span>.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 16px;">
+            <h4>Cotar</h4>
+            <p style="font-size:0.65em;">Antes de fechar o próximo pedido, ele simula: origem, destino, peso, modalidade. Vem de <span class="mono">POST /api/v1/frete/cotacao</span>.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 16px;">
+            <h4>Sem recarregar a página</h4>
+            <p style="font-size:0.65em;">Uma SPA: o navegador baixa a aplicação uma vez e depois só troca dados com a API. É o que o React faz.</p>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:12px; border-left-color:#c0392b; background:#fdedec;">
+          <p style="font-size:0.7em; line-height:1.55;">Uma mudança de natureza acontece aqui, e ela vale ser nomeada: até a Aula 08, <strong>todo consumidor das nossas APIs era outro processo de servidor</strong>. A partir de hoje o consumidor é o <strong>navegador</strong>, e o navegador aplica a política de mesma origem. Nenhum serviço das Aulas 02, 05 e 06 foi escrito com isso em mente.</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">O desafio de hoje, segunda metade</span>
+          <p>Uma tela em React 19 com TypeScript, na porta 5173, consumindo dois serviços da plataforma, com os testes de componente verdes antes de o navegador abrir.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Desafio do Mini Mundo</div>
+          <div class="footer-page">7</div>
+        </div>
+      </section>
+
+      <!-- ==================== 8: SEÇÃO TESTES ==================== -->
+      <section class="section-slide">
+        <div class="top-bar"></div>
+        <div class="accent-bar"></div>
+        <h2>Pirâmide de Testes, TDD e Dublês</h2>
+        <p>A rede de proteção das regras que já existem</p>
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Testes de Unidade</div>
+          <div class="footer-page">8</div>
+        </div>
+      </section>
+
+      <!-- ==================== 9: A PIRÂMIDE ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A pirâmide de testes: proporção, não hierarquia <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 940 320" style="max-height:388px;" role="img" aria-label="Pirâmide de testes com as três camadas e seus custos">
+            <polygon points="300,28 400,120 200,120" fill="#c0392b"/>
+            <polygon points="200,124 400,124 470,222 130,222" fill="#e8a33d"/>
+            <polygon points="130,226 470,226 540,318 60,318" fill="#1e8449"/>
+
+            <text x="300" y="98" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">Ponta a ponta</text>
+            <text x="300" y="180" text-anchor="middle" font-size="14" font-weight="700" fill="#fff">Integração</text>
+            <text x="300" y="284" text-anchor="middle" font-size="16" font-weight="700" fill="#fff">Unidade</text>
+
+            <g font-size="11" fill="#444">
+              <text x="580" y="80" font-weight="700" font-size="12" fill="#c0392b">Poucos. Sobem a plataforma inteira.</text>
+              <text x="580" y="98">Provam que o sistema funciona junto, e só isso.</text>
+              <text x="580" y="114">Lentos, frágeis, caros de manter.</text>
+
+              <text x="580" y="164" font-weight="700" font-size="12" fill="#a06a00">Alguns. Dois componentes de verdade conversando.</text>
+              <text x="580" y="182">Banco real, fila real, serviço vizinho real.</text>
+              <text x="580" y="198">Pegam o que a unidade não vê: contrato, SQL, serialização.</text>
+
+              <text x="580" y="252" font-weight="700" font-size="12" fill="#1e8449">Muitos. Uma unidade de comportamento por vez.</text>
+              <text x="580" y="270">Sem rede, sem banco, sem relógio, sem sistema de arquivos.</text>
+              <text x="580" y="286">Milissegundos por teste. Rodam a cada arquivo salvo.</text>
+              <text x="580" y="302">Quando quebram, apontam a linha, não o sistema.</text>
+            </g>
+
+            <line x1="545" y1="30" x2="545" y2="318" stroke="#999" stroke-width="1.5"/>
+            <text x="30" y="30" font-size="11.5" font-weight="700" fill="#666">custo por teste</text>
+            <text x="30" y="46" font-size="11.5" font-weight="700" fill="#666">tempo de execução</text>
+            <line x1="34" y1="60" x2="34" y2="300" stroke="#999" stroke-width="2"/>
+            <polygon points="29,60 39,60 34,48" fill="#999"/>
+            <text x="30" y="74" text-anchor="end" font-size="10.5" fill="#888">alto</text>
+            <text x="30" y="300" text-anchor="end" font-size="10.5" fill="#888">baixo</text>
+          </svg>
+          <figcaption>
+            A pirâmide não diz que teste de unidade é melhor: diz que ele é o mais barato por unidade de confiança, então cabem muitos. As camadas de cima existem e são necessárias, mas cada uma custa mais e demora mais, então cabem menos. Suíte com a forma invertida, cheia de teste de ponta a ponta, é a que ninguém roda.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Pirâmide de Testes</div>
+          <div class="footer-page">9</div>
+        </div>
+      </section>
+
+      <!-- ==================== 10: O CUSTO MEDIDO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Por que a base é grande, medido no laboratório de hoje</h2>
+        </div>
+
+        <p style="font-size:0.74em; margin-top:2px;">Os números abaixo saíram da execução do laboratório desta aula, na máquina do professor. Vocês vão medir os seus.</p>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>Camada</th><th>O que precisa estar de pé</th><th>Quantos, no lab</th><th>Quanto demora</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Unidade</strong>, PyTest</td><td>nada: só o interpretador</td><td>22 testes</td><td><strong>0,03 s</strong> a suíte inteira</td></tr>
+            <tr><td><strong>Unidade</strong>, Vitest e Testing Library</td><td>nada: o DOM é simulado pelo jsdom</td><td>9 testes</td><td><strong>0,87 s</strong> a suíte inteira</td></tr>
+            <tr><td><strong>Integração</strong></td><td><span class="mono">pedidos</span> na 8080 e <span class="mono">frete</span> na 8000</td><td>não entra hoje</td><td>segundos por execução, mais o tempo de subir</td></tr>
+            <tr><td><strong>Ponta a ponta</strong></td><td>a plataforma da Aula 07 mais um navegador</td><td>não entra hoje</td><td>minutos</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout" style="margin-top:8px; padding:10px 15px;">
+          <p style="font-size:0.64em; line-height:1.5;">A conta que importa não é 0,03 contra 3 segundos. É <strong>quantas vezes por dia você roda</strong>. Uma suíte de 30 milissegundos roda a cada arquivo salvo, e o defeito aparece enquanto o contexto ainda está na sua cabeça. Uma suíte de dez minutos roda no fim do dia, quando roda.</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Takeaway</span>
+          <p>Teste de unidade fica na base porque é <strong>rápido, barato de manter e preciso no diagnóstico</strong>: quando quebra, ele aponta a regra, e não "o sistema".</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Pirâmide de Testes</div>
+          <div class="footer-page">10</div>
+        </div>
+      </section>
+
+      <!-- ==================== 11: O QUE É UNIDADE ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O que é um teste de unidade, e o que só parece</h2>
+        </div>
+
+        <div class="side-by-side" style="margin-top:6px;">
+          <div class="side">
+            <h4 style="color:#1e8449;">É teste de unidade</h4>
+            <ul style="font-size:0.64em; line-height:1.55;">
+              <li>Roda em memória, sem tocar em rede, banco, disco nem relógio.</li>
+              <li>Cobre <strong>um comportamento</strong>, com nome que diz qual regra ele protege.</li>
+              <li>Não depende da ordem em que a suíte roda.</li>
+              <li>Falha por <strong>um</strong> motivo, e a mensagem já diz qual.</li>
+              <li>Continua verde quando você refatora sem mudar comportamento.</li>
+            </ul>
+          </div>
+          <div class="side">
+            <h4 style="color:#c0392b;">Só parece</h4>
+            <ul style="font-size:0.64em; line-height:1.55;">
+              <li>Chama <span class="mono">localhost:8080</span>, e passa porque o serviço estava no ar naquela hora.</li>
+              <li>Testa quatro regras de uma vez, com dez <span class="mono">assert</span> em sequência.</li>
+              <li>Depende de o teste anterior ter deixado o estado do jeito certo.</li>
+              <li>Espia atributo privado e quebra a cada refatoração.</li>
+              <li>Repete a fórmula da implementação no valor esperado.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:9px; padding:9px 15px;">
+          <p style="font-size:0.63em; line-height:1.45;">O último item da direita é o mais traiçoeiro. Escrever <span class="mono">esperado = bruto * (1 - DESCONTO)</span> importando a constante do código sob teste faz os dois lados da igualdade mudarem juntos: o teste passa com o desconto zerado. <strong>Aconteceu na construção deste laboratório</strong>, e o teste de mutação foi quem denunciou.</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Regra de bolso</span>
+          <p>Se o teste precisa que <strong>alguma coisa esteja no ar</strong> para passar, ele não é de unidade. Pode ser um ótimo teste de integração, mas não pertence à base da pirâmide.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Pirâmide de Testes</div>
+          <div class="footer-page">11</div>
+        </div>
+      </section>
+
+      <!-- ==================== 12: COBERTURA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Cobertura de 100 por cento é meta de slide <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 940 250" style="max-height:298px;" role="img" aria-label="Um teste que executa a linha sem verificar nada ainda conta como cobertura">
+            <rect x="20" y="24" width="440" height="200" rx="9" fill="#f4fbf6" stroke="#1e8449" stroke-width="2"/>
+            <text x="240" y="48" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1e8449">Cobertura: 100 por cento</text>
+            <g font-family="JetBrains Mono, monospace" font-size="10.5" fill="#333">
+              <text x="40" y="76">def test_cotar_nao_quebra():</text>
+              <text x="40" y="94">    cotador = CotadorDePedido(stub)</text>
+              <text x="40" y="112">    cotador.cotar("PED-1001", "expresso")</text>
+            </g>
+            <text x="40" y="146" font-size="11" fill="#c0392b" font-weight="700">Nenhum assert. Nenhuma verificação.</text>
+            <text x="40" y="168" font-size="11" fill="#555">Toda linha de cotar foi executada,</text>
+            <text x="40" y="186" font-size="11" fill="#555">então a ferramenta pinta tudo de verde.</text>
+            <text x="40" y="210" font-size="11" fill="#555">O cálculo pode devolver qualquer número.</text>
+
+            <rect x="500" y="24" width="420" height="200" rx="9" fill="#fdedec" stroke="#c0392b" stroke-width="2"/>
+            <text x="710" y="48" text-anchor="middle" font-size="12.5" font-weight="700" fill="#c0392b">O que a meta de 100 produz</text>
+            <g font-size="11" fill="#a03028">
+              <text x="520" y="80">Teste de getter, para cobrir o getter.</text>
+              <text x="520" y="104">Teste de dataclass, para cobrir o construtor.</text>
+              <text x="520" y="128">Teste de repr, para cobrir o repr.</text>
+              <text x="520" y="152">Teste de import, para cobrir o import.</text>
+            </g>
+            <line x1="520" y1="168" x2="900" y2="168" stroke="#c0392b" stroke-width="1.5" stroke-dasharray="5,4"/>
+            <text x="520" y="192" font-size="11.5" font-weight="700" fill="#c0392b">Suíte grande, lenta e cara de manter,</text>
+            <text x="520" y="210" font-size="11.5" font-weight="700" fill="#c0392b">que não protege nenhuma regra de negócio.</text>
+          </svg>
+          <figcaption>
+            Cobertura mede linha executada, não comportamento verificado. Ela é ótima para achar o que ninguém testou: um trecho com zero por cento é um alerta legítimo. Ela é péssima como meta, porque o caminho mais curto entre 80 e 100 por cento é escrever testes sem asserção.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Como usar cobertura sem estragar a suíte</span>
+          <p>Leia o <strong>relatório</strong>, procurando regra de negócio descoberta. Não persiga o <strong>número</strong>, e nunca ponha o número como meta de time: métrica que vira meta deixa de ser métrica.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Cobertura e Mutação</div>
+          <div class="footer-page">12</div>
+        </div>
+      </section>
+
+      <!-- ==================== 13: MUTAÇÃO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A régua que substitui a cobertura: teste de mutação <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <p style="font-size:0.76em; margin-top:2px;">A pergunta certa não é "quantas linhas o teste executou". É <strong>"o teste reprovaria código errado?"</strong>. E dá para responder isso por máquina.</p>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 940 210" style="max-height:250px;" role="img" aria-label="Ciclo do teste de mutação: copia, estraga, roda a suíte e espera vermelho">
+            <g font-size="11.5" font-weight="700" fill="#fff">
+              <rect x="20" y="52" width="180" height="58" rx="8" fill="#5b6dcd"/>
+              <text x="110" y="76" text-anchor="middle">1. copia o código</text>
+              <text x="110" y="94" text-anchor="middle" font-size="10" font-weight="400">para um diretório temporário</text>
+
+              <rect x="235" y="52" width="180" height="58" rx="8" fill="#e8a33d"/>
+              <text x="325" y="76" text-anchor="middle">2. estraga a cópia</text>
+              <text x="325" y="94" text-anchor="middle" font-size="10" font-weight="400">um defeito conhecido, o mutante</text>
+
+              <rect x="450" y="52" width="180" height="58" rx="8" fill="#2e8b8b"/>
+              <text x="540" y="76" text-anchor="middle">3. roda a sua suíte</text>
+              <text x="540" y="94" text-anchor="middle" font-size="10" font-weight="400">contra a cópia estragada</text>
+
+              <rect x="665" y="52" width="255" height="58" rx="8" fill="#1e8449"/>
+              <text x="792" y="76" text-anchor="middle">4. exige vermelho</text>
+              <text x="792" y="94" text-anchor="middle" font-size="10" font-weight="400">mutante que sobrevive é buraco na suíte</text>
+            </g>
+            <g stroke="#bbb" stroke-width="2.5" fill="none">
+              <path d="M 205 81 L 228 81"/><path d="M 420 81 L 443 81"/><path d="M 635 81 L 658 81"/>
+            </g>
+            <polygon points="228,76 240,81 228,86" fill="#bbb"/>
+            <polygon points="443,76 455,81 443,86" fill="#bbb"/>
+            <polygon points="658,76 670,81 658,86" fill="#bbb"/>
+
+            <rect x="20" y="132" width="900" height="62" rx="8" fill="#fff8e6" stroke="#e8a33d" stroke-width="2"/>
+            <text x="40" y="156" font-size="12" font-weight="700" fill="#8a5d00">É isso que o verificador do laboratório de hoje faz com os testes de vocês.</text>
+            <text x="40" y="178" font-size="11.5" fill="#8a5d00">Sete mutantes, e cinco deles não mudam nenhum número devolvido: só a colaboração entre os objetos. Guardem esse detalhe.</text>
+          </svg>
+          <figcaption>
+            O ciclo completo dos sete mutantes do laboratório roda em cerca de 17 segundos na máquina do professor. É caro para rodar a cada salvamento e barato para rodar na entrega, que é exatamente onde a régua importa.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Takeaway</span>
+          <p>Cobertura conta linha tocada. Mutação conta <strong>defeito pego</strong>. A segunda é a que responde à pergunta que o time realmente tem.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Cobertura e Mutação</div>
+          <div class="footer-page">13</div>
+        </div>
+      </section>
+
+      <!-- ==================== 14: TDD, O CICLO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>TDD: vermelho, verde, refatora <a href="#/ref-slide" class="ref-badge" title="Ver referências">[3]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 940 300" style="max-height:360px;" role="img" aria-label="Ciclo do TDD com as três etapas se sucedendo">
+            <circle cx="230" cy="150" r="118" fill="none" stroke="#e2e2e2" stroke-width="26"/>
+
+            <circle cx="230" cy="32" r="26" fill="#c0392b"/>
+            <circle cx="230" cy="32" r="30" fill="none" stroke="#c0392b" stroke-width="3" opacity="0">
+              <animate attributeName="opacity" values="1;1;0;0;0;0" keyTimes="0;0.28;0.34;0.66;0.99;1" dur="7.5s" repeatCount="indefinite"/>
+            </circle>
+            <text x="230" y="37" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">1</text>
+
+            <circle cx="332" cy="209" r="26" fill="#1e8449"/>
+            <circle cx="332" cy="209" r="30" fill="none" stroke="#1e8449" stroke-width="3" opacity="0">
+              <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.3;0.36;0.62;0.68;1" dur="7.5s" repeatCount="indefinite"/>
+            </circle>
+            <text x="332" y="214" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">2</text>
+
+            <circle cx="128" cy="209" r="26" fill="#5b6dcd"/>
+            <circle cx="128" cy="209" r="30" fill="none" stroke="#5b6dcd" stroke-width="3" opacity="0">
+              <animate attributeName="opacity" values="0;0;0;0;1;1" keyTimes="0;0.3;0.62;0.68;0.72;1" dur="7.5s" repeatCount="indefinite"/>
+            </circle>
+            <text x="128" y="214" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">3</text>
+
+            <g stroke="#c8c8c8" stroke-width="3" fill="none">
+              <path d="M 300 78 A 118 118 0 0 1 330 168"/>
+              <path d="M 300 240 A 118 118 0 0 1 165 243"/>
+              <path d="M 128 168 A 118 118 0 0 1 190 60"/>
+            </g>
+            <polygon points="326,163 337,172 328,180" fill="#c8c8c8"/>
+            <polygon points="172,247 160,246 167,236" fill="#c8c8c8"/>
+            <polygon points="186,66 194,55 199,68" fill="#c8c8c8"/>
+
+            <g font-size="12">
+              <text x="430" y="46" font-size="14" font-weight="700" fill="#c0392b">1. Vermelho</text>
+              <text x="430" y="68" fill="#444">Escreva o teste da regra que ainda não existe. Rode.</text>
+              <text x="430" y="86" fill="#444">Ele precisa falhar, e falhar pelo motivo certo.</text>
+
+              <text x="430" y="130" font-size="14" font-weight="700" fill="#1e8449">2. Verde</text>
+              <text x="430" y="152" fill="#444">Escreva o mínimo de código que faz o teste passar.</text>
+              <text x="430" y="170" fill="#444">Feio é permitido aqui. Ninguém vai ver esta versão.</text>
+
+              <text x="430" y="214" font-size="14" font-weight="700" fill="#5b6dcd">3. Refatora</text>
+              <text x="430" y="236" fill="#444">Agora arrume o código, com a suíte verde o tempo todo.</text>
+              <text x="430" y="254" fill="#444">O teste é a rede: se ficar vermelho, você mudou comportamento.</text>
+              <text x="430" y="286" fill="#888" font-size="11.5">E volta para o 1, com a próxima regra. Ciclos de minutos, não de dias.</text>
+            </g>
+          </svg>
+          <figcaption>
+            A ordem não é burocracia. O vermelho da etapa 1 é a única evidência de que o teste está ligado ao código certo. A etapa 3 é a que muita gente pula, e é ela que impede a suíte de virar cimento em volta de um código ruim. Na animação, o realce percorre as três etapas em ciclo.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – TDD</div>
+          <div class="footer-page">14</div>
+        </div>
+      </section>
+
+      <!-- ==================== 15: O QUE O VERMELHO PROVA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O teste que nunca ficou vermelho não protege nada <a href="#/ref-slide" class="ref-badge" title="Ver referências">[3]</a></h2>
+        </div>
+
+        <p style="font-size:0.76em; margin-top:2px;">O defeito mais comum de quem escreve teste depois do código: o teste nasce verde e ninguém sabe se ele está de fato ligado à regra.</p>
+
+        <div class="concept-cards" style="grid-template-columns: 1fr 1fr; gap:14px; margin-top:8px;">
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Casos clássicos de teste verde e inútil</h4>
+            <p style="font-size:0.65em; line-height:1.6;">Arquivo com nome fora do padrão que o executor nunca coleta. <span class="mono">assert</span> dentro de um <span class="mono">if</span> que nunca é verdadeiro. Asserção esquecida dentro de um <span class="mono">try</span> sem <span class="mono">except</span>. Dublê configurado para devolver o próprio valor esperado.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Como conferir sem fazer TDD do começo</h4>
+            <p style="font-size:0.65em; line-height:1.6;">Estrague o código de propósito, rode o teste e confira que ele fica vermelho. Depois desfaça. É teste de mutação feito à mão, leva dez segundos e é o hábito mais barato de adquirir nesta disciplina.</p>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:12px;">
+          <p style="font-size:0.7em; line-height:1.55;">É por isso que os testes de componente do laboratório de hoje <strong>chegam vermelhos até vocês</strong>. Não é engano: é o ciclo do TDD visto do lado de dentro. A especificação existe antes da implementação, ela falha, e o trabalho de vocês é fazê-la passar sem mudar o que ela cobra.</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Takeaway</span>
+          <p>Quem ajusta o teste para caber no código entrega software que faz outra coisa. O teste é a <strong>especificação executável</strong>, e especificação não se negocia com a implementação.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – TDD</div>
+          <div class="footer-page">15</div>
+        </div>
+      </section>
+
+      <!-- ==================== 16: OS DUBLÊS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Dublê de teste: a família inteira, e os três que importam <a href="#/ref-slide" class="ref-badge" title="Ver referências">[4]</a></h2>
+        </div>
+
+        <p style="font-size:0.66em; margin-top:0;">"Test double" é o termo guarda-chuva de Gerard Meszaros, emprestado do dublê de cinema: quem entra no lugar do ator na cena perigosa. Aqui, a cena perigosa é a rede.</p>
+
+        <table class="compact-table" style="margin:5px 0;">
+          <thead>
+            <tr><th>Nome</th><th>O que faz</th><th>O que o teste verifica</th><th>Hoje</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Dummy</strong></td><td>Existe só para preencher um parâmetro obrigatório. Nunca é usado.</td><td>nada</td><td>não</td></tr>
+            <tr><td><strong>Stub</strong></td><td>Responde o que você mandou responder.</td><td>o <strong>resultado</strong> que saiu</td><td><span class="mono">TODO-1</span></td></tr>
+            <tr><td><strong>Spy</strong></td><td>Envolve o objeto real, deixa ele responder e anota as chamadas.</td><td>o resultado <strong>e</strong> a chamada</td><td><span class="mono">TODO-3</span></td></tr>
+            <tr><td><strong>Mock</strong></td><td>Substitui o colaborador e registra tudo o que recebeu.</td><td>a <strong>chamada</strong>: se houve, quantas, com quais argumentos</td><td><span class="mono">TODO-2</span> e <span class="mono">TODO-6</span></td></tr>
+            <tr><td><strong>Fake</strong></td><td>Implementação de verdade, simplificada: um repositório em memória.</td><td>o resultado, com comportamento real</td><td>não</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout" style="margin-top:7px; padding:8px 15px;">
+          <p style="font-size:0.62em; line-height:1.42;">Na prática, as bibliotecas embaralham os nomes: o <span class="mono">Mock</span> do Python faz Stub, Spy e Mock dependendo de como você o configura, e o <span class="mono">vi.fn()</span> do Vitest também. <strong>O que separa os três não é a classe usada, é a asserção que você escreve depois.</strong></p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A pergunta que decide</span>
+          <p>Você quer provar <strong>o que saiu</strong> ou <strong>o que foi pedido</strong>? A primeira resposta leva a Stub. A segunda, a Mock.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Dublês de Teste</div>
+          <div class="footer-page">16</div>
+        </div>
+      </section>
+
+      <!-- ==================== 17: STUB ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Stub: resposta pré-programada para chegar até a regra <a href="#/ref-slide" class="ref-badge" title="Ver referências">[4]</a></h2>
+        </div>
+
+        <pre class="code-compact"><code class="language-python">class ClientePedidosStub:            # cinco linhas, sem herdar de nada:
+    def __init__(self, pedido):      # ClientePedidos e um Protocol, e basta
+        self._pedido = pedido        # ter o metodo com a assinatura certa
+
+    def buscar(self, pedido_id):
+        return self._pedido
+
+
+def test_rota_de_referencia_no_expresso_sai_por_545_em_um_dia():
+    cotador = CotadorDePedido(ClientePedidosStub(PEDIDO_LEVE))
+
+    cotacao = cotador.cotar("PED-1001", "expresso")
+
+    assert cotacao.valor == pytest.approx(545.00)     # o RESULTADO
+    assert cotacao.prazo_dias == 1                    # o RESULTADO
+    assert cotacao.carga_fechada is False             # o RESULTADO</code></pre>
+
+        <div class="concept-cards" style="grid-template-columns: 1fr 1fr; gap:13px; margin-top:9px;">
+          <div class="concept-card" style="padding:12px 15px;">
+            <h4>O que o Stub resolveu</h4>
+            <p style="font-size:0.63em;">O cotador precisa do peso, o peso vem do serviço de Pedidos, e o serviço de Pedidos não está no ar. O Stub responde <span class="mono">PEDIDO_LEVE</span> e o teste chega à regra que queria testar.</p>
+          </div>
+          <div class="concept-card" style="padding:12px 15px;">
+            <h4>O que ele não consegue provar</h4>
+            <p style="font-size:0.63em;">Que o cotador chamou o serviço <strong>uma vez só</strong>. Que ele <strong>não chamou</strong> quando o identificador era inválido. Que passou <strong>origem antes de destino</strong>. Nada disso muda o número.</p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Dublês de Teste</div>
+          <div class="footer-page">17</div>
+        </div>
+      </section>
+
+      <!-- ==================== 18: MOCK ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Mock: a asserção passa a ser sobre a chamada <a href="#/ref-slide" class="ref-badge" title="Ver referências">[4]</a></h2>
+        </div>
+
+        <pre class="code-compact"><code class="language-python">from unittest.mock import Mock      # biblioteca padrao: nada para instalar
+
+def test_tres_modalidades_do_mesmo_pedido_batem_uma_vez_no_vizinho():
+    cliente = Mock(spec=ClientePedidos)        # spec= prende ao contrato
+    cliente.buscar.return_value = PEDIDO_LEVE  # ate aqui, e um Stub
+    cotador = CotadorDePedido(cliente)
+
+    for modalidade in ("expresso", "economico", "padrao"):
+        cotador.cotar("PED-1001", modalidade)
+
+    cliente.buscar.assert_called_once_with("PED-1001")   # a CHAMADA
+
+
+def test_identificador_invalido_nao_chega_ao_servico_de_pedidos():
+    cliente = Mock(spec=ClientePedidos)
+    with pytest.raises(PedidoInvalido):
+        CotadorDePedido(cliente).cotar("1001", "expresso")
+    cliente.buscar.assert_not_called()                   # a CHAMADA</code></pre>
+
+        <div class="callout" style="margin-top:8px;">
+          <p style="font-size:0.65em; line-height:1.5;"><span class="mono">spec=ClientePedidos</span> não é detalhe. Sem ele, o <span class="mono">Mock</span> aceita qualquer método que você digitar, inclusive um que não existe: <span class="mono">cliente.busca_r(...)</span> passa, e o teste fica verde contra uma interface que ninguém implementa.</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Takeaway</span>
+          <p>As duas regras acima são <strong>invisíveis para qualquer asserção de valor</strong>. Cotar três vezes devolve os mesmos três números com ou sem a memória, e o erro de identificador é o mesmo com ou sem o fail fast.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Dublês de Teste</div>
+          <div class="footer-page">18</div>
+        </div>
+      </section>
+
+      <!-- ==================== 19: SPY ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Spy: o objeto real continua respondendo, e você observa <a href="#/ref-slide" class="ref-badge" title="Ver referências">[4]</a></h2>
+        </div>
+
+        <pre class="code-compact"><code class="language-python">espia = Mock(wraps=TabelaDistancias())   # envolve o objeto REAL
+cotador = CotadorDePedido(cliente_stub, tabela=espia)
+
+cotador.cotar("PED-1001", "expresso")
+
+assert espia.km.call_args_list == [call("SAO", "LDB")]   # ordem dos argumentos
+# a distancia devolvida foi a verdadeira: 500.0 km, vinda da tabela real</code></pre>
+
+        <div class="side-by-side" style="margin-top:10px;">
+          <div class="side">
+            <h4>Por que aqui o Stub não serve</h4>
+            <p style="font-size:0.65em; line-height:1.6;">A tabela de distâncias da LogiTech é <strong>simétrica</strong>: <span class="mono">km("SAO","LDB")</span> e <span class="mono">km("LDB","SAO")</span> devolvem os mesmos 500,0. Um cotador que trocasse os dois argumentos devolveria o valor certo, o prazo certo e o desconto certo. Nenhum teste de resultado pegaria.</p>
+          </div>
+          <div class="side">
+            <h4>Quando escolher Spy em vez de Mock</h4>
+            <p style="font-size:0.65em; line-height:1.6;">Quando o <strong>comportamento real importa</strong> e a colaboração também. Substituir a tabela por um Mock exigiria reprogramar as distâncias no teste, e o teste passaria a afirmar que 500 km é 500 km porque você digitou isso. O Spy deixa a fonte da verdade responder.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Takeaway</span>
+          <p>Stub e Mock <strong>substituem</strong> o colaborador. Spy <strong>envolve</strong> o colaborador. É a diferença entre encenar a cena e filmar o ator com uma câmera a mais.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Dublês de Teste</div>
+          <div class="footer-page">19</div>
+        </div>
+      </section>
+
+      <!-- ==================== 20: STUB X MOCK, O MESMO DEFEITO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O mesmo defeito: um dublê pega, o outro não</h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 940 300" style="max-height:360px;" role="img" aria-label="Um defeito que não muda o resultado passa pelo Stub e é pego pelo Mock">
+            <text x="470" y="18" text-anchor="middle" font-size="12.5" font-weight="700" fill="#555">alguém remove a memória de pedido do cotador, achando que era otimização prematura</text>
+
+            <rect x="20" y="32" width="440" height="118" rx="9" fill="#f9f9fb" stroke="#bbb" stroke-width="1.5"/>
+            <text x="240" y="54" text-anchor="middle" font-size="12" font-weight="700" fill="#444">antes</text>
+            <g font-family="JetBrains Mono, monospace" font-size="10" fill="#333">
+              <text x="38" y="80">if pedido_id not in self._cache:</text>
+              <text x="38" y="98">    self._cache[pedido_id] = self._cliente.buscar(pedido_id)</text>
+              <text x="38" y="116">return self._cache[pedido_id]</text>
+            </g>
+            <text x="38" y="140" font-size="10.5" fill="#1e8449" font-weight="700">3 cotações do mesmo pedido = 1 chamada de rede</text>
+
+            <rect x="480" y="32" width="440" height="118" rx="9" fill="#fdedec" stroke="#c0392b" stroke-width="1.5"/>
+            <text x="700" y="54" text-anchor="middle" font-size="12" font-weight="700" fill="#c0392b">depois</text>
+            <g font-family="JetBrains Mono, monospace" font-size="10" fill="#333">
+              <text x="498" y="98">return self._cliente.buscar(pedido_id)</text>
+            </g>
+            <text x="498" y="140" font-size="10.5" fill="#c0392b" font-weight="700">3 cotações do mesmo pedido = 3 chamadas de rede</text>
+
+            <rect x="20" y="172" width="440" height="116" rx="9" fill="#f4fbf6" stroke="#1e8449" stroke-width="2"/>
+            <text x="38" y="196" font-size="12" font-weight="700" fill="#1e8449">O teste com Stub continua VERDE</text>
+            <text x="38" y="218" font-size="11" fill="#444">assert cotacao.valor == 545.00</text>
+            <text x="38" y="238" font-size="11" fill="#444">O valor não mudou. O prazo não mudou.</text>
+            <text x="38" y="258" font-size="11" fill="#444">Nada no resultado mudou, porque o dublê</text>
+            <text x="38" y="278" font-size="11" fill="#444">responde a mesma coisa quantas vezes for chamado.</text>
+
+            <rect x="480" y="172" width="440" height="116" rx="9" fill="#fdedec" stroke="#c0392b" stroke-width="2"/>
+            <text x="498" y="196" font-size="12" font-weight="700" fill="#c0392b">O teste com Mock fica VERMELHO</text>
+            <text x="498" y="218" font-size="10.5" fill="#444">cliente.buscar.assert_called_once_with("PED-1001")</text>
+            <text x="498" y="242" font-size="11" font-family="JetBrains Mono, monospace" fill="#c0392b">AssertionError: expected call once.</text>
+            <text x="498" y="260" font-size="11" font-family="JetBrains Mono, monospace" fill="#c0392b">Called 3 times.</text>
+            <text x="498" y="280" font-size="11" fill="#444">A regra estava viva no código e no teste.</text>
+          </svg>
+          <figcaption>
+            No laboratório de hoje esse defeito é o mutante M3, e ele é aplicado por máquina. Dos sete mutantes do verificador, cinco são deste tipo: não mudam nenhum valor devolvido, só a colaboração. Uma suíte escrita só com asserções de resultado passa em todos eles.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Dublês de Teste</div>
+          <div class="footer-page">20</div>
+        </div>
+      </section>
+
+      <!-- ==================== 21: ONDE O DUBLÊ É INEVITÁVEL ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Onde o dublê é inevitável: o frete depende de Pedidos</h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 940 290" style="max-height:348px;" role="img" aria-label="Em produção o cotador fala HTTP com Pedidos; no teste ele fala com um dublê">
+            <text x="240" y="20" text-anchor="middle" font-size="12.5" font-weight="700" fill="#c0392b">em produção</text>
+            <text x="700" y="20" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1e8449">no teste de unidade</text>
+            <line x1="470" y1="8" x2="470" y2="280" stroke="#ddd" stroke-width="2" stroke-dasharray="7,6"/>
+
+            <g font-size="11" font-weight="700" fill="#fff">
+              <rect x="40" y="42" width="150" height="46" rx="7" fill="#2e8b8b"/>
+              <text x="115" y="62" text-anchor="middle">CotadorDePedido</text>
+              <text x="115" y="78" text-anchor="middle" font-size="9" font-weight="400">a regra de negócio</text>
+
+              <rect x="40" y="128" width="150" height="46" rx="7" fill="#8a8a8a"/>
+              <text x="115" y="148" text-anchor="middle">ClientePedidosHttp</text>
+              <text x="115" y="164" text-anchor="middle" font-size="9" font-weight="400">só traduz JSON</text>
+
+              <rect x="270" y="128" width="150" height="46" rx="7" fill="#5b6dcd"/>
+              <text x="345" y="148" text-anchor="middle">pedidos</text>
+              <text x="345" y="164" text-anchor="middle" font-size="9" font-weight="400">outro processo, 8080</text>
+
+              <rect x="510" y="42" width="150" height="46" rx="7" fill="#2e8b8b"/>
+              <text x="585" y="62" text-anchor="middle">CotadorDePedido</text>
+              <text x="585" y="78" text-anchor="middle" font-size="9" font-weight="400">a MESMA classe</text>
+
+              <rect x="510" y="128" width="150" height="46" rx="7" fill="#1e8449"/>
+              <text x="585" y="148" text-anchor="middle">Stub ou Mock</text>
+              <text x="585" y="164" text-anchor="middle" font-size="9" font-weight="400">cinco linhas, em memória</text>
+            </g>
+
+            <line x1="115" y1="92" x2="115" y2="124" stroke="#666" stroke-width="2"/>
+            <polygon points="110,124 120,124 115,134" fill="#666"/>
+            <line x1="585" y1="92" x2="585" y2="124" stroke="#666" stroke-width="2"/>
+            <polygon points="580,124 590,124 585,134" fill="#666"/>
+
+            <path d="M 194 151 L 264 151" stroke="#c0392b" stroke-width="2.5" fill="none" stroke-dasharray="70" stroke-dashoffset="70">
+              <animate attributeName="stroke-dashoffset" values="70;70;0;0;0" keyTimes="0;0.1;0.4;0.9;1" dur="6s" repeatCount="indefinite"/>
+            </path>
+            <polygon points="264,146 276,151 264,156" fill="#c0392b"/>
+            <text x="230" y="142" text-anchor="middle" font-size="9.5" fill="#c0392b" font-weight="700">HTTP</text>
+
+            <rect x="270" y="196" width="180" height="66" rx="7" fill="#fdedec" stroke="#c0392b" stroke-width="1.5"/>
+            <text x="360" y="216" text-anchor="middle" font-size="10" font-weight="700" fill="#c0392b">precisa estar no ar</text>
+            <text x="360" y="234" text-anchor="middle" font-size="10" fill="#a03028">latência de rede</text>
+            <text x="360" y="250" text-anchor="middle" font-size="10" fill="#a03028">falha por motivo alheio</text>
+
+            <rect x="700" y="196" width="200" height="66" rx="7" fill="#f4fbf6" stroke="#1e8449" stroke-width="1.5"/>
+            <text x="800" y="216" text-anchor="middle" font-size="10" font-weight="700" fill="#1e8449">nada precisa estar no ar</text>
+            <text x="800" y="234" text-anchor="middle" font-size="10" fill="#186c3a">microssegundos</text>
+            <text x="800" y="250" text-anchor="middle" font-size="10" fill="#186c3a">falha só quando a regra quebra</text>
+
+            <rect x="700" y="42" width="200" height="130" rx="7" fill="#f9f9fb" stroke="#bbb" stroke-width="1.5"/>
+            <text x="800" y="66" text-anchor="middle" font-size="10.5" font-weight="700" fill="#555">o que permite a troca</text>
+            <text x="712" y="90" font-size="10" fill="#444">O cotador recebe o cliente</text>
+            <text x="712" y="106" font-size="10" fill="#444">no construtor, e depende de um</text>
+            <text x="712" y="122" font-size="10" fill="#444">Protocol, não de uma classe.</text>
+            <text x="712" y="146" font-size="10" font-weight="700" fill="#2e8b8b">Injeção de dependência,</text>
+            <text x="712" y="162" font-size="10" font-weight="700" fill="#2e8b8b">da Aula 05, cobrando juros.</text>
+          </svg>
+          <figcaption>
+            A classe testada é literalmente a mesma dos dois lados. O que muda é quem entra pelo construtor. Se a dependência fosse criada dentro do método, com um ClientePedidosHttp cravado, não haveria dublê possível e a regra só se testaria com o outro serviço no ar.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Dublês de Teste</div>
+          <div class="footer-page">21</div>
+        </div>
+      </section>
+
+      <!-- ==================== 22: O QUE NÃO DUBLAR ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O que não dublar, e por quê <a href="#/ref-slide" class="ref-badge" title="Ver referências">[4]</a></h2>
+        </div>
+
+        <p style="font-size:0.75em; margin-top:2px;">Excesso de dublê é o outro extremo, e produz uma suíte que trava a refatoração em vez de permiti-la.</p>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>Não duble</th><th>Por quê</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Código puro que você mesmo escreveu</td><td>As estratégias de frete recebem dois números e devolvem um objeto. Não há colaborador. Dublê aqui é ruído que ninguém lê daqui a seis meses.</td></tr>
+            <tr><td>Objeto de valor: <span class="mono">Cotacao</span>, <span class="mono">PedidoResumo</span></td><td>Construir o real custa uma linha e não tem efeito colateral. Dublar um objeto de valor troca clareza por nada.</td></tr>
+            <tr><td>Detalhe interno da classe sob teste</td><td>Se o teste precisa dublar algo privado da própria classe, o problema não é o teste: é a classe fazendo coisa demais.</td></tr>
+            <tr><td>Biblioteca de terceiro, direto</td><td>Duble a <strong>sua</strong> fronteira sobre ela. Dublar a biblioteca amarra o teste à API dela, e ela vai mudar.</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout" style="margin-top:10px;">
+          <p style="font-size:0.68em; line-height:1.55;">A regra prática que sobrevive a qualquer stack: <strong>duble o que atravessa a fronteira do processo</strong>. Rede, banco, fila, relógio, sistema de arquivos, gerador aleatório. O resto, use de verdade.</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">O sintoma de que passou do ponto</span>
+          <p>Quando uma refatoração que <strong>não muda comportamento nenhum</strong> deixa dez testes vermelhos, a suíte parou de testar o que o sistema faz e passou a testar como ele está escrito.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Dublês de Teste</div>
+          <div class="footer-page">22</div>
+        </div>
+      </section>
+
+      <!-- ==================== 23: SEÇÃO REACT ==================== -->
+      <section class="section-slide">
+        <div class="top-bar"></div>
+        <div class="accent-bar"></div>
+        <h2>Frontend Enterprise I: React</h2>
+        <p>A primeira tela que um cliente da LogiTech vai ver</p>
+        <div class="slide-footer">
+          <div class="footer-bar">10 – React</div>
+          <div class="footer-page">23</div>
+        </div>
+      </section>
+
+      <!-- ==================== 24: IMPERATIVO X DECLARATIVO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A ideia central: a tela é uma função do estado <a href="#/ref-slide" class="ref-badge" title="Ver referências">[5]</a></h2>
+        </div>
+
+        <div class="side-by-side" style="margin-top:6px;">
+          <div class="side">
+            <h4 style="color:#c0392b;">Imperativo: você manda no DOM</h4>
+            <pre class="code-compact" style="margin-top:6px;"><code class="language-javascript">const el = document.getElementById('status');
+el.textContent = 'Consultando...';
+el.classList.add('carregando');
+
+const p = await fetch(url).then(r =&gt; r.json());
+
+el.textContent = rotulo(p.status);
+el.classList.remove('carregando');
+if (p.status === 'ENTREGUE') {
+  el.classList.add('final');
+}</code></pre>
+            <p style="font-size:0.6em; margin-top:5px;">Cada estado novo é um passo a mais, e é você que lembra de desfazer o anterior. O esquecido vira defeito visual.</p>
+          </div>
+          <div class="side">
+            <h4 style="color:#1e8449;">Declarativo: você descreve o resultado</h4>
+            <pre class="code-compact" style="margin-top:6px;"><code class="language-javascript">if (carregando) {
+  return &lt;p role="status"&gt;Consultando...&lt;/p&gt;;
+}
+if (erro) {
+  return &lt;p role="alert"&gt;{erro}&lt;/p&gt;;
+}
+return (
+  &lt;p className={classe(pedido.status)}&gt;
+    {ROTULO_STATUS[pedido.status]}
+  &lt;/p&gt;
+);</code></pre>
+            <p style="font-size:0.6em; margin-top:5px;">Você diz como a tela é <strong>para cada estado</strong>. Quem calcula a diferença e mexe no DOM é o React.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Takeaway</span>
+          <p>No modelo declarativo você nunca escreve "apague o texto anterior". Você descreve a tela que corresponde ao estado atual, e a transição entre estados deixa de ser código seu.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – React</div>
+          <div class="footer-page">24</div>
+        </div>
+      </section>
+
+      <!-- ==================== 25: JSX ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>JSX não é HTML: é chamada de função disfarçada <a href="#/ref-slide" class="ref-badge" title="Ver referências">[5]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 940 260" style="max-height:312px;" role="img" aria-label="JSX vira chamada de função, que vira objeto em memória, que vira DOM">
+            <g font-size="11.5" font-weight="700" fill="#333">
+              <rect x="14" y="34" width="216" height="112" rx="8" fill="#f9f9fb" stroke="#bbb" stroke-width="1.5"/>
+              <text x="122" y="56" text-anchor="middle" fill="#555">1. o que você escreve</text>
+              <g font-family="JetBrains Mono, monospace" font-size="9.5" font-weight="400" fill="#333">
+                <text x="26" y="82">&lt;p className="destaque"&gt;</text>
+                <text x="26" y="98">  {rotulo}</text>
+                <text x="26" y="114">&lt;/p&gt;</text>
+              </g>
+              <text x="122" y="136" text-anchor="middle" font-size="9.5" font-weight="400" fill="#888">JSX, no arquivo .tsx</text>
+
+              <rect x="252" y="34" width="232" height="112" rx="8" fill="#eef1fb" stroke="#5b6dcd" stroke-width="1.5"/>
+              <text x="368" y="56" text-anchor="middle" fill="#3c4c9e">2. o que o Vite compila</text>
+              <g font-family="JetBrains Mono, monospace" font-size="9.5" font-weight="400" fill="#333">
+                <text x="264" y="82">jsx("p", {</text>
+                <text x="264" y="98">  className: "destaque",</text>
+                <text x="264" y="114">  children: rotulo })</text>
+              </g>
+              <text x="368" y="136" text-anchor="middle" font-size="9.5" font-weight="400" fill="#888">JavaScript comum</text>
+
+              <rect x="506" y="34" width="216" height="112" rx="8" fill="#f0f9f4" stroke="#1e8449" stroke-width="1.5"/>
+              <text x="614" y="56" text-anchor="middle" fill="#166b3a">3. o que existe em memória</text>
+              <g font-family="JetBrains Mono, monospace" font-size="9.5" font-weight="400" fill="#333">
+                <text x="518" y="82">{ type: "p",</text>
+                <text x="518" y="98">  props: { className,</text>
+                <text x="518" y="114">           children } }</text>
+              </g>
+              <text x="614" y="136" text-anchor="middle" font-size="9.5" font-weight="400" fill="#888">um objeto: o Virtual DOM</text>
+
+              <rect x="744" y="34" width="182" height="112" rx="8" fill="#fdedec" stroke="#c0392b" stroke-width="1.5"/>
+              <text x="835" y="56" text-anchor="middle" fill="#a03028">4. o que o React aplica</text>
+              <g font-family="JetBrains Mono, monospace" font-size="9.5" font-weight="400" fill="#333">
+                <text x="756" y="90">el.textContent =</text>
+                <text x="756" y="106">   "Em trânsito"</text>
+              </g>
+              <text x="835" y="136" text-anchor="middle" font-size="9.5" font-weight="400" fill="#888">DOM de verdade</text>
+            </g>
+
+            <g stroke="#bbb" stroke-width="2.5" fill="none">
+              <path d="M 234 90 L 246 90"/><path d="M 488 90 L 500 90"/><path d="M 726 90 L 738 90"/>
+            </g>
+            <polygon points="240,85 252,90 240,95" fill="#bbb"/>
+            <polygon points="494,85 506,90 494,95" fill="#bbb"/>
+            <polygon points="732,85 744,90 732,95" fill="#bbb"/>
+
+            <rect x="14" y="176" width="912" height="70" rx="8" fill="#fff8e6" stroke="#e8a33d" stroke-width="2"/>
+            <text x="32" y="200" font-size="12" font-weight="700" fill="#8a5d00">Três consequências práticas de o JSX ser código, e não marcação:</text>
+            <text x="32" y="220" font-size="11" fill="#8a5d00">é className e não class, porque class é palavra reservada de JavaScript; toda expressão entre chaves é JavaScript de verdade;</text>
+            <text x="32" y="238" font-size="11" fill="#8a5d00">e o TypeScript consegue conferir os atributos do componente, porque eles são só os parâmetros de uma função.</text>
+          </svg>
+          <figcaption>
+            O passo 3 é o que a próxima parte da aula usa: antes de tocar no navegador, a tela inteira existe como um objeto JavaScript comum. É barato criar, comparar e jogar fora.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – JSX</div>
+          <div class="footer-page">25</div>
+        </div>
+      </section>
+
+      <!-- ==================== 26: COMPONENTE ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Componente: função que recebe props e devolve elementos <a href="#/ref-slide" class="ref-badge" title="Ver referências">[5]</a></h2>
+        </div>
+
+        <pre class="code-compact"><code class="language-typescript">interface Props {
+  pedidoId: string;                       // o contrato do componente,
+}                                         // conferido em tempo de compilacao
+
+export function RastreioPedido({ pedidoId }: Props) {
+  // ... estado e efeito entram aqui
+  return (
+    &lt;section className="cartao" data-testid="rastreio"&gt;
+      &lt;h2&gt;Rastreamento&lt;/h2&gt;
+      &lt;p className="destaque"&gt;{ROTULO_STATUS[pedido.status]}&lt;/p&gt;
+    &lt;/section&gt;
+  );
 }
 
-export const ProductCard: React.FC<Props> = ({ title, onAddToCart }) => (
-  <div>
-    <h3>{title}</h3>
-    <button onClick={() => onAddToCart("123")}>Adicionar</button>
-  </div>
-);</code></pre>
-      </section>
+// uso, dentro de outro componente:
+&lt;RastreioPedido pedidoId="PED-1001" /&gt;</code></pre>
 
-      <!-- ==================== SLIDE: QUIZ 2 ==================== -->
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div>
-        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area">
-          <div class="accent-bar"></div>
-          <h2>Quiz #2 (Retorno do Intervalo)</h2>
-        </div>
-
-        <div class="quiz-container">
-          <div class="quiz-question">O que um `Mock` faz em um teste de unidade?</div>
-          <ul class="quiz-options">
-            <li data-correct="true"><span class="option-letter">A</span> Simula o comportamento de uma dependência externa.</li>
-            <li data-correct="false"><span class="option-letter">B</span> Otimiza a performance do banco de dados.</li>
-            <li data-correct="false"><span class="option-letter">C</span> Valida a tipagem estática no TypeScript.</li>
-            <li data-correct="false"><span class="option-letter">D</span> Reinicia o ambiente React automaticamente.</li>
-          </ul>
-          <div class="quiz-feedback"
-               data-correct-msg="Isso mesmo! Mocks isolam o componente sendo testado substituindo serviços externos."
-               data-incorrect-msg="Incorreto. Mocks são usados para substituir dependências em testes.">
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:12px; margin-top:9px;">
+          <div class="concept-card" style="padding:12px 15px;">
+            <h4>Props entram, nunca voltam</h4>
+            <p style="font-size:0.62em;">O componente <strong>não altera</strong> as props que recebeu. Quem manda no dado é quem está acima. Para avisar o de cima, recebe-se uma função por prop.</p>
+          </div>
+          <div class="concept-card" style="padding:12px 15px;">
+            <h4>Nome com maiúscula</h4>
+            <p style="font-size:0.62em;">Não é estilo: <span class="mono">p</span> minúsculo vira a etiqueta HTML, <span class="mono">RastreioPedido</span> maiúsculo vira chamada de função. O compilador decide pela primeira letra.</p>
+          </div>
+          <div class="concept-card" style="padding:12px 15px;">
+            <h4>É por isso que se testa fácil</h4>
+            <p style="font-size:0.62em;">Entra prop, sai árvore. Um componente sem dependência escondida é uma função pura, e função pura é o caso mais barato da pirâmide.</p>
           </div>
         </div>
-      </section>
 
-      <!-- ==================== SLIDE: QUIZ 3 ==================== -->
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div>
-        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area">
-          <div class="accent-bar"></div>
-          <h2>Quiz #3</h2>
-        </div>
-
-        <div class="quiz-container">
-          <div class="quiz-question">No React, por que usar TypeScript em vez de JavaScript puro?</div>
-          <ul class="quiz-options">
-            <li data-correct="false"><span class="option-letter">A</span> Ele torna o React mais rápido no navegador.</li>
-            <li data-correct="true"><span class="option-letter">B</span> Adiciona tipagem estática, prevenindo erros no desenvolvimento e melhorando o IntelliSense.</li>
-            <li data-correct="false"><span class="option-letter">C</span> Substitui o uso de CSS nos componentes.</li>
-            <li data-correct="false"><span class="option-letter">D</span> É obrigatório para qualquer projeto criado no Vercel.</li>
-          </ul>
-          <div class="quiz-feedback"
-               data-correct-msg="Correto! O TypeScript melhora a manutenção e escalabilidade da base de código."
-               data-incorrect-msg="Cuidado! O principal benefício do TypeScript é a segurança de tipos (Type Safety).">
-          </div>
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Componentes</div>
+          <div class="footer-page">26</div>
         </div>
       </section>
 
-      <!-- ==================== SLIDE: HANDS-ON LAB ==================== -->
+      <!-- ==================== 27: VIRTUAL DOM ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Hands-on Lab: TDD & React (Grupo)</h2>
+          <h2>Virtual DOM: compara em memória, toca no mínimo <a href="#/ref-slide" class="ref-badge" title="Ver referências">[6]</a></h2>
         </div>
 
-        <div class="concept-cards">
-          <div class="concept-card">
-            <h4>Case: Carrinho LogiTech</h4>
-            <p>Criaremos o carrinho de compras do E-commerce LogiTech seguindo TDD (Vitest/RTL).</p>
+        <figure class="slide-figure">
+          <svg viewBox="0 0 940 296" style="max-height:356px;" role="img" aria-label="O estado muda, o React compara as duas árvores em memória e altera só o nó diferente">
+            <text x="470" y="16" text-anchor="middle" font-size="12" font-weight="700" fill="#555">o status do PED-1001 mudou de COLETADO para EM_TRANSITO</text>
+
+            <text x="120" y="44" text-anchor="middle" font-size="11.5" font-weight="700" fill="#888">árvore anterior</text>
+            <g stroke="#bbb" stroke-width="1.5" fill="#f4f4f6">
+              <rect x="60" y="56" width="120" height="26" rx="5"/><rect x="30" y="104" width="82" height="26" rx="5"/>
+              <rect x="128" y="104" width="82" height="26" rx="5"/><rect x="128" y="152" width="82" height="26" rx="5"/>
+            </g>
+            <g font-size="9.5" fill="#444" text-anchor="middle">
+              <text x="120" y="73">section</text><text x="71" y="121">h2</text><text x="169" y="121">p</text><text x="169" y="169">Coletado</text>
+            </g>
+            <g stroke="#ccc" stroke-width="1.5" fill="none">
+              <path d="M 120 82 L 71 104"/><path d="M 120 82 L 169 104"/><path d="M 169 130 L 169 152"/>
+            </g>
+
+            <text x="360" y="44" text-anchor="middle" font-size="11.5" font-weight="700" fill="#5b6dcd">árvore nova</text>
+            <g stroke="#5b6dcd" stroke-width="1.5" fill="#eef1fb">
+              <rect x="300" y="56" width="120" height="26" rx="5"/><rect x="270" y="104" width="82" height="26" rx="5"/>
+              <rect x="368" y="104" width="82" height="26" rx="5"/>
+            </g>
+            <rect x="368" y="152" width="82" height="26" rx="5" fill="#e8a33d" stroke="#a06a00" stroke-width="1.5"/>
+            <g font-size="9.5" fill="#444" text-anchor="middle">
+              <text x="360" y="73">section</text><text x="311" y="121">h2</text><text x="409" y="121">p</text>
+            </g>
+            <text x="409" y="169" font-size="9.5" fill="#fff" font-weight="700" text-anchor="middle">Em trânsito</text>
+            <g stroke="#c7cff0" stroke-width="1.5" fill="none">
+              <path d="M 360 82 L 311 104"/><path d="M 360 82 L 409 104"/><path d="M 409 130 L 409 152"/>
+            </g>
+
+            <text x="595" y="44" text-anchor="middle" font-size="11.5" font-weight="700" fill="#a06a00">diffing</text>
+            <g opacity="0">
+              <animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.3;0.42;0.92;1" dur="7s" repeatCount="indefinite"/>
+              <rect x="500" y="56" width="190" height="122" rx="8" fill="#fff8e6" stroke="#e8a33d" stroke-width="2"/>
+              <text x="514" y="80" font-size="10.5" fill="#8a5d00">section: igual</text>
+              <text x="514" y="100" font-size="10.5" fill="#8a5d00">h2: igual</text>
+              <text x="514" y="120" font-size="10.5" fill="#8a5d00">p: igual</text>
+              <text x="514" y="144" font-size="10.5" font-weight="700" fill="#c0392b">texto: DIFERENTE</text>
+              <text x="514" y="166" font-size="10" fill="#8a5d00">1 alteração, 3 nós preservados</text>
+            </g>
+
+            <text x="825" y="44" text-anchor="middle" font-size="11.5" font-weight="700" fill="#1e8449">DOM do navegador</text>
+            <g opacity="0">
+              <animate attributeName="opacity" values="0;0;0;1;1" keyTimes="0;0.5;0.6;0.7;1" dur="7s" repeatCount="indefinite"/>
+              <rect x="710" y="56" width="215" height="122" rx="8" fill="#f4fbf6" stroke="#1e8449" stroke-width="2"/>
+              <text x="724" y="84" font-size="10" font-family="JetBrains Mono, monospace" fill="#166b3a">no.textContent =</text>
+              <text x="724" y="102" font-size="10" font-family="JetBrains Mono, monospace" fill="#166b3a">   "Em trânsito"</text>
+              <text x="724" y="132" font-size="10.5" fill="#166b3a">uma única operação de DOM.</text>
+              <text x="724" y="152" font-size="10.5" fill="#166b3a">Nada foi recriado, nada perdeu</text>
+              <text x="724" y="168" font-size="10.5" fill="#166b3a">foco nem posição de rolagem.</text>
+            </g>
+
+            <rect x="60" y="208" width="865" height="74" rx="8" fill="#f9f9fb" stroke="#bbb" stroke-width="1.5"/>
+            <text x="80" y="232" font-size="12" font-weight="700" fill="#444">Por que isso é rápido, se são duas árvores inteiras a cada mudança?</text>
+            <text x="80" y="252" font-size="11" fill="#555">Porque as duas árvores são objetos JavaScript comuns, e comparar objeto em memória é ordens de grandeza mais barato do que</text>
+            <text x="80" y="270" font-size="11" fill="#555">mexer no DOM: cada escrita no DOM real pode disparar recálculo de layout e repintura da página.</text>
+          </svg>
+          <figcaption>
+            O React monta a árvore nova em memória, compara com a anterior (diffing), calcula o conjunto mínimo de alterações e só então toca no navegador (reconciliação). Sequência da animação: as duas árvores aparecem, o quadro de diffing mostra o único nó diferente, e o quadro final mostra a única operação aplicada no DOM real.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Virtual DOM</div>
+          <div class="footer-page">27</div>
+        </div>
+      </section>
+
+      <!-- ==================== 28: A CHAVE DA LISTA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O limite do diffing, e por que <span class="mono">key</span> existe <a href="#/ref-slide" class="ref-badge" title="Ver referências">[6]</a></h2>
+        </div>
+
+        <p style="font-size:0.74em; margin-top:2px;">Comparar duas árvores quaisquer é caro. O React só é rápido porque assume duas coisas, e uma delas é problema seu.</p>
+
+        <div class="side-by-side" style="margin-top:6px;">
+          <div class="side">
+            <h4>As duas suposições</h4>
+            <p style="font-size:0.64em; line-height:1.55;"><strong>1.</strong> Se o tipo do elemento mudou (<span class="mono">p</span> virou <span class="mono">div</span>), a subárvore inteira é descartada e refeita. Não vale a pena procurar semelhança.</p>
+            <p style="font-size:0.64em; line-height:1.55;"><strong>2.</strong> Em uma lista, elementos são comparados <strong>por posição</strong>, a não ser que você dê uma <span class="mono">key</span> a cada um.</p>
+          </div>
+          <div class="side">
+            <h4>O que dá errado sem <span class="mono">key</span></h4>
+            <p style="font-size:0.64em; line-height:1.55;">Insira um pedido no topo da lista. Sem <span class="mono">key</span>, o React acha que o primeiro item mudou de conteúdo, o segundo também, e assim por diante: <strong>toda a lista é reescrita</strong>. Pior, o estado interno de cada item, como o campo que estava sendo digitado, acompanha a posição e não o pedido.</p>
           </div>
         </div>
 
-        <pre><code class="language-bash"># Lab em aulas-1sem/labs/aula10-lab/
-npm install
-npm test
-npm run dev
-</code></pre>
+        <pre class="code-compact" style="margin:6px 0;"><code class="language-typescript">{PEDIDOS_DA_BASE.map((id) =&gt; (
+  &lt;button key={id} ...&gt;{id}&lt;/button&gt;      // key = identidade estavel do item
+))}
+// o indice do array NAO serve como key se a lista for reordenada, filtrada ou receber item no meio.</code></pre>
 
-        <p><strong>Desafio:</strong> Commit das alterações no repositório do Git seguindo Conventional Commits.</p>
+        <div class="takeaway">
+          <span class="takeaway-label">Takeaway</span>
+          <p><span class="mono">key</span> não é enfeite para calar o aviso do console. É o que diz ao React <strong>qual item é qual</strong> entre duas renderizações, e é o que preserva o estado e o desempenho da lista.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Virtual DOM</div>
+          <div class="footer-page">28</div>
+        </div>
+      </section>
+
+      <!-- ==================== 29: useState ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2><span class="mono">useState</span>: o dado que sobrevive à renderização <a href="#/ref-slide" class="ref-badge" title="Ver referências">[7]</a></h2>
+        </div>
+
+        <pre class="code-compact"><code class="language-typescript">const [pedido, setPedido] = useState&lt;Pedido | null&gt;(null);
+const [erro, setErro] = useState&lt;string | null&gt;(null);
+const [carregando, setCarregando] = useState(true);
+
+// mudar o estado NAO altera a variavel `pedido` desta execucao.
+// Ela agenda uma nova renderizacao, e la a variavel ja nasce com o novo valor.
+setPedido(encontrado);
+console.log(pedido);   // ainda o valor ANTIGO, e isso e correto</code></pre>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:12px; margin-top:10px;">
+          <div class="concept-card" style="padding:12px 15px;">
+            <h4>Por que não uma variável comum</h4>
+            <p style="font-size:0.62em;">O componente é uma função, e ela roda inteira de novo a cada renderização. Variável local nasce e morre junto. O <span class="mono">useState</span> guarda o valor <strong>fora</strong> da função e devolve o mesmo na próxima execução.</p>
+          </div>
+          <div class="concept-card" style="padding:12px 15px;">
+            <h4>Estado é imutável</h4>
+            <p style="font-size:0.62em;">Nunca <span class="mono">pedido.status = 'ENTREGUE'</span>. O React compara referências para decidir se algo mudou: alterar por dentro não dispara renderização. Crie um objeto novo.</p>
+          </div>
+          <div class="concept-card" style="padding:12px 15px;">
+            <h4>Um estado por preocupação</h4>
+            <p style="font-size:0.62em;">Três estados separados, e não um objeto com três campos. Fica legível, e cada um muda no seu momento. Quando eles sempre mudam juntos, aí sim vale agrupar.</p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Hooks</div>
+          <div class="footer-page">29</div>
+        </div>
+      </section>
+
+      <!-- ==================== 30: useEffect ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2><span class="mono">useEffect</span>: o array de dependências não é opcional <a href="#/ref-slide" class="ref-badge" title="Ver referências">[7]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 940 250" style="max-height:298px;" role="img" aria-label="Sem array de dependências o efeito dispara a cada renderização e vira laço infinito">
+            <rect x="14" y="26" width="450" height="212" rx="9" fill="#fdedec" stroke="#c0392b" stroke-width="2"/>
+            <text x="239" y="50" text-anchor="middle" font-size="12.5" font-weight="700" fill="#c0392b">sem array: laço infinito de requisições</text>
+
+            <g font-size="10.5" font-weight="700" fill="#fff">
+              <rect x="40" y="70" width="112" height="34" rx="6" fill="#8a8a8a"/><text x="96" y="91" text-anchor="middle">renderiza</text>
+              <rect x="188" y="70" width="112" height="34" rx="6" fill="#e8a33d"/><text x="244" y="91" text-anchor="middle">efeito roda</text>
+              <rect x="336" y="70" width="106" height="34" rx="6" fill="#5b6dcd"/><text x="389" y="91" text-anchor="middle">fetch</text>
+              <rect x="188" y="146" width="112" height="34" rx="6" fill="#c0392b"/><text x="244" y="167" text-anchor="middle">setPedido</text>
+            </g>
+            <g stroke="#c0392b" stroke-width="2" fill="none">
+              <path d="M 156 87 L 182 87"/><path d="M 304 87 L 330 87"/>
+              <path d="M 389 106 L 389 163 L 306 163"/>
+              <path d="M 188 163 L 96 163 L 96 108"/>
+            </g>
+            <polygon points="182,82 194,87 182,92" fill="#c0392b"/>
+            <polygon points="330,82 342,87 330,92" fill="#c0392b"/>
+            <polygon points="306,158 294,163 306,168" fill="#c0392b"/>
+            <polygon points="91,110 101,110 96,98" fill="#c0392b"/>
+            <text x="239" y="206" text-anchor="middle" font-size="10.5" fill="#a03028">Mudar o estado renderiza de novo. Renderizar de novo roda o efeito de novo.</text>
+            <text x="239" y="226" text-anchor="middle" font-size="10.5" font-weight="700" fill="#c0392b">A aba trava e o serviço de Pedidos recebe centenas de chamadas por segundo.</text>
+
+            <rect x="486" y="26" width="440" height="212" rx="9" fill="#f4fbf6" stroke="#1e8449" stroke-width="2"/>
+            <text x="706" y="50" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1e8449">com [pedidoId]: roda quando importa</text>
+            <g font-family="JetBrains Mono, monospace" font-size="10" fill="#333">
+              <text x="506" y="80">useEffect(() =&gt; {</text>
+              <text x="506" y="98">  buscarPedido(pedidoId).then(setPedido);</text>
+              <text x="506" y="116">}, [pedidoId]);</text>
+            </g>
+            <g font-size="10.5" fill="#166b3a">
+              <text x="506" y="146">[] vazio: roda uma vez, na montagem.</text>
+              <text x="506" y="168">[pedidoId]: roda na montagem e sempre que o pedido muda.</text>
+              <text x="506" y="190">sem array: roda a cada renderização. Quase sempre é engano.</text>
+            </g>
+            <text x="506" y="218" font-size="11" font-weight="700" fill="#166b3a">A regra: tudo o que o efeito lê de fora dele entra no array.</text>
+          </svg>
+          <figcaption>
+            O efeito existe para sincronizar o componente com algo externo: rede, temporizador, assinatura. O array de dependências é o que diz ao React quando refazer essa sincronização. Errar o array é a causa mais comum de laço infinito e de tela que não atualiza.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Hooks</div>
+          <div class="footer-page">30</div>
+        </div>
+      </section>
+
+      <!-- ==================== 31: OS TRÊS ESTADOS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Toda tela que fala com rede tem três estados, não um</h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 940 230" style="max-height:274px;" role="img" aria-label="Os três estados de uma tela que consome API: carregando, dados e erro">
+            <g font-size="11.5" font-weight="700">
+              <rect x="30" y="56" width="230" height="132" rx="9" fill="#f2f2f5" stroke="#999" stroke-width="2"/>
+              <text x="145" y="82" text-anchor="middle" fill="#555">carregando</text>
+              <rect x="52" y="98" width="186" height="16" rx="4" fill="#ddd"/>
+              <rect x="52" y="124" width="140" height="16" rx="4" fill="#ddd"/>
+              <text x="145" y="168" text-anchor="middle" font-size="10" font-weight="400" fill="#666">role="status", para o leitor de tela</text>
+
+              <rect x="355" y="56" width="230" height="132" rx="9" fill="#f4fbf6" stroke="#1e8449" stroke-width="2"/>
+              <text x="470" y="82" text-anchor="middle" fill="#1e8449">dados</text>
+              <text x="470" y="116" text-anchor="middle" font-size="16" font-weight="700" fill="#ed145b">Em trânsito</text>
+              <text x="470" y="140" text-anchor="middle" font-size="10.5" font-weight="400" fill="#555">SAO para LDB, 100 kg</text>
+              <text x="470" y="168" text-anchor="middle" font-size="10" font-weight="400" fill="#666">data-testid="rastreio"</text>
+
+              <rect x="680" y="56" width="230" height="132" rx="9" fill="#fdedec" stroke="#c0392b" stroke-width="2"/>
+              <text x="795" y="82" text-anchor="middle" fill="#c0392b">erro</text>
+              <text x="795" y="118" text-anchor="middle" font-size="11" font-weight="400" fill="#a03028">pedido não encontrado:</text>
+              <text x="795" y="136" text-anchor="middle" font-size="11" font-weight="400" fill="#a03028">PED-9999</text>
+              <text x="795" y="168" text-anchor="middle" font-size="10" font-weight="400" fill="#666">role="alert", anunciado na hora</text>
+            </g>
+
+            <text x="470" y="30" text-anchor="middle" font-size="12" font-weight="700" fill="#555">o mesmo componente, três resultados possíveis do mesmo estado interno</text>
+            <text x="470" y="214" text-anchor="middle" font-size="11.5" fill="#666">A tela que só trata o caminho feliz é a que fica em branco em produção, sem dizer nada a quem está olhando.</text>
+          </svg>
+          <figcaption>
+            Os papéis de acessibilidade não são decoração: role igual a status anuncia mudanças de forma discreta e role igual a alert interrompe o leitor de tela. Eles também são o que a Testing Library usa para encontrar os elementos, o que faz teste e acessibilidade puxarem para o mesmo lado.
+          </figcaption>
+        </figure>
+
+        <div class="takeaway">
+          <span class="takeaway-label">No laboratório</span>
+          <p>Os três estados são o contrato do <span class="mono">TODO-4</span>, e os quatro testes que já vêm escritos cobram um por um.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Hooks</div>
+          <div class="footer-page">31</div>
+        </div>
+      </section>
+
+      <!-- ==================== 32: A CORRIDA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A corrida entre duas respostas, e a função de limpeza <a href="#/ref-slide" class="ref-badge" title="Ver referências">[7]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 940 258" style="max-height:310px;" role="img" aria-label="Duas requisições voltando fora de ordem deixam a tela mostrando o pedido errado">
+            <g font-family="JetBrains Mono, monospace" font-size="9.5" fill="#166b3a">
+              <text x="150" y="18">let ativo = true;  buscarPedido(id).then(p =&gt; { if (ativo) setPedido(p); });  return () =&gt; { ativo = false; };</text>
+            </g>
+
+            <line x1="150" y1="196" x2="900" y2="196" stroke="#333" stroke-width="2"/>
+            <text x="525" y="216" text-anchor="middle" font-size="10.5" fill="#888">tempo</text>
+
+            <text x="140" y="56" text-anchor="end" font-size="11" font-weight="700" fill="#333">clicou PED-1001</text>
+            <rect x="150" y="38" width="0" height="26" rx="5" fill="#8a8a8a">
+              <animate attributeName="width" values="0;0;520;520;520" keyTimes="0;0.06;0.6;0.95;1" dur="8s" repeatCount="indefinite"/>
+            </rect>
+            <text x="410" y="56" text-anchor="middle" font-size="10" fill="#fff" font-weight="700" opacity="0">requisição lenta, 1200 ms
+              <animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.18;0.26;0.95;1" dur="8s" repeatCount="indefinite"/>
+            </text>
+
+            <text x="140" y="106" text-anchor="end" font-size="11" font-weight="700" fill="#333">clicou PED-1002</text>
+            <rect x="300" y="88" width="0" height="26" rx="5" fill="#5b6dcd">
+              <animate attributeName="width" values="0;0;180;180;180" keyTimes="0;0.2;0.42;0.95;1" dur="8s" repeatCount="indefinite"/>
+            </rect>
+            <text x="390" y="106" text-anchor="middle" font-size="10" fill="#fff" font-weight="700" opacity="0">rápida, 300 ms
+              <animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.3;0.38;0.95;1" dur="8s" repeatCount="indefinite"/>
+            </text>
+
+            <g opacity="0">
+              <animate attributeName="opacity" values="0;0;1;1;1" keyTimes="0;0.44;0.5;0.95;1" dur="8s" repeatCount="indefinite"/>
+              <rect x="452" y="130" width="204" height="42" rx="6" fill="#f4fbf6" stroke="#1e8449" stroke-width="1.5"/>
+              <text x="554" y="148" text-anchor="middle" font-size="10.5" font-weight="700" fill="#166b3a">tela mostra PED-1002</text>
+              <text x="554" y="164" text-anchor="middle" font-size="9.5" fill="#166b3a">correto: é o que o usuário pediu</text>
+            </g>
+
+            <g opacity="0">
+              <animate attributeName="opacity" values="0;0;0;1;1" keyTimes="0;0.6;0.66;0.72;1" dur="8s" repeatCount="indefinite"/>
+              <rect x="670" y="130" width="250" height="42" rx="6" fill="#fdedec" stroke="#c0392b" stroke-width="2"/>
+              <text x="795" y="148" text-anchor="middle" font-size="10.5" font-weight="700" fill="#c0392b">a resposta lenta chega e sobrescreve</text>
+              <text x="795" y="164" text-anchor="middle" font-size="9.5" fill="#a03028">a tela volta a mostrar PED-1001</text>
+            </g>
+
+            <text x="150" y="242" font-size="10.5" font-weight="700" fill="#166b3a">A função de limpeza roda antes do próximo efeito: a bandeira cai e a resposta velha é descartada em vez de sobrescrever a nova.</text>
+          </svg>
+          <figcaption>
+            Sequência da animação: a requisição do PED-1001 começa e demora; o usuário clica no PED-1002, cuja resposta é rápida e aparece corretamente; então a resposta antiga chega e reescreve a tela com o pedido errado. O return do efeito é o ponto onde isso se resolve, e é a mesma ideia do switchMap que a Aula 11 vai usar no Angular.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Hooks</div>
+          <div class="footer-page">32</div>
+        </div>
+      </section>
+
+      <!-- ==================== 33: CORS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O navegador é um consumidor diferente: CORS <a href="#/ref-slide" class="ref-badge" title="Ver referências">[8]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 940 250" style="max-height:298px;" role="img" aria-label="O preflight OPTIONS e a resposta descartada pelo navegador quando falta o cabeçalho">
+            <rect x="14" y="34" width="180" height="200" rx="9" fill="#f9f9fb" stroke="#bbb" stroke-width="1.5"/>
+            <text x="104" y="58" text-anchor="middle" font-size="11.5" font-weight="700" fill="#555">navegador</text>
+            <text x="104" y="78" text-anchor="middle" font-size="10" fill="#888">origem</text>
+            <text x="104" y="94" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#555">localhost:5173</text>
+
+            <rect x="746" y="34" width="180" height="200" rx="9" fill="#f9f9fb" stroke="#bbb" stroke-width="1.5"/>
+            <text x="836" y="58" text-anchor="middle" font-size="11.5" font-weight="700" fill="#555">serviço de frete</text>
+            <text x="836" y="78" text-anchor="middle" font-size="10" fill="#888">outra origem</text>
+            <text x="836" y="94" text-anchor="middle" font-size="10" font-family="JetBrains Mono, monospace" fill="#555">localhost:8000</text>
+
+            <path d="M 200 128 L 736 128" stroke="#5b6dcd" stroke-width="2.5" fill="none" stroke-dasharray="536" stroke-dashoffset="536">
+              <animate attributeName="stroke-dashoffset" values="536;536;0;0;0;0" keyTimes="0;0.05;0.22;0.9;0.99;1" dur="8s" repeatCount="indefinite"/>
+            </path>
+            <polygon points="736,123 748,128 736,133" fill="#5b6dcd"/>
+            <text x="468" y="118" text-anchor="middle" font-size="10.5" font-weight="700" fill="#5b6dcd">1. OPTIONS (preflight), antes do POST de verdade</text>
+
+            <path d="M 736 172 L 200 172" stroke="#1e8449" stroke-width="2.5" fill="none" stroke-dasharray="536" stroke-dashoffset="536">
+              <animate attributeName="stroke-dashoffset" values="536;536;536;0;0;0" keyTimes="0;0.24;0.3;0.46;0.99;1" dur="8s" repeatCount="indefinite"/>
+            </path>
+            <polygon points="200,167 188,172 200,177" fill="#1e8449"/>
+            <text x="468" y="162" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1e8449">2. 200, com Access-Control-Allow-Origin: http://localhost:5173</text>
+
+            <g opacity="0">
+              <animate attributeName="opacity" values="0;0;0;0;1;1" keyTimes="0;0.5;0.56;0.6;0.66;1" dur="8s" repeatCount="indefinite"/>
+              <rect x="230" y="192" width="480" height="46" rx="7" fill="#fdedec" stroke="#c0392b" stroke-width="2"/>
+              <text x="470" y="211" text-anchor="middle" font-size="10.5" font-weight="700" fill="#c0392b">se o cabeçalho não vier, ou não listar a sua origem:</text>
+              <text x="470" y="229" text-anchor="middle" font-size="10" fill="#a03028">o servidor respondeu, e o navegador descarta a resposta antes de o React vê-la</text>
+            </g>
+          </svg>
+          <figcaption>
+            A política de mesma origem é do navegador, não do servidor. O cURL e qualquer cliente HTTP de servidor a ignoram por completo, e é por isso que a suíte de backend fica verde enquanto a tela fica vazia. Sequência: o preflight sai, a autorização volta, e o quadro final mostra o que acontece quando ela não volta.
+          </figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – CORS</div>
+          <div class="footer-page">33</div>
+        </div>
+      </section>
+
+      <!-- ==================== 34: A MENSAGEM REAL ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A mensagem que vocês vão ver, capturada de verdade</h2>
+        </div>
+
+        <p style="font-size:0.72em; margin-top:2px;">Console do Chromium, com o serviço de frete deste laboratório subido com <span class="mono">LOGITECH_CORS_ORIGINS=http://localhost:9999</span>:</p>
+
+        <pre class="code-compact"><code>Access to fetch at 'http://localhost:8000/api/v1/frete/cotacao'
+from origin 'http://localhost:5173' has been blocked by CORS policy:
+Response to preflight request doesn't pass access control check:
+No 'Access-Control-Allow-Origin' header is present on the requested resource.
+
+Failed to load resource: net::ERR_FAILED</code></pre>
+
+        <div class="concept-cards" style="grid-template-columns: 1fr 1fr; gap:13px; margin-top:10px;">
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>O que aparece na tela</h4>
+            <p style="font-size:0.63em;">Nada de diferente. O <span class="mono">fetch</span> rejeita como se fosse falha de rede, o componente cai no estado de erro genérico e o usuário lê "não foi possível falar com o serviço". <strong>Ninguém suspeita de CORS olhando a tela.</strong></p>
+          </div>
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>Como o contrato resolve</h4>
+            <p style="font-size:0.63em;">A ADR-008 pôs CORS no contrato de <strong>todo serviço que um navegador chama</strong>, lendo <span class="mono">LOGITECH_CORS_ORIGINS</span>. Os serviços congelados do lab já sobem assim. Decidido no contrato custa uma variável; descoberto em sala custa o bloco prático.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Hábito para levar</span>
+          <p>Tela vazia sem erro visível: <strong>abra o console antes de abrir o código</strong>. Metade dos defeitos de integração de frontend se identifica na primeira linha vermelha.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – CORS</div>
+          <div class="footer-page">34</div>
+        </div>
+      </section>
+
+      <!-- ==================== 35: TESTING LIBRARY ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Testing Library: procure o que o usuário procuraria <a href="#/ref-slide" class="ref-badge" title="Ver referências">[9]</a></h2>
+        </div>
+
+        <pre class="code-compact"><code class="language-typescript">vi.mock('../api/logitech', ...);          // o modulo de rede vira duble
+
+it('mostra o status do pedido em portugues', async () =&gt; {
+  buscarPedidoDublado.mockResolvedValue(PEDIDO);
+
+  render(&lt;RastreioPedido pedidoId="PED-1001" /&gt;);
+
+  const cartao = await screen.findByTestId('rastreio');
+  expect(cartao).toHaveTextContent('Em trânsito');
+});</code></pre>
+
+        <table class="compact-table" style="margin-top:9px;">
+          <thead>
+            <tr><th>Prefixo</th><th>Quando o elemento não existe</th><th>Espera?</th><th>Use para</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="mono">getBy...</span></td><td>lança erro na hora</td><td>não</td><td>o que já deve estar na tela</td></tr>
+            <tr><td><span class="mono">queryBy...</span></td><td>devolve <span class="mono">null</span></td><td>não</td><td>afirmar que algo <strong>não</strong> está lá</td></tr>
+            <tr><td><span class="mono">findBy...</span></td><td>lança erro depois do tempo limite</td><td>sim</td><td>o que chega depois de uma resposta assíncrona</td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A regra da biblioteca</span>
+          <p>Prefira encontrar por <strong>papel, rótulo e texto</strong>, que é como uma pessoa encontra. Selecionar por classe CSS amarra o teste ao estilo, e o estilo muda toda semana.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Testando Componentes</div>
+          <div class="footer-page">35</div>
+        </div>
+      </section>
+
+      <!-- ==================== 36: O TESTE DE TELA NÃO VÊ A CHAMADA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O mesmo par Stub e Mock, agora em TypeScript</h2>
+        </div>
+
+        <p style="font-size:0.72em; margin-top:2px;">O componente de cotação envia quatro campos para a API. O dublê responde a mesma coisa independentemente do que receber, então a tela fica idêntica se o componente enviar errado.</p>
+
+        <div class="side-by-side" style="margin-top:6px;">
+          <div class="side">
+            <h4>Teste de tela: olha o que apareceu</h4>
+            <pre class="code-compact" style="margin-top:6px;"><code class="language-typescript">await userEvent.click(botaoCotar);
+
+const r = await screen.findByTestId('cotacao');
+expect(r).toHaveTextContent('380,00');
+expect(r).toHaveTextContent('2 dia');</code></pre>
+            <p style="font-size:0.6em; margin-top:5px;">Verde mesmo se o componente mandar a modalidade errada, ou o peso como texto: a resposta vem do dublê.</p>
+          </div>
+          <div class="side">
+            <h4>Teste de chamada: olha o que saiu</h4>
+            <pre class="code-compact" style="margin-top:6px;"><code class="language-typescript">await userEvent.selectOptions(selecao, 'expresso');
+await userEvent.click(botaoCotar);
+
+expect(cotarFreteDublado).toHaveBeenCalledWith({
+  origem: 'SAO', destino: 'LDB',
+  pesoKg: 100, modalidade: 'expresso',
+});</code></pre>
+            <p style="font-size:0.6em; margin-top:5px;">Repare no <span class="mono">pesoKg: 100</span>: o número, não a string. O valor de um <span class="mono">input</span> é sempre texto, inclusive com <span class="mono">type="number"</span>.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">No laboratório</span>
+          <p>Os testes da esquerda vêm prontos, para o <span class="mono">TODO-5</span>. O da direita é o <span class="mono">TODO-6</span>, e o verificador o avalia com dois mutantes que <strong>não mudam um pixel da tela</strong>.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Testando Componentes</div>
+          <div class="footer-page">36</div>
+        </div>
+      </section>
+
+      <!-- ==================== 37: QUIZ 1 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container" data-quiz-key="aula10-quiz1">
+          <div class="quiz-question">O que é a Pirâmide de Testes e por que os testes de unidade devem ser a maior parte da suíte?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> É a ordem em que os testes devem ser executados: primeiro unidade, depois integração, depois ponta a ponta.</li>
+            <li data-correct="true"><span class="option-letter">B</span> É uma orientação de proporção entre os tipos de teste. A unidade fica na base por ser rápida de executar, barata de manter e por dar diagnóstico preciso sobre uma pequena parte do código.</li>
+            <li data-correct="false"><span class="option-letter">C</span> É a hierarquia de importância: teste de unidade vale mais do que teste de integração, que por sua vez substitui o de ponta a ponta.</li>
+            <li data-correct="false"><span class="option-letter">D</span> É a meta de cobertura por camada: 100 por cento na unidade, 60 na integração e 30 no ponta a ponta.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. A pirâmide fala de proporção e de custo, não de ordem nem de importância. As camadas de cima são necessárias e pegam o que a unidade não vê; elas são poucas porque cada uma custa mais tempo e mais manutenção."
+               data-incorrect-msg="Incorreto. Não é ordem de execução, não é hierarquia de valor e não é meta de cobertura. Revise o slide da pirâmide e o do custo medido: 22 testes de unidade rodaram em 0,03 segundo neste laboratório.">
+          </div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz1Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz1Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Verificação de Aprendizado</div>
+          <div class="footer-page">37</div>
+        </div>
+      </section>
+
+      <!-- ==================== 38: INTERVALO ==================== -->
+      <section class="content-slide" style="text-align:center; background:transparent;"
+               data-background-image="../assets/img/coffee-relax.jpg"
+               data-background-size="cover"
+               data-background-opacity="0.45">
+        <div style="margin-top:150px;">
+          <h2 style="font-size:4em; color:var(--fiap-pink); margin-bottom:10px; text-shadow:0 2px 12px rgba(255,255,255,0.9);">Intervalo</h2>
+          <h3 style="font-size:2.2em; color:var(--fiap-dark); text-shadow:0 2px 10px rgba(255,255,255,0.9);">30 minutos</h3>
+
+          <div class="quiz-timer-box" style="margin:40px auto 0 auto; padding:15px 30px; font-size:1.3em;">
+            <button class="quiz-timer-btn" style="width:40px; height:40px; font-size:1.2em;" onclick="startTimer('breakTimer', 1800)" aria-label="Iniciar cronômetro do intervalo">&#9654;</button>
+            <span id="breakTimer">30:00</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 39: QUIZ 2 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container" data-quiz-key="aula10-quiz2">
+          <div class="quiz-question">Qual a diferença entre um Mock e um Stub em testes de unidade?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> Stub é escrito à mão e Mock vem de biblioteca; fora isso, os dois fazem a mesma coisa.</li>
+            <li data-correct="false"><span class="option-letter">B</span> Stub substitui a dependência e Mock envolve a dependência real, deixando ela responder de verdade.</li>
+            <li data-correct="true"><span class="option-letter">C</span> O Stub fornece respostas pré-programadas para as chamadas feitas durante o teste. O Mock vai além: ele verifica se determinadas chamadas, com determinados parâmetros, realmente ocorreram.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Stub serve para testar valores e Mock serve para testar exceções e casos de erro.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. A diferença está na asserção: o Stub sustenta uma afirmação sobre o resultado, o Mock sustenta uma afirmação sobre a interação. A alternativa B descreve o Spy, que envolve o objeto real com Mock(wraps=...)."
+               data-incorrect-msg="Incorreto. Não é sobre quem escreveu o dublê nem sobre valor contra exceção. Revise o slide do mutante M3: remover a memória de pedido não muda nenhum número, e só a asserção sobre a chamada pega.">
+          </div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz2Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz2Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Verificação de Aprendizado</div>
+          <div class="footer-page">39</div>
+        </div>
+      </section>
+
+      <!-- ==================== 40: QUIZ 3 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container" data-quiz-key="aula10-quiz3">
+          <div class="quiz-question">Como o Virtual DOM do React otimiza a atualização da interface em comparação com a manipulação direta do DOM?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> Ele mantém a página inteira em cache e recarrega tudo de uma vez, o que é mais rápido do que alterar elemento por elemento.</li>
+            <li data-correct="true"><span class="option-letter">B</span> Ele mantém uma cópia da árvore da interface em memória. Quando o estado muda, compara a árvore nova com a anterior (diffing) e aplica no DOM real apenas as alterações que de fato ocorreram.</li>
+            <li data-correct="false"><span class="option-letter">C</span> Ele substitui o DOM do navegador por uma implementação própria, mais rápida, escrita em JavaScript.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Ele adia todas as alterações para o momento em que a aba perde o foco, evitando repintura enquanto o usuário está olhando.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. As duas árvores são objetos JavaScript comuns, e compará-las em memória é muito mais barato do que escrever no DOM, onde cada alteração pode disparar recálculo de layout e repintura. O Virtual DOM não substitui o DOM: ele decide o mínimo a mexer nele."
+               data-incorrect-msg="Incorreto. O React não recarrega a página, não substitui o DOM do navegador e não adia alteração. Revise o slide do Virtual DOM: monta a árvore nova, compara com a anterior e aplica só a diferença.">
+          </div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz3Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz3Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Verificação de Aprendizado</div>
+          <div class="footer-page">40</div>
+        </div>
+      </section>
+
+      <!-- ==================== 41: ATIVIDADE PRÁTICA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Atividade prática: seis lacunas, duas stacks</h2>
+        </div>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>Vem pronto, não é tarefa</th><th>Vocês escrevem</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><span class="mono">servicos/pedidos/</span>, rodando na 8080, já com CORS</td><td><span class="mono">TODO-1</span>, <span class="mono">TODO-2</span> e <span class="mono">TODO-3</span>: a suíte de unidade do cotador</td></tr>
+            <tr><td><span class="mono">servicos/frete/app/</span>, o serviço da Aula 06 resolvido, mais o cotador</td><td><span class="mono">TODO-4</span> e <span class="mono">TODO-5</span>: os dois componentes React</td></tr>
+            <tr><td><span class="mono">conftest.py</span>, que bloqueia a rede durante os testes</td><td><span class="mono">TODO-6</span>: o teste que olha para a chamada</td></tr>
+            <tr><td><span class="mono">test_estrategias.py</span>, 10 testes verdes, o modelo de escrita</td><td><span class="mono">docs/EVIDENCIAS.md</span>, com os 9 marcadores</td></tr>
+            <tr><td><span class="mono">portal/</span>, Vite com React 19 e TypeScript, dependências instaladas</td><td>Os commits, um por lacuna</td></tr>
+            <tr><td>7 testes de componente já escritos e <strong>vermelhos</strong>, e o <span class="mono">verificar.py</span></td><td></td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout" style="margin-top:10px;">
+          <p style="font-size:0.66em; line-height:1.5;">O laboratório <strong>inverte</strong> o das Aulas 05 e 06. No bloco de PyTest o código está congelado e o entregável é o teste. No bloco de React a ordem volta ao normal: os testes vêm prontos e vermelhos, e o código que os faz passar é de vocês.</p>
+          <p style="font-size:0.66em; line-height:1.5; margin-top:8px;">Reparem numa coisa: o <span class="mono">servicos/pedidos/</span> que chega congelado aqui é uma versão em <strong>Python</strong>, não o Spring Boot que vocês escreveram na Aula 05. Mesma porta, mesmas rotas, mesmo JSON. Ninguém jogou o trabalho de vocês fora: <strong>o contrato é a interface, não a implementação</strong>, e é exatamente por isso que dá para trocar a linguagem por baixo sem quem consome perceber.</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Lab Kit</span>
+          <p><a href="https://github.com/josercf/mwe-2026-2-lab10-testes-react" target="_blank" style="color:var(--fiap-pink); font-weight:700;">github.com/josercf/mwe-2026-2-lab10-testes-react</a>. Façam <strong>fork</strong>, nunca clone: o fork permite trazer correção feita durante a aula.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Atividade Prática</div>
+          <div class="footer-page">41</div>
+        </div>
+      </section>
+
+      <!-- ==================== 42: PASSO 1 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 1 de 6: o Stub (<span class="mono">TODO-1</span>, 10 min)</h2>
+        </div>
+
+        <p style="font-size:0.74em; margin-top:2px;">Arquivo: <span class="mono">servicos/frete/tests/test_cotador_stub.py</span>. No mínimo <strong>4 testes</strong>.</p>
+
+        <div class="concept-cards" style="grid-template-columns: 1fr 1fr; gap:13px; margin-top:6px;">
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>O que cobrir</h4>
+            <p style="font-size:0.63em; line-height:1.55;">A cotação da rota de referência sem desconto; o desconto de carga fechada a partir de 1000 kg; o dia extra de pernoite acima de 1000 km; e a recusa da carga acima da capacidade da frota.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>Os números que a plataforma devolve</h4>
+            <p style="font-size:0.63em; line-height:1.55;"><span class="mono">PED-1001</span> no expresso: <strong>545,00 em 1 dia</strong>. <span class="mono">PED-1003</span> no padrão: <strong>9956,24 em 5 dias</strong>, com desconto e pernoite. Escreva esses valores <strong>à mão</strong> no teste.</p>
+          </div>
+        </div>
+
+        <pre class="code-compact" style="margin-top:8px;"><code class="language-bash">python3 -m pytest servicos/frete/tests/test_cotador_stub.py
+python3 verificar.py --criterio 1
+git commit -am "test(todo-1): stub do cliente de pedidos e as regras de valor"</code></pre>
+
+        <div class="callout" style="margin-top:8px; border-left-color:#c0392b; background:#fdedec;">
+          <p style="font-size:0.64em;">Não calcule o valor esperado com a fórmula do código. O verificador zera o desconto na cópia estragada, e um teste que importa a constante passa mesmo assim.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Passo 1</div>
+          <div class="footer-page">42</div>
+        </div>
+      </section>
+
+      <!-- ==================== 43: PASSO 2 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 2 de 6: o Mock (<span class="mono">TODO-2</span>, 10 min)</h2>
+        </div>
+
+        <p style="font-size:0.74em; margin-top:2px;">Arquivo: <span class="mono">servicos/frete/tests/test_cotador_mock.py</span>. No mínimo <strong>3 testes</strong>. É o passo mais importante da noite.</p>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:12px; margin-top:6px;">
+          <div class="concept-card" style="padding:12px 15px;">
+            <h4>A memória de pedido</h4>
+            <p style="font-size:0.62em;">Três cotações do mesmo pedido produzem <strong>uma</strong> chamada a <span class="mono">buscar</span>. <span class="mono">assert_called_once_with</span>.</p>
+          </div>
+          <div class="concept-card" style="padding:12px 15px;">
+            <h4>O fail fast</h4>
+            <p style="font-size:0.62em;">Identificador inválido levanta <span class="mono">PedidoInvalido</span> e o serviço vizinho <strong>não</strong> é chamado. <span class="mono">assert_not_called</span>.</p>
+          </div>
+          <div class="concept-card" style="padding:12px 15px;">
+            <h4>A normalização</h4>
+            <p style="font-size:0.62em;">Cotar <span class="mono">"ped-1001"</span> chama <span class="mono">buscar("PED-1001")</span>. O Stub responderia igual dos dois jeitos.</p>
+          </div>
+        </div>
+
+        <pre class="code-compact" style="margin-top:8px;"><code class="language-python">cliente = Mock(spec=ClientePedidos)      # spec= prende ao contrato
+cliente.buscar.return_value = PEDIDO_LEVE
+# ... exercite o cotador ...
+cliente.buscar.assert_called_once_with("PED-1001")</code></pre>
+
+        <pre class="code-compact" style="margin-top:7px;"><code class="language-bash">python3 verificar.py --criterio 2
+git commit -am "test(todo-2): mock verificando a colaboracao com pedidos"</code></pre>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Passo 2</div>
+          <div class="footer-page">43</div>
+        </div>
+      </section>
+
+      <!-- ==================== 44: PASSO 3 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 3 de 6: o Spy (<span class="mono">TODO-3</span>, 8 min)</h2>
+        </div>
+
+        <p style="font-size:0.74em; margin-top:2px;">Arquivo: <span class="mono">servicos/frete/tests/test_cotador_spy.py</span>. No mínimo <strong>3 testes</strong>, com a tabela de distâncias real envolvida por um espião.</p>
+
+        <pre class="code-compact" style="margin-top:6px;"><code class="language-python">espia = Mock(wraps=TabelaDistancias())        # o objeto REAL continua respondendo
+cotador = CotadorDePedido(cliente_stub, tabela=espia)
+
+cotador.cotar("PED-1001", "expresso")
+
+assert espia.km.call_args_list == [call("SAO", "LDB")]   # origem antes de destino</code></pre>
+
+        <div class="concept-cards" style="grid-template-columns: 1fr 1fr; gap:13px; margin-top:8px;">
+          <div class="concept-card" style="padding:12px 16px;">
+            <h4>O que cobrir</h4>
+            <p style="font-size:0.62em; line-height:1.55;">A tabela consultada uma vez por cotação, na ordem certa; o valor idêntico ao que sairia sem o espião; e a rota fora da tabela caindo nos 750 km padrão, com a consulta acontecendo assim mesmo.</p>
+          </div>
+          <div class="concept-card" style="padding:12px 16px;">
+            <h4>Por que só o Spy pega</h4>
+            <p style="font-size:0.62em; line-height:1.55;">A tabela é simétrica. Trocar origem por destino devolve o mesmo número, o mesmo prazo e o mesmo desconto. É o mutante M5, e nenhuma asserção sobre resultado o alcança.</p>
+          </div>
+        </div>
+
+        <pre class="code-compact" style="margin-top:8px;"><code class="language-bash">python3 verificar.py --criterio 3
+python3 verificar.py --criterio 4       # a suite inteira, verde e sem rede
+git commit -am "test(todo-3): spy sobre a tabela de distancias real"</code></pre>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Passo 3</div>
+          <div class="footer-page">44</div>
+        </div>
+      </section>
+
+      <!-- ==================== 45: OS MUTANTES ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O verificador estraga o código de propósito</h2>
+        </div>
+
+        <p style="font-size:0.74em; margin-top:2px;">Ele copia o serviço e o portal para um diretório temporário, planta um defeito conhecido na cópia, roda a <strong>sua</strong> suíte contra ela e exige vermelho.</p>
+
+        <table class="compact-table">
+          <thead>
+            <tr><th>Mutante</th><th>O que ele estraga</th><th>Muda algum número?</th><th>Pego por</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>M1</td><td>a tabela de preços do expresso</td><td>sim</td><td>Stub, <span class="mono">TODO-1</span></td></tr>
+            <tr><td>M2</td><td>zera o desconto de carga fechada</td><td>sim</td><td>Stub, <span class="mono">TODO-1</span></td></tr>
+            <tr><td>M3</td><td>remove a memória de pedido do cotador</td><td><strong>não</strong></td><td>Mock, <span class="mono">TODO-2</span></td></tr>
+            <tr><td>M4</td><td>inverte o fail fast da validação</td><td><strong>não</strong></td><td>Mock, <span class="mono">TODO-2</span></td></tr>
+            <tr><td>M5</td><td>consulta a tabela com origem e destino trocados</td><td><strong>não</strong></td><td>Spy, <span class="mono">TODO-3</span></td></tr>
+            <tr><td>M6</td><td>crava a modalidade enviada em <span class="mono">padrao</span></td><td><strong>não</strong></td><td>Mock em React, <span class="mono">TODO-6</span></td></tr>
+            <tr><td>M7</td><td>envia o peso como texto, e não como número</td><td><strong>não</strong></td><td>Mock em React, <span class="mono">TODO-6</span></td></tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Por que cinco dos sete não mudam número</span>
+          <p>Porque é essa a definição operacional da diferença entre Stub e Mock. Uma suíte escrita só com asserções de resultado passa em todos os cinco, e o CP3 cobra exatamente isso.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Verificação</div>
+          <div class="footer-page">45</div>
+        </div>
+      </section>
+
+      <!-- ==================== 46: PASSO 4 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 4 de 6: a tela de rastreamento (<span class="mono">TODO-4</span>, 12 min)</h2>
+        </div>
+
+        <p style="font-size:0.74em; margin-top:2px;">Arquivo: <span class="mono">portal/src/componentes/RastreioPedido.tsx</span>. Os 4 testes que o cobram já estão escritos e vermelhos.</p>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:12px; margin-top:6px;">
+          <div class="concept-card" style="padding:12px 15px;">
+            <h4>Três <span class="mono">useState</span></h4>
+            <p style="font-size:0.62em;"><span class="mono">pedido</span>, <span class="mono">erro</span> e <span class="mono">carregando</span>. Um por preocupação, e não um objeto com três campos.</p>
+          </div>
+          <div class="concept-card" style="padding:12px 15px;">
+            <h4>Um <span class="mono">useEffect</span></h4>
+            <p style="font-size:0.62em;">Com <span class="mono">[pedidoId]</span> no array de dependências e a função de limpeza que fecha a corrida.</p>
+          </div>
+          <div class="concept-card" style="padding:12px 15px;">
+            <h4>Os três estados na tela</h4>
+            <p style="font-size:0.62em;"><span class="mono">role="status"</span>, <span class="mono">role="alert"</span> e <span class="mono">data-testid="rastreio"</span>. O contrato está na documentação do arquivo.</p>
+          </div>
+        </div>
+
+        <pre class="code-compact" style="margin-top:8px;"><code class="language-bash">cd portal &amp;&amp; npx vitest run src/componentes/RastreioPedido.test.tsx &amp;&amp; cd ..
+python3 verificar.py --criterio 5
+git commit -am "feat(todo-4): tela de rastreamento com useState e useEffect"</code></pre>
+
+        <div class="callout" style="margin-top:8px;">
+          <p style="font-size:0.64em;">O <span class="mono">StrictMode</span> monta cada componente duas vezes em desenvolvimento, de propósito. Se o navegador disparar duas requisições e o teste só uma, não é defeito do React: é o StrictMode mostrando que falta a limpeza do efeito.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Passo 4</div>
+          <div class="footer-page">46</div>
+        </div>
+      </section>
+
+      <!-- ==================== 47: PASSO 5 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 5 de 6: o formulário de cotação (<span class="mono">TODO-5</span>, 12 min)</h2>
+        </div>
+
+        <p style="font-size:0.74em; margin-top:2px;">Arquivo: <span class="mono">portal/src/componentes/CotacaoFrete.tsx</span>. Formulário controlado, com os 3 testes de tela já escritos e vermelhos.</p>
+
+        <div class="concept-cards" style="grid-template-columns: 1fr 1fr; gap:13px; margin-top:6px;">
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>Campo controlado</h4>
+            <p style="font-size:0.63em; line-height:1.55;">Cada <span class="mono">input</span> tem <span class="mono">value</span> vindo do estado e <span class="mono">onChange</span> escrevendo nele. Os campos começam com a rota de referência: <span class="mono">SAO</span>, <span class="mono">LDB</span>, <span class="mono">100</span> e <span class="mono">padrao</span>.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>As duas armadilhas</h4>
+            <p style="font-size:0.63em; line-height:1.55;"><span class="mono">event.preventDefault()</span>, senão a página recarrega e o resultado some. E <span class="mono">Number(peso)</span>, porque o valor de um <span class="mono">input</span> é sempre texto, inclusive com <span class="mono">type="number"</span>.</p>
+          </div>
+        </div>
+
+        <pre class="code-compact" style="margin-top:8px;"><code class="language-bash">cd portal &amp;&amp; npx vitest run src/componentes/CotacaoFrete.tela.test.tsx &amp;&amp; cd ..
+python3 verificar.py --criterio 6
+git commit -am "feat(todo-5): formulario de cotacao de frete"</code></pre>
+
+        <div class="callout" style="margin-top:8px;">
+          <p style="font-size:0.64em;">Com <span class="mono">pedidos</span> na 8080 e <span class="mono">frete</span> na 8000, abram <span class="mono">http://localhost:5173</span> e vejam a tela funcionando de ponta a ponta. É a primeira vez no semestre que a plataforma tem rosto.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Passo 5</div>
+          <div class="footer-page">47</div>
+        </div>
+      </section>
+
+      <!-- ==================== 48: PASSO 6 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 6 de 6: o teste que você escreve (<span class="mono">TODO-6</span>, 8 min)</h2>
+        </div>
+
+        <p style="font-size:0.74em; margin-top:2px;">Arquivo: <span class="mono">portal/src/componentes/CotacaoFrete.chamada.test.tsx</span>. No mínimo <strong>2 testes</strong> sobre a chamada, e não sobre a tela.</p>
+
+        <pre class="code-compact" style="margin-top:6px;"><code class="language-typescript">await userEvent.selectOptions(screen.getByLabelText(/modalidade/i), 'expresso');
+await userEvent.click(screen.getByRole('button', { name: /cotar/i }));
+
+expect(cotarFreteDublado).toHaveBeenCalledTimes(1);
+expect(cotarFreteDublado).toHaveBeenCalledWith({
+  origem: 'SAO', destino: 'LDB', pesoKg: 100, modalidade: 'expresso',
+});</code></pre>
+
+        <div class="concept-cards" style="grid-template-columns: 1fr 1fr; gap:13px; margin-top:8px;">
+          <div class="concept-card" style="padding:12px 16px;">
+            <h4>O segundo teste</h4>
+            <p style="font-size:0.62em;">Digite outra origem e outro destino nos campos e confira que os novos valores chegam à chamada, <strong>em maiúsculas</strong>.</p>
+          </div>
+          <div class="concept-card" style="padding:12px 16px;">
+            <h4>Como ele é avaliado</h4>
+            <p style="font-size:0.62em;">Contra os mutantes M6 e M7, que não mudam um pixel da tela: a modalidade cravada e o peso enviado como texto.</p>
+          </div>
+        </div>
+
+        <pre class="code-compact" style="margin-top:8px;"><code class="language-bash">cd portal &amp;&amp; npx vitest run &amp;&amp; cd ..
+python3 verificar.py --criterio 7
+git commit -am "test(todo-6): o que o formulario envia pela rede"</code></pre>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Passo 6</div>
+          <div class="footer-page">48</div>
+        </div>
+      </section>
+
+      <!-- ==================== 49: ENTREGA E ORDEM DE CORTE ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O que vai no repositório, e o que sai se o relógio vencer</h2>
+        </div>
+
+        <div class="side-by-side" style="margin-top:6px;">
+          <div class="side">
+            <h4>Entregáveis</h4>
+            <ul style="font-size:0.62em; line-height:1.5;">
+              <li>As <strong>6 lacunas</strong>, uma por commit.</li>
+              <li><span class="mono">pytest</span> verde, com no mínimo <strong>20 testes</strong>.</li>
+              <li><span class="mono">vitest</span> verde, com no mínimo <strong>9 testes</strong>.</li>
+              <li>4 testes no Stub, 3 no Mock, 3 no Spy, 2 no de chamada.</li>
+              <li>Os <strong>7 mutantes</strong> pegos.</li>
+              <li><span class="mono">docs/EVIDENCIAS.md</span> com os <strong>9 marcadores</strong>.</li>
+              <li><span class="mono">verificar.py</span> imprimindo <strong>8 de 8</strong>.</li>
+            </ul>
+          </div>
+          <div class="side">
+            <h4>Ordem de corte, declarada antes de começar</h4>
+            <ul style="font-size:0.62em; line-height:1.5;">
+              <li><strong>1.</strong> <span class="mono">TODO-1</span> e <span class="mono">TODO-2</span>, Stub e Mock. São a tese da aula. Não caem em hipótese nenhuma.</li>
+              <li><strong>2.</strong> <span class="mono">TODO-4</span>, a tela de rastreamento: é onde <span class="mono">useState</span>, <span class="mono">useEffect</span> e o array de dependências acontecem.</li>
+              <li><strong>3.</strong> <span class="mono">TODO-5</span>, o formulário.</li>
+              <li><strong>4.</strong> <span class="mono">TODO-3</span> e <span class="mono">TODO-6</span> são os primeiros a ficar para casa. Terminem depois e refaçam o push.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:9px;">
+          <p style="font-size:0.66em; line-height:1.5;">Sobre cobertura: <strong>este laboratório não pede número de cobertura, e é deliberado</strong>. Perseguir 100 por cento leva a teste de getter, que é linha coberta sem comportamento verificado. A régua aqui é mutante pego, não linha tocada.</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A régua é pública</span>
+          <p><span class="mono">python3 verificar.py</span> imprimindo 8 de 8 é a mesma régua que o professor roda. Sem surpresa: se passou aí, passou lá.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Entrega</div>
+          <div class="footer-page">49</div>
+        </div>
+      </section>
+
+      <!-- ==================== 50: FORMULÁRIO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Formulário de Entrega</h2>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 620px 1fr; gap:26px; align-items:start; margin-top:4px;">
+          <div style="border:2px dashed #c0392b; border-radius:8px; height:340px; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#fdedec; padding:20px;">
+            <div style="font-size:1.05em; font-weight:800; color:#c0392b; margin-bottom:12px;">Formulário ainda não publicado</div>
+            <p style="font-size:0.68em; color:#a03028; text-align:center; margin:0 0 10px; line-height:1.5;">
+              A URL de entrega desta aula <strong>será publicada pelo professor antes do encontro</strong>,
+              e este slide passa a exibi-la aqui.
+            </p>
+            <p style="font-size:0.64em; color:#a03028; text-align:center; margin:0; line-height:1.5;">
+              Até lá, não use o formulário de outra aula: cada entrega é registrada em um formulário próprio.
+            </p>
+          </div>
+
+          <div>
+            <div class="concept-cards" style="grid-template-columns:1fr; gap:10px; margin-top:0;">
+              <div class="concept-card" style="padding:11px 16px;">
+                <h4>O que enviar</h4>
+                <p style="font-size:0.66em;">A URL do <strong>fork da dupla</strong>, no formato<br><span class="mono">github.com/usuario/mwe-2026-2-lab10-testes-react</span></p>
+              </div>
+              <div class="concept-card" style="padding:11px 16px;">
+                <h4>Quem envia</h4>
+                <p style="font-size:0.66em;">Um envio por dupla, com os dois nomes.</p>
+              </div>
+              <div class="concept-card" style="padding:11px 16px;">
+                <h4>Até quando</h4>
+                <p style="font-size:0.66em;">Até 22h50, com os commits no fork.</p>
+              </div>
+            </div>
+
+            <div class="callout" style="margin-top:9px; padding:11px 15px;">
+              <p style="font-size:0.64em; margin:0; line-height:1.5;">Critérios de aceitação completos no
+                <a href="https://github.com/josercf/mwe-2026-2-lab10-testes-react" target="_blank" style="color:var(--fiap-pink); font-weight:700;">README do Lab Kit</a></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Entrega da Atividade</div>
+          <div class="footer-page">50</div>
+        </div>
+      </section>
+
+      <!-- ==================== 51: O QUE VEM ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O que vem: a mesma tela, com o framework opinado</h2>
+        </div>
+
+        <div class="concept-cards" style="grid-template-columns: 1fr 1fr; gap:16px; margin-top:8px;">
+          <div class="concept-card" style="padding:16px 20px;">
+            <h4>Aula 11, 13/10: Angular, RxJS e o padrão Observer</h4>
+            <p style="font-size:0.67em;">O painel administrativo da LogiTech, consumindo o serviço de Faturamento em .NET e a telemetria da frota. React é uma <strong>biblioteca</strong>: você monta a arquitetura. Angular é um <strong>framework</strong>: ele já vem com ela, com injeção de dependência nativa e fluxos reativos.</p>
+          </div>
+          <div class="concept-card" style="padding:16px 20px;">
+            <h4>E o que continua valendo daqui</h4>
+            <p style="font-size:0.67em;">A função de limpeza do <span class="mono">useEffect</span> volta com outro nome: no RxJS, o <span class="mono">switchMap</span> cancela a inscrição anterior quando chega uma nova. É a mesma corrida, resolvida por um operador em vez de por uma bandeira. E o dublê continua sendo dublê: lá ele entra pela injeção de dependência.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A espiral continua</span>
+          <p>Sockets viraram HTTP, que virou container, que virou plataforma orquestrada, que ganhou um agente. Hoje ela ganhou <strong>rede de proteção e rosto</strong>. Na Aula 12 ela ganha memória semântica com <span class="mono">pgvector</span> e RAG, e a Global Solution herda o conjunto. Guardem o fork.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Próximos Passos</div>
+          <div class="footer-page">51</div>
+        </div>
+      </section>
+
+      <!-- ==================== 52: REFERÊNCIAS ==================== -->
+      <section id="ref-slide" class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Referências Bibliográficas e Documentação</h2>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px 26px; font-size:0.56em; line-height:1.42; color:var(--fiap-gray);">
+          <div>
+            <p style="margin:0 0 7px;"><strong style="color:var(--fiap-pink);">[1] Pirâmide de testes</strong><br>
+            COHN, M. <em>Succeeding with Agile</em>. Addison-Wesley, 2009.<br>
+            FOWLER, M.: <a href="https://martinfowler.com/bliki/TestPyramid.html" target="_blank" style="color:var(--fiap-pink);">TestPyramid</a> | <a href="https://martinfowler.com/bliki/UnitTest.html" target="_blank" style="color:var(--fiap-pink);">UnitTest</a></p>
+
+            <p style="margin:0 0 7px;"><strong style="color:var(--fiap-pink);">[2] Cobertura e teste de mutação</strong><br>
+            MARICK, B. <em>How to Misuse Code Coverage</em>. 1997.<br>
+            FOWLER, M.: <a href="https://martinfowler.com/bliki/TestCoverage.html" target="_blank" style="color:var(--fiap-pink);">TestCoverage</a> | PITEST: <a href="https://pitest.org/" target="_blank" style="color:var(--fiap-pink);">pitest.org</a> | <a href="https://mutmut.readthedocs.io/" target="_blank" style="color:var(--fiap-pink);">mutmut</a></p>
+
+            <p style="margin:0 0 7px;"><strong style="color:var(--fiap-pink);">[3] TDD</strong><br>
+            BECK, K. <em>Test-Driven Development: By Example</em>. Addison-Wesley, 2002.<br>
+            FREEMAN, S.; PRYCE, N. <em>Growing Object-Oriented Software, Guided by Tests</em>. Addison-Wesley, 2009.</p>
+
+            <p style="margin:0 0 7px;"><strong style="color:var(--fiap-pink);">[4] Dublês de teste: Stub, Mock e Spy</strong><br>
+            MESZAROS, G. <em>xUnit Test Patterns</em>. Addison-Wesley, 2007.<br>
+            FOWLER, M.: <a href="https://martinfowler.com/articles/mocksArentStubs.html" target="_blank" style="color:var(--fiap-pink);">Mocks Aren't Stubs</a> | PYTHON: <a href="https://docs.python.org/3/library/unittest.mock.html" target="_blank" style="color:var(--fiap-pink);">unittest.mock</a> | <a href="https://docs.pytest.org/" target="_blank" style="color:var(--fiap-pink);">pytest</a></p>
+
+            <p style="margin:0;"><strong style="color:var(--fiap-pink);">[5] React: JSX e componentes</strong><br>
+            REACT: <a href="https://react.dev/learn/writing-markup-with-jsx" target="_blank" style="color:var(--fiap-pink);">Writing Markup with JSX</a> | <a href="https://react.dev/learn/your-first-component" target="_blank" style="color:var(--fiap-pink);">Your First Component</a> | <a href="https://react.dev/blog/2024/12/05/react-19" target="_blank" style="color:var(--fiap-pink);">React 19</a></p>
+          </div>
+
+          <div>
+            <p style="margin:0 0 7px;"><strong style="color:var(--fiap-pink);">[6] Renderização, diffing e listas</strong><br>
+            REACT: <a href="https://react.dev/learn/render-and-commit" target="_blank" style="color:var(--fiap-pink);">Render and Commit</a> | <a href="https://react.dev/learn/rendering-lists" target="_blank" style="color:var(--fiap-pink);">Rendering Lists</a><br>
+            REACT: <a href="https://react.dev/learn/preserving-and-resetting-state" target="_blank" style="color:var(--fiap-pink);">Preserving and Resetting State</a></p>
+
+            <p style="margin:0 0 7px;"><strong style="color:var(--fiap-pink);">[7] Hooks de estado e de efeito</strong><br>
+            REACT: <a href="https://react.dev/reference/react/useState" target="_blank" style="color:var(--fiap-pink);">useState</a> | <a href="https://react.dev/reference/react/useEffect" target="_blank" style="color:var(--fiap-pink);">useEffect</a><br>
+            REACT: <a href="https://react.dev/learn/synchronizing-with-effects" target="_blank" style="color:var(--fiap-pink);">Synchronizing with Effects</a> | <a href="https://react.dev/learn/you-might-not-need-an-effect" target="_blank" style="color:var(--fiap-pink);">You Might Not Need an Effect</a></p>
+
+            <p style="margin:0 0 7px;"><strong style="color:var(--fiap-pink);">[8] CORS e política de mesma origem</strong><br>
+            MDN: <a href="https://developer.mozilla.org/pt-BR/docs/Web/HTTP/CORS" target="_blank" style="color:var(--fiap-pink);">Cross-Origin Resource Sharing</a> | <a href="https://developer.mozilla.org/pt-BR/docs/Web/Security/Same-origin_policy" target="_blank" style="color:var(--fiap-pink);">Same-origin policy</a><br>
+            FASTAPI: <a href="https://fastapi.tiangolo.com/tutorial/cors/" target="_blank" style="color:var(--fiap-pink);">CORSMiddleware</a></p>
+
+            <p style="margin:0 0 7px;"><strong style="color:var(--fiap-pink);">[9] Vitest e Testing Library</strong><br>
+            VITEST: <a href="https://vitest.dev/guide/" target="_blank" style="color:var(--fiap-pink);">Guide</a> | <a href="https://vitest.dev/api/vi.html" target="_blank" style="color:var(--fiap-pink);">vi.mock e vi.fn</a><br>
+            TESTING LIBRARY: <a href="https://testing-library.com/docs/react-testing-library/intro/" target="_blank" style="color:var(--fiap-pink);">React Testing Library</a> | <a href="https://testing-library.com/docs/queries/about/" target="_blank" style="color:var(--fiap-pink);">Queries</a> | VITE: <a href="https://vite.dev/guide/" target="_blank" style="color:var(--fiap-pink);">Guide</a></p>
+
+            <p style="margin:0;"><strong style="color:var(--fiap-pink);">[10] Lab Kit e contrato da plataforma</strong><br>
+            LAB KIT: <a href="https://github.com/josercf/mwe-2026-2-lab10-testes-react" target="_blank" style="color:var(--fiap-pink);">mwe-2026-2-lab10-testes-react</a><br>
+            ADR-006 e ADR-008 do acervo da disciplina, contratos dos Módulos II e III.</p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">10 – Bibliografia da Aula</div>
+          <div class="footer-page">52</div>
+        </div>
+      </section>
+
+      <!-- ==================== 53: ENCERRAMENTO ==================== -->
+      <section class="end-slide">
+        <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" style="max-width:350px;">
+        <div class="copyright">
+          Copyright &copy; 2026<br>
+          Prof. José Romualdo da Costa Filho<br><br>
+          Todos os direitos reservados. É expressamente proibida a reprodução, divulgação<br>
+          total ou parcial, deste material acadêmico sem autorização formal,<br>
+          por escrito, do Professor autor da ementa.
+        </div>
       </section>
 
     </div>
@@ -233,8 +2348,21 @@ npm run dev
       slideNumber: false,
       width: 1280,
       height: 720,
+      margin: 0,
+      minScale: 0.2,
+      maxScale: 2.0,
+      center: false,
+      pdfMaxPagesPerSlide: 1,
+      pdfSeparateFragments: false,
+      transition: 'slide',
+      transitionSpeed: 'default',
       plugins: [RevealHighlight]
     });
+    // startTimer(elementId, segundos) vem de ../assets/js/fiap-quiz.js
   </script>
+  <!-- Cliente do serviço Pulso: liga os quizzes com data-quiz-key à votação ao vivo.
+       Carregamento assíncrono (defer) e opcional: se o host estiver fora do ar
+       ou o script falhar, o quiz continua funcionando no modo local de sempre. -->
+  <script defer src="https://vote.jrcf.dev/client.js"></script>
 </body>
 </html>

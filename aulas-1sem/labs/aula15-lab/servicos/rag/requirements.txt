@@ -1,0 +1,6 @@
+# Mesmas versões do AI Gateway, herdadas da Aula 07. O TODO-5b vale para as
+# duas imagens Python do laboratório: o Trivy aponta a mesma coisa nas duas.
+fastapi==0.115.6
+uvicorn==0.34.0
+pydantic==2.10.4
+httpx==0.28.1

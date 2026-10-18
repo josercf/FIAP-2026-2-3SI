@@ -1,0 +1,73 @@
+# GABARITO do `servicos/notificacoes/Dockerfile` (TODO-5a).
+#
+#     cp resgate/Dockerfile.notificacoes servicos/notificacoes/Dockerfile
+#
+# O que o Trivy apontou, na varredura de preparação deste laboratório
+# (31/07/2026, banco de vulnerabilidades do dia):
+#
+#   CVE-2026-59873  CRITICAL  tar 7.5.11
+#   CVE-2026-59874  HIGH      tar 7.5.11
+#   CVE-2026-48815  HIGH      sigstore 3.1.0
+#   CVE-2026-33671  HIGH      picomatch 4.0.3
+#   CVE-2026-13149  HIGH      brace-expansion 2.0.2
+#   CVE-2026-14257  HIGH      brace-expansion 2.0.2
+#
+# E o `PkgPath` de todas as seis:
+#
+#   usr/local/lib/node_modules/npm/node_modules/...
+#
+# Nenhuma delas é dependência da aplicação. O `package.json` deste serviço não
+# tem uma única dependência: o servidor usa só o `node:http`. As seis vêm do
+# **npm que a imagem base instala**, e o container roda `node server.ts`, que
+# nunca chama o npm.
+#
+# É a lição do Passo 5 e vale mais do que a correção: **superfície de ataque é
+# o que está na imagem, não o que o seu código usa.** Ferramenta de build
+# dentro da imagem de execução é dívida que aparece toda semana no relatório e
+# que ninguém consegue pagar, porque a correção depende de o mantenedor da base
+# publicar uma imagem nova.
+#
+# Trocar `node:22-alpine` por uma tag mais recente empurra o problema: a base
+# nova traz npm igual, e o relógio recomeça. Tirar o npm resolve a classe.
+#
+# O `apk --no-cache upgrade` cuida do outro lado, o do sistema operacional: ele
+# atualiza os pacotes do Alpine que ganharam correção depois de a tag da imagem
+# ser publicada. Foi o que zerou a CVE de `libexpat` na imagem Java do
+# `pedidos`. Tem um preço declarado: o mesmo `docker build` passa a produzir
+# imagens diferentes em dias diferentes. Quem precisa de build reproduzível
+# troca isto por reconstruir a partir de uma tag de base mais nova, com data.
+#
+# UMA COISA QUE ESTE ARQUIVO NÃO FAZ, E É BOM SABER
+# -------------------------------------------------
+# Ele **não reduz o tamanho da imagem**. Medido: 58,1 MB antes, 58,3 MB depois.
+#
+# Camada não desfaz camada. O `rm -rf` roda numa camada acima daquela em que o
+# npm foi instalado, e o que ele cria é um registro de remoção, não a devolução
+# dos bytes. O npm continua dentro do arquivo da imagem, em uma camada de
+# baixo, e quem tiver acesso ao registro consegue extraí-lo de lá.
+#
+# O relatório do Trivy fica limpo porque o Trivy varre o sistema de arquivos
+# **montado**, que é o que o container enxerga, e ali o npm não existe mais.
+# Isso resolve o problema real, que é o pacote alcançável em tempo de execução.
+# Não resolve o outro, e a solução daquele é diferente: instalar a ferramenta
+# só no estágio de build, e nunca no de execução.
+
+FROM node:22-alpine AS base
+WORKDIR /build
+COPY package.json server.ts ./
+
+FROM node:22-alpine
+WORKDIR /app
+RUN apk --no-cache upgrade \
+ && adduser -D -H -s /sbin/nologin logitech \
+ && rm -rf /usr/local/lib/node_modules/npm \
+           /usr/local/bin/npm \
+           /usr/local/bin/npx
+COPY --from=base /build ./
+
+ENV NODE_ENV=production \
+    LOGITECH_PORTA=3001
+
+USER logitech
+EXPOSE 3001
+CMD ["node", "server.ts"]

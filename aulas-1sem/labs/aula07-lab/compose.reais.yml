@@ -1,0 +1,192 @@
+# =============================================================================
+# Troca dos quatro serviços mínimos pelos serviços REAIS das Aulas 05 e 06
+# =============================================================================
+#
+# LEIA ANTES DE USAR. Este arquivo não faz parte do roteiro da aula.
+#
+# O `docker-compose.yml` que vocês escrevem hoje aponta para `servicos/`, onde
+# moram quatro versões mínimas de Pedidos, Faturamento, Frete e Notificações.
+# Elas obedecem ao contrato da ADR-006 (portas, rotas, `/health`), mas foram
+# escritas para esta aula: sobem em segundos e não trazem os padrões de projeto
+# das Aulas 05 e 06.
+#
+# Este arquivo troca as quatro pelos serviços que vocês mesmos construíram:
+# o Spring Boot com JPA e Factory Method da Aula 05, o .NET 8 com Repository,
+# o FastAPI com Strategy e o Node com Adapter e Decorator da Aula 06.
+#
+# ---------------------------------------------------------------------------
+# COMO LIGAR
+# ---------------------------------------------------------------------------
+#
+# A troca é sempre **explícita**, com dois `-f`. Este arquivo de propósito não
+# se chama `compose.reais.yml`: com aquele nome o Compose o leria
+# sozinho, e quem não fizesse nada cairia nos serviços reais sem saber, com o
+# build longo caindo no meio da aula.
+#
+#     docker compose -f docker-compose.yml -f compose.reais.yml up -d --build
+#
+# Para voltar aos mínimos, é só omitir o segundo `-f`.
+#
+#   1. Diga onde estão os dois laboratórios anteriores, no seu `.env`:
+#
+#        LOGITECH_SRC_AULA05=../aula05-lab
+#        LOGITECH_SRC_AULA06=../aula06-lab
+#
+#      Os caminhos são relativos a **este** diretório. Os valores acima são o
+#      padrão e servem para quem tem os três laboratórios lado a lado. Quem fez
+#      fork de repositórios separados troca pelos caminhos dos seus forks.
+#
+#      Se o caminho novo tiver uma profundidade diferente, o `dockerfile:` de
+#      cada serviço também precisa mudar: ele é relativo ao `context`, e os
+#      `../` de lá contam exatamente os níveis daqui até `aula07-lab/docker/`.
+#      Caminho absoluto também vale, e é o jeito mais seguro quando os
+#      laboratórios não são vizinhos:
+#
+#        dockerfile: /caminho/completo/aula07-lab/docker/Dockerfile.pedidos
+#
+#   2. Suba:
+#
+#        docker compose up -d --build
+#
+# ---------------------------------------------------------------------------
+# COMO DESLIGAR
+# ---------------------------------------------------------------------------
+#
+# Renomeie o arquivo. Não precisa apagar nem comentar nada:
+#
+#     docker compose up -d --build
+#     docker compose up -d --build
+#
+# Sem o segundo `-f`, o Compose volta aos serviços mínimos.
+# Para conferir qual dos dois está valendo antes de subir:
+#
+#     docker compose config | grep -A2 "pedidos:"
+#
+# ---------------------------------------------------------------------------
+# O QUE ESTE ARQUIVO NÃO FAZ
+# ---------------------------------------------------------------------------
+#
+# Ele **não** mexe em `healthcheck`, `ports`, `mem_limit`, `depends_on` nem
+# `environment`: tudo isso continua vindo do `docker-compose.yml` que vocês
+# escreveram, e o Compose funde os dois arquivos chave a chave. Aqui só muda
+# de onde a imagem é construída.
+#
+# As exceções são duas, e as duas estão comentadas onde acontecem: o serviço
+# `prepara-schemas`, que não existe no caminho padrão, e o `depends_on` do
+# `pedidos`, que passa a esperar por ele.
+
+services:
+
+  # ---------------------------------------------------------------------------
+  # Serviço efêmero: cria os schemas do banco e morre.
+  # ---------------------------------------------------------------------------
+  #
+  # Este é o preço de usar os serviços reais, e vale entender de onde ele vem.
+  #
+  # O `pedidos` da Aula 05 usa `hibernate.default_schema=pedidos` com
+  # `ddl-auto=update`. O Hibernate cria as **tabelas**, mas não cria o
+  # **schema** que as abriga: na Aula 05 o schema nasceu de um comando à mão,
+  # no passo 1 daquele roteiro:
+  #
+  #     docker exec logitech-postgres psql -U logitech -d logitech \
+  #       -c "CREATE SCHEMA IF NOT EXISTS pedidos; CREATE SCHEMA IF NOT EXISTS faturamento;"
+  #
+  # Dentro do Compose não há passo manual. Sem isto, o `pedidos` sobe, responde
+  # `/health` com `ok` e falha em toda consulta, com
+  # `ERROR: schema "pedidos" does not exist` enterrado no log. É o pior tipo de
+  # falha: o container fica verde e o serviço não funciona.
+  #
+  # O serviço mínimo de `servicos/pedidos/` não precisa disto porque executa o
+  # `CREATE SCHEMA` no próprio código, na subida. O real não faz, e não podemos
+  # mexer nele.
+  #
+  # Duas coisas a observar aqui, porque são conteúdo desta aula:
+  #
+  #   - `condition: service_completed_successfully` é a terceira condição de
+  #     `depends_on`, ao lado de `service_started` e `service_healthy`. Ela
+  #     espera o container **terminar com código zero**, que é exatamente a
+  #     semântica de uma tarefa de preparação.
+  #   - `CREATE SCHEMA IF NOT EXISTS` torna a tarefa idempotente. Ela roda a
+  #     cada `up` e não quebra na segunda vez.
+  #
+  # Consequência a assumir: com os serviços reais a plataforma passa a ter **nove**
+  # serviços declarados, e o `verificar.py --criterio 5` reprova exatamente por
+  # isso ("há serviços fora do contrato da ADR-006"). É esperado. O verificador
+  # foi escrito para o caminho padrão da aula; a seção do README sobre a troca
+  # lista tudo o que ele passa a acusar.
+  prepara-schemas:
+    image: postgres:16-alpine
+    environment:
+      PGPASSWORD: ${LOGITECH_DB_PASSWORD:?defina LOGITECH_DB_PASSWORD no arquivo .env}
+    networks:
+      - logitech-net
+    mem_limit: 64m
+    restart: "no"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command:
+      - psql
+      - -h
+      - postgres
+      - -U
+      - logitech
+      - -d
+      - logitech
+      - -v
+      - ON_ERROR_STOP=1
+      - -c
+      - CREATE SCHEMA IF NOT EXISTS pedidos; CREATE SCHEMA IF NOT EXISTS faturamento;
+
+  # ---------------------------------------------------------------------------
+  # Pedidos: Java 21, Spring Boot 3.3.5, Maven. O build mais caro dos quatro.
+  # ---------------------------------------------------------------------------
+  pedidos:
+    build:
+      # `context` é o diretório do serviço real; `dockerfile` é um caminho
+      # relativo a esse contexto, e é por isso que ele começa subindo dois
+      # níveis para voltar a este laboratório. O Dockerfile pode viver fora do
+      # contexto: o BuildKit lê os dois do sistema de arquivos do cliente.
+      context: ${LOGITECH_SRC_AULA05:-../aula05-lab}/pedidos
+      dockerfile: ../../aula07-lab/docker/Dockerfile.pedidos
+    # O `depends_on` do `docker-compose.yml` de vocês é um mapa, e mapa o
+    # Compose funde chave a chave: a espera pelo `postgres: service_healthy`
+    # continua valendo, e esta linha acrescenta a espera pelo preparador de
+    # schemas. Nada do que vocês escreveram é substituído.
+    depends_on:
+      prepara-schemas:
+        condition: service_completed_successfully
+
+  # ---------------------------------------------------------------------------
+  # Faturamento: C#, .NET 8, EF Core com Npgsql.
+  # ---------------------------------------------------------------------------
+  faturamento:
+    build:
+      context: ${LOGITECH_SRC_AULA05:-../aula05-lab}/faturamento
+      dockerfile: ../../aula07-lab/docker/Dockerfile.faturamento
+
+  # ---------------------------------------------------------------------------
+  # Frete: Python 3.12, FastAPI, Strategy com registro de modalidades.
+  # ---------------------------------------------------------------------------
+  frete:
+    build:
+      context: ${LOGITECH_SRC_AULA06:-../aula06-lab}/servicos/frete
+      dockerfile: ../../../aula07-lab/docker/Dockerfile.frete
+
+  # ---------------------------------------------------------------------------
+  # Notificações: Node 22, TypeScript, Adapter e Decorator.
+  # ---------------------------------------------------------------------------
+  notificacoes:
+    build:
+      context: ${LOGITECH_SRC_AULA06:-../aula06-lab}/servicos/notificacoes
+      dockerfile: ../../../aula07-lab/docker/Dockerfile.notificacoes
+    environment:
+      # O serviço real fala com o rastreamento da parceira (o `parceira-rastreio`
+      # da Aula 06), que não faz parte dos oito serviços do contrato da ADR-006 e
+      # por isso não está no `docker-compose.yml`. O endereço padrão do código é
+      # `http://localhost:9090`, que dentro do container não existe.
+      #
+      # `/health` e `POST /api/v1/notificacoes` não dependem dele: só a rota
+      # interna `GET /api/v1/rastreio/{codigo}` usa. A variável fica declarada
+      # para deixar a dependência visível em vez de escondida.
+      LOGITECH_RASTREIO_PARCEIRA_URL: ${LOGITECH_RASTREIO_PARCEIRA_URL:-http://parceira-rastreio:9090}

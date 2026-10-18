@@ -1,26 +1,442 @@
-version: '3.8'
+# =============================================================================
+# LogiTech Enterprise AI Platform - a plataforma inteira, treze serviços.
+# Aula 16, 17/11/2026. Hackathon de integração e simulado da banca.
+# =============================================================================
+#
+# ESTE ARQUIVO SOBE **QUEBRADO**, E ISSO É DE PROPÓSITO.
+#
+# Ele tem **seis falhas plantadas**, e todas as seis aconteceram de verdade
+# durante a construção deste acervo, entre março e julho de 2026. Nenhuma é
+# invenção didática: cada uma custou tempo de alguém, e por isso está aqui.
+#
+# O seu trabalho na Frente 1 não é copiar a correção. É **diagnosticar**: subir,
+# ler o que o Compose e os logs dizem, e descobrir qual serviço está mentindo
+# sobre a própria saúde. A banca vai perguntar "por que o serviço X ficou
+# unhealthy", e essa resposta não está no arquivo corrigido: está no caminho.
+#
+# O runbook de diagnóstico está no README, na seção "Quando algo não sobe".
+# Os quatro comandos que resolvem quase tudo:
+#
+#     docker compose ps -a               quem subiu, quem está healthy
+#     docker compose logs <servico>      o que o processo disse antes de morrer
+#     docker inspect --format '{{json .State.Health}}' <container> | python3 -m json.tool
+#     docker compose exec <a> wget -qO- http://<b>:<porta>/health
+#
+# Cada falha tem um rótulo `FALHA-N` no lugar onde ela mora. Os rótulos existem
+# para você registrar a correção em docs/EVIDENCIAS.md, e não para dispensar o
+# diagnóstico: leia o sintoma antes de ler o rótulo.
+#
+# Os nomes de serviço, portas, rotas e variáveis são o contrato da plataforma
+# (ADR-006, ADR-008 e ADR-009). Trocar um nome aqui quebra outro serviço.
+#
+# ANTES DE COMEÇAR:
+#
+#     cp .env.exemplo .env
+#     docker network create logitech-net        # se ainda não existir
+#     docker volume  create logitech-telemetria
+#
+# =============================================================================
+
+name: logitech
+
+# Bloco reutilizável de healthcheck, com âncora YAML, herdado da Aula 07.
+x-saude: &saude
+  interval: 10s
+  timeout: 5s
+  retries: 10
+  start_period: 30s
+
+# Os quatro valores de identidade que quase todo backend precisa. Repetir isto
+# doze vezes é como o erro de issuer nasce: um serviço fica para trás numa
+# correção e passa a recusar o token que os outros aceitam.
+x-identidade: &identidade
+  # FALHA-6: falta aqui a variável que liga a autenticação.
+  #
+  # A ADR-009 criou `LOGITECH_AUTH_ATIVA` com padrão **false**, para que os
+  # laboratórios das Aulas 05 a 12 continuassem passando depois que a Aula 14
+  # pôs segurança na plataforma. Sem declará-la aqui, os treze serviços sobem,
+  # ficam healthy, e não protegem absolutamente nada.
+  #
+  # Sintoma: `curl http://localhost:8080/api/v1/pedidos` **sem token** devolve
+  # 200. O `GET /health` de cada serviço anuncia `auth_ativa`, e é por ele que
+  # se confirma.
+  #
+  # FALHA-2: o issuer abaixo está errado, e o erro é sutil.
+  #
+  # `http://keycloak:8090` é o endereço da rede interna, que é por onde o
+  # backend busca o JWKS. Mas o `iss` que o Keycloak grava dentro do token é o
+  # endereço pelo qual o **navegador** chegou, `http://localhost:8090`. São
+  # dois valores diferentes, e é por isso que existem duas variáveis.
+  #
+  # Sintoma: o login funciona, o token chega, e toda rota protegida devolve
+  # 401. O motivo aparece no corpo da resposta e no log do serviço.
+  LOGITECH_OIDC_ISSUER: http://keycloak:8090/realms/logitech
+  LOGITECH_OIDC_JWKS_URL: http://keycloak:8090/realms/logitech/protocol/openid-connect/certs
+  LOGITECH_CORS_ORIGINS: http://localhost:5173,http://localhost:4200
 
 services:
-  auth-api:
-    build: ./auth-service
-    container_name: logitech-auth
+
+  # =====================================================================
+  # Infraestrutura: banco e identidade
+  # =====================================================================
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: logitech
+      POSTGRES_USER: logitech
+      POSTGRES_PASSWORD: ${LOGITECH_DB_PASSWORD:?defina LOGITECH_DB_PASSWORD no .env (copie de .env.exemplo)}
+    volumes:
+      - logitech-postgres:/var/lib/postgresql/data
+      - ./banco:/docker-entrypoint-initdb.d:ro
+    # Repare que o banco NÃO publica porta nenhuma no host, como na Aula 07:
+    # ele só é alcançável de dentro da rede da plataforma. Além de ser a
+    # postura certa, evita a colisão com qualquer PostgreSQL que já esteja
+    # ocupando a 5432 na máquina, que é o defeito mais comum de quem tem
+    # outro projeto de pé. Para abrir o `psql`:
+    #     docker compose exec postgres psql -U logitech -d logitech
+    networks:
+      - logitech-net
+    mem_limit: 384m
+    healthcheck:
+      <<: *saude
+      test: ["CMD-SHELL", "pg_isready -U logitech -d logitech"]
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0
+    command: ["start-dev", "--import-realm", "--http-port=8090"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${LOGITECH_KEYCLOAK_ADMIN_SENHA:-admin}
+      # O endereço pelo qual o navegador alcança o Keycloak. É ELE que acaba
+      # dentro do `iss` de todo token emitido, e é por isso que os serviços
+      # esperam `localhost:8090` no issuer mesmo estando na rede interna.
+      KC_HOSTNAME: http://localhost:8090
+      KC_HOSTNAME_BACKCHANNEL_DYNAMIC: "true"
+      KC_HEALTH_ENABLED: "true"
+      KC_HTTP_ENABLED: "true"
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import:ro
+    ports:
+      # FALHA-3: esta publicação colide com outro serviço da plataforma.
+      #
+      # Sintoma: o `docker compose up` morre com "Bind for 0.0.0.0:8080 failed:
+      # port is already allocated", e o serviço que aparece na mensagem pode
+      # não ser o que está errado: quem chegou primeiro ganha a porta.
+      #
+      # A ADR-009 fixou a 8090 para o Keycloak justamente para não brigar com a
+      # 8080. Repare que o `--http-port` do `command` já diz 8090: quem está
+      # fora do lugar é o mapeamento do host.
+      - "8080:8090"
+    networks:
+      - logitech-net
+    mem_limit: 768m
+    healthcheck:
+      <<: *saude
+      # A imagem do Keycloak 26 não traz `wget` nem `curl`: ela é UBI micro. O
+      # que ela traz é `bash`, e o /dev/tcp do bash abre socket. Este é o
+      # exemplo de que healthcheck não é um comando fixo, é uma pergunta que
+      # cada imagem responde com o que tem dentro.
+      test:
+        - CMD-SHELL
+        - >-
+          exec 3<>/dev/tcp/127.0.0.1/9000 &&
+          printf 'GET /health/ready HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n' >&3 &&
+          grep -q '"status": "UP"' <&3
+      start_period: 60s
+
+  # =====================================================================
+  # Telemetria: os dois serviços mais antigos da plataforma
+  # =====================================================================
+
+  coletor:
+    build: ./servicos/coletor
+    environment:
+      LOGITECH_DADOS: /dados/telemetria.jsonl
+    volumes:
+      - logitech-telemetria:/dados
+    ports:
+      - "8081:8081/udp"
+      - "8082:8082"
+    networks:
+      - logitech-net
+    mem_limit: 96m
+    healthcheck:
+      <<: *saude
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8082/health"]
+
+  painel:
+    build: ./servicos/painel
+    environment:
+      LOGITECH_TELEMETRIA_URL: http://coletor:8082/telemetria
+      LOGITECH_CORS_ORIGINS: http://localhost:5173,http://localhost:4200
     ports:
       - "3000:3000"
     networks:
       - logitech-net
-
-  ai-api:
-    build: ./ai-service
-    container_name: logitech-ai
-    ports:
-      - "8000:8000"
-    environment:
-      - AUTH_SERVICE_URL=http://auth-api:3000
+    mem_limit: 128m
     depends_on:
-      - auth-api
+      coletor:
+        condition: service_healthy
+    healthcheck:
+      <<: *saude
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:3000/health"]
+
+  # =====================================================================
+  # Negócio: os quatro serviços das Aulas 05 e 06
+  # =====================================================================
+
+  pedidos:
+    build: ./servicos/pedidos
+    environment:
+      <<: *identidade
+      LOGITECH_DB_URL: jdbc:postgresql://postgres:5432/logitech
+      LOGITECH_DB_USER: logitech
+      LOGITECH_DB_PASSWORD: ${LOGITECH_DB_PASSWORD}
+      LOGITECH_FRETE_URL: http://frete:8000
+      LOGITECH_FATURAMENTO_URL: http://faturamento:5080
+      LOGITECH_NOTIFICACOES_URL: http://notificacoes:3001
+    ports:
+      - "8080:8080"
     networks:
       - logitech-net
+    mem_limit: 384m
+    depends_on:
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      <<: *saude
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/health"]
+
+  faturamento:
+    build: ./servicos/faturamento
+    environment:
+      <<: *identidade
+      LOGITECH_DB_URL: Host=postgres;Port=5432;Database=logitech;Username=logitech;Password=${LOGITECH_DB_PASSWORD}
+      LOGITECH_FATURAMENTO_ATRASO_MS: "800"
+    ports:
+      - "5080:5080"
+    networks:
+      - logitech-net
+    mem_limit: 256m
+    depends_on:
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      <<: *saude
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:5080/health"]
+
+  frete:
+    build: ./servicos/frete
+    environment:
+      <<: *identidade
+    ports:
+      - "8000:8000"
+    networks:
+      - logitech-net
+    mem_limit: 192m
+    depends_on:
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      <<: *saude
+      # FALHA-1: este healthcheck usa um nome que resolve para o lugar errado.
+      #
+      # Sintoma: o serviço responde normalmente pelo host
+      # (`curl localhost:8000/health` devolve 200) e mesmo assim o container
+      # fica `unhealthy` para sempre, e tudo que depende dele nunca começa.
+      #
+      # Dica de diagnóstico: leia a saída do próprio healthcheck com
+      #     docker inspect --format '{{json .State.Health}}' <container>
+      # Ela diz "Connection refused", com o serviço no ar.
+      #
+      # A mesma linha errada está no `notificacoes`, logo abaixo.
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:8000/health"]
+
+  notificacoes:
+    build: ./servicos/notificacoes
+    environment:
+      <<: *identidade
+    ports:
+      - "3001:3001"
+    networks:
+      - logitech-net
+    mem_limit: 160m
+    depends_on:
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      <<: *saude
+      # FALHA-1, a segunda ocorrência da MESMA linha errada, e ela ensina mais
+      # que a primeira: aqui o healthcheck **passa**.
+      #
+      # O `notificacoes` roda em Node, e o servidor HTTP do Node escuta em `::`,
+      # que aceita conexão IPv4 mapeada. O `frete` roda em uvicorn, que escuta
+      # em `0.0.0.0`, só IPv4. A mesma linha errada, dois desfechos, e o que
+      # decide é o que a stack faz por baixo.
+      #
+      # Corrija esta também. Defeito que só não aparece porque a stack ao lado
+      # é tolerante não é defeito corrigido: é defeito esperando outra imagem
+      # base, outra versão do Node ou outro sistema operacional.
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://localhost:3001/health"]
+
+  # =====================================================================
+  # Inteligência: gateway, RAG e o servidor MCP
+  # =====================================================================
+
+  ai-gateway:
+    build: ./servicos/ai-gateway
+    environment:
+      <<: *identidade
+      LOGITECH_GUARDRAILS_ATIVOS: "true"
+      LOGITECH_IA_ESTRATEGIA: preferir-remoto
+      LOGITECH_IA_REMOTA_URL: https://api.openai.com/v1/chat/completions
+      LOGITECH_IA_REMOTA_CHAVE: ${LOGITECH_IA_REMOTA_CHAVE:-}
+      LOGITECH_IA_OLLAMA_URL: http://host.docker.internal:11434
+      LOGITECH_IA_MODELO_LOCAL: ${LOGITECH_IA_MODELO_LOCAL:-qwen2.5:1.5b}
+      LOGITECH_IA_LIMITE_POR_MINUTO: "60"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "4000:4000"
+    networks:
+      - logitech-net
+    mem_limit: 256m
+    depends_on:
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      <<: *saude
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:4000/health"]
+
+  rag:
+    build:
+      # A raiz, e não ./servicos/rag: o Dockerfile precisa de `contratos/`.
+      context: .
+      dockerfile: servicos/rag/Dockerfile
+    environment:
+      <<: *identidade
+      LOGITECH_DB_URL: postgresql://logitech:${LOGITECH_DB_PASSWORD}@postgres:5432/logitech
+      LOGITECH_OLLAMA_URL: http://host.docker.internal:11434
+      LOGITECH_EMBEDDING_MODELO: ${LOGITECH_EMBEDDING_MODELO:-paraphrase-multilingual}
+      LOGITECH_MODELO: ${LOGITECH_MODELO:-qwen2.5:1.5b}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "8010:8010"
+    networks:
+      - logitech-net
+    mem_limit: 320m
+    # FALHA-4: esta forma de `depends_on` não espera o que você acha que espera.
+    #
+    # A forma curta, em lista, espera o **container existir**. Ela não espera o
+    # PostgreSQL aceitar conexão. Numa máquina rápida às vezes passa, e é o que
+    # torna esta falha traiçoeira: ela aparece na máquina de outra pessoa.
+    #
+    # Sintoma: o `rag` sobe, fica unhealthy e o log mostra falha de conexão com
+    # o banco. Subir de novo "resolve", o que é a assinatura de uma corrida.
+    #
+    # A forma longa, com `condition: service_healthy`, é a que espera o
+    # healthcheck do outro serviço passar. Ela já está usada no `pedidos`:
+    # compare os dois.
+    depends_on:
+      - postgres
+      - keycloak
+    healthcheck:
+      <<: *saude
+      # A imagem é `slim` por causa do psycopg, e slim não traz o wget do
+      # BusyBox. O Python que já está dentro resolve.
+      test:
+        - CMD-SHELL
+        - python -c "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8010/health',timeout=3)"
+
+  mcp-logitech:
+    build:
+      context: .
+      dockerfile: servicos/mcp-logitech/Dockerfile
+    environment:
+      LOGITECH_RAG_URL: http://rag:8010
+      LOGITECH_PEDIDOS_URL: http://pedidos:8080
+      LOGITECH_OIDC_TOKEN_URL: http://keycloak:8090/realms/logitech/protocol/openid-connect/token
+      LOGITECH_OIDC_CLIENT_ID: logitech-portal
+      LOGITECH_MCP_USUARIO: ${LOGITECH_MCP_USUARIO:-carla.admin}
+      LOGITECH_MCP_SENHA: ${LOGITECH_MCP_SENHA:-logitech}
+    # FALHA-5: falta uma linha aqui, e é a que mantém este serviço vivo.
+    #
+    # Este é o décimo terceiro serviço da plataforma e o único **sem porta**: o
+    # transporte padrão do MCP é stdio, e ele conversa por entrada e saída
+    # padrão, não por HTTP.
+    #
+    # Sintoma: o container sobe e sai imediatamente, sem erro nenhum no log. O
+    # `docker compose ps -a` mostra `Exited (0)`. Saiu com sucesso, porque do
+    # ponto de vista do processo terminar de ler a entrada padrão é o fim
+    # normal do trabalho.
+    #
+    # Procure, na referência do Compose, a opção equivalente ao `-i` do
+    # `docker run`.
+    networks:
+      - logitech-net
+    mem_limit: 160m
+    depends_on:
+      rag:
+        condition: service_healthy
+    healthcheck:
+      <<: *saude
+      # Não há /health para chamar: este serviço não fala HTTP. O que prova que
+      # ele está de pé é o próprio aperto de mão do MCP, e é isso que o cliente
+      # de teste faz, subindo um segundo servidor como processo filho.
+      test: ["CMD", "node", "--experimental-strip-types", "src/cliente-teste.ts", "--json", "--sem-busca"]
+      start_period: 20s
+
+  # =====================================================================
+  # Frontends: as duas telas
+  # =====================================================================
+
+  portal:
+    build:
+      context: ./servicos/portal
+      args:
+        VITE_PEDIDOS_URL: http://localhost:8080
+        VITE_FRETE_URL: http://localhost:8000
+        VITE_OIDC_AUTORIDADE: http://localhost:8090/realms/logitech
+        VITE_OIDC_CLIENT_ID: logitech-portal
+    ports:
+      - "5173:5173"
+    networks:
+      - logitech-net
+    mem_limit: 128m
+    healthcheck:
+      <<: *saude
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:5173/health"]
+
+  painel-admin:
+    build: ./servicos/painel-admin
+    ports:
+      - "4200:4200"
+    networks:
+      - logitech-net
+    mem_limit: 128m
+    healthcheck:
+      <<: *saude
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:4200/health"]
+
+# -------------------------------------------------------------------------
+# Rede e volumes
+# -------------------------------------------------------------------------
 
 networks:
   logitech-net:
-    driver: bridge
+    # Herdada da Aula 03, criada à mão. `external: true` diz ao Compose para
+    # usar a que já existe em vez de criar outra. Se ela não existir, o erro
+    # que o Compose devolve não diz "crie a rede": ele diz que a rede
+    # declarada como externa não foi encontrada, e é o `post-create.sh` que a
+    # cria no devcontainer.
+    external: true
+
+volumes:
+  logitech-telemetria:
+    external: true
+  logitech-postgres:
+    name: logitech-postgres

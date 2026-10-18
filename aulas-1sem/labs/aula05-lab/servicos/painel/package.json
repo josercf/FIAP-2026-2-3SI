@@ -1,0 +1,15 @@
+{
+  "name": "mwe-2026-2-lab02-http-sse",
+  "version": "1.0.0",
+  "description": "Gateway HTTP/SSE de telemetria da LogiTech Enterprise - Aula 02",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "verificar": "node verificar.mjs"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "UNLICENSED"
+}

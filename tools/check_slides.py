@@ -2,7 +2,7 @@
 """
 Valida os decks Reveal.js procurando conteudo que estoura o slide.
 
-Duas checagens, porque sao dois defeitos diferentes:
+Tres checagens, porque sao tres defeitos diferentes:
 
 1. ESTOURO. O tema fixa cada <section> em 1280x720. Qualquer elemento que
    ultrapasse essa caixa aparece cortado na projecao. Medir `scrollHeight` da
@@ -14,6 +14,14 @@ Duas checagens, porque sao dois defeitos diferentes:
    assim cobre o bloco de cima, deixando texto ilegivel. Isso passa inteiro pela
    checagem de estouro. Aqui comparamos os filhos diretos da section entre si:
    como o layout deles e empilhado, qualquer intersecao real e defeito.
+
+3. TITULO NO LOGO. O logo da FIAP fica fora da checagem 2 de proposito, senao
+   todo slide daria falso positivo. O efeito colateral era um ponto cego: um
+   titulo longo quebra a segunda linha por baixo do logo sem estourar os 720px
+   e sem sobrepor filho direto da section. Apareceu nas Aulas 10 e 11 em
+   31/07/2026, e so foi visto porque alguem abriu o slide no navegador.
+   Comparamos as caixas de LINHA do titulo (nao a caixa do h2, que costuma ser
+   larga e vazia a direita) com o retangulo do logo.
 
 Uso:
     python3 tools/check_slides.py                      # todos os decks
@@ -134,6 +142,41 @@ JS_MEDIR = """
       }
     }
 
+    // COLISAO COM O LOGO. O logo fica de proposito fora da checagem acima, senao
+    // todo slide daria falso positivo. O efeito colateral e um ponto cego: um
+    // titulo longo quebra a segunda linha por baixo do logo sem estourar os
+    // 720px e sem sobrepor filho direto da section. Aconteceu nas Aulas 10 e 11,
+    // e so apareceu porque alguem olhou o slide no navegador.
+    //
+    // Medimos as caixas de LINHA do titulo, nao a caixa do h2: o h2 costuma ser
+    // largo e vazio a direita, entao a caixa dele encosta no logo em todo slide.
+    const MARGEM_LOGO = 15;
+    const colisoes = [];
+    const logo = sec.querySelector('[class*="logo-header"]');
+    if (logo) {
+      const rl = logo.getBoundingClientRect();
+      if (rl.width > 0 && rl.height > 0) {
+        for (const alvo of sec.querySelectorAll('h1, h2, h3')) {
+          const faixa = document.createRange();
+          faixa.selectNodeContents(alvo);
+          for (const rt of faixa.getClientRects()) {
+            if (rt.width < 1 || rt.height < 1) continue;
+            const dx = Math.max(rl.left - rt.right, rt.left - rl.right);
+            const dy = Math.max(rl.top - rt.bottom, rt.top - rl.bottom);
+            // Só interessa quando as caixas se cruzam em uma das direções.
+            if (dx >= MARGEM_LOGO || dy >= MARGEM_LOGO) continue;
+            const folga = Math.round(Math.max(dx, dy));
+            colisoes.push({
+              alvo: rotulo(alvo),
+              folga: folga,
+              texto: (alvo.textContent || '').trim().replace(/\\s+/g, ' ').slice(0, 60),
+            });
+            break;
+          }
+        }
+      }
+    }
+
     sec.setAttribute('style', estiloAnterior);
 
     const titulo = sec.querySelector('h2');
@@ -145,6 +188,7 @@ JS_MEDIR = """
         (b.abaixo + b.direita) - (a.abaixo + a.direita))[0] || null,
       total: vazamentos.length,
       sobreposicoes: sobreposicoes.sort((x, y) => y.px - x.px).slice(0, 3),
+      colisoes: colisoes.sort((x, y) => x.folga - y.folga).slice(0, 2),
     };
   });
 }
@@ -156,10 +200,11 @@ def checar(page, url, nome, shots_dir=None):
     page.wait_for_timeout(900)
     slides = page.evaluate(JS_MEDIR)
 
-    problemas = [s for s in slides if s["pior"] or s.get("sobreposicoes")]
+    problemas = [s for s in slides
+                 if s["pior"] or s.get("sobreposicoes") or s.get("colisoes")]
     print("\n%s  (%d slides)" % (nome, len(slides)))
     if not problemas:
-        print("  OK: nada estourando 1280x720 e nenhum bloco sobreposto")
+        print("  OK: nada estourando 1280x720, sem bloco sobreposto nem titulo no logo")
         return 0
 
     for s in problemas:
@@ -180,6 +225,11 @@ def checar(page, url, nome, shots_dir=None):
             print("           SOBREPOSICAO: %s cobre %s em %dpx"
                   % (sob["a"], sob["b"], sob["px"]))
             print("           texto coberto: %s" % sob["texto"])
+
+        for col in s.get("colisoes", []):
+            print("           TITULO NO LOGO: <%s> a %dpx do logo da FIAP"
+                  % (col["alvo"], col["folga"]))
+            print("           texto: %s" % col["texto"])
 
         if shots_dir:
             os.makedirs(shots_dir, exist_ok=True)

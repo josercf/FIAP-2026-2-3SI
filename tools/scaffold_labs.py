@@ -23,6 +23,22 @@ CASE = "LogiTech Enterprise AI Platform"
 # SLM que acompanha o devcontainer. ~1 GB, roda em CPU no Codespaces de 2 nucleos.
 MODELO_SLM = "qwen2.5:1.5b"
 
+
+def modelo_do_lab(lab):
+    """Modelo local do laboratório, com o global como padrão."""
+    return lab.get("modelo", MODELO_SLM)
+
+
+def embedding_do_lab(lab):
+    """Modelo de embedding, quando o laboratório precisar de um.
+
+    Só a Aula 12 precisa hoje: modelo de geração não produz vetor de busca. A
+    escolha está fixada na ADR-008 do acervo, junto com a dimensão da coluna,
+    porque trocar de modelo com dimensão diferente obriga a recriar a coluna e
+    reindexar.
+    """
+    return lab.get("embedding")
+
 # Imagens oficiais de devcontainer da Microsoft
 IMG = {
     "python": "mcr.microsoft.com/devcontainers/python:1-3.12-bookworm",
@@ -53,124 +69,204 @@ LABS = [
     },
     {
         "n": "03", "slug": "docker", "img": "python", "docker": True,
+        "modelo": "qwen3.5:2b", "extras": ["node"],
         "titulo": "Docker I: Dockerfile Multi-Stage, Volumes e Networks",
         "aula": "Aula 03 - Docker I: Engine, Imagens, Multi-Stage e Persistencia",
         "data": "18/08/2026",
-        "missao": "Conteinerizar a API de telemetria da LogiTech com Dockerfile multi-stage, reduzindo a imagem final e persistindo dados em volume.",
-        "entrega": ["Dockerfile", "docker-compose.yml"],
-        "ports": [8000],
+        "missao": "Conteinerizar o coletor de telemetria e o gateway HTTP da LogiTech em sete etapas progressivas, do isolamento de processos ate a publicacao da imagem no Docker Hub.",
+        "entrega": ["Dockerfile.coletor", "Dockerfile.gateway", "docs/EVIDENCIAS.md"],
+        "ports": [3000, 8081],
     },
     {
-        "n": "05", "slug": "solid-patterns", "img": "java", "docker": False,
+        "n": "05", "slug": "solid-patterns", "img": "java", "docker": True,
+        "preparo": (
+            '# Pre-aquece as duas stacks: sem isto a turma perde minutos baixando\n'
+            '# Spring Boot e Npgsql no comeco da aula.\n'
+            'if [ -f pedidos/pom.xml ]; then mvn -B -q -f pedidos/pom.xml dependency:go-offline || true; fi\n'
+            'if [ -f faturamento/Faturamento.sln ]; then dotnet restore faturamento/Faturamento.sln || true; fi\n'
+            'pip install --user pytest >/dev/null 2>&1 || true'
+        ),
+        "extras": ["dotnet"],
         "titulo": "POO, SOLID e Design Patterns em Java e C#",
         "aula": "Aula 05 - POO, Principios SOLID e Design Patterns",
         "data": "01/09/2026",
-        "missao": "Implementar o calculo de frete da LogiTech com Strategy e injecao de dependencia, em Java (Spring Boot) e C# (.NET), aplicando SOLID.",
-        "entrega": ["java/", "csharp/"],
-        "ports": [8080],
+        "missao": "Implementar os contextos de Pedidos (Java, Spring Boot 3) e Faturamento (C#, .NET 8) da LogiTech aplicando SOLID, Repository, Factory Method e Singleton thread-safe.",
+        "entrega": ["servicos/pedidos/", "servicos/faturamento/", "docs/EVIDENCIAS.md"],
+        "ports": [8080, 5080, 5432],
     },
     {
         "n": "06", "slug": "apis-patterns", "img": "python", "docker": False,
+        "preparo": (
+            'if [ -f servicos/frete/requirements.txt ]; then pip install --user -r servicos/frete/requirements.txt; fi\n'
+            'if [ -f servicos/notificacoes/package.json ]; then (cd servicos/notificacoes && npm ci); fi'
+        ),
+        "extras": ["node"],
         "titulo": "Adapter, Decorator e Strategy em APIs Node.js e Python",
         "aula": "Aula 06 - Design Patterns Estruturais e Comportamentais",
         "data": "08/09/2026",
-        "missao": "Integrar a LogiTech a uma API legada de rastreamento usando Adapter, expondo uma API moderna em FastAPI e em Express/TypeScript.",
-        "entrega": ["python-fastapi/", "node-ts/"],
-        "ports": [8000, 3000],
+        "missao": "Construir o motor de frete (Python, FastAPI) com Strategy e o servico de notificacoes (Node, TypeScript) com Decorator e Adapter para a API legada de rastreamento.",
+        "entrega": ["servicos/frete/", "servicos/notificacoes/", "docs/EVIDENCIAS.md"],
+        "ports": [8000, 3001],
     },
     {
         "n": "07", "slug": "compose-gateway", "img": "python", "docker": True,
+        "preparo": (
+            '# A rede e o volume vem da Aula 03 e entram no Compose como external:\n'
+            '# sem eles o compose up falha com mensagem obscura.\n'
+            'docker network create logitech-net 2>/dev/null || true\n'
+            'docker volume create logitech-telemetria >/dev/null 2>&1 || true\n'
+            'if [ -f .env.exemplo ] && [ ! -f .env ]; then cp .env.exemplo .env; fi\n'
+            'pip install --user pytest >/dev/null 2>&1 || true'
+        ),
+        "extras": ["node"],
         "titulo": "Docker Compose Multi-Servico e AI Gateway",
         "aula": "Aula 07 - Docker Compose e AI Gateways (Strategy e Facade)",
         "data": "15/09/2026",
-        "missao": "Subir a stack da LogiTech com Docker Compose e construir um AI Gateway (Facade) que roteia para multiplos modelos por tras de uma unica interface.",
-        "entrega": ["docker-compose.yml", "gateway/"],
-        "ports": [8000, 6379],
+        "missao": "Orquestrar os oito servicos da plataforma LogiTech com Docker Compose e construir um AI Gateway (Facade e Strategy) com fallback real entre provedor remoto e modelo local.",
+        "entrega": ["docker-compose.yml", "docs/EVIDENCIAS.md"],
+        "ports": [3000, 3001, 4000, 5080, 8000, 8080, 8082],
     },
     {
-        "n": "08", "slug": "agentes-worktrees", "img": "python", "docker": False,
+        "n": "08", "slug": "agentes-worktrees", "img": "python", "docker": True,
+        "preparo": (
+            'pip install --user pytest >/dev/null 2>&1 || true'
+        ),
+        "modelo": "qwen3.5:2b",
         "titulo": "Function Calling, Command Pattern e Git Worktrees",
         "aula": "Aula 08 - Orquestracao de Agentes e Git Worktrees I",
         "data": "22/09/2026",
-        "missao": "Construir um agente de logistica que expoe ferramentas via Function Calling, modeladas com Command Pattern, e paralelizar o trabalho com Git Worktrees.",
-        "entrega": ["agent.py", "tools/"],
-        "ports": [],
+        "missao": "Construir um agente de logistica que executa acoes reais na API de Pedidos via Function Calling, com cada acao modelada como Command validado por JSON Schema, e paralelizar o trabalho com Git Worktrees.",
+        "entrega": ["agente/", "docs/AUDITORIA.md", "docs/EVIDENCIAS.md"],
+        "ports": [8080],
     },
     {
         "n": "10", "slug": "testes-react", "img": "node", "docker": False,
+        "preparo": (
+            '# O portal sobe com dependencias instaladas: npm install dentro do bloco\n'
+            '# pratico de 60 minutos custaria o que a aula tem de mais escasso.\n'
+            'if [ -f portal/package-lock.json ]; then npm ci --prefix portal || true; fi\n'
+            'pip install --user pytest >/dev/null 2>&1 || true'
+        ),
+        "extras": ["python"],
         "titulo": "Testes de Unidade (TDD e Mocks) e Frontend React",
         "aula": "Aula 10 - Testes de Unidade e Frontend Enterprise I",
         "data": "06/10/2026",
-        "missao": "Desenvolver a SPA de rastreamento da LogiTech em React com TypeScript, guiada por testes (Vitest e Testing Library).",
-        "entrega": ["src/", "src/__tests__/"],
-        "ports": [5173],
+        "missao": "Escrever a suite de testes de unidade das regras de frete da LogiTech, com Stub, Mock e Spy, e construir o Portal do Cliente em React com TypeScript.",
+        "entrega": ["portal/src/", "servicos/frete/tests/", "docs/EVIDENCIAS.md"],
+        "ports": [5173, 8000, 8080],
     },
     {
         "n": "11", "slug": "angular-rxjs", "img": "node", "docker": False,
+        "preparo": (
+            '# Angular e .NET pre-aquecidos: sem isto o bloco pratico comeca com a\n'
+            '# turma olhando barra de progresso.\n'
+            'if [ -f painel-admin/package-lock.json ]; then npm ci --prefix painel-admin || true; fi\n'
+            'if [ -d servicos/faturamento ]; then dotnet build servicos/faturamento || true; fi\n'
+            'pip install --user pytest >/dev/null 2>&1 || true'
+        ),
+        "extras": ["python", "dotnet"],
         "titulo": "Frontend Angular com Observer Pattern e RxJS",
         "aula": "Aula 11 - Frontend Enterprise II: Angular",
         "data": "13/10/2026",
-        "missao": "Construir o dashboard administrativo da LogiTech em Angular, consumindo a telemetria em tempo real com RxJS (Observer Pattern).",
-        "entrega": ["src/app/"],
-        "ports": [4200],
+        "missao": "Construir o painel administrativo da LogiTech em Angular, com a frota em tempo real e o faturamento em dois fluxos concorrentes, aplicando o Observer Pattern com RxJS.",
+        "entrega": ["painel-admin/src/app/", "docs/EVIDENCIAS.md"],
+        "ports": [3000, 4200, 5080, 8082],
     },
     {
         "n": "12", "slug": "rag-mcp", "img": "python", "docker": True,
-        "titulo": "Persistencia Vetorial com pgvector, RAG e MCP",
-        "aula": "Aula 12 - pgvector, RAG e Model Context Protocol",
+        "preparo": (
+            '# A imagem do Postgres aqui e a pgvector: a extensao precisa existir\n'
+            '# para o CREATE EXTENSION do Passo 1 ter o que ativar.\n'
+            'if [ -f .env.exemplo ] && [ ! -f .env ]; then cp .env.exemplo .env; fi\n'
+            'pip install --user pytest >/dev/null 2>&1 || true'
+        ),
+        "extras": ["node"],
+        "embedding": "paraphrase-multilingual",
+        "titulo": "PostgreSQL do relacional ao vetorial: SQL, pgvector, RAG e MCP",
+        "aula": "Aula 12 - PostgreSQL: do relacional ao vetorial",
         "data": "20/10/2026",
-        "missao": "Indexar os contratos de frete da LogiTech em pgvector, montar um pipeline RAG e expor a busca como um servidor MCP.",
-        "entrega": ["src/rag_pgvector.py", "src/mcp_server.py"],
-        "ports": [5432, 8000],
+        "missao": "Abrir no psql o banco que os servicos do Modulo II vinham usando por ORM, escrever a DDL do acervo de contratos a mao, indexar em pgvector, montar o pipeline RAG com citacao da fonte e expor a plataforma por um servidor MCP.",
+        "entrega": [
+            "sql/02-conhecimento.sql", "sql/03-consultas.sql", "sql/05-indice.sql",
+            "rag/busca.py", "mcp-logitech/src/servidor.ts", "docs/EVIDENCIAS.md",
+        ],
+        "ports": [5432, 8010],
     },
     {
-        "n": "14", "slug": "oauth-jwt", "img": "node", "docker": True,
+        "n": "14", "slug": "oauth-jwt", "img": "python", "docker": True,
+        "extras": ["java", "node"],
+        "preparo": (
+            'docker network create logitech-net 2>/dev/null || true\n'
+            'if [ -f .env.exemplo ] && [ ! -f .env ]; then cp .env.exemplo .env; fi\n'
+            'if [ -f portal/package.json ]; then (cd portal && npm ci); fi\n'
+            'pip install --user pytest >/dev/null 2>&1 || true\n'
+            '# O Keycloak sozinho pede quase 500 MB: baixa a imagem antes da aula.\n'
+            'docker pull quay.io/keycloak/keycloak:26.0 >/dev/null 2>&1 || true'
+        ),
         "titulo": "Seguranca Enterprise: OAuth 2.0, OIDC, JWT e RBAC",
         "aula": "Aula 14 - Seguranca Web Enterprise e Git Worktrees II",
         "data": "03/11/2026",
         "missao": "Proteger as APIs da LogiTech com Keycloak: fluxo OIDC, validacao de JWT e autorizacao por papel (RBAC).",
-        "entrega": ["app.js", "docker-compose.yml"],
-        "ports": [3000, 8080],
+        "entrega": ["docker-compose.yml", "docs/EVIDENCIAS.md"],
+        "ports": [8090, 8080, 3001, 5173, 5199],
     },
     {
         "n": "15", "slug": "owasp-llm", "img": "python", "docker": True,
+        "preparo": (
+            'docker network create logitech-net 2>/dev/null || true\n'
+            'if [ -f .env.exemplo ] && [ ! -f .env ]; then cp .env.exemplo .env; fi\n'
+            'pip install --user pytest >/dev/null 2>&1 || true\n'
+            '# O Trivy e a ferramenta central do laboratorio.\n'
+            'curl -fsSL --connect-timeout 10 --max-time 300 '
+            'https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh '
+            '| sh -s -- -b /usr/local/bin || echo "    AVISO: instale o Trivy manualmente."'
+        ),
         "titulo": "Seguranca AI-First (OWASP Top 10 for LLMs) e Trivy",
         "aula": "Aula 15 - Seguranca AI-First e Container Scan",
         "data": "10/11/2026",
         "missao": "Defender o AI Gateway da LogiTech contra Prompt Injection e escanear as imagens Docker com Trivy, corrigindo as vulnerabilidades encontradas.",
-        "entrega": ["llm_defense.py", "Dockerfile.vulnerable"],
-        "ports": [8000],
+        "entrega": ["servicos/ai-gateway/", "docs/EXCECOES.md", "docs/EVIDENCIAS.md"],
+        "ports": [4000, 8010, 3001],
     },
     {
         "n": "16", "slug": "integracao-e2e", "img": "universal", "docker": True,
+        "preparo": (
+            'docker network create logitech-net 2>/dev/null || true\n'
+            'docker volume create logitech-telemetria >/dev/null 2>&1 || true\n'
+            'if [ -f .env.exemplo ] && [ ! -f .env ]; then cp .env.exemplo .env; fi\n'
+            'pip install --user pytest >/dev/null 2>&1 || true\n'
+            '# Sao treze containers mais o Ollama: o roteiro sobe por grupos.\n'
+            'curl -fsSL --connect-timeout 10 --max-time 300 '
+            'https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh '
+            '| sh -s -- -b /usr/local/bin || echo "    AVISO: instale o Trivy manualmente."'
+        ),
         "titulo": "Integracao Enterprise End-to-End e Simulado da Global Solution",
         "aula": "Aula 16 - Integracao End-to-End e Simulado GS",
         "data": "17/11/2026",
         "missao": "Integrar toda a plataforma LogiTech: frontends, servicos poliglotas, gateway de IA e autenticacao, orquestrados por Docker Compose.",
-        "entrega": ["docker-compose.yml", "ai-service/", "auth-service/"],
-        "ports": [3000, 8000, 8080],
+        "entrega": ["docker-compose.yml", "docs/EVIDENCIAS.md", "docs/ROTEIRO-BANCA.md"],
+        "ports": [3000, 3001, 4000, 4200, 5080, 5173, 8000, 8010, 8080, 8090],
     },
 ]
 
 
 # --------------------------------------------------------------------------
-# Helper de IA: GitHub Models (padrao) com fallback para Ollama local
+# Helper de IA: Ollama local, o único backend dos laboratórios (ADR-005)
 # --------------------------------------------------------------------------
 AI_ASK = r'''#!/usr/bin/env python3
 """
-Cliente minimo de IA para os laboratorios da disciplina.
+Cliente mínimo de IA para os laboratórios da disciplina.
 
-Ordem de tentativa:
-  1. GitHub Models  - usa o GITHUB_TOKEN, que o Codespaces ja injeta.
-                      Nenhuma conta ou cartao adicional e necessario.
-  2. Ollama local   - fallback offline, se voce tiver `ollama serve` rodando.
+Backend único: o servidor Ollama instalado neste devcontainer. O GitHub
+Models foi retirado do ar em 30/07/2026, antes da primeira aula, e deixou
+de ser uma opção (decisão registrada na ADR-005 do acervo da disciplina).
 
 Uso:
-    python ai/ask.py "escreva um PRD para o servico de telemetria"
+    python ai/ask.py "escreva um PRD para o serviço de telemetria"
     cat prompt.txt | python ai/ask.py
-    MODEL=microsoft/phi-4-mini-instruct python ai/ask.py "..."
+    OLLAMA_MODEL=qwen2.5:3b python ai/ask.py "..."
 
-Sem dependencias externas: so a biblioteca padrao.
+Sem dependências externas: só a biblioteca padrão.
 """
 import json
 import os
@@ -178,55 +274,35 @@ import sys
 import urllib.error
 import urllib.request
 
-GITHUB_ENDPOINT = "https://models.github.ai/inference/chat/completions"
-OLLAMA_ENDPOINT = "http://localhost:11434/api/chat"
-
-# Modelos pequenos, adequados ao uso em sala
-DEFAULT_GITHUB_MODEL = os.environ.get("MODEL", "openai/gpt-4o-mini")
-DEFAULT_OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "qwen2.5:1.5b")
-
-TIMEOUT = int(os.environ.get("AI_TIMEOUT", "120"))
+BASE_URL = os.environ.get("OLLAMA_HOST", "http://localhost:11434").rstrip("/")
+MODELO = os.environ.get("OLLAMA_MODEL", "__MODELO__")
+TIMEOUT = int(os.environ.get("AI_TIMEOUT", "300"))
 
 
-def _post(url, payload, headers, timeout=TIMEOUT):
+def ollama_no_ar():
+    """Confirma que o servidor Ollama responde antes de mandar o prompt."""
+    try:
+        with urllib.request.urlopen(BASE_URL + "/api/tags", timeout=5):
+            return True
+    except (urllib.error.URLError, OSError):
+        return False
+
+
+def perguntar(prompt):
     req = urllib.request.Request(
-        url,
-        data=json.dumps(payload).encode("utf-8"),
-        headers={"Content-Type": "application/json", **headers},
+        BASE_URL + "/api/chat",
+        data=json.dumps(
+            {
+                "model": MODELO,
+                "messages": [{"role": "user", "content": prompt}],
+                "stream": False,
+            }
+        ).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
         method="POST",
     )
-    with urllib.request.urlopen(req, timeout=timeout) as resp:
-        return json.loads(resp.read().decode("utf-8"))
-
-
-def via_github_models(prompt):
-    token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
-    if not token:
-        raise RuntimeError("GITHUB_TOKEN ausente")
-
-    data = _post(
-        GITHUB_ENDPOINT,
-        {
-            "model": DEFAULT_GITHUB_MODEL,
-            "messages": [{"role": "user", "content": prompt}],
-            "temperature": 0.7,
-        },
-        {"Authorization": "Bearer " + token},
-    )
-    return data["choices"][0]["message"]["content"]
-
-
-def via_ollama(prompt):
-    data = _post(
-        OLLAMA_ENDPOINT,
-        {
-            "model": DEFAULT_OLLAMA_MODEL,
-            "messages": [{"role": "user", "content": prompt}],
-            "stream": False,
-        },
-        {},
-        timeout=300,
-    )
+    with urllib.request.urlopen(req, timeout=TIMEOUT) as resp:
+        data = json.loads(resp.read().decode("utf-8"))
     return data["message"]["content"]
 
 
@@ -238,36 +314,51 @@ def main():
         print(__doc__)
         return 1
 
-    tentativas = [("GitHub Models", via_github_models), ("Ollama local", via_ollama)]
-    erros = []
+    if not ollama_no_ar():
+        sys.stderr.write(
+            "O servidor Ollama não está respondendo em %s.\n"
+            "Suba com: ollama serve\n"
+            "Depois confirme o modelo com: ollama list\n" % BASE_URL
+        )
+        return 1
 
-    for nome, fn in tentativas:
-        try:
-            print("[{}] consultando...".format(nome), file=sys.stderr)
-            print(fn(prompt))
-            return 0
-        except urllib.error.HTTPError as e:
-            corpo = e.read().decode("utf-8", "replace")[:300]
-            erros.append("{}: HTTP {} {}".format(nome, e.code, corpo))
-        except Exception as e:  # noqa: BLE001
-            erros.append("{}: {}".format(nome, e))
-
-    print("\nNenhum backend de IA respondeu.\n", file=sys.stderr)
-    for e in erros:
-        print("  - " + e, file=sys.stderr)
-    print(
-        "\nDicas:\n"
-        "  - No Codespaces o GITHUB_TOKEN e injetado automaticamente.\n"
-        "  - Localmente: export GITHUB_TOKEN=$(gh auth token)\n"
-        "  - Offline: ollama serve && ollama pull qwen2.5:3b\n",
-        file=sys.stderr,
-    )
-    return 1
+    try:
+        print("[Ollama] consultando o modelo %s..." % MODELO, file=sys.stderr)
+        print(perguntar(prompt))
+        return 0
+    except urllib.error.HTTPError as e:
+        corpo = e.read().decode("utf-8", "replace")[:300]
+        sys.stderr.write(
+            "O Ollama respondeu HTTP %d: %s\n"
+            "Se o modelo não existe localmente, baixe com: ollama pull %s\n"
+            % (e.code, corpo, MODELO)
+        )
+        return 1
+    except (urllib.error.URLError, OSError) as e:
+        sys.stderr.write(
+            "Falha ao consultar o Ollama: %s\n"
+            "Confira o servidor com: ollama list\n" % e
+        )
+        return 1
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
 '''
+
+
+# Stacks que um lab pode pedir além da imagem base, via a chave "extras".
+# A imagem base já traz a stack principal; isto é para os labs poliglotas.
+EXTRAS = {
+    "node": ("ghcr.io/devcontainers/features/node:1",
+             ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]),
+    "dotnet": ("ghcr.io/devcontainers/features/dotnet:2",
+               ["ms-dotnettools.csharp"]),
+    "java": ("ghcr.io/devcontainers/features/java:1",
+             ["vscjava.vscode-java-pack"]),
+    "python": ("ghcr.io/devcontainers/features/python:1",
+               ["ms-python.python"]),
+}
 
 
 def devcontainer(lab):
@@ -277,8 +368,6 @@ def devcontainer(lab):
     }
     if lab["docker"]:
         features["ghcr.io/devcontainers/features/docker-in-docker:2"] = {}
-    if lab["img"] == "python" and lab["n"] in ("02",):
-        features["ghcr.io/devcontainers/features/node:1"] = {}
 
     extensions = ["GitHub.copilot", "GitHub.vscode-pull-request-github", "eamodio.gitlens"]
     if lab["img"] in ("python", "universal"):
@@ -290,6 +379,11 @@ def devcontainer(lab):
     if lab["docker"]:
         extensions += ["ms-azuretools.vscode-docker"]
 
+    for extra in lab.get("extras", []):
+        feature, exts = EXTRAS[extra]
+        features[feature] = {}
+        extensions += [e for e in exts if e not in extensions]
+
     cfg = {
         "name": "{}-lab{}-{}".format(PREFIX, lab["n"], lab["slug"]),
         "image": IMG[lab["img"]],
@@ -297,10 +391,6 @@ def devcontainer(lab):
         "forwardPorts": lab["ports"] + [11434],
         "postCreateCommand": "bash .devcontainer/post-create.sh",
         "postStartCommand": "bash .devcontainer/post-start.sh",
-        "remoteEnv": {
-            # No Codespaces esta variavel ja existe; localmente o aluno exporta.
-            "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}"
-        },
         "customizations": {
             "vscode": {
                 "extensions": extensions,
@@ -314,6 +404,25 @@ def devcontainer(lab):
     return json.dumps(cfg, indent=2, ensure_ascii=False) + "\n"
 
 
+def bloco_embedding(lab):
+    """Trecho do post-create que baixa o modelo de embedding, quando houver.
+
+    Fica vazio para os doze laboratórios que não fazem busca vetorial, para o
+    post-create deles não carregar passo morto.
+    """
+    modelo = embedding_do_lab(lab)
+    if not modelo:
+        return ""
+    return (
+        '\n# --- Modelo de embedding ---------------------------------------------------\n'
+        '# Modelo de geracao nao produz vetor de busca: sao dois modelos, com papeis\n'
+        '# diferentes. A escolha e a dimensao estao fixadas na ADR-008 do acervo.\n'
+        'echo "==> Baixando o modelo de embedding {m} (uso unico, fica em cache)"\n'
+        'ollama pull {m} \\\n'
+        '  || echo "    AVISO: falha ao baixar. Rode \'ollama pull {m}\' manualmente."\n'
+    ).format(m=modelo)
+
+
 POST_CREATE = r'''#!/usr/bin/env bash
 # Preparacao do ambiente do laboratorio. Roda uma vez, na criacao do container.
 set -euo pipefail
@@ -321,14 +430,22 @@ set -euo pipefail
 echo "==> Configurando o laboratorio {nome}"
 
 # --- Dependencias da stack -------------------------------------------------
-{stack}
+{stack}{preparo}
 
 # --- Ollama: SLM rodando dentro do proprio container -----------------------
-# Backend de IA offline, usado quando o GitHub Models nao esta disponivel
-# ou quando a cota da conta do aluno acabou.
+# Backend único de IA dos laboratórios, decisão registrada na ADR-005 do
+# acervo: o GitHub Models foi retirado do ar em 30/07/2026.
+# O instalador do Ollama extrai com zstd, que a imagem base não traz.
+if ! command -v zstd >/dev/null 2>&1; then
+  echo "==> Instalando o zstd, exigido pelo instalador do Ollama"
+  SUDO=""; command -v sudo >/dev/null 2>&1 && SUDO=sudo
+  $SUDO apt-get update -y >/dev/null 2>&1 || true
+  $SUDO apt-get install -y zstd \
+    || echo "    AVISO: não consegui instalar o zstd; o Ollama pode falhar."
+fi
 if ! command -v ollama >/dev/null 2>&1; then
   echo "==> Instalando o Ollama"
-  curl -fsSL https://ollama.com/install.sh | sh
+  curl -fsSL --connect-timeout 10 --max-time 600 https://ollama.com/install.sh | sh
 fi
 
 echo "==> Subindo o servidor Ollama"
@@ -342,16 +459,16 @@ done
 
 echo "==> Baixando o modelo {modelo} (uso unico, fica em cache)"
 ollama pull {modelo} || echo "    AVISO: falha ao baixar o modelo. Rode 'ollama pull {modelo}' manualmente."
-
+{embedding}
 # --- Verificacao do backend de IA -----------------------------------------
-if [ -n "${{GITHUB_TOKEN:-}}" ]; then
-  echo "==> GITHUB_TOKEN presente: GitHub Models disponivel."
-  echo "    Teste com: python ai/ask.py \"diga ola\""
+if curl -sf --connect-timeout 5 http://localhost:11434/api/tags >/dev/null 2>&1 \
+   && ollama list 2>/dev/null | grep -q "{modelo}"; then
+  echo "==> Backend de IA pronto: Ollama respondendo com o modelo {modelo}."
+  echo "    Teste com: python ai/ask.py \"diga olá\""
 else
-  echo "==> AVISO: GITHUB_TOKEN ausente."
-  echo "    No Codespaces ele e injetado automaticamente."
-  echo "    Localmente, rode: export GITHUB_TOKEN=\$(gh auth token)"
-  echo "    Ou use Ollama offline: ollama serve && ollama pull qwen2.5:3b"
+  echo "==> AVISO: o Ollama não confirmou o modelo {modelo}."
+  echo "    Suba o servidor com: ollama serve"
+  echo "    Depois baixe o modelo com: ollama pull {modelo}"
 fi
 
 echo ""
@@ -424,43 +541,29 @@ code .
 # VS Code vai sugerir: "Reopen in Container"
 ```
 
-Localmente, exporte o token para habilitar o assistente de IA:
-
-```bash
-export GITHUB_TOKEN=$(gh auth token)
-```
-
 ---
 
 ## Assistente de IA incluso
 
-O laboratorio traz um cliente minimo que fala com **GitHub Models** usando o
-token que o Codespaces ja injeta. Voce nao precisa criar conta, gerar chave nem
-cadastrar cartao.
-
-```bash
-python ai/ask.py "explique a diferenca entre TCP e UDP em duas frases"
-
-# escolher outro modelo pequeno
-MODEL=microsoft/phi-4-mini-instruct python ai/ask.py "..."
-
-# usar um arquivo como prompt
-cat prompts/prd.md | python ai/ask.py
-```
-
-Se o GitHub Models estiver indisponivel ou a cota da sua conta tiver acabado, o
-script cai automaticamente para o **Ollama que ja vem instalado neste
-devcontainer**, com o modelo `qwen2.5:1.5b` baixado na criacao do ambiente.
+O laboratorio traz um cliente minimo que fala com o **Ollama que ja vem
+instalado neste devcontainer**, com o modelo `{modelo}` baixado na criacao
+do ambiente. Nenhuma conta, chave ou cartao e necessario, e o prompt nao sai
+da sua maquina.
 
 ```bash
 ollama list                      # o modelo ja deve aparecer aqui
-OLLAMA_MODEL=qwen2.5:1.5b python ai/ask.py "..."   # forcar o modelo local
+python ai/ask.py "explique a diferenca entre TCP e UDP em duas frases"
+
+# usar um arquivo como prompt
+cat prompts/prd.md | python ai/ask.py
+
+# escolher outro modelo local
 ollama pull qwen2.5:3b           # modelo maior, se a maquina aguentar
+OLLAMA_MODEL=qwen2.5:3b python ai/ask.py "..."
 ```
 
-> A cota gratuita do GitHub Models e limitada por dia. Se a turma inteira
-> disparar requisicoes ao mesmo tempo, o fallback local resolve sem depender
-> de rede.
+> Se o `ai/ask.py` avisar que o servidor nao responde, rode `ollama serve`
+> em um terminal separado e tente de novo.
 
 ---
 
@@ -538,7 +641,7 @@ Portas expostas pelo ambiente: {portas}
 │   ├── devcontainer.json   # ambiente reproduzivel (Codespaces e local)
 │   └── post-create.sh      # instalacao de dependencias
 ├── ai/
-│   └── ask.py              # cliente de IA (GitHub Models -> Ollama)
+│   └── ask.py              # cliente de IA (Ollama local)
 ├── docs/                   # artefatos de especificacao
 └── README.md
 ```
@@ -567,6 +670,7 @@ Este laboratorio faz parte do acervo da disciplina:
         repo=nome_repo,
         entregaveis=entregaveis,
         portas=portas,
+        modelo=modelo_do_lab(lab),
     )
 
 
@@ -616,11 +720,20 @@ def main():
         write(os.path.join(root, ".devcontainer", "devcontainer.json"), devcontainer(lab))
         write(
             os.path.join(root, ".devcontainer", "post-create.sh"),
-            POST_CREATE.format(nome=nome, stack=STACK_CMDS[lab["img"]], modelo=MODELO_SLM),
+            POST_CREATE.format(
+                nome=nome, stack=STACK_CMDS[lab["img"]],
+                preparo=("\n" + lab["preparo"]) if lab.get("preparo") else "",
+                modelo=modelo_do_lab(lab),
+                embedding=bloco_embedding(lab),
+            ),
             executable=True,
         )
         write(os.path.join(root, ".devcontainer", "post-start.sh"), POST_START, executable=True)
-        write(os.path.join(root, "ai", "ask.py"), AI_ASK, executable=True)
+        write(
+            os.path.join(root, "ai", "ask.py"),
+            AI_ASK.replace("__MODELO__", modelo_do_lab(lab)),
+            executable=True,
+        )
         write(os.path.join(root, "README.md"), readme(lab))
         write(os.path.join(root, ".gitignore"), GITIGNORE)
         write(

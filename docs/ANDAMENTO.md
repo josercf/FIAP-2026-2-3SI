@@ -2,7 +2,7 @@
 
 Estado do trabalho para retomar em uma sessão nova. Atualize este arquivo ao fim de cada sessão.
 
-**Última atualização:** 30/07/2026
+**Última atualização:** 31/07/2026 (Módulo III construído)
 
 ---
 
@@ -15,7 +15,9 @@ Estado do trabalho para retomar em uma sessão nova. Atualize este arquivo ao fi
 Push do acervo **exige a chave do josercf**, senão o GitHub autentica como `canaldoovidio` e nega:
 
 ```bash
-GIT_SSH_COMMAND='ssh -i ~/.ssh/id_ed25519_josercf -o IdentitiesOnly=yes' git push
+# O -F /dev/null nao e enfeite: sem ele o ~/.ssh/config manda o github.com para a
+# outra identidade e o push falha com "denied to canaldoovidio", mesmo com -i.
+GIT_SSH_COMMAND='ssh -i ~/.ssh/id_ed25519_josercf -o IdentitiesOnly=yes -F /dev/null' git push
 ```
 
 ---
@@ -46,13 +48,13 @@ Foi refeita a partir do feedback do professor: foto real de família no slide de
 13 repositórios públicos criados, um por aula com lab, autocontidos:
 
 - devcontainer sobre a imagem oficial da stack, com **Ollama e `qwen2.5:1.5b` já baixados** na criação
-- `ai/ask.py` sem dependências: usa **GitHub Models** com o `GITHUB_TOKEN` que o Codespaces injeta, e cai para o Ollama local quando a cota acaba
+- `ai/ask.py` sem dependências: fala só com o **Ollama local** do devcontainer (o GitHub Models foi retirado em 30/07/2026, ver ADR-005 e o registro histórico abaixo)
 - README com missão no case LogiTech, passo a passo e entregáveis com valor numérico
 - fluxo por **fork**, não clone
 
 Gerados por `tools/scaffold_labs.py` (respeita `LABS_OUT`).
 
-Verificado nesta sessão: o GitHub Models responde com o token do professor. Atenção, os limites medidos (20k req / 2M tokens) são da conta dele, que tem Copilot. Conta de aluno no free tier tem cota bem menor, e é por isso que o fallback local existe.
+**Registro histórico:** em sessão de 30/07/2026 (manhã) o GitHub Models respondia com o token do professor. No mesmo dia o serviço entrou em brownout de aposentadoria (HTTP 410) e deixou de ser opção: o Ollama local virou o único backend de IA dos 13 laboratórios, decisão registrada na `ADR-005-fim-do-github-models-e-ollama-como-unico-backend.md`. O scaffolder e o `ai/ask.py` gerados já não mencionam o serviço.
 
 ### Automação
 
@@ -63,7 +65,13 @@ Verificado nesta sessão: o GitHub Models responde com o token do professor. Ate
 
 ### Decisões registradas
 
-`docs/adrs/ADR-001-votacao-ao-vivo-nos-quizzes.md` — a votação ao vivo dos quizzes será um produto separado, fora do contexto FIAP, hospedado no `home01` sob `jrcf.dev`, atrás do nginx-proxy-manager e usando o PostgreSQL que já rodam lá. Sugestão de subdomínio: `vote.jrcf.dev`. Nada foi implementado ainda; o QR nos slides é placeholder tracejado escrito "em breve".
+`docs/adrs/ADR-001-votacao-ao-vivo-nos-quizzes.md` — **Aceita e publicada.** A votação ao vivo (serviço Pulso, repositório `josercf/pulso`) está no ar em `vote.jrcf.dev` desde 31/07/2026. As aulas 01, 02 e 03 carregam o `client.js` com `defer` e ligam os quizzes por `data-quiz-key="aulaNN-quizN"`; o QR placeholder permanece no markup como fallback. Aulas novas devem repetir esse padrão.
+
+`docs/adrs/ADR-008-contratos-compartilhados-do-modulo-III.md`, contrato do Módulo III: os quatro serviços novos, **CORS no contrato de todo backend chamado por navegador**, PostgreSQL virando `pgvector/pgvector:pg16`, embeddings em 768 dimensões, e a decisão de que **SQL relacional é conteúdo da Aula 12**, não pré-requisito dela. Emendada no mesmo dia, por medição, trocando o modelo de embedding padrão.
+
+`docs/adrs/ADR-004-formato-progressivo-da-aula-03.md` — a Aula 03 abandona o formato teoria + laboratório único e adota sete ciclos de teoria + prática individual, com verificador progressivo e diretório de resgate.
+
+`docs/adrs/ADR-005-fim-do-github-models-e-ollama-como-unico-backend.md` — o GitHub Models foi retirado em 30/07/2026; o Ollama local é o único backend de IA dos laboratórios, com modelo por lab (`qwen2.5:1.5b` no geral, `qwen3.5:2b` no lab03).
 
 `docs/adrs/ADR-002-escopo-do-laboratorio-da-aula-02.md` — **Aceita.** O laboratório da Aula 02 entrega o coletor de sockets L4 pronto e troca o relatório de captura por três medições numéricas com `cURL`. O **Wireshark saiu do programa da disciplina**, não só do laboratório, por decisão do professor em 30/07/2026. A comunicação entre o coletor e o gateway é por arquivo JSON Lines, simplificação declarada, a ser substituída na Aula 07.
 
@@ -127,9 +135,187 @@ o README real, **sem o `gabarito/`**.
 > copiar o conteúdo (nunca o `gabarito/`), preservar `.devcontainer/` e `ai/ask.py`,
 > e dar push. Foi assim que a Aula 02 foi sincronizada.
 
+### Aula 03 — pronta, validada e revisada (31/07/2026)
+
+Deck de 55 slides em sete ciclos progressivos (ADR-004), com nove animações
+SVG, três quizzes ligados ao Pulso e sete slides de atividade espelhando o
+`verificar.py`. Validado em 1280x720 e revisado pelo `revisor-slides`; a
+revisão moveu os quizzes de multi-stage e volumes para depois dos ciclos que
+os ensinam e renomeou o marcador `MOUNTS_DENTRO` para `ENTRADAS_PROC_DENTRO`.
+
+Lab kit completo em `aulas-1sem/labs/aula03-lab/`: serviços congelados da
+Aula 02, baseline de medição, `resgate/`, verificador com sete critérios
+(0 de 7 no esqueleto, suíte com 24 testes), skill `logitech-dockerfile`,
+`agente.yaml` (Ollama, `qwen3.5:2b`) e devcontainer testado de ponta a ponta
+na imagem oficial (222 s, incluindo o download do modelo e do `docker-agent`).
+
+Números medidos (arm64): coletor 1638,4 MB -> 78,9 MB (95,2%); gateway
+1658,9 MB -> 229,0 MB (86,2%). Critérios do entregável: redução mínima de
+80% nos dois, absoluto de 100 MB só no coletor.
+
+Armadilhas fechadas nesta construção: o instalador do Ollama passou a exigir
+`zstd`, que a imagem do devcontainer não traz (o post-create gerado instala
+antes); e os curls de download ganharam `--connect-timeout`/`--max-time`,
+porque execuções anteriores travaram em curl sem timeout contra o GitHub.
+
+### Módulo II completo: Aulas 05 a 08 (31/07/2026)
+
+As quatro aulas de setembro foram construídas na mesma sessão, em paralelo, e é
+a primeira vez que aulas do acervo **dependem umas das outras**: a 07 orquestra
+o que a 05 e a 06 constroem, e a 08 chama a API de Pedidos da 05. Por isso o
+contrato veio antes do conteúdo, na `ADR-006`.
+
+| Aula | Deck | Laboratório |
+|---|---|---|
+| 05, POO e SOLID | 51 slides, 17 figuras (10 animadas) | Pedidos em Spring Boot 3 e Faturamento em .NET 8, seis lacunas, verificador com 11 critérios |
+| 06, Padrões estruturais | 57 slides, 11 figuras animadas | Frete em FastAPI e Notificações em Node/TS, seis lacunas, 8 critérios, 33 testes |
+| 07, Compose e AI Gateway | 53 slides, 9 animações | Oito serviços orquestrados, AI Gateway com Facade e Strategy, 5 critérios |
+| 08, Function Calling | 52 slides, 9 animações | Agente com Command e JSON Schema, worktrees, 9 critérios, 42 testes |
+
+**Números medidos, não estimados.** Race condition do Singleton na Aula 05: 35,
+41 e 44 notas fiscais duplicadas em três execuções no Mac, 19 num contêiner com
+dois núcleos. Compose da Aula 07: 11,9 s até os oito serviços saudáveis e 228 MB
+somados em repouso, contra 1632 MB de teto declarado, em arm64 com 10 núcleos.
+Tool calling do modelo local na Aula 08: 6 de 6 acertos com descrição boa da
+ferramenta, 0 de 3 com a descrição enfraquecida.
+
+**Defeitos reais encontrados durante a construção**, todos corrigidos e a maioria
+virando conteúdo: healthcheck com `localhost` deixava 4 dos 8 serviços
+`unhealthy`, porque no Alpine ele resolve primeiro para IPv6 (`ADR-007`); o
+numerador de notas reiniciava a cada boot e colidia com o índice único; conexão
+JDBC única expirava depois de 45 minutos ociosa; seis animações da Aula 07 tinham
+`keyTimes` que não terminavam em 1 e eram descartadas pelo navegador; o
+verificador da Aula 08 aprovava por engano quando outro serviço ocupava a 8080.
+
+**O que a revisão independente pegou e foi corrigido.** Na Aula 06: código do
+decorator que não compilava com `strict`, bloco de comandos que quebrava se
+colado inteiro, saída do verificador **editada passando por real** no slide que
+se vende como a régua pública, ligaduras da JetBrains Mono projetando `<=` como
+`≤` em slides onde o aluno digita a sintaxe, e caminhos de arquivo subindo para
+maiúscula por causa do `text-transform` do tema.
+
+**Decisão pedagógica que custa e está registrada** (`ADR-007`): o Compose da
+Aula 07 orquestra serviços **mínimos** por padrão, porque conteinerizar Spring
+Boot e .NET colocaria build de Maven e NuGet dentro de um laboratório de 60
+minutos. O kit traz um caminho de troca testado, com Dockerfiles multi-stage
+para os serviços reais, para quem completou as Aulas 05 e 06 subir a própria
+implementação.
+
+### Módulo III completo: Aulas 10, 11 e 12 (31/07/2026)
+
+Construídas em paralelo, na mesma sessão, com o contrato escrito antes na
+`ADR-008`. A interdependência é a mesma do Módulo II, e uma novidade: **a partir
+da Aula 10 o consumidor das APIs é o navegador**, que aplica a política de mesma
+origem. Nenhum serviço das Aulas 02, 05 e 06 tinha sido escrito com isso em
+mente, então CORS entrou no contrato antes de virar aula de conserto.
+
+| Aula | Deck | Laboratório |
+|---|---|---|
+| 10, TDD e React | 53 slides, 13 figuras (6 animadas) | Suíte de unidade sobre o frete com Stub, Mock e Spy, mais o Portal do Cliente em React 19, seis lacunas, 8 critérios |
+| 11, Angular e RxJS | 52 slides, 17 figuras, 82 animações | Painel administrativo com frota em tempo real e faturamento, seis lacunas, 8 critérios, 31 testes |
+| 12, do relacional ao vetorial | 57 slides, 9 figuras (4 animadas) | SQL à mão, `pgvector`, RAG com citação da fonte e servidor MCP, seis lacunas, 7 critérios, 23 testes |
+
+**A Aula 12 mudou de escopo, e é a decisão pedagógica do módulo.** O levantamento
+feito ao escrever a `ADR-008` mostrou que **não existia um único arquivo `.sql`
+no acervo**: o schema nascia do `ddl-auto` do Hibernate e do `ModelBuilder` do EF
+Core, e o aluno chegava a outubro tendo persistido em PostgreSQL o semestre
+inteiro sem escrever SQL. A aula virou "PostgreSQL: do relacional ao vetorial",
+com a busca semântica entrando como **mais um `ORDER BY`**, sobre distância. O
+servidor MCP encolheu para o último terço do bloco prático, e a Pergunta de
+Verificação 3 deixou de cobrar a lista de conceitos do MCP para cobrar índice,
+`EXPLAIN` e a natureza **aproximada** do HNSW.
+
+**Números medidos, não estimados.** `EXPLAIN` com 50.000 vetores: `Seq Scan` em
+389,933 ms contra `Index Scan` em 1,005 ms, com o índice ocupando 161 MB contra
+2944 kB da tabela. Cancelamento do `switchMap` na Aula 11, observado nos dois
+lados: 4 requisições recebidas e 4 concluídas com `mergeMap`, contra 4 recebidas,
+1 concluída e 3 canceladas com `switchMap`. Aula 10: `verificar.py` 0 de 8 no
+esqueleto e 8 de 8 no resgate, com sete mutantes discriminando critério a
+critério.
+
+**Uma decisão minha foi derrubada por medição.** A `ADR-008` fixava
+`nomic-embed-text` para os embeddings. A construção mediu `recall@3` em treze
+perguntas de resposta conhecida: 9 de 13 para o `nomic`, **13 de 13** para o
+`paraphrase-multilingual`, que tem as mesmas 768 dimensões. O modelo é treinado
+predominantemente em inglês e o acervo é contrato de transporte em português
+jurídico. Mais instrutivo ainda: seguir a recomendação do próprio fornecedor,
+prefixando a consulta com `search_query:`, **piorou** para 7 de 13, em silêncio.
+A ADR foi emendada e isso virou conteúdo do slide 22.
+
+**Defeitos reais encontrados durante a construção**, todos corrigidos: teste do
+resgate **tautológico** na Aula 10, que calculava o esperado importando a
+constante do código sob teste e deixava o mutante sobreviver; lacuna que **não
+discriminava** na Aula 11, porque o Angular 22 resolve o `HttpClient` sem
+`provideHttpClient()` e o critério passaria intocado; `verificar.py` da Aula 11
+reprovando código correto por ancorar na chamada em vez da declaração do método;
+e o `EXPLAIN` da Aula 12 que **nunca usaria o índice**, porque a consulta tirava
+o vetor de comparação de uma subconsulta.
+
+**O que a revisão independente pegou.** Ligadura da JetBrains Mono comendo o
+`=>` na Aula 10, que **não tinha regra nenhuma** de bloqueio, nem para código nem
+para SVG, numa aula de React; a mesma ligadura escapando dentro de `<text>` de
+SVG na Aula 12, onde o operador `<=>` virava glifo de seta dupla, porque a regra
+do tema alcança `pre`, `code` e `.mono` mas não SVG; dois links da MDN em pt-BR
+com 404 de verdade na Aula 11 e o blog da Nomic morto na Aula 12; e os Quizzes 2
+e 3 da Aula 12 fora de sincronia com o planejamento, que **eu** havia emendado
+depois que o deck ficou pronto.
+
+### O validador ganhou uma terceira checagem (31/07/2026)
+
+`tools/check_slides.py` passou a detectar **TITULO NO LOGO**: título longo que
+quebra a segunda linha por baixo do logo da FIAP. Isso cabia nos 720px e não
+sobrepunha filho direto da `section`, então passava pelas duas checagens
+anteriores. O logo fica fora da checagem de sobreposição de propósito, senão todo
+slide daria falso positivo, e esse era o ponto cego.
+
+Apareceu em dois dos três decks novos e só foi visto porque um revisor abriu o
+slide no navegador. A checagem compara as caixas de **linha** do título, não a
+caixa do `h2`, que costuma ser larga e vazia à direita.
+
+### Módulo IV completo: Aulas 14 a 16 (31/07/2026)
+
+Este módulo **não acrescenta serviço**: muda o comportamento dos doze que já
+existem. O risco deixou de ser nome que não casa e passou a ser papel lido de
+dois lugares diferentes, que faz a autorização funcionar numa stack e falhar em
+outra com o mesmo token. Por isso a `ADR-009` veio antes do conteúdo.
+
+| Aula | Deck | Laboratório |
+|---|---|---|
+| 14, OAuth2 e RBAC | 51 slides, 8 animações | Keycloak com realm versionado, PKCE, JWKS em Java e Node, 6 lacunas |
+| 15, OWASP LLM e Trivy | 55 slides, 11 animações | Guardrails no gateway, injeção direta e indireta, Trivy até zero CRITICAL, 6 lacunas |
+| 16, integração e GS | 51 slides, 11 animações | Treze serviços, seis falhas plantadas, cinco frentes e o ensaio da banca |
+
+**Medido, não estimado.** Aula 14: token de 300 s e 1266 caracteres, com
+`resource_access` **vazio**, que é a prova empírica de por que o contrato lê de
+`realm_access.roles`. Aula 15: injeção indireta pelo RAG comprometeu 6 de 6 com
+composição ingênua, 2 de 6 com delimitador e 0 de 6 com sanitização; o Trivy foi
+de 9 CRITICAL para zero. Aula 16: os treze serviços sobem em 35,3 s na primeira
+vez e 28 depois, ocupando 806 MiB contra 3.056 de teto, num M4 de 16 GB com
+8 GB para a VM.
+
+**A construção corrigiu a própria ADR.** A `ADR-009` mandava esperar
+`keycloak:8090` no `LOGITECH_OIDC_ISSUER`, e isso derruba toda validação: o `iss`
+gravado no token é o endereço pelo qual o **navegador** falou com o Keycloak. As
+Aulas 14 e 16 descobriram executando, cada uma por conta própria. A emenda está
+datada na ADR, junto com a propagação do token do usuário entre serviços e a
+divergência declarada do direct access grant entre as Aulas 14 e 16.
+
+**Achados de revisão que valeram a pena.** Na 14, dois slides anunciavam como
+medido um token cujo `iat` era de outro ano, e descreviam a assinatura como texto
+legível. Na 15, um bloco rotulado "trecho literal" cortava justamente a instrução
+maliciosa do contrato envenenado. Na 16, a escolha de ligar o direct access grant
+não estava declarada em nenhum slide, contrariando a própria ADR.
+
+**As ligaduras da JetBrains Mono foram desligadas no tema**, e não mais deck a
+deck: a fonte fundia `->` numa seta e `==` num glifo único justamente onde o
+aluno digita a sintaxe. Sem ligadura o monoespaçado fica mais largo, e oito
+slides das Aulas 05 e 06 precisaram de ajuste. Os treze decks foram revalidados.
+
 ### Saneamento do acervo (30/07/2026)
 
-- **Os 13 decks passam no `check_slides.py`.** Havia 5 slides de hands-on estourando
+- **Os 13 decks passavam no `check_slides.py` nesta data.** Em 31/07/2026 isso
+  deixou de ser verdade para as Aulas 05 e 06, ver as pendências técnicas.
+  Havia 5 slides de hands-on estourando
   (aulas 03, 05, 06, 07 e 08), todos pelo mesmo motivo: bloco de código longo em um
   slide que já trazia `concept-cards`. Resolvido com a classe `code-compact`.
 - **`fiap-zoom.js` e `fiap-print.js` foram ligados nos 13 decks.** Verificado em
@@ -158,8 +344,25 @@ o README real, **sem o `gabarito/`**.
 
 ### Técnicas
 
-- [ ] **Aulas 03 a 16 ainda são rasas.** Decks de ~140 a ~370 linhas, sem figura, quizzes genéricos. Cada uma precisa passar pelo `construtor-aulas`. **A próxima é a Aula 03** (Docker I, 18/08), que empacota justamente o coletor Python e o gateway Node da Aula 02.
-- [ ] **Labs 03 a 16 têm só o esqueleto.** Devcontainer e README funcionam; falta o conteúdo de cada laboratório.
+- [ ] **Acervo e repositórios publicados divergem nos labs 10 e 14.** O `aulas-1sem/labs/aula10-lab` e o `aula14-lab` declaram `python:1-3.12-bookworm`, e os repositórios que os alunos forkam, `mwe-2026-2-lab10-testes-react` e `mwe-2026-2-lab14-oauth-jwt`, declaram `typescript-node:1-22-bookworm`. Descoberto em 08/09/2026 ao corrigir a chave GPG do Yarn: os dois repositórios publicados escaparam do defeito justamente por usarem a outra imagem, e por isso ficaram intocados. Decidir qual das duas é a verdade e alinhar, porque hoje o kit do aluno roda sobre uma base diferente da referência do professor.
+- [ ] **O lab 01 não tem devcontainer no acervo, mas o repositório publicado tem.** `mwe-2026-2-lab01-requisitos` declara `python:1-3.12-bookworm` e foi corrigido direto no repositório em 08/09/2026, sem contrapartida em `aulas-1sem/labs/aula01-lab`. Mesma decisão pendente do item acima.
+- [ ] **Rodar `tools/check_devcontainers.py --build` antes de cada aula com laboratório.** As duas primeiras checagens levam segundos e pegam a classe de falha que derrubou a Aula 05 em sala; a terceira constrói de verdade e é a única que pega ferramenta ausente, como o Maven que faltava na imagem de Java. Ver ADR-011.
+
+- [ ] **REGRESSÃO NAS AULAS 05 E 06.** O validador acusa, de forma reprodutível, 4 estouros e 4 colisões de título com o logo, uma delas com 18px de sobreposição real (Aula 05, slide 14). Os arquivos estão intocados desde o commit: ninguém rodou o validador depois das últimas edições daquelas aulas. Detalhe: `aula05` slides 14, 25 e 37; `aula06` slides 14, 23, 26, 41 e 47. **As Aulas 10, 11 e 12 passam nas três checagens.** Corrigir antes de 01/09, que é quando a Aula 05 é dada.
+- [ ] **Aulas 14, 15 e 16 ainda são rasas.** Decks de ~345 a ~370 linhas, sem figura, quizzes genéricos. Cada uma precisa passar pelo `construtor-aulas`. **A próxima é a Aula 14** (segurança, OAuth 2.0 e JWT, 03/11).
+- [ ] **Labs 14, 15 e 16 têm só o esqueleto.** Devcontainer e README funcionam; falta o conteúdo de cada laboratório.
+- [ ] **Sincronizar os três repositórios do Módulo III.** `josercf/mwe-2026-2-lab10-testes-react`, `lab11-angular-rxjs` e `lab12-rag-mcp` **existem** e respondem, mas ainda têm só o esqueleto do scaffolder. O aluno que forkar hoje abre um kit que não bate com o slide. Vale o mesmo aviso da Aula 02: copiar o conteúdo sem o `resgate/`, preservar `.devcontainer/` e `ai/ask.py`.
+- [ ] **Promover ao `construtor-aulas` as três armadilhas que custaram retrabalho hoje:** regra de ligadura precisa cobrir `svg text, svg tspan` além de `pre`, `code` e `.mono`; o texto do `takeaway` cabe em até duas linhas, senão o bloco dobra de altura e estoura; e título de `h2` acima de ~65 caracteres colide com o logo. As duas primeiras já estão resolvidas localmente nos decks novos; falta o padrão nascer certo.
+- [ ] **Criar os três formulários de entrega do Módulo III** no Microsoft Forms. Os slides das Aulas 10, 11 e 12 estão com marcador visível no lugar do iframe.
+- [ ] **Cadastrar as nove perguntas do Módulo III no Pulso** (`aula10-quiz1|2|3`, `aula11-...`, `aula12-...`). O placeholder de QR continua no markup como fallback.
+- [ ] **Cronometrar os três laboratórios do Módulo III na primeira aplicação.** Nenhum foi medido com turma. A ordem de corte de cada um está declarada no README, e a da Aula 12 é a mais apertada, porque são seis passos em 53 minutos.
+- [ ] Cosmético, mas rastro de manutenção: os comentários HTML de navegação interna do `aula12.html` ficaram fora de sincronia com a posição real a partir do slide 12, resultado da inserção do slide 22 em duas etapas. Não afeta nada renderizado.
+- [ ] **Criar os formulários de entrega dos Módulos II, III e IV** no Microsoft Forms. Os slides das Aulas 05 a 08 estão com marcador visível no lugar do iframe, à espera da URL.
+- [ ] **Promover ao `fiap-theme.css`** as regras que hoje vivem locais nos decks 06 e 08: desligar as ligaduras da JetBrains Mono e impedir que o `text-transform` do tema suba caminho de arquivo para maiúscula. Vale para os treze decks; revalidar todos depois.
+- [ ] **Cronometrar os laboratórios do Módulo II na primeira aplicação.** Nenhum foi medido com turma; a ordem de corte de cada um está declarada no README.
+- [ ] **Validar com o professor a minutagem nova da Aula 03.** A revisão moveu os Quizzes 2 e 3 para depois dos Ciclos 4 e 5 (o planejamento antigo dava toda a teoria antes do Quiz 1). Deck, planejamento e plano de ensino já estão alinhados entre si; falta o aceite explícito.
+- [ ] **Avisar a turma antes de 18/08:** conta no Docker Hub criada e verificada por e-mail é pré-requisito da Aula 03 (a etapa 7 publica imagem, e a verificação custa 5 a 10 minutos).
+- [ ] **Cronometrar os sete ciclos da Aula 03 na primeira aplicação.** Ordem de corte registrada no spec: primeiro o Ciclo 6 vira demonstração, depois a segunda metade do Ciclo 5; o Ciclo 7 e as Agent Skills nunca saem.
 - [ ] **Decidir o destino do `gabarito/`.** Agora são dois arquivos, `server.js` e `server_telemetry.py`, commitados em `labs/aula02-lab/gabarito/`, e o workflow publica o repositório inteiro no GitHub Pages: um aluno que navegue pelo acervo acha as duas respostas. Confirmado que o repositório que o aluno forka **não** leva o gabarito, então o risco é só de quem procura no acervo. Avaliar se o gabarito sai do repositório público ou se fica assumido. A ADR-003 lista isto como risco aberto.
 - [ ] **Cronometrar o lab da Aula 02 na primeira aplicação.** São 64 minutos previstos para os ~75 do Bloco 2, ou seja cerca de 11 de margem. Se faltar, o corte previsto na ADR-003 é a segunda metade do Passo 4, que são medições independentes, e nunca o Passo 5.
 - [ ] **Os outros 12 repositórios de lab provavelmente estão como o da Aula 02 estava:** só o esqueleto do scaffolder, com README genérico. Ao construir cada aula, sincronizar o repositório correspondente junto, senão o aluno abre um kit que não bate com o slide.

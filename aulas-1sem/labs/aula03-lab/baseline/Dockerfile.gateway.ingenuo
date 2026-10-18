@@ -1,0 +1,7 @@
+FROM node:22
+WORKDIR /app
+ENV LOGITECH_DADOS=/dados/telemetria.jsonl
+COPY servicos/gateway ./servicos/gateway
+RUN npm install --omit=dev --prefix servicos/gateway
+EXPOSE 3000
+CMD ["node", "servicos/gateway/server.js"]

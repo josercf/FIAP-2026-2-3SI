@@ -612,6 +612,20 @@
   color: #d4d4d4;
 }
 
+/* Ligaduras desligadas em todo texto monoespaçado do acervo.
+   A JetBrains Mono funde `->` numa seta, `>=` num símbolo matemático e `==`
+   num glifo único. Em slide onde o aluno digita a sintaxe ou compara com o
+   próprio arquivo, o que ele vê na projeção não é o caractere que precisa
+   escrever. Isso foi encontrado por revisão independente em quatro decks
+   antes de virar regra do tema. */
+.reveal pre code,
+.reveal code,
+.reveal .mono,
+.reveal svg text {
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "clig" 0, "calt" 0;
+}
+
 /* Bloco de código para slides que já trazem outro conteúdo acima, como os
    cards de conceito do hands-on. Sem isto o código estoura os 720px. */
 .reveal pre.code-compact {

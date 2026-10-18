@@ -1,0 +1,92 @@
+# =============================================================================
+# Notificações, o serviço REAL da Aula 06 (Node 22, TypeScript, porta 3001)
+# =============================================================================
+#
+# Contexto de build: o diretório `servicos/notificacoes/` do laboratório da
+# Aula 06, com `package.json`, `package-lock.json`, `tsconfig.json`, `src/` e
+# `tests/`. Quem faz a amarração é o `docker-compose.override.yml`.
+#
+# Regras da Aula 03 aplicadas aqui: dois estágios nomeados, base alpine no
+# estágio final, usuário não-root com UID acima de 10000, nunca `COPY . .`,
+# `EXPOSE 3001` como manda a ADR-006.
+#
+# Duas amarras do serviço real ditam o desenho deste arquivo, e vale entender
+# as duas antes de mexer:
+#
+#   1. `src/servidor.ts` importa `./adaptador`, `./decoradores` e companhia
+#      **sem extensão**. O apagador de tipos nativo do Node 22 não reescreve
+#      caminho de importação: ele exige `./adaptador.ts` escrito por extenso.
+#      Então o `tsx` não é conforto de desenvolvimento aqui, é o motor que faz
+#      o serviço subir, e por isso ele chega ao estágio final.
+#
+#   2. O servidor só escuta se `process.argv[1]` terminar em `servidor.ts`
+#      (é o truque que deixa a suíte importar o módulo sem abrir porta). O
+#      `CMD` precisa apontar para o `.ts`. Compilar para `servidor.js` deixaria
+#      o container "Up" para sempre, sem nunca aceitar conexão.
+
+# -----------------------------------------------------------------------------
+# Estágio 1: builder. Aqui vive o `npm`, o TypeScript e o Vitest.
+# -----------------------------------------------------------------------------
+FROM node:22-alpine AS builder
+WORKDIR /origem
+
+# Manifesto e lockfile primeiro, sozinhos: enquanto eles não mudarem, a camada
+# do `npm ci` fica no cache e editar um `.ts` não obriga a reinstalar nada.
+COPY package.json package-lock.json ./
+RUN npm ci --no-audit --no-fund
+
+# Só o código de produção. `tests/` não entra nem aqui no builder.
+COPY tsconfig.json ./
+COPY src ./src
+
+# Checagem de tipos como portão do build: se o TypeScript não fecha, a imagem
+# não nasce. É o equivalente, para este serviço, ao `mvn package` do Pedidos.
+#
+# As opções vêm na linha de comando em vez de virem do `tsconfig.json` porque
+# o `include` de lá abrange `src` **e** `tests`, e as lacunas em aberto da
+# Aula 06 vivem justamente nos testes: apontar o `--project` para o arquivo
+# faria a imagem depender de o aluno já ter terminado aquele laboratório. O
+# que este build precisa garantir é que o código que sobe no container compila.
+RUN npx --no-install tsc --noEmit \
+      --target ES2023 --lib ES2023 --module ESNext --moduleResolution bundler \
+      --types node --strict --skipLibCheck --esModuleInterop \
+      --forceConsistentCasingInFileNames \
+      src/servidor.ts
+
+# Refaz a árvore só com o que é de produção e acrescenta o `tsx`, que é
+# dependência de execução pelo motivo explicado no cabeçalho.
+#
+# `npm ci --omit=dev` apaga e reinstala `node_modules`, o que é mais confiável
+# que `npm prune`; o `--omit=dev` no `npm install` seguinte é o que impede o
+# npm de reintroduzir a árvore inteira de desenvolvimento ao recalcular.
+#
+# `--save-prod` grava o `tsx` em `dependencies`, e grava no `package.json`
+# **deste estágio**, que é uma cópia dentro da imagem. O arquivo do serviço
+# real, na Aula 06, continua intocado. Sem `--save-prod` o npm classifica o
+# `tsx` como dependência de desenvolvimento e o próprio `--omit=dev` o remove:
+# o container sobe e morre com "Cannot find package 'tsx'".
+RUN npm ci --omit=dev --no-audit --no-fund \
+ && npm install --omit=dev --save-prod --no-audit --no-fund tsx@4
+
+# -----------------------------------------------------------------------------
+# Estágio 2: runtime. Node, as dependências podadas e o código.
+# -----------------------------------------------------------------------------
+FROM node:22-alpine AS runtime
+
+RUN addgroup -g 10004 logitech \
+ && adduser -u 10004 -G logitech -D -H -s /sbin/nologin logitech
+
+WORKDIR /app
+COPY --from=builder /origem/node_modules ./node_modules
+COPY --from=builder /origem/package.json ./package.json
+COPY --from=builder /origem/src ./src
+
+ENV NODE_ENV=production \
+    PORT=3001
+
+USER logitech
+EXPOSE 3001
+
+# `node --import tsx` registra o carregador do tsx e mantém `process.argv[1]`
+# apontando para o arquivo `.ts`, que é o que a guarda do servidor exige.
+CMD ["node", "--import", "tsx", "src/servidor.ts"]

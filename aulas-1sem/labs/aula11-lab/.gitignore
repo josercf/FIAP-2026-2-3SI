@@ -1,0 +1,19 @@
+# Segredos: nunca commitados. O .env.exemplo, sim.
+.env
+
+# Artefatos do Angular
+node_modules/
+dist/
+.angular/
+
+# Artefatos do .NET
+bin/
+obj/
+
+# Artefatos do Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Telemetria gravada em execução local
+dados/

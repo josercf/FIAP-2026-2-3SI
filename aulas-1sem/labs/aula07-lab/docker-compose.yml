@@ -1,14 +1,246 @@
-version: '3.8'
+# =============================================================================
+# LogiTech Enterprise AI Platform - orquestração da plataforma inteira
+# Aula 07, 15/09/2026
+# =============================================================================
+#
+# ESTE É O SEU ARQUIVO. Ele sobe com cinco lacunas nomeadas, TODO-1 a TODO-5,
+# e é o único artefato que vocês escrevem hoje. Tudo em `servicos/` já vem
+# pronto e congelado: **não é tarefa**, não editem.
+#
+# Depois de cada passo, suba o que já escreveu e confira:
+#
+#     docker compose up -d --build
+#     docker compose ps
+#     python3 verificar.py --criterio N
+#
+# ANTES DE COMEÇAR, pare o Ollama (`pkill ollama`). São oito containers, e no
+# Codespace de 2 núcleos o modelo local disputa a memória com eles. O Passo 4
+# diz exatamente quando religá-lo.
+#
+# Os nomes de serviço, portas, rotas e variáveis abaixo são o contrato da
+# plataforma (ADR-006). Trocar um nome aqui quebra a Aula 08.
+#
+# =============================================================================
+
+# `name:` fixa o nome do projeto Compose. Sem ele, o nome sai do diretório, e
+# cada fork com nome diferente geraria containers com nomes diferentes.
+#
+# Nenhum serviço declara `container_name`, e isso é decisão de projeto: o
+# Compose já nomeia cada container como `logitech-<servico>-1`. Fixar o nome à
+# mão colidiria com o PostgreSQL que a Aula 05 subiu por `docker run --name
+# logitech-postgres`, e o `up` morreria com "container name is already in
+# use". Se a sua Aula 05 ainda estiver de pé, pare aquele container antes:
+#
+#     docker rm -f logitech-postgres
+name: logitech
+
+# Bloco reutilizável de healthcheck, com âncora YAML. Os oito serviços usam a
+# mesma cadência; o que muda é só o comando de teste. Use assim:
+#
+#     healthcheck:
+#       <<: *saude
+#       test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:PORTA/health"]
+#
+# Todas as imagens deste laboratório são Alpine, e Alpine traz `wget` no
+# BusyBox. É por isso que o mesmo comando serve para Java, C#, Python e Node.
+x-saude: &saude
+  interval: 10s
+  timeout: 4s
+  retries: 6
+  start_period: 25s
+
+# Repare no `127.0.0.1`, e não `localhost`: dentro de uma imagem Alpine o
+# `localhost` pode resolver primeiro para `::1` (IPv6), enquanto os serviços
+# escutam em IPv4. O healthcheck falharia com "Connection refused" mesmo com
+# o serviço no ar. Endereço literal não tem essa ambiguidade.
+
 services:
-  web:
-    build: gateway/
-    ports:
-      - "8000:8000"
+
+  # =====================================================================
+  # PASSO 1: o banco e o primeiro serviço que depende dele
+  # =====================================================================
+  #
+  # Faça nesta ordem, sem pular a primeira parte:
+  #
+  #   1. Suba assim como está (postgres SEM healthcheck e pedidos com
+  #      `depends_on` na forma de lista) e leia
+  #      `docker compose logs pedidos`. Registre o que aconteceu em
+  #      docs/EVIDENCIAS.md, no marcador PEDIDOS_SEM_HEALTHCHECK.
+  #   2. Só então preencha TODO-1a e TODO-1b, suba de novo e compare.
+
+  postgres:
+    image: postgres:16-alpine
     environment:
-      - REDIS_HOST=redis
-    depends_on:
-      - redis
-  redis:
-    image: "redis:alpine"
+      POSTGRES_DB: logitech
+      POSTGRES_USER: logitech
+      # A senha nunca é escrita aqui. Vem do .env, que está no .gitignore.
+      POSTGRES_PASSWORD: ${LOGITECH_DB_PASSWORD:?defina LOGITECH_DB_PASSWORD no arquivo .env (copie de .env.exemplo)}
+    volumes:
+      - logitech-postgres:/var/lib/postgresql/data
+    networks:
+      - logitech-net
+    mem_limit: 256m
+    # Repare que o banco não publica porta nenhuma no host: ele só é
+    # alcançável de dentro da rede da plataforma. É de propósito.
+    #
+    # TODO-1a: declare o `healthcheck` do PostgreSQL.
+    #   Use a âncora `<<: *saude` e, como teste, o comando que responde
+    #   "o processo aceita conexão" e não "o container subiu":
+    #     ["CMD-SHELL", "pg_isready -U logitech -d logitech"]
+
+  pedidos:
+    build: ./servicos/pedidos
+    environment:
+      # Cada stack tem o seu formato de DSN. O nome da variável é o mesmo
+      # (contrato da ADR-006), o valor obedece ao driver de cada linguagem.
+      LOGITECH_DB_URL: jdbc:postgresql://postgres:5432/logitech
+      LOGITECH_DB_USER: logitech
+      LOGITECH_DB_PASSWORD: ${LOGITECH_DB_PASSWORD}
+      LOGITECH_FRETE_URL: http://frete:8000
+      LOGITECH_FATURAMENTO_URL: http://faturamento:5080
+      LOGITECH_NOTIFICACOES_URL: http://notificacoes:3001
     ports:
-      - "6379:6379"
+      - "8080:8080"
+    networks:
+      - logitech-net
+    mem_limit: 320m
+    # Esta é a forma que NÃO basta, e é ela que você vai ver falhar na
+    # primeira subida. Ela espera o container do postgres existir, não o
+    # PostgreSQL aceitar conexão.
+    depends_on:
+      - postgres
+    #
+    # TODO-1b: troque o `depends_on` acima pela forma longa, com condição:
+    #     depends_on:
+    #       postgres:
+    #         condition: service_healthy
+    #
+    # TODO-5a: acrescente o `healthcheck` deste serviço (porta 8080).
+
+  # =====================================================================
+  # PASSO 2: os três serviços das Aulas 05 e 06
+  # =====================================================================
+  #
+  # TODO-2: declare `faturamento`, `frete` e `notificacoes`.
+  #
+  # Para os três vale o mesmo esqueleto:
+  #
+  #   build: ./servicos/<nome>
+  #   ports: publique a porta do contrato no mesmo número no host
+  #   networks: logitech-net
+  #   mem_limit: o teto de memória daquele serviço
+  #   healthcheck: fica no TODO-5b, não agora
+  #
+  # Contrato de cada um (ADR-006):
+  #
+  #   faturamento   porta 5080, C#/.NET 8, mem_limit 256m
+  #                 environment:
+  #                   LOGITECH_DB_URL: Host=postgres;Port=5432;Database=logitech;Username=logitech;Password=${LOGITECH_DB_PASSWORD}
+  #
+  #   frete         porta 8000, Python/FastAPI, mem_limit 192m
+  #                 não precisa de variável nenhuma
+  #
+  #   notificacoes  porta 3001, Node 22/TypeScript, mem_limit 128m
+  #                 não precisa de variável nenhuma
+  #
+  # Depois de subir: `curl localhost:8000/health` e
+  # `docker compose exec pedidos wget -qO- http://frete:8000/health`.
+  # A segunda prova o DNS interno: `frete` é um nome que só existe dentro da
+  # rede da plataforma.
+
+  # =====================================================================
+  # PASSO 3: telemetria, e a dívida da ADR-002 sendo paga
+  # =====================================================================
+  #
+  # Até a Aula 03 o painel lia o mesmo arquivo que o coletor gravava. A
+  # ADR-002 registrou isso como simplificação deliberada e marcou esta aula
+  # como o ponto de substituição. É agora.
+  #
+  # TODO-3: declare `coletor` e `painel`.
+  #
+  #   coletor    build: ./servicos/coletor
+  #              environment: LOGITECH_DADOS: /dados/telemetria.jsonl
+  #              volumes: logitech-telemetria em /dados
+  #              ports: 8081 em UDP e 8082 em TCP
+  #              networks: logitech-net
+  #              mem_limit: 96m
+  #
+  #   painel     build: ./servicos/painel
+  #              environment:
+  #                LOGITECH_TELEMETRIA_URL: http://coletor:8082/telemetria
+  #              ports: 3000
+  #              networks: logitech-net
+  #              mem_limit: 128m
+  #              depends_on: coletor, com condition: service_healthy
+  #
+  # ATENÇÃO, é o critério do passo: o `painel` **não monta volume nenhum**.
+  # Se você montar `logitech-telemetria` nele, a dívida não foi paga, ele só
+  # trocou de endereço. A prova está em `curl localhost:3000/health`: o campo
+  # `fonte` precisa dizer `http`.
+
+  # =====================================================================
+  # PASSO 4: o ponto único de entrada de IA
+  # =====================================================================
+  #
+  # Religue o Ollama agora (`ollama serve &`), só para este passo, e pare de
+  # novo antes de medir a memória no Passo 5.
+  #
+  # TODO-4: declare `ai-gateway`.
+  #
+  #   build: ./servicos/ai-gateway
+  #   ports: 4000
+  #   networks: logitech-net
+  #   mem_limit: 256m
+  #   environment:
+  #     LOGITECH_IA_ESTRATEGIA: preferir-remoto
+  #     LOGITECH_IA_REMOTA_URL: https://api.openai.com/v1/chat/completions
+  #     LOGITECH_IA_REMOTA_CHAVE: ${LOGITECH_IA_REMOTA_CHAVE:-}
+  #     LOGITECH_IA_OLLAMA_URL: http://host.docker.internal:11434
+  #     LOGITECH_IA_MODELO_LOCAL: ${LOGITECH_IA_MODELO_LOCAL:-qwen2.5:1.5b}
+  #     LOGITECH_IA_LIMITE_POR_MINUTO: "30"
+  #   extra_hosts:
+  #     - "host.docker.internal:host-gateway"
+  #
+  # A chave remota vazia não é descuido: é o que faz o fallback acontecer de
+  # verdade. Faça a mesma pergunta três vezes e leia
+  # `curl localhost:4000/v1/metricas`.
+
+  # =====================================================================
+  # PASSO 5: os oito de pé, e todos saudáveis
+  # =====================================================================
+  #
+  # `docker compose ps` mostra "Up" para todo container que subiu. Ele só
+  # mostra "healthy" para os que declaram `healthcheck`. Sem isso, você tem
+  # oito containers de pé e nenhuma prova de que estão funcionando.
+  #
+  # TODO-5a: `healthcheck` do `pedidos` (já indicado lá em cima)
+  # TODO-5b: `healthcheck` dos sete serviços restantes
+  #
+  # Modelo, trocando só a porta:
+  #
+  #   healthcheck:
+  #     <<: *saude
+  #     test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:PORTA/health"]
+  #
+  # O `postgres` é a exceção: ele não fala HTTP, e o teste dele é o
+  # `pg_isready` do TODO-1a.
+
+# -------------------------------------------------------------------------
+# Rede e volumes
+# -------------------------------------------------------------------------
+
+networks:
+  logitech-net:
+    # Herdada da Aula 03, criada à mão com `docker network create`.
+    # `external: true` diz ao Compose para usar a que já existe em vez de
+    # criar outra, e para não removê-la no `docker compose down`.
+    external: true
+
+volumes:
+  logitech-telemetria:
+    # Também herdado da Aula 03: o dado da telemetria é anterior a este
+    # laboratório e sobrevive a ele.
+    external: true
+  logitech-postgres:
+    # Este nasce hoje. Quem cria e destrói é o Compose.
+    name: logitech-postgres

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aula 12 – Persistência Vetorial (pgvector), RAG & MCP | FIAP</title>
+  <title>Aula 12 – PostgreSQL: do relacional ao vetorial | FIAP</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css">
@@ -11,142 +11,2616 @@
   <link rel="stylesheet" href="../assets/css/fiap-print.css">
   <script>if(/print-pdf/gi.test(window.location.search)){var link=document.createElement('link');link.rel='stylesheet';link.href='https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/css/print/pdf.css';document.head.appendChild(link);}</script>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* Tabelas compactas, mesmo padrao das Aulas 02, 03 e 07 */
+    .reveal table.compact-table { font-size: 0.62em; margin: 8px 0; }
+    .reveal table.compact-table th { padding: 7px 12px; }
+    .reveal table.compact-table td { padding: 7px 12px; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    /* A JetBrains Mono desenha ligaduras: `<=` vira o glifo de menor ou igual,
+       `->` vira uma seta e o `<=>` do pgvector some por completo. Esta aula
+       inteira gira em torno desse operador, e o aluno precisa ler os tres
+       caracteres como eles sao digitados. Desligado aqui, no deck, e nao no
+       tema compartilhado. */
+    .reveal pre code, .reveal code, .reveal .mono {
+      font-variant-ligatures: none;
+      font-feature-settings: "liga" 0, "clig" 0, "calt" 0;
+    }
+    /* E precisa valer dentro do SVG tambem. Texto de figura nao e `code` nem
+       `.mono`, e o seletor acima passa reto por ele: na primeira conferencia
+       visual o `<=>` do slide da tese aparecia como um unico glifo de seta
+       dupla, que e exatamente o caractere que o aluno vai digitar. */
+    .reveal svg text, .reveal svg tspan {
+      font-variant-ligatures: none;
+      font-feature-settings: "liga" 0, "clig" 0, "calt" 0;
+    }
+    /* O tema poe `text-transform: uppercase` no h3 do exercise-container.
+       Caminho de arquivo e comando SQL sao sensiveis a caixa. */
+    .reveal .exercise-container h3 .caminho { text-transform: none; }
+    .reveal .exercise-container .fecho {
+      margin: 8px 0 0; font-size: 0.62em;
+      border-top: 1px solid rgba(255,255,255,0.2); padding-top: 8px;
+    }
+    .reveal .exercise-container .fecho strong { color: var(--fiap-pink); }
+    /* Figuras com animacao SVG: altura controlada para nunca estourar os 720px */
+    .reveal .slide-figure { margin: 6px 0 0; }
+    .reveal .slide-figure svg { width: 100%; }
+    .reveal .slide-figure figcaption { font-size: 0.57em; line-height: 1.4; color: #6b6b6b; margin-top: 4px; }
+    /* Os seis slides de passo desta aula carregam bloco de SQL com lacunas,
+       que e mais alto que o comando de uma linha das outras aulas. O ajuste
+       tira altura de ESTRUTURA, e nao de conteudo: padding do container e
+       entrelinha, sem encolher a fonte do codigo, que ja esta no piso do que
+       se le projetado. Escopado a este deck. */
+    .reveal .exercise-slide .exercise-container { padding: 15px 22px; margin-top: 6px; }
+    .reveal .exercise-slide .exercise-container h3 { margin-bottom: 7px; }
+    .reveal .exercise-slide .exercise-container pre { line-height: 1.34; }
+    .reveal .exercise-slide .exercise-container p { line-height: 1.4; }
+    .reveal .marcador-pendente {
+      border: 2px dashed var(--fiap-pink); border-radius: 8px;
+      padding: 26px 24px; text-align: center; background: #fff5f8;
+    }
+  </style>
 </head>
 <body>
   <div class="reveal">
     <div class="slides">
 
-      <!-- CAPA -->
+      <!-- ==================== 1: CAPA ==================== -->
       <section class="cover-slide">
-        <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP" class="fiap-logo-full">
+        <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" class="fiap-logo-full">
       </section>
 
-      <!-- TÍTULO -->
-      <section class="title-slide">
+      <!-- ==================== 2: TÍTULO ==================== -->
+      <section class="title-slide" data-background-image="../assets/img/microservices-bg.jpg" data-background-opacity="0.3">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="title-card">
           <div class="accent-bar"></div>
           <h1>Sistemas de Informação</h1>
-          <h2>Microservice and Web Engineering & IT Services</h2>
+          <h2>Microservice and Web Engineering &amp; IT Services</h2>
           <h3>Prof. José Romualdo</h3>
         </div>
-        <div class="lesson-bar">AULA 12 – Persistência Vetorial (pgvector), RAG & Model Context Protocol (MCP)</div>
+        <div class="lesson-bar">AULA 12 – PostgreSQL: do relacional ao vetorial</div>
       </section>
 
-      <!-- AGENDA -->
+      <!-- ==================== 3: AGENDA ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Agenda do Encontro</h2>
+          <h2>Agenda do Encontro de Hoje</h2>
         </div>
-        <table>
+
+        <table class="compact-table">
           <thead>
-            <tr><th>Bloco</th><th>Horário</th><th>Conteúdo & Atividades</th></tr>
+            <tr><th>Início</th><th>Conteúdo</th></tr>
           </thead>
           <tbody>
-            <tr><td><strong>Bloco 1</strong></td><td>19h20 – 20h50</td><td>Vetores/Embeddings, pgvector, Introdução ao RAG + Quiz #1</td></tr>
-            <tr><td><strong>Intervalo</strong></td><td>20h50 – 21h20</td><td>☕ Pausa para Café e Networking</td></tr>
-            <tr><td><strong>Bloco 2</strong></td><td>21h20 – 22h50</td><td>Model Context Protocol (MCP), Arquitetura RAG, Quizzes #2 e #3 + Lab</td></tr>
+            <tr><td>19h20</td><td>Resgate da espiral: o banco que vocês usam desde a Aula 05 e nunca abriram</td></tr>
+            <tr><td>19h35</td><td>Desafio do Mini Mundo: achar a cláusula certa em quatro contratos de transporte</td></tr>
+            <tr><td>19h55</td><td>Teoria: a SQL que o ORM escreveu, DDL à mão, <span class="mono">JOIN</span> e <span class="mono">ORDER BY</span>. Embeddings, distância de cosseno e <span class="mono">pgvector</span>. Pipeline RAG. Índice, <span class="mono">EXPLAIN</span> e Model Context Protocol</td></tr>
+            <tr><td>20h35</td><td>Quiz 1 e tira-dúvidas</td></tr>
+            <tr><td>20h50</td><td>Intervalo (30 minutos)</td></tr>
+            <tr><td>21h20</td><td>Quizzes 2 e 3</td></tr>
+            <tr><td>21h35</td><td>Atividade prática em dupla: os seis passos, do <span class="mono">psql</span> ao servidor MCP</td></tr>
+            <tr><td>22h35</td><td>Verificação, evidências medidas e commit</td></tr>
           </tbody>
         </table>
-      </section>
 
-      <!-- QUIZ 1 -->
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div>
-        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area">
-          <div class="accent-bar"></div>
-          <h2>Quiz #1</h2>
+        <div class="takeaway">
+          <span class="takeaway-label">Entregável de hoje</span>
+          <p>O seu fork com a DDL do schema <span class="mono">conhecimento</span>, a busca por distância funcionando, o índice HNSW, o servidor MCP respondendo e o <span class="mono">verificar.py</span> imprimindo 7 de 7.</p>
         </div>
-        <div class="quiz-container">
-          <div class="quiz-question">No contexto de IA Generativa, o que é um Embedding?</div>
-          <ul class="quiz-options">
-            <li data-correct="false"><span class="option-letter">A</span> Um tipo especial de prompt que ignora os limites de tokens da LLM.</li>
-            <li data-correct="true"><span class="option-letter">B</span> Uma representação matemática em forma de vetor (array de números) que captura o significado semântico de um dado.</li>
-            <li data-correct="false"><span class="option-letter">C</span> O processo de enviar imagens para a API da OpenAI.</li>
-            <li data-correct="false"><span class="option-letter">D</span> Um banco de dados relacional clássico.</li>
-          </ul>
-          <div class="quiz-feedback" data-correct-msg="Correto! Textos com significados parecidos terão vetores próximos no espaço multidimensional." data-incorrect-msg="Cuidado! Embeddings são vetores numéricos de alta dimensão."></div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Agenda do Encontro</div>
+          <div class="footer-page">3</div>
         </div>
       </section>
 
-      <!-- INTERVALO -->
-      <section class="content-slide" style="text-align:center;">
-        <div class="top-bar"></div>
-        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div style="margin-top:100px;">
-          <h2 style="font-size:2.5em; color:var(--fiap-pink);">☕ Pausa para Café</h2>
-          <h3 style="font-size:1.5em; color:var(--fiap-gray-light); margin-top:20px;">20h50 – 21h20 (30 minutos)</h3>
-        </div>
-      </section>
-
-      <!-- RAG E MCP -->
+      <!-- ==================== 4: RESGATE DA ESPIRAL ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>RAG & Model Context Protocol (MCP)</h2>
+          <h2>Resgate da Espiral: o mesmo banco, desde setembro</h2>
         </div>
-        <p><strong>RAG (Retrieval-Augmented Generation):</strong> Buscar dados externos para injetar no contexto da LLM, reduzindo alucinações.</p>
-        <p><strong>MCP:</strong> Padroniza a conexão entre Modelos de IA e Fontes de Dados Corporativas (ex: nosso pgvector da LogiTech).</p>
-      </section>
 
-      <!-- QUIZ 2 -->
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div>
-        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area">
-          <div class="accent-bar"></div>
-          <h2>Quiz #2</h2>
+        <div class="concept-cards" style="grid-template-columns: repeat(4, 1fr); gap:11px; margin-top:8px;">
+          <div class="concept-card" style="padding:13px 15px;">
+            <h4>Aula 05: o núcleo</h4>
+            <p style="font-size:0.63em;"><strong>Pedidos</strong> em Java e <strong>Faturamento</strong> em C#, com Repository Pattern. O schema nasceu do <span class="mono">ddl-auto=update</span> e do <span class="mono">ModelBuilder</span>.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 15px;">
+            <h4>Aula 07: a plataforma</h4>
+            <p style="font-size:0.63em;">O <strong>PostgreSQL</strong> entrou no <span class="mono">docker-compose.yml</span>, com <span class="mono">healthcheck</span>, volume nomeado e um schema por Bounded Context.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 15px;">
+            <h4>Aula 08: o agente</h4>
+            <p style="font-size:0.63em;">O agente chamou <span class="mono">/api/v1/pedidos/{id}/status</span> por <strong>Function Calling</strong>. Integração escrita à mão, para aquele agente.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 15px;">
+            <h4>Aulas 10 e 11: as telas</h4>
+            <p style="font-size:0.63em;">React e Angular consumindo a plataforma. O <strong>navegador</strong> virou consumidor, e com ele veio o CORS.</p>
+          </div>
         </div>
-        <div class="quiz-container">
-          <div class="quiz-question">O que o pgvector permite fazer dentro do PostgreSQL?</div>
-          <ul class="quiz-options">
-            <li data-correct="false"><span class="option-letter">A</span> Acelerar consultas JOIN em chaves primárias relacionais.</li>
-            <li data-correct="true"><span class="option-letter">B</span> Armazenar e consultar vetores de embeddings utilizando buscas por similaridade (ex: distância de cosseno).</li>
-            <li data-correct="false"><span class="option-letter">C</span> Substituir o uso de SQL por comandos em Python puro.</li>
-            <li data-correct="false"><span class="option-letter">D</span> Gerar embeddings textuais diretamente no banco sem depender de LLMs externas.</li>
-          </ul>
-          <div class="quiz-feedback" data-correct-msg="Perfeito! O pgvector transforma o Postgres em um Vector Database nativo." data-incorrect-msg="Incorreto. O pgvector permite armazenamento de vetores e busca semântica por similaridade."></div>
-        </div>
-      </section>
 
-      <!-- QUIZ 3 -->
-      <section class="quiz-slide content-slide">
-        <div class="top-bar"></div>
-        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area">
-          <div class="accent-bar"></div>
-          <h2>Quiz #3</h2>
+        <div class="takeaway">
+          <span class="takeaway-label">A pergunta de hoje</span>
+          <p>Cinco aulas gravando e lendo dados em PostgreSQL. Quantas vezes vocês abriram o <span class="mono">psql</span> e olharam o que está lá dentro?</p>
         </div>
-        <div class="quiz-container">
-          <div class="quiz-question">No pipeline RAG, em que momento ocorre a etapa de "Retrieval" (Recuperação)?</div>
-          <ul class="quiz-options">
-            <li data-correct="false"><span class="option-letter">A</span> Depois que a resposta final é exibida ao usuário.</li>
-            <li data-correct="false"><span class="option-letter">B</span> Durante o treinamento dos pesos (weights) do modelo na infraestrutura da OpenAI.</li>
-            <li data-correct="true"><span class="option-letter">C</span> Antes de enviar o prompt final à LLM, buscando os documentos relevantes na base vetorial.</li>
-            <li data-correct="false"><span class="option-letter">D</span> Apenas quando ocorre um erro na rede.</li>
-          </ul>
-          <div class="quiz-feedback" data-correct-msg="Correto! O Retrieval ocorre para buscar o contexto que embasará a geração." data-incorrect-msg="Cuidado! O Retrieval acontece ANTES de chamar a LLM para adicionar contexto ao prompt."></div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Resgate da Espiral</div>
+          <div class="footer-page">4</div>
         </div>
       </section>
 
-      <!-- LAB -->
+      <!-- ==================== 5: O LEVANTAMENTO ==================== -->
       <section class="content-slide">
         <div class="top-bar"></div>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Hands-on Lab (Grupo)</h2>
+          <h2>Um levantamento no acervo da disciplina</h2>
         </div>
-        <p><strong>LogiTech AI Assistant:</strong> Vamos criar um script Python que conecta no pgvector, faz uma busca por similaridade de incidentes de frete e utiliza RAG/MCP para responder.</p>
-        <p>Lab disponível em: <code>aulas-1sem/labs/aula12-lab</code>.</p>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 300" style="max-height:300px;" role="img" aria-label="Linha do tempo mostrando que nenhuma aula anterior escreveu SQL">
+            <line x1="60" y1="150" x2="1120" y2="150" stroke="#ccc" stroke-width="3"/>
+            <g font-family="Montserrat, sans-serif" text-anchor="middle">
+              <g>
+                <circle cx="180" cy="150" r="13" fill="#8e8e8e"/>
+                <text x="180" y="118" font-size="19" font-weight="700" fill="#333">Aula 05</text>
+                <text x="180" y="192" font-size="16" fill="#555">Java, Hibernate</text>
+                <text x="180" y="214" font-size="15" fill="#888" font-family="'JetBrains Mono', monospace">ddl-auto=update</text>
+              </g>
+              <g>
+                <circle cx="430" cy="150" r="13" fill="#8e8e8e"/>
+                <text x="430" y="118" font-size="19" font-weight="700" fill="#333">Aula 05</text>
+                <text x="430" y="192" font-size="16" fill="#555">C#, EF Core</text>
+                <text x="430" y="214" font-size="15" fill="#888" font-family="'JetBrains Mono', monospace">ModelBuilder</text>
+              </g>
+              <g>
+                <circle cx="680" cy="150" r="13" fill="#8e8e8e"/>
+                <text x="680" y="118" font-size="19" font-weight="700" fill="#333">Aula 07</text>
+                <text x="680" y="192" font-size="16" fill="#555">Compose</text>
+                <text x="680" y="214" font-size="15" fill="#888" font-family="'JetBrains Mono', monospace">image: postgres:16</text>
+              </g>
+              <g>
+                <circle cx="930" cy="150" r="13" fill="#8e8e8e"/>
+                <text x="930" y="118" font-size="19" font-weight="700" fill="#333">Aulas 08 a 11</text>
+                <text x="930" y="192" font-size="16" fill="#555">agente e telas</text>
+                <text x="930" y="214" font-size="15" fill="#888">tudo pela API</text>
+              </g>
+            </g>
+            <g>
+              <rect x="330" y="18" width="520" height="56" rx="10" fill="#fff0f5" stroke="#ED145B" stroke-width="2"/>
+              <text x="590" y="55" text-anchor="middle" font-family="Montserrat, sans-serif" font-size="25" font-weight="800" fill="#ED145B">
+                arquivos .sql no acervo: 0
+              </text>
+            </g>
+            <path d="M590 76 L590 130" stroke="#ED145B" stroke-width="2.5" stroke-dasharray="6,5"/>
+            <polygon points="590,140 583,128 597,128" fill="#ED145B"/>
+          </svg>
+          <figcaption>Levantamento feito no repositório da disciplina em 31/07/2026, antes de escrever esta aula.</figcaption>
+        </figure>
+
+        <div class="takeaway">
+          <span class="takeaway-label">O que isso significa</span>
+          <p>Vocês persistiram em um banco relacional o semestre inteiro <strong>sem nunca escrever uma linha de SQL</strong>. Pedir <span class="mono">CREATE EXTENSION vector</span> e o operador <span class="mono">&lt;=&gt;</span> de alguém nessa situação produz cópia, não aprendizado.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Resgate da Espiral</div>
+          <div class="footer-page">5</div>
+        </div>
       </section>
+
+      <!-- ==================== 6: DESAFIO DO MINI MUNDO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Desafio: a resposta está no contrato, e ninguém acha</h2>
+        </div>
+
+        <p style="font-size:0.73em; margin:2px 0 6px;">Um cliente liga: a carga refrigerada chegou estragada. O atendente precisa dizer, agora, <strong>em quantos dias ele pode formalizar o pedido de ressarcimento</strong>. A resposta está em um contrato de dez cláusulas, e há quatro contratos vigentes com regras diferentes.</p>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 230" style="max-height:245px;" role="img" aria-label="Quatro contratos com prazos de reclamação diferentes">
+            <g font-family="Montserrat, sans-serif">
+              <rect x="20" y="14" width="272" height="150" rx="10" fill="#f7f7f7" stroke="#ccc" stroke-width="2"/>
+              <text x="156" y="44" text-anchor="middle" font-size="17" font-weight="700" fill="#333">Aurora Supermercados</text>
+              <text x="156" y="66" text-anchor="middle" font-size="14" fill="#777">carga seca paletizada</text>
+              <text x="156" y="112" text-anchor="middle" font-size="34" font-weight="800" fill="#ED145B">90 dias</text>
+              <text x="156" y="140" text-anchor="middle" font-size="14" fill="#777">para pedir indenização</text>
+
+              <rect x="308" y="14" width="272" height="150" rx="10" fill="#f7f7f7" stroke="#ccc" stroke-width="2"/>
+              <text x="444" y="44" text-anchor="middle" font-size="17" font-weight="700" fill="#333">Frigolar</text>
+              <text x="444" y="66" text-anchor="middle" font-size="14" fill="#777">temperatura controlada</text>
+              <text x="444" y="112" text-anchor="middle" font-size="34" font-weight="800" fill="#ED145B">120 dias</text>
+              <text x="444" y="140" text-anchor="middle" font-size="14" fill="#777">para pedir indenização</text>
+
+              <rect x="596" y="14" width="272" height="150" rx="10" fill="#f7f7f7" stroke="#ccc" stroke-width="2"/>
+              <text x="732" y="44" text-anchor="middle" font-size="17" font-weight="700" fill="#333">Petroquímica Litoral</text>
+              <text x="732" y="66" text-anchor="middle" font-size="14" fill="#777">produtos perigosos</text>
+              <text x="732" y="112" text-anchor="middle" font-size="34" font-weight="800" fill="#ED145B">180 dias</text>
+              <text x="732" y="140" text-anchor="middle" font-size="14" fill="#777">para pedir indenização</text>
+
+              <rect x="884" y="14" width="272" height="150" rx="10" fill="#f7f7f7" stroke="#ccc" stroke-width="2"/>
+              <text x="1020" y="44" text-anchor="middle" font-size="17" font-weight="700" fill="#333">Nordeste Agro</text>
+              <text x="1020" y="66" text-anchor="middle" font-size="14" fill="#777">granéis agrícolas</text>
+              <text x="1020" y="112" text-anchor="middle" font-size="34" font-weight="800" fill="#ED145B">90 dias</text>
+              <text x="1020" y="140" text-anchor="middle" font-size="14" fill="#777">para pedir indenização</text>
+
+              <text x="590" y="204" text-anchor="middle" font-size="18" fill="#444">Responder o prazo errado custa dinheiro. Responder devagar custa o cliente.</text>
+            </g>
+          </svg>
+          <figcaption>Os quatro contratos do laboratório de hoje. Prazos diferentes, escritos com palavras diferentes, para o mesmo conceito de negócio.</figcaption>
+        </figure>
+
+        <div class="takeaway">
+          <span class="takeaway-label">O detalhe que decide tudo</span>
+          <p>Nenhum dos quatro contratos usa a palavra <em>ressarcimento</em>. Eles falam em <strong>indenização por perdas e danos</strong>. Buscar por igualdade de texto não encontra nada.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Desafio do Mini Mundo</div>
+          <div class="footer-page">6</div>
+        </div>
+      </section>
+
+      <!-- ==================== 7: A TESE DA AULA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A tese desta aula, em uma linha de SQL</h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 290" style="max-height:330px;" role="img" aria-label="Duas consultas quase iguais, uma ordenando por coluna e outra por distância">
+            <g font-family="Montserrat, sans-serif">
+              <rect x="20" y="14" width="560" height="192" rx="10" fill="#f4f8f4" stroke="#7ba87b" stroke-width="2"/>
+              <text x="300" y="42" text-anchor="middle" font-size="19" font-weight="700" fill="#3d6b3d">O que vocês já sabem fazer</text>
+              <g font-family="'JetBrains Mono', monospace" font-size="16" fill="#333">
+                <text x="42" y="78">SELECT t.texto, c.titulo</text>
+                <text x="42" y="104">FROM   trechos t</text>
+                <text x="42" y="130">JOIN   contratos c ON c.id = t.contrato_id</text>
+                <text x="42" y="156" font-weight="700" fill="#2d7a2d">ORDER BY length(t.texto) DESC</text>
+                <text x="42" y="182">LIMIT  5;</text>
+              </g>
+
+              <rect x="600" y="14" width="560" height="192" rx="10" fill="#fff0f5" stroke="#ED145B" stroke-width="2"/>
+              <text x="880" y="42" text-anchor="middle" font-size="19" font-weight="700" fill="#ED145B">O que vocês vão fazer hoje</text>
+              <g font-family="'JetBrains Mono', monospace" font-size="16" fill="#333">
+                <text x="622" y="78">SELECT t.texto, c.titulo</text>
+                <text x="622" y="104">FROM   trechos t</text>
+                <text x="622" y="130">JOIN   contratos c ON c.id = t.contrato_id</text>
+                <text x="622" y="156" font-weight="700" fill="#ED145B">ORDER BY t.embedding &lt;=&gt; :pergunta</text>
+                <text x="622" y="182">LIMIT  5;</text>
+              </g>
+
+              <rect x="30" y="142" width="540" height="26" rx="6" fill="none" stroke="#2d7a2d" stroke-width="2.5" stroke-dasharray="7,5">
+                <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.25;0.35;0.85;0.95;1" dur="7s" repeatCount="indefinite"/>
+              </rect>
+              <rect x="610" y="142" width="540" height="26" rx="6" fill="none" stroke="#ED145B" stroke-width="2.5" stroke-dasharray="7,5">
+                <animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.25;0.35;0.85;0.95;1" dur="7s" repeatCount="indefinite"/>
+              </rect>
+
+              <text x="590" y="244" text-anchor="middle" font-size="23" font-weight="800" fill="#333">
+                Muda uma linha: a expressão do ORDER BY.
+              </text>
+              <text x="590" y="274" text-anchor="middle" font-size="17" fill="#666">
+                Mesma tabela, mesmo JOIN, mesmo LIMIT, mesmo banco.
+              </text>
+            </g>
+          </svg>
+          <figcaption>A cada sete segundos a animação destaca, nos dois lados, a única linha que difere entre as duas consultas.</figcaption>
+        </figure>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Guarde esta frase</span>
+          <p>Busca vetorial <strong>não é outro banco nem outro paradigma</strong>. É mais um <span class="mono">ORDER BY</span> no PostgreSQL que já estava lá, sobre distância em vez de sobre coluna. Quem entende índice e plano de execução leva isso para qualquer stack.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – A Tese da Aula</div>
+          <div class="footer-page">7</div>
+        </div>
+      </section>
+
+      <!-- ==================== 8: O QUE O ORM ESCREVEU ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A SQL que escreveram por vocês <a href="#/ref-slide" class="ref-badge" title="Ver referências">[1]</a></h2>
+        </div>
+
+        <p style="font-size:0.68em; margin:2px 0 6px;">Nenhuma linha abaixo foi digitada por uma pessoa. É a saída de um <span class="mono">pg_dump --schema-only</span> tirada depois de subir os serviços reais das Aulas 05 e 06.</p>
+
+        <div class="side-by-side" style="gap:16px;">
+          <div class="side">
+            <h4>Hibernate, do serviço em Java</h4>
+            <pre class="code-compact" style="font-size:0.44em; margin:0;"><code class="language-sql">CREATE TABLE pedidos.pedidos (
+    id                 varchar(36) NOT NULL,
+    cliente            varchar(120) NOT NULL,
+    criado_em          timestamp(6) with time zone NOT NULL,
+    endereco_entrega   varchar(240) NOT NULL,
+    peso_kg            numeric(38,2) NOT NULL,
+    status             varchar(30) NOT NULL,
+    CONSTRAINT pedidos_status_check
+      CHECK (status = ANY (ARRAY['CRIADO','FATURADO',
+             'EM_TRANSITO','ENTREGUE']))
+);</code></pre>
+          </div>
+          <div class="side">
+            <h4>EF Core, do serviço em C#</h4>
+            <pre class="code-compact" style="font-size:0.44em; margin:0;"><code class="language-sql">CREATE TABLE faturamento.faturas (
+    "Id"               varchar(36) NOT NULL,
+    "PedidoId"         varchar(36) NOT NULL,
+    "Cliente"          varchar(120) NOT NULL,
+    "Valor"            numeric(12,2) NOT NULL,
+    "NumeroNotaFiscal" varchar(30) NOT NULL,
+    "EmitidaEm"        timestamp with time zone NOT NULL
+);
+CREATE UNIQUE INDEX "IX_faturas_NumeroNotaFiscal"
+    ON faturamento.faturas ("NumeroNotaFiscal");</code></pre>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Por que começar por aqui</span>
+          <p>O ORM não inventou nada: ele <strong>traduziu</strong>. E a língua para a qual ele traduziu é exatamente a que vocês vão escrever no Passo 2.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – A SQL que o ORM escreveu</div>
+          <div class="footer-page">8</div>
+        </div>
+      </section>
+
+      <!-- ==================== 9: TRÊS LEITURAS DO DUMP ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Três leituras do mesmo despejo, e nenhuma é acidente</h2>
+        </div>
+
+        <table class="compact-table" style="font-size:0.56em;">
+          <thead>
+            <tr><th style="width:31%;">O que está escrito</th><th style="width:33%;">De onde veio</th><th>O que isso custa a você</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="mono">"PedidoId" varchar(36)</span>, com aspas</td>
+              <td>O EF Core manteve o PascalCase do C#. Sem aspas o PostgreSQL rebaixaria tudo para minúsculas, e o mapeamento quebraria.</td>
+              <td>No <span class="mono">psql</span>, <span class="mono">SELECT PedidoId</span> falha e <span class="mono">SELECT "PedidoId"</span> funciona. O Hibernate escolheu o contrário: <span class="mono">enderecoEntrega</span> virou <span class="mono">endereco_entrega</span>.</td>
+            </tr>
+            <tr>
+              <td><span class="mono">peso_kg numeric(38,2)</span> ao lado de <span class="mono">"Valor" numeric(12,2)</span></td>
+              <td>Um <span class="mono">BigDecimal</span> sem precisão declarada no Java, contra um <span class="mono">HasPrecision(12, 2)</span> explícito no <span class="mono">ModelBuilder</span>.</td>
+              <td>A mesma ideia de negócio virou duas colunas diferentes, porque só uma das duas foi declarada. O ORM não adivinha: ele usa o teto.</td>
+            </tr>
+            <tr>
+              <td><span class="mono">CONSTRAINT pedidos_status_check</span></td>
+              <td>Um <span class="mono">enum</span> Java anotado com <span class="mono">@Enumerated(EnumType.STRING)</span>.</td>
+              <td>O banco passou a recusar status fora da lista, <strong>inclusive de outra aplicação</strong> escrevendo na mesma tabela. Regra de negócio gravada no banco.</td>
+            </tr>
+            <tr>
+              <td><span class="mono">CREATE UNIQUE INDEX ... ("NumeroNotaFiscal")</span></td>
+              <td>Um <span class="mono">HasIndex(...).IsUnique()</span>.</td>
+              <td>Índice único não é performance: é a afirmação "não existem duas faturas com o mesmo número", garantida mesmo que o código tenha um defeito.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Takeaway</span>
+          <p>Cada linha de configuração do ORM virou uma <strong>decisão de schema</strong>. Quem nunca leu o resultado não sabe quais decisões tomou.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – A SQL que o ORM escreveu</div>
+          <div class="footer-page">9</div>
+        </div>
+      </section>
+
+      <!-- ==================== 10: PSQL ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O <span class="mono">psql</span> e os atalhos que consultam o catálogo <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <p style="font-size:0.7em; margin:2px 0 6px;">Comandos que começam com barra invertida <strong>não são SQL</strong>: são do cliente. Ele os traduz em consultas às tabelas de sistema, e por isso não funcionam em cliente gráfico nem dentro de um <span class="mono">SELECT</span>.</p>
+
+        <table class="compact-table" style="font-size:0.58em;">
+          <thead><tr><th style="width:22%;">Atalho</th><th style="width:36%;">O que responde</th><th>A mesma pergunta em SQL</th></tr></thead>
+          <tbody>
+            <tr><td><span class="mono">\dn</span></td><td>Que schemas existem</td><td><span class="mono">SELECT nspname FROM pg_namespace</span></td></tr>
+            <tr><td><span class="mono">\dt pedidos.*</span></td><td>Que tabelas há em um schema</td><td><span class="mono">SELECT tablename FROM pg_tables WHERE schemaname = ...</span></td></tr>
+            <tr><td><span class="mono">\d+ faturamento.faturas</span></td><td>Colunas, tipos, restrições e índices de uma tabela</td><td><span class="mono">SELECT ... FROM information_schema.columns</span></td></tr>
+            <tr><td><span class="mono">\di</span></td><td>Os índices, com a definição completa</td><td><span class="mono">SELECT indexdef FROM pg_indexes</span></td></tr>
+            <tr><td><span class="mono">\dx</span></td><td>As extensões instaladas <strong>neste banco</strong></td><td><span class="mono">SELECT extname, extversion FROM pg_extension</span></td></tr>
+            <tr><td><span class="mono">\gset</span></td><td>Guarda o resultado de uma linha em variáveis do cliente</td><td>não tem equivalente: é do <span class="mono">psql</span></td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout" style="margin-top:8px; padding:11px 15px;">
+          <p style="font-size:0.65em; margin:0;">O <span class="mono">\gset</span> parece o menos importante da lista e é o que faz o índice HNSW entrar no plano do Passo 5. Voltamos a ele.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – A SQL que o ORM escreveu</div>
+          <div class="footer-page">10</div>
+        </div>
+      </section>
+
+      <!-- ==================== 11: DDL À MÃO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A partir daqui o ORM não escreve mais por você</h2>
+        </div>
+
+        <p style="font-size:0.7em; margin:2px 0 6px;">Nem o Hibernate nem o EF Core sabem declarar uma coluna do tipo <span class="mono">vector</span>. O tipo vem de uma extensão, e extensão está fora do vocabulário do mapeamento objeto-relacional. A DDL de hoje é sua.</p>
+
+        <pre class="code-compact" style="font-size:0.5em; margin:4px 0 0;"><code class="language-sql">CREATE EXTENSION IF NOT EXISTS vector;         -- por BANCO, nao por servidor
+CREATE SCHEMA    IF NOT EXISTS conhecimento;   -- um schema por Bounded Context
+
+CREATE TABLE conhecimento.contratos (
+    id        bigserial    PRIMARY KEY,         -- coluna, sequencia e default, de uma vez
+    cliente   varchar(160) NOT NULL,
+    titulo    varchar(200) NOT NULL,
+    vigencia  varchar(60)  NOT NULL,
+    arquivo   varchar(200) NOT NULL UNIQUE,     -- o mesmo documento nao entra duas vezes
+    criado_em timestamptz  NOT NULL DEFAULT now()
+);</code></pre>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A armadilha da imagem</span>
+          <p>A imagem <span class="mono">pgvector/pgvector:pg16</span> traz a extensão <strong>disponível</strong>, e disponível não é instalada. Trocar a imagem do banco não dispensa o <span class="mono">CREATE EXTENSION</span>, que vale por banco de dados e não por servidor.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – DDL à mão</div>
+          <div class="footer-page">11</div>
+        </div>
+      </section>
+
+      <!-- ==================== 12: A TABELA DOS TRECHOS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A tabela onde o vetor mora</h2>
+        </div>
+
+        <p style="font-size:0.7em; margin:2px 0 6px;">Uma linha por pedaço de contrato, com o vetor <strong>ao lado</strong> do texto. Não no lugar dele: do vetor não se volta ao texto, e é a coluna <span class="mono">texto</span> que a resposta cita.</p>
+
+        <pre class="code-compact" style="font-size:0.5em; margin:4px 0 0;"><code class="language-sql">CREATE TABLE conhecimento.trechos (
+    id          bigserial PRIMARY KEY,
+    contrato_id bigint    NOT NULL
+                REFERENCES conhecimento.contratos (id) ON DELETE CASCADE,
+    ordem       int       NOT NULL,
+    texto       text      NOT NULL,
+    embedding   vector(768),
+    CONSTRAINT trechos_ordem_unica_por_contrato UNIQUE (contrato_id, ordem)
+);</code></pre>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A restrição que vale por duas colunas</span>
+          <p><span class="mono">UNIQUE (contrato_id, ordem)</span> não é o mesmo que duas restrições únicas. Ela diz: a ordem 3 pode existir em todos os contratos, e <strong>só uma vez em cada</strong>. É a regra que impede a ingestão duplicar um trecho sem ninguém notar.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – DDL à mão</div>
+          <div class="footer-page">12</div>
+        </div>
+      </section>
+
+      <!-- ==================== 12: DUAS TABELAS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Duas tabelas, e a normalização é deliberada</h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 320" style="max-height:340px;" role="img" aria-label="Comparação entre uma tabela única desnormalizada e duas tabelas ligadas por chave estrangeira">
+            <g font-family="Montserrat, sans-serif">
+              <text x="270" y="26" text-anchor="middle" font-size="18" font-weight="700" fill="#a03028">Uma tabela só: o RAG funciona, e é uma demonstração</text>
+              <rect x="30" y="40" width="480" height="120" rx="8" fill="#fdedec" stroke="#c0392b" stroke-width="2"/>
+              <g font-family="'JetBrains Mono', monospace" font-size="13.5" fill="#444">
+                <text x="46" y="66">trechos(texto, embedding, cliente, titulo, vigencia)</text>
+                <text x="46" y="92">"Clausula 7 ...", [..], "Frigolar", "Contrato ...", "2026"</text>
+                <text x="46" y="112">"Clausula 8 ...", [..], "Frigolar", "Contrato ...", "2026"</text>
+                <text x="46" y="132">"Clausula 9 ...", [..], "Frigolar", "Contrato ...", "2026"</text>
+                <text x="46" y="152">"Clausula 1 ...", [..], "Aurora",   "Contrato ...", "2026"</text>
+              </g>
+              <text x="270" y="180" text-anchor="middle" font-size="15" fill="#a03028">cliente, título e vigência repetidos em cada uma das 44 linhas</text>
+
+              <text x="870" y="26" text-anchor="middle" font-size="18" font-weight="700" fill="#2d7a2d">Duas tabelas: o JOIN responde de onde veio</text>
+              <rect x="600" y="40" width="240" height="86" rx="8" fill="#f4f8f4" stroke="#5a8f5a" stroke-width="2"/>
+              <text x="720" y="62" text-anchor="middle" font-size="15" font-weight="700" fill="#2d7a2d" font-family="'JetBrains Mono', monospace">contratos</text>
+              <g font-family="'JetBrains Mono', monospace" font-size="13" fill="#444" text-anchor="middle">
+                <text x="720" y="84">id, cliente, titulo,</text>
+                <text x="720" y="102">vigencia, arquivo</text>
+                <text x="720" y="120">4 linhas</text>
+              </g>
+
+              <rect x="920" y="40" width="240" height="86" rx="8" fill="#f4f8f4" stroke="#5a8f5a" stroke-width="2"/>
+              <text x="1040" y="62" text-anchor="middle" font-size="15" font-weight="700" fill="#2d7a2d" font-family="'JetBrains Mono', monospace">trechos</text>
+              <g font-family="'JetBrains Mono', monospace" font-size="13" fill="#444" text-anchor="middle">
+                <text x="1040" y="84">id, contrato_id,</text>
+                <text x="1040" y="102">ordem, texto, embedding</text>
+                <text x="1040" y="120">44 linhas</text>
+              </g>
+
+              <path d="M920 83 L845 83" stroke="#ED145B" stroke-width="2.5"/>
+              <polygon points="838,83 850,77 850,89" fill="#ED145B"/>
+              <text x="882" y="72" text-anchor="middle" font-size="12" fill="#ED145B" font-weight="700">FK</text>
+
+              <rect x="600" y="140" width="560" height="46" rx="8" fill="#fff0f5" stroke="#ED145B" stroke-width="2"/>
+              <text x="880" y="169" text-anchor="middle" font-size="16" font-weight="700" fill="#ED145B">
+                "de qual contrato veio este trecho?"
+              </text>
+
+              <line x1="30" y1="212" x2="1150" y2="212" stroke="#ddd" stroke-width="2"/>
+              <text x="590" y="248" text-anchor="middle" font-size="21" font-weight="800" fill="#333">
+                Uma tabela só bastaria. É por isso que são duas.
+              </text>
+              <text x="590" y="282" text-anchor="middle" font-size="17" fill="#555">
+                A citação da fonte na resposta sai desse JOIN, e não de metadado duplicado em cada linha.
+              </text>
+              <text x="590" y="308" text-anchor="middle" font-size="17" fill="#555">
+                É a diferença entre um RAG que alguém usa para decidir e um que alguém mostra em slide.
+              </text>
+            </g>
+          </svg>
+          <figcaption>Contrato de dados fixado na ADR-008 do acervo: <span class="mono">conhecimento.contratos</span> e <span class="mono">conhecimento.trechos</span>, ligadas por chave estrangeira com <span class="mono">ON DELETE CASCADE</span>.</figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – DDL à mão</div>
+          <div class="footer-page">13</div>
+        </div>
+      </section>
+
+      <!-- ==================== 13: A CHAVE ESTRANGEIRA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A chave estrangeira e o <span class="mono">ON DELETE CASCADE</span></h2>
+        </div>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:12px; margin-top:6px;">
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>Sem chave estrangeira</h4>
+            <p style="font-size:0.63em;">Nada impede um trecho apontar para um contrato que não existe. A busca continua funcionando e a <strong>citação da fonte passa a mentir</strong>, sem dar erro nenhum.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>Com FK, sem cascata</h4>
+            <p style="font-size:0.63em;">O banco recusa o trecho órfão. Mas a reingestão, que apaga os contratos para refazer tudo, <strong>falha com violação de restrição</strong>: há trechos apontando para as linhas que ela tenta apagar.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>Com FK e cascata</h4>
+            <p style="font-size:0.63em;">Apagar um contrato leva os trechos dele junto, e a reingestão vira uma operação idempotente. É a única das três que funciona no laboratório de hoje.</p>
+          </div>
+        </div>
+
+        <pre class="code-compact" style="font-size:0.5em; margin:10px 0 0;"><code class="language-sql">-- e por isso que a ingestao pode comecar assim, sem apagar trecho por trecho:
+DELETE FROM conhecimento.contratos;</code></pre>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Takeaway</span>
+          <p>Restrição no banco não é burocracia: é a regra continuando a valer <strong>quando a aplicação erra</strong>, e quando outra aplicação escreve na mesma tabela.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – DDL à mão</div>
+          <div class="footer-page">14</div>
+        </div>
+      </section>
+
+      <!-- ==================== 14: JUNÇÃO SEM CONDIÇÃO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Junção sem condição não é erro de sintaxe <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 300" style="max-height:320px;" role="img" aria-label="Comparação entre junção com condição e produto cartesiano">
+            <g font-family="Montserrat, sans-serif">
+              <text x="290" y="24" text-anchor="middle" font-size="18" font-weight="700" fill="#2d7a2d">Com condição: 44 linhas, cada trecho com o seu contrato</text>
+              <g font-family="'JetBrains Mono', monospace" font-size="15" fill="#333">
+                <text x="30" y="56">FROM trechos t</text>
+                <text x="30" y="78">JOIN contratos c ON c.id = t.contrato_id</text>
+              </g>
+              <g>
+                <rect x="30" y="96" width="120" height="26" rx="4" fill="#eaf3ea" stroke="#5a8f5a"/>
+                <text x="90" y="114" text-anchor="middle" font-size="13" fill="#333" font-family="'JetBrains Mono', monospace">trecho 1</text>
+                <path d="M154 109 L232 109" stroke="#5a8f5a" stroke-width="2"/>
+                <polygon points="240,109 228,104 228,114" fill="#5a8f5a"/>
+                <rect x="244" y="96" width="150" height="26" rx="4" fill="#eaf3ea" stroke="#5a8f5a"/>
+                <text x="319" y="114" text-anchor="middle" font-size="13" fill="#333" font-family="'JetBrains Mono', monospace">Frigolar</text>
+
+                <rect x="30" y="132" width="120" height="26" rx="4" fill="#eaf3ea" stroke="#5a8f5a"/>
+                <text x="90" y="150" text-anchor="middle" font-size="13" fill="#333" font-family="'JetBrains Mono', monospace">trecho 2</text>
+                <path d="M154 145 L232 145" stroke="#5a8f5a" stroke-width="2"/>
+                <polygon points="240,145 228,140 228,150" fill="#5a8f5a"/>
+                <rect x="244" y="132" width="150" height="26" rx="4" fill="#eaf3ea" stroke="#5a8f5a"/>
+                <text x="319" y="150" text-anchor="middle" font-size="13" fill="#333" font-family="'JetBrains Mono', monospace">Frigolar</text>
+
+                <rect x="30" y="168" width="120" height="26" rx="4" fill="#eaf3ea" stroke="#5a8f5a"/>
+                <text x="90" y="186" text-anchor="middle" font-size="13" fill="#333" font-family="'JetBrains Mono', monospace">trecho 3</text>
+                <path d="M154 181 L232 181" stroke="#5a8f5a" stroke-width="2"/>
+                <polygon points="240,181 228,176 228,186" fill="#5a8f5a"/>
+                <rect x="244" y="168" width="150" height="26" rx="4" fill="#eaf3ea" stroke="#5a8f5a"/>
+                <text x="319" y="186" text-anchor="middle" font-size="13" fill="#333" font-family="'JetBrains Mono', monospace">Aurora</text>
+              </g>
+              <text x="212" y="232" text-anchor="middle" font-size="36" font-weight="800" fill="#2d7a2d">44 linhas</text>
+              <text x="212" y="262" text-anchor="middle" font-size="15" fill="#555">todas verdadeiras</text>
+
+              <line x1="470" y1="14" x2="470" y2="280" stroke="#ddd" stroke-width="2"/>
+
+              <text x="830" y="24" text-anchor="middle" font-size="18" font-weight="700" fill="#a03028">Sem condição: 176 linhas, quase todas mentira</text>
+              <g font-family="'JetBrains Mono', monospace" font-size="15" fill="#333">
+                <text x="510" y="56">FROM trechos t</text>
+                <text x="510" y="78">CROSS JOIN contratos c</text>
+              </g>
+              <g>
+                <rect x="510" y="96" width="120" height="26" rx="4" fill="#fdedec" stroke="#c0392b"/>
+                <text x="570" y="114" text-anchor="middle" font-size="13" fill="#333" font-family="'JetBrains Mono', monospace">trecho 1</text>
+                <rect x="724" y="96" width="150" height="26" rx="4" fill="#fdedec" stroke="#c0392b"/>
+                <text x="799" y="114" text-anchor="middle" font-size="13" fill="#333" font-family="'JetBrains Mono', monospace">Frigolar</text>
+                <rect x="724" y="132" width="150" height="26" rx="4" fill="#fdedec" stroke="#c0392b"/>
+                <text x="799" y="150" text-anchor="middle" font-size="13" fill="#333" font-family="'JetBrains Mono', monospace">Aurora</text>
+                <rect x="724" y="168" width="150" height="26" rx="4" fill="#fdedec" stroke="#c0392b"/>
+                <text x="799" y="186" text-anchor="middle" font-size="13" fill="#333" font-family="'JetBrains Mono', monospace">Petroquímica</text>
+                <rect x="724" y="204" width="150" height="26" rx="4" fill="#fdedec" stroke="#c0392b"/>
+                <text x="799" y="222" text-anchor="middle" font-size="13" fill="#333" font-family="'JetBrains Mono', monospace">Nordeste Agro</text>
+
+                <path d="M634 109 L712 109" stroke="#c0392b" stroke-width="1.8"/>
+                <path d="M634 109 L712 145" stroke="#c0392b" stroke-width="1.8"/>
+                <path d="M634 109 L712 181" stroke="#c0392b" stroke-width="1.8"/>
+                <path d="M634 109 L712 217" stroke="#c0392b" stroke-width="1.8"/>
+              </g>
+              <text x="990" y="252" text-anchor="middle" font-size="36" font-weight="800" fill="#c0392b">176 linhas</text>
+              <text x="990" y="280" text-anchor="middle" font-size="15" fill="#555">44 x 4, e 132 são falsas</text>
+            </g>
+          </svg>
+          <figcaption>Com quatro contratos e 44 trechos, a junção sem condição produz 176 linhas. O PostgreSQL aceita, executa e não reclama.</figcaption>
+        </figure>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Por que isso é grave</span>
+          <p>As 176 linhas são todas <strong>plausíveis</strong>: texto de contrato ao lado de nome de cliente. Ninguém percebe até conferir a fonte, e conferir a fonte é justamente o que este JOIN existe para permitir.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – SELECT, JOIN, ORDER BY</div>
+          <div class="footer-page">15</div>
+        </div>
+      </section>
+
+      <!-- ==================== 15: INNER x LEFT ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2><span class="mono">INNER</span> ou <span class="mono">LEFT</span>: a escolha que some sem dar erro</h2>
+        </div>
+
+        <p style="font-size:0.7em; margin:2px 0 6px;">A pergunta é "quantos trechos cada contrato gerou". Um contrato recém-cadastrado, ainda sem trechos, é uma resposta legítima com o valor zero.</p>
+
+        <div class="side-by-side" style="gap:16px;">
+          <div class="side">
+            <h4>INNER JOIN</h4>
+            <pre class="code-compact" style="font-size:0.46em; margin:0 0 6px;"><code class="language-sql">FROM contratos c
+JOIN trechos t ON t.contrato_id = c.id
+GROUP BY c.id, c.cliente</code></pre>
+            <p style="font-size:0.62em; margin:0;">O contrato sem trecho <strong>desaparece do relatório</strong>. Não há erro, não há aviso, e o total do rodapé fecha certinho com um contrato a menos.</p>
+          </div>
+          <div class="side">
+            <h4>LEFT JOIN</h4>
+            <pre class="code-compact" style="font-size:0.46em; margin:0 0 6px;"><code class="language-sql">FROM contratos c
+LEFT JOIN trechos t ON t.contrato_id = c.id
+GROUP BY c.id, c.cliente</code></pre>
+            <p style="font-size:0.62em; margin:0;">O contrato sem trecho aparece com <span class="mono">0</span>, que é exatamente o caso que interessa a quem opera a ingestão: um documento que entrou e não foi fatiado.</p>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:9px; padding:11px 15px; border-left:4px solid #c0392b;">
+          <p style="font-size:0.65em; margin:0;"><strong style="color:#c0392b;">A armadilha:</strong> com o acervo já ingerido, as duas consultas devolvem <strong>exatamente o mesmo resultado</strong>. A diferença só aparece no dia em que existe um contrato sem trecho, que é o dia em que você precisa do relatório para descobrir isso. Escolha pensando, não testando.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – SELECT, JOIN, ORDER BY</div>
+          <div class="footer-page">16</div>
+        </div>
+      </section>
+
+      <!-- ==================== 16: O QUE É UM EMBEDDING ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Embedding: o texto vira uma coordenada <a href="#/ref-slide" class="ref-badge" title="Ver referências">[4]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 250" style="max-height:255px;" role="img" aria-label="Um trecho de contrato entrando em um modelo e saindo como 768 números">
+            <g font-family="Montserrat, sans-serif">
+              <rect x="20" y="52" width="320" height="120" rx="8" fill="#f7f7f7" stroke="#bbb" stroke-width="2"/>
+              <text x="180" y="42" text-anchor="middle" font-size="16" font-weight="700" fill="#555">trecho do contrato</text>
+              <g font-size="14" fill="#444">
+                <text x="38" y="80">"A EMBARCADORA dispõe de 15 dias</text>
+                <text x="38" y="102">corridos contados da entrega para</text>
+                <text x="38" y="124">comunicar avaria não aparente..."</text>
+                <text x="38" y="152" fill="#888">937 caracteres</text>
+              </g>
+
+              <path d="M348 112 L436 112" stroke="#ED145B" stroke-width="3"/>
+              <polygon points="446,112 432,105 432,119" fill="#ED145B"/>
+
+              <rect x="452" y="62" width="230" height="100" rx="8" fill="#fff0f5" stroke="#ED145B" stroke-width="2"/>
+              <text x="567" y="98" text-anchor="middle" font-size="17" font-weight="700" fill="#ED145B">modelo de</text>
+              <text x="567" y="122" text-anchor="middle" font-size="17" font-weight="700" fill="#ED145B">embedding</text>
+              <text x="567" y="146" text-anchor="middle" font-size="12" fill="#a03a5e" font-family="'JetBrains Mono', monospace">paraphrase-multilingual</text>
+
+              <path d="M690 112 L778 112" stroke="#ED145B" stroke-width="3"/>
+              <polygon points="788,112 774,105 774,119" fill="#ED145B"/>
+
+              <rect x="794" y="52" width="366" height="120" rx="8" fill="#f4f8f4" stroke="#5a8f5a" stroke-width="2"/>
+              <text x="977" y="42" text-anchor="middle" font-size="16" font-weight="700" fill="#3d6b3d">768 números</text>
+              <g font-family="'JetBrains Mono', monospace" font-size="13" fill="#444">
+                <text x="810" y="82">[ 0.0119,  0.0152, -0.0045,  0.0200,</text>
+                <text x="810" y="104">  0.0067,  0.0265,  0.0132, -0.0150,</text>
+                <text x="810" y="126">  ... mais 760 ... , -0.0164 ]</text>
+              </g>
+              <text x="977" y="156" text-anchor="middle" font-size="13" fill="#888">um ponto no espaço de 768 dimensões</text>
+
+              <text x="590" y="212" text-anchor="middle" font-size="19" font-weight="700" fill="#333">
+                O modelo não guarda o texto. Ele guarda uma posição.
+              </text>
+              <text x="590" y="238" text-anchor="middle" font-size="16" fill="#666">
+                Textos com significado parecido saem em posições próximas, mesmo com palavras diferentes.
+              </text>
+            </g>
+          </svg>
+          <figcaption>O trecho é do contrato da Frigolar, do laboratório de hoje. Os números são de uma execução real do modelo, arredondados para caber.</figcaption>
+        </figure>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A consequência prática</span>
+          <p>Vetor não é resumo nem compressão: <strong>não dá para voltar do vetor ao texto</strong>. Por isso a coluna <span class="mono">texto</span> continua na tabela ao lado da coluna <span class="mono">embedding</span>.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Embeddings</div>
+          <div class="footer-page">17</div>
+        </div>
+      </section>
+
+      <!-- ==================== 17: O ESPAÇO VETORIAL ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O espaço vetorial: proximidade é significado</h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 330" style="max-height:340px;" role="img" aria-label="Trechos de contrato distribuídos em um plano, com a pergunta chegando e os mais próximos sendo destacados">
+            <g font-family="Montserrat, sans-serif">
+              <rect x="20" y="14" width="700" height="300" rx="10" fill="#fbfbfb" stroke="#ddd" stroke-width="2"/>
+
+              <!-- agrupamento: avarias e prazos -->
+              <circle cx="180" cy="90" r="9" fill="#5a8f5a"/>
+              <circle cx="222" cy="118" r="9" fill="#5a8f5a"/>
+              <circle cx="156" cy="140" r="9" fill="#5a8f5a"/>
+              <circle cx="206" cy="66" r="9" fill="#5a8f5a"/>
+              <text x="186" y="42" text-anchor="middle" font-size="15" fill="#3d6b3d" font-weight="700">avarias e prazos de reclamação</text>
+
+              <!-- agrupamento: temperatura -->
+              <circle cx="540" cy="98" r="9" fill="#4a7bb5"/>
+              <circle cx="580" cy="128" r="9" fill="#4a7bb5"/>
+              <circle cx="512" cy="142" r="9" fill="#4a7bb5"/>
+              <text x="548" y="66" text-anchor="middle" font-size="15" fill="#2f5a8a" font-weight="700">temperatura e cadeia fria</text>
+
+              <!-- agrupamento: produtos perigosos -->
+              <circle cx="380" cy="252" r="9" fill="#b58a3a"/>
+              <circle cx="424" cy="228" r="9" fill="#b58a3a"/>
+              <circle cx="342" cy="222" r="9" fill="#b58a3a"/>
+              <circle cx="404" cy="276" r="9" fill="#b58a3a"/>
+              <text x="386" y="304" text-anchor="middle" font-size="15" fill="#8a6320" font-weight="700">habilitação e produtos perigosos</text>
+
+              <!-- agrupamento: preço -->
+              <circle cx="628" cy="240" r="9" fill="#8a5aa8"/>
+              <circle cx="664" cy="262" r="9" fill="#8a5aa8"/>
+              <text x="646" y="296" text-anchor="middle" font-size="15" fill="#6b3f88" font-weight="700">preço e reajuste</text>
+
+              <!-- a pergunta chega -->
+              <g>
+                <circle cx="196" cy="108" r="0" fill="none" stroke="#ED145B" stroke-width="3">
+                  <animate attributeName="r" values="0;0;13;13;13;0" keyTimes="0;0.2;0.35;0.8;0.92;1" dur="8s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="196" cy="108" r="0" fill="#ED145B">
+                  <animate attributeName="r" values="0;0;6;6;6;0" keyTimes="0;0.2;0.35;0.8;0.92;1" dur="8s" repeatCount="indefinite"/>
+                </circle>
+                <circle cx="196" cy="108" r="20" fill="none" stroke="#ED145B" stroke-width="2" opacity="0">
+                  <animate attributeName="r" values="20;20;95;95" keyTimes="0;0.35;0.6;1" dur="8s" repeatCount="indefinite"/>
+                  <animate attributeName="opacity" values="0;0;0.85;0.4;0" keyTimes="0;0.35;0.5;0.85;1" dur="8s" repeatCount="indefinite"/>
+                </circle>
+                <text x="196" y="176" text-anchor="middle" font-size="15" font-weight="700" fill="#ED145B" opacity="0">
+                  <animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.25;0.4;0.88;1" dur="8s" repeatCount="indefinite"/>
+                  a pergunta cai aqui
+                </text>
+              </g>
+
+              <text x="370" y="322" text-anchor="middle" font-size="13" fill="#999">projeção de 768 dimensões em 2, só para poder ser desenhada</text>
+
+              <!-- painel lateral -->
+              <rect x="740" y="14" width="420" height="300" rx="10" fill="#fff8fa" stroke="#ED145B" stroke-width="2"/>
+              <text x="950" y="48" text-anchor="middle" font-size="18" font-weight="700" fill="#ED145B">A pergunta vira um ponto também</text>
+              <g font-size="16" fill="#444">
+                <text x="762" y="88">"Quanto tempo o cliente tem para</text>
+                <text x="762" y="112">pedir ressarcimento de mercadoria</text>
+                <text x="762" y="136">danificada?"</text>
+              </g>
+              <path d="M762 158 L1138 158" stroke="#f0c6d6" stroke-width="2"/>
+              <g font-size="16" fill="#444">
+                <text x="762" y="192">O mesmo modelo, a mesma função,</text>
+                <text x="762" y="216">o mesmo espaço de 768 dimensões.</text>
+              </g>
+              <path d="M762 238 L1138 238" stroke="#f0c6d6" stroke-width="2"/>
+              <g font-size="17" fill="#333" font-weight="700">
+                <text x="762" y="272">Recuperar passa a ser: quais pontos</text>
+                <text x="762" y="296">estão mais perto deste?</text>
+              </g>
+            </g>
+          </svg>
+          <figcaption>Sequência da animação, em oito segundos: os trechos já estão no espaço, a pergunta chega e vira um ponto, e a onda cor de rosa se expande a partir dela alcançando primeiro os vizinhos mais próximos, que são as cláusulas de avaria.</figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Embeddings</div>
+          <div class="footer-page">18</div>
+        </div>
+      </section>
+
+      <!-- ==================== 18: COSSENO x EUCLIDIANA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Distância de cosseno: o ângulo, não o tamanho <a href="#/ref-slide" class="ref-badge" title="Ver referências">[3]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 300" style="max-height:310px;" role="img" aria-label="Dois vetores de mesma direção e tamanhos diferentes, comparados por cosseno e por distância euclidiana">
+            <g font-family="Montserrat, sans-serif">
+              <!-- eixos -->
+              <line x1="70" y1="252" x2="470" y2="252" stroke="#bbb" stroke-width="2"/>
+              <line x1="70" y1="252" x2="70" y2="30" stroke="#bbb" stroke-width="2"/>
+
+              <!-- vetor A curto -->
+              <line x1="70" y1="252" x2="180" y2="172" stroke="#2d7a2d" stroke-width="4"/>
+              <polygon points="188,166 172,168 178,180" fill="#2d7a2d"/>
+              <text x="150" y="152" font-size="16" font-weight="700" fill="#2d7a2d">A</text>
+
+              <!-- vetor B longo, mesma direcao -->
+              <line x1="70" y1="252" x2="400" y2="12" stroke="#4a7bb5" stroke-width="4"/>
+              <polygon points="408,6 392,10 398,22" fill="#4a7bb5"/>
+              <text x="380" y="42" font-size="16" font-weight="700" fill="#4a7bb5">B</text>
+
+              <!-- vetor C outro angulo -->
+              <line x1="70" y1="252" x2="330" y2="238" stroke="#b58a3a" stroke-width="4"/>
+              <polygon points="340,237 324,232 326,244" fill="#b58a3a"/>
+              <text x="300" y="228" font-size="16" font-weight="700" fill="#b58a3a">C</text>
+
+              <path d="M118 220 A 60 60 0 0 1 138 246" fill="none" stroke="#c0392b" stroke-width="2"/>
+              <text x="150" y="238" font-size="14" fill="#c0392b">ângulo</text>
+
+              <text x="270" y="288" text-anchor="middle" font-size="14" fill="#999">A e B apontam para o mesmo lado. B é três vezes maior.</text>
+
+              <!-- tabela -->
+              <rect x="510" y="20" width="650" height="240" rx="10" fill="#fbfbfb" stroke="#ddd" stroke-width="2"/>
+              <g font-family="'JetBrains Mono', monospace" font-size="16">
+                <text x="534" y="54" fill="#666">'[1,0,0]'::vector &lt;=&gt; '[1,0,0]'::vector</text>
+                <text x="1050" y="54" text-anchor="end" font-size="20" font-weight="700" fill="#2d7a2d">0</text>
+
+                <text x="534" y="94" fill="#666">'[1,0,0]'::vector &lt;=&gt; '[9,0,0]'::vector</text>
+                <text x="1050" y="94" text-anchor="end" font-size="20" font-weight="700" fill="#2d7a2d">0</text>
+
+                <text x="534" y="134" fill="#666">'[1,0,0]'::vector &lt;=&gt; '[0,1,0]'::vector</text>
+                <text x="1050" y="134" text-anchor="end" font-size="20" font-weight="700" fill="#b58a3a">1</text>
+
+                <text x="534" y="174" fill="#666">'[1,0,0]'::vector &lt;=&gt; '[-1,0,0]'::vector</text>
+                <text x="1050" y="174" text-anchor="end" font-size="20" font-weight="700" fill="#c0392b">2</text>
+
+                <text x="534" y="222" fill="#666">'[1,0,0]'::vector &lt;-&gt;  '[9,0,0]'::vector</text>
+                <text x="1050" y="222" text-anchor="end" font-size="20" font-weight="700" fill="#4a7bb5">8</text>
+              </g>
+              <text x="835" y="248" text-anchor="middle" font-size="14" fill="#777">as quatro primeiras com cosseno, a última com euclidiana</text>
+            </g>
+          </svg>
+          <figcaption>Valores conferidos no PostgreSQL com a extensão pgvector 0.8.6, e reproduzíveis em <span class="mono">sql/04-busca.sql</span> do laboratório.</figcaption>
+        </figure>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Por que o cosseno é o padrão em texto</span>
+          <p><span class="mono">[1,0,0]</span> e <span class="mono">[9,0,0]</span> distam <strong>zero</strong> por cosseno e <strong>oito</strong> por euclidiana. Um trecho três vezes mais longo sobre o mesmo assunto aponta para o mesmo lado: o que interessa é a direção do significado.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Distância</div>
+          <div class="footer-page">19</div>
+        </div>
+      </section>
+
+      <!-- ==================== 19: OS TRÊS OPERADORES ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Os três operadores de distância do <span class="mono">pgvector</span> <a href="#/ref-slide" class="ref-badge" title="Ver referências">[3]</a></h2>
+        </div>
+
+        <table class="compact-table" style="font-size:0.6em;">
+          <thead>
+            <tr><th style="width:11%;">Operador</th><th style="width:22%;">Distância</th><th style="width:22%;">Classe do índice</th><th>Quando usar</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-size:1.35em; font-weight:700; color:#ED145B;"><span class="mono">&lt;=&gt;</span></td>
+              <td>cosseno, de 0 a 2</td>
+              <td><span class="mono">vector_cosine_ops</span></td>
+              <td><strong>Busca semântica em texto.</strong> É o padrão, porque ignora o tamanho do vetor e compara direção.</td>
+            </tr>
+            <tr>
+              <td style="font-size:1.35em; font-weight:700;"><span class="mono">&lt;-&gt;</span></td>
+              <td>euclidiana, de 0 ao infinito</td>
+              <td><span class="mono">vector_l2_ops</span></td>
+              <td>Quando a magnitude significa alguma coisa: coordenada geográfica, sinal, imagem em espaço métrico.</td>
+            </tr>
+            <tr>
+              <td style="font-size:1.35em; font-weight:700;"><span class="mono">&lt;#&gt;</span></td>
+              <td>produto interno negativo</td>
+              <td><span class="mono">vector_ip_ops</span></td>
+              <td>O mais barato de calcular, e só equivale ao cosseno se os vetores já estiverem normalizados.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout" style="margin-top:9px; padding:12px 16px; border-left:4px solid #c0392b;">
+          <p style="font-size:0.66em; margin:0;"><strong style="color:#c0392b;">Índice é criado para um operador.</strong> Um índice em <span class="mono">vector_l2_ops</span> não serve à consulta escrita com <span class="mono">&lt;=&gt;</span>, e o PostgreSQL <strong>não avisa</strong>: o índice nasce, ocupa disco e o planejador o ignora para sempre. Voltamos a isso no bloco do <span class="mono">EXPLAIN</span>.</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Regra de leitura</span>
+          <p>Distância <strong>menor</strong> é mais parecido. Por isso a ordenação é ascendente, que é o padrão do SQL: você quer o mais próximo no topo, não o mais distante.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Distância</div>
+          <div class="footer-page">20</div>
+        </div>
+      </section>
+
+      <!-- ==================== 20: A DIMENSÃO É DO MODELO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A dimensão é do modelo, e não uma escolha sua</h2>
+        </div>
+
+        <p style="font-size:0.7em; margin:2px 0 6px;">O <span class="mono">768</span> de <span class="mono">vector(768)</span> não foi escolhido por ninguém: é quantos números o <span class="mono">paraphrase-multilingual</span> devolve. Esta é a primeira decisão irreversível do laboratório, e ela merece ser tomada de olhos abertos.</p>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:12px; margin-top:4px;">
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>Trocar por outro de 768</h4>
+            <p style="font-size:0.62em;">A coluna e o índice continuam servindo. Custa uma <strong>reingestão</strong>: todos os vetores precisam ser recalculados pelo modelo novo, porque os espaços não são comparáveis entre si.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>Trocar por um de 1024</h4>
+            <p style="font-size:0.62em;">Custa <span class="mono">ALTER TABLE</span> para recriar a coluna, <span class="mono">DROP INDEX</span> e <span class="mono">CREATE INDEX</span>, e a reingestão inteira. Em produção, com milhões de linhas, isso é um projeto.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>Misturar os dois</h4>
+            <p style="font-size:0.62em;">Não existe. Vetor de um modelo e vetor de outro <strong>não se comparam</strong>, ainda que tenham a mesma dimensão: são espaços diferentes, e a distância entre eles não significa nada.</p>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:10px; padding:12px 16px;">
+          <p style="font-size:0.65em; margin:0;">Trocar de modelo <strong>dentro da mesma dimensão</strong> é o caso barato, e é o que este laboratório já fez uma vez: uma reingestão, sem tocar em uma linha de SQL. O próximo slide mostra por que essa troca foi feita.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Distância</div>
+          <div class="footer-page">21</div>
+        </div>
+      </section>
+
+      <!-- ==================== COMO SE ESCOLHE UM MODELO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Como se escolhe um modelo de embedding: medindo</h2>
+        </div>
+
+        <p style="font-size:0.67em; margin:2px 0 4px;">O modelo padrão deste laboratório <strong>não foi escolhido por reputação</strong>: a primeira versão usava o <span class="mono">nomic-embed-text</span>, e a medição o descartou. Mesmas 13 perguntas de resposta conhecida, mesmo acervo.</p>
+
+        <table class="compact-table" style="font-size:0.57em;">
+          <thead>
+            <tr><th style="width:40%;">Modelo de embedding</th><th style="width:12%;">Dimensão</th><th style="width:14%;"><span class="mono">recall@3</span></th><th>Situação</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="mono">paraphrase-multilingual</span></td>
+              <td>768</td>
+              <td style="font-weight:800; color:#2d7a2d;">13 de 13</td>
+              <td>o padrão do laboratório</td>
+            </tr>
+            <tr>
+              <td><span class="mono">nomic-embed-text</span></td>
+              <td>768</td>
+              <td style="font-weight:700;">9 de 13</td>
+              <td>descartado pela medição</td>
+            </tr>
+            <tr>
+              <td><span class="mono">nomic-embed-text</span> com o prefixo <span class="mono">search_query:</span></td>
+              <td>768</td>
+              <td style="font-weight:700; color:#c0392b;">7 de 13</td>
+              <td>o prefixo que a documentação recomenda <strong>piorou</strong></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(2, 1fr); gap:10px; margin-top:5px;">
+          <div class="concept-card" style="padding:10px 15px;">
+            <h4>Onde o modelo errava</h4>
+            <p style="font-size:0.61em;">O <span class="mono">nomic-embed-text</span> é treinado <strong>predominantemente em inglês</strong>, e o acervo é contrato em português jurídico. Ele achava o assunto e trocava <strong>qual dos quatro contratos</strong> respondia, que é o erro mais caro possível aqui: o prazo de avaria varia de 90 a 180 dias.</p>
+          </div>
+          <div class="concept-card" style="padding:10px 15px;">
+            <h4>A linha que mais ensina</h4>
+            <p style="font-size:0.61em;">O prefixo <span class="mono">search_query:</span> está na documentação do próprio fornecedor. Segui-la <strong>sem medir</strong> teria piorado a recuperação de 9 para 7, e ninguém perceberia: não há erro, não há aviso, só respostas piores.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">O que levar disto</span>
+          <p>Escolha de modelo de embedding <strong>se resolve medindo no seu corpus</strong>, e não lendo a documentação de quem o vende.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Distância</div>
+          <div class="footer-page">22</div>
+        </div>
+      </section>
+
+      <!-- ==================== 21: PALAVRA-CHAVE x SIGNIFICADO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O que o <span class="mono">ILIKE</span> não acha, medido</h2>
+        </div>
+
+        <p style="font-size:0.7em; margin:2px 0 6px;">A pergunta: <em>"O motorista precisa de algum curso especial para levar produto inflamável?"</em></p>
+
+        <div class="side-by-side" style="gap:16px;">
+          <div class="side">
+            <h4>Busca por palavra-chave</h4>
+            <pre class="code-compact" style="font-size:0.45em; margin:0 0 6px;"><code class="language-sql">SELECT c.titulo, t.ordem
+FROM   trechos t
+JOIN   contratos c ON c.id = t.contrato_id
+WHERE  t.texto ILIKE '%curso especial%';</code></pre>
+            <p style="font-size:0.63em; margin:0;"><strong>0 linhas.</strong> A expressão "curso especial" não aparece em nenhum dos quatro contratos. O texto que responde à pergunta fala em <strong>curso MOPP</strong>, e quem não conhece a sigla não tem como procurar por ela.</p>
+          </div>
+          <div class="side">
+            <h4>Busca por distância</h4>
+            <pre class="code-compact" style="font-size:0.45em; margin:0 0 6px;"><code class="language-sql">SELECT c.titulo, t.ordem,
+       t.embedding &lt;=&gt; :pergunta AS distancia
+FROM   trechos t
+JOIN   contratos c ON c.id = t.contrato_id
+ORDER BY t.embedding &lt;=&gt; :pergunta
+LIMIT  3;</code></pre>
+            <p style="font-size:0.63em; margin:0;"><strong>Primeiro resultado, distância 0,4104:</strong> Cláusula 2 do contrato da Petroquímica Litoral, "Da habilitação e do treinamento", que exige curso MOPP com validade em dia.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">A diferença em uma frase</span>
+          <p>A busca por palavra-chave exige que <strong>você já saiba como o documento foi escrito</strong>. A busca por distância exige apenas que você saiba o que quer perguntar.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Distância</div>
+          <div class="footer-page">23</div>
+        </div>
+      </section>
+
+      <!-- ==================== 22: O PIPELINE RAG ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>RAG: quatro etapas, e duas delas acontecem antes <a href="#/ref-slide" class="ref-badge" title="Ver referências">[5]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 350" style="max-height:355px;" role="img" aria-label="Pipeline de RAG animado com as etapas de chunking, ingestão, recuperação e geração">
+            <g font-family="Montserrat, sans-serif">
+              <!-- faixa offline -->
+              <rect x="16" y="14" width="560" height="150" rx="10" fill="#f6f9f6" stroke="#9dbd9d" stroke-width="2" stroke-dasharray="8,5"/>
+              <text x="296" y="38" text-anchor="middle" font-size="16" font-weight="700" fill="#3d6b3d">ANTES, uma vez só (offline)</text>
+
+              <rect x="40" y="56" width="230" height="86" rx="8" fill="#fff" stroke="#5a8f5a" stroke-width="2"/>
+              <text x="155" y="82" text-anchor="middle" font-size="17" font-weight="700" fill="#2d7a2d">1. Chunking</text>
+              <text x="155" y="106" text-anchor="middle" font-size="14" fill="#555">4 contratos viram</text>
+              <text x="155" y="128" text-anchor="middle" font-size="14" fill="#555">44 trechos</text>
+
+              <rect x="320" y="56" width="230" height="86" rx="8" fill="#fff" stroke="#5a8f5a" stroke-width="2"/>
+              <text x="435" y="82" text-anchor="middle" font-size="17" font-weight="700" fill="#2d7a2d">2. Ingestão</text>
+              <text x="435" y="106" text-anchor="middle" font-size="14" fill="#555">44 vetores gravados</text>
+              <text x="435" y="128" text-anchor="middle" font-size="14" fill="#555">em duas tabelas</text>
+
+              <path d="M274 99 L306 99" stroke="#5a8f5a" stroke-width="3"/>
+              <polygon points="314,99 302,94 302,104" fill="#5a8f5a"/>
+
+              <!-- faixa online -->
+              <rect x="604" y="14" width="560" height="150" rx="10" fill="#fff6f9" stroke="#ED145B" stroke-width="2"/>
+              <text x="884" y="38" text-anchor="middle" font-size="16" font-weight="700" fill="#ED145B">DEPOIS, a cada pergunta (online)</text>
+
+              <rect x="628" y="56" width="230" height="86" rx="8" fill="#fff" stroke="#ED145B" stroke-width="2"/>
+              <text x="743" y="82" text-anchor="middle" font-size="17" font-weight="700" fill="#ED145B">3. Recuperação</text>
+              <text x="743" y="106" text-anchor="middle" font-size="14" fill="#555">um ORDER BY por</text>
+              <text x="743" y="128" text-anchor="middle" font-size="14" fill="#555">distância, com LIMIT</text>
+
+              <rect x="908" y="56" width="230" height="86" rx="8" fill="#fff" stroke="#ED145B" stroke-width="2"/>
+              <text x="1023" y="82" text-anchor="middle" font-size="17" font-weight="700" fill="#ED145B">4. Geração</text>
+              <text x="1023" y="106" text-anchor="middle" font-size="14" fill="#555">o modelo redige</text>
+              <text x="1023" y="128" text-anchor="middle" font-size="14" fill="#555">citando as fontes</text>
+
+              <path d="M862 99 L894 99" stroke="#ED145B" stroke-width="3"/>
+              <polygon points="902,99 890,94 890,104" fill="#ED145B"/>
+
+              <!-- ligação banco -->
+              <path d="M435 146 L435 200 L743 200 L743 146" fill="none" stroke="#999" stroke-width="2.5" stroke-dasharray="6,5"/>
+              <rect x="500" y="182" width="178" height="36" rx="6" fill="#f0f0f0" stroke="#999" stroke-width="2"/>
+              <text x="589" y="206" text-anchor="middle" font-size="15" font-weight="700" fill="#555" font-family="'JetBrains Mono', monospace">conhecimento.trechos</text>
+
+              <!-- Pastilha animada percorrendo o pipeline. O trajeto passa POR
+                   BAIXO das caixas, e nao pelo centro delas: na primeira
+                   conferencia visual ela cobria o texto de "1. Chunking". -->
+              <circle r="8" fill="#ED145B">
+                <animateMotion dur="8s" repeatCount="indefinite"
+                  keyPoints="0;0.12;0.25;0.37;0.5;0.62;0.75;0.87;1"
+                  keyTimes="0;0.1;0.22;0.34;0.5;0.62;0.74;0.88;1"
+                  calcMode="linear"
+                  path="M155 153 L435 153 L435 200 L589 200 L743 200 L743 153 L1023 153 L1023 262 L590 262"/>
+              </circle>
+
+              <!-- legenda inferior -->
+              <rect x="16" y="286" width="1148" height="52" rx="8" fill="#fbfbfb" stroke="#ddd" stroke-width="2"/>
+              <text x="590" y="308" text-anchor="middle" font-size="17" font-weight="700" fill="#333">
+                O que esta aula cobra é a etapa 3. A etapa 4 é a que varia com o modelo que a sua máquina aguenta.
+              </text>
+              <text x="590" y="330" text-anchor="middle" font-size="15" fill="#666">
+                Resposta ruim quase sempre é trecho errado recuperado, e não modelo fraco. Olhe a etapa 3 primeiro.
+              </text>
+            </g>
+          </svg>
+          <figcaption>A pastilha cor de rosa percorre o pipeline em oito segundos: chunking, ingestão, gravação no banco, recuperação a partir do banco, geração e resposta ao usuário.</figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Pipeline RAG</div>
+          <div class="footer-page">24</div>
+        </div>
+      </section>
+
+      <!-- ==================== 23: CHUNKING ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Chunking: a decisão que mais afeta a qualidade</h2>
+        </div>
+
+        <p style="font-size:0.7em; margin:2px 0 6px;">Um contrato inteiro em um vetor só vira um ponto "sobre tudo e sobre nada". Uma frase por vetor perde o contexto e recupera meia regra. O tamanho do pedaço é uma decisão de projeto, e ela é revisitada quando a recuperação está ruim.</p>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:12px; margin-top:4px;">
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>Pedaço grande demais</h4>
+            <p style="font-size:0.62em;">O vetor mistura assuntos. A Cláusula 7 fala de avaria, de prazo, de limite de indenização e de seguro ao mesmo tempo, e o ponto resultante não fica perto de nenhum dos quatro.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>Pedaço pequeno demais</h4>
+            <p style="font-size:0.62em;">"em até 120 dias corridos" recupera lindamente e <strong>não responde nada</strong>: não diz de que prazo se trata nem de qual contrato. O contexto foi cortado fora junto.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>Corte pela estrutura</h4>
+            <p style="font-size:0.62em;">Contrato tem cláusulas. Cortar de 700 em 700 caracteres joga essa estrutura fora de graça. O laboratório corta <strong>por cláusula</strong>, com um teto, e repete o título da cláusula nos pedaços de uma cláusula longa.</p>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:10px; padding:12px 16px;">
+          <p style="font-size:0.65em; margin:0;"><strong>Medido:</strong> os quatro contratos do laboratório produzem <strong>44 trechos</strong>, 11 por contrato, com teto de 1200 caracteres. Reduzir o teto para 450 produz 77 trechos, e nas dez perguntas de teste isso <strong>não melhorou</strong> a recuperação: o gargalo era o modelo, não o tamanho do pedaço. Medir antes de ajustar vale mais do que ajustar por intuição.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Pipeline RAG</div>
+          <div class="footer-page">25</div>
+        </div>
+      </section>
+
+      <!-- ==================== 24: A INGESTÃO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Ingestão: onde o vetor entra na tabela</h2>
+        </div>
+
+        <p style="font-size:0.69em; margin:2px 0 6px;">O vetor viaja do Python para o PostgreSQL <strong>como texto</strong>, e o banco converte. É por isso que este laboratório não precisa de biblioteca de vetores em Python: precisa de um <span class="mono">::vector</span>.</p>
+
+        <pre class="code-compact" style="font-size:0.46em; margin:4px 0 0;"><code class="language-python">vetores = vetorizar(trechos)          # UMA chamada ao Ollama, com a lista inteira
+
+for ordem, (texto, vetor) in enumerate(zip(trechos, vetores), start=1):
+    cursor.execute(
+        """
+        INSERT INTO conhecimento.trechos (contrato_id, ordem, texto, embedding)
+        VALUES (%s, %s, %s, %s::vector)
+        """,
+        (contrato_id, ordem, texto, para_literal(vetor)),
+    )
+
+# para_literal([0.021, -0.041, ...])  ->  "[0.021,-0.041,...]"
+# o pgvector aceita a mesma notacao de um array em texto, e o ::vector converte</code></pre>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(2, 1fr); gap:12px; margin-top:9px;">
+          <div class="concept-card" style="padding:12px 16px;">
+            <h4>Vetorizar em lote, não em laço</h4>
+            <p style="font-size:0.62em;">Os 44 trechos vão em <strong>uma</strong> chamada. O custo de carregar o modelo é pago uma vez: a ingestão inteira levou <strong>0,82 s</strong> com o modelo já carregado e 2,59 s na primeira execução.</p>
+          </div>
+          <div class="concept-card" style="padding:12px 16px;">
+            <h4>Reingestão idempotente</h4>
+            <p style="font-size:0.62em;">A ingestão começa com <span class="mono">DELETE FROM conhecimento.contratos</span> e deixa o <span class="mono">ON DELETE CASCADE</span> levar os trechos junto. Sem a cascata, esse <span class="mono">DELETE</span> falha.</p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Pipeline RAG</div>
+          <div class="footer-page">26</div>
+        </div>
+      </section>
+
+      <!-- ==================== 25: RECUPERAÇÃO x GERAÇÃO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A geração é a parte frágil. A recuperação não é.</h2>
+        </div>
+
+        <p style="font-size:0.69em; margin:2px 0 6px;">Mesma pergunta, mesmo acervo, mesma consulta SQL. A única variável trocada foi o modelo de conversa da etapa 4.</p>
+
+        <table class="compact-table" style="font-size:0.6em;">
+          <thead>
+            <tr><th style="width:26%;">Modelo de geração</th><th style="width:20%;">Recuperação (etapa 3)</th><th style="width:22%;">Geração (etapa 4)</th><th>Resultado para o usuário</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="mono">qwen2.5:1.5b</span></td>
+              <td>os mesmos 3 trechos, em <strong>0,109 s</strong></td>
+              <td><strong>1,24 s</strong></td>
+              <td>Resposta correta, citando o curso MOPP e a reciclagem obrigatória.</td>
+            </tr>
+            <tr>
+              <td><span class="mono">qwen3.5:2b</span>, modelo de raciocínio</td>
+              <td>os mesmos 3 trechos, em <strong>0,109 s</strong></td>
+              <td><strong>230,7 s</strong></td>
+              <td>Devolveu <strong>texto vazio</strong>: gastou o orçamento inteiro pensando e não chegou a redigir. As três fontes voltaram intactas.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout" style="margin-top:9px; padding:12px 16px;">
+          <p style="font-size:0.65em; margin:0;">Foi por isso que a rota <span class="mono">POST /api/v1/busca</span> existe separada de <span class="mono">POST /api/v1/perguntar</span>: poder olhar a recuperação <strong>sem a geração no caminho</strong> é o que permite descobrir se a resposta ruim veio de um trecho errado ou de um modelo fraco. São defeitos diferentes, com consertos diferentes.</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Por isso o entregável mede recuperação</span>
+          <p>O critério de aceitação de hoje pergunta <strong>se o trecho certo do contrato foi trazido</strong>, e não como a resposta foi redigida. A redação depende de qual modelo a máquina de cada um aguenta; a recuperação, não.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Pipeline RAG</div>
+          <div class="footer-page">27</div>
+        </div>
+      </section>
+
+      <!-- ==================== 26: A CITAÇÃO DA FONTE ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A citação da fonte não é enfeite: é a única defesa</h2>
+        </div>
+
+        <p style="font-size:0.69em; margin:2px 0 6px;">A instrução do prompt manda o modelo responder só com o contexto e dizer que não sabe quando o contexto não cobre. Isso <strong>reduz</strong> a alucinação, não elimina. O que de fato protege quem lê é poder conferir.</p>
+
+        <div class="side-by-side" style="gap:16px;">
+          <div class="side">
+            <h4>Sem o JOIN</h4>
+            <pre class="code-compact" style="font-size:0.45em; margin:0 0 6px;"><code class="language-text">O prazo para comunicar avaria nao
+aparente e de 15 dias corridos
+contados da entrega.</code></pre>
+            <p style="font-size:0.62em; margin:0;">Está certo, e é <strong>inútil para decidir</strong>. Quinze dias em qual contrato? A Aurora tem cinco, a Nordeste Agro tem sete, e a Petroquímica tem dez. Quem lê não tem como saber, nem como conferir.</p>
+          </div>
+          <div class="side">
+            <h4>Com o JOIN</h4>
+            <pre class="code-compact" style="font-size:0.45em; margin:0 0 6px;"><code class="language-text">O prazo e de 15 dias corridos [1].
+
+[1] Contrato de Transporte com
+    Temperatura Controlada
+    (Frigolar), trecho 8,
+    distancia 0.2543</code></pre>
+            <p style="font-size:0.62em; margin:0;">Agora dá para abrir o contrato, ler a Cláusula 7 e confirmar. O atendente responde ao cliente com a fonte na mão.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">De onde sai a citação</span>
+          <p>Do <span class="mono">JOIN</span> entre <span class="mono">trechos</span> e <span class="mono">contratos</span> que vocês escrevem no <span class="mono">TODO-4a</span>. É a mesma junção do Passo 3, e é por isso que as duas tabelas existem.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Pipeline RAG</div>
+          <div class="footer-page">28</div>
+        </div>
+      </section>
+
+      <!-- ==================== 27: SEM ÍNDICE ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Sem índice, a busca compara com todas as linhas</h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 300" style="max-height:315px;" role="img" aria-label="Varredura sequencial calculando a distância de cada linha da tabela">
+            <g font-family="Montserrat, sans-serif">
+              <text x="590" y="26" text-anchor="middle" font-size="18" font-weight="700" fill="#333">Seq Scan: uma multiplicação de 768 números por linha, para todas as linhas</text>
+
+              <circle cx="90" cy="120" r="22" fill="#ED145B"/>
+              <text x="90" y="127" text-anchor="middle" font-size="15" font-weight="700" fill="#fff">?</text>
+              <text x="90" y="166" text-anchor="middle" font-size="14" fill="#666">pergunta</text>
+
+              <g>
+                <rect x="200" y="56" width="640" height="26" rx="4" fill="#f4f4f4" stroke="#ccc"/>
+                <rect x="200" y="90" width="640" height="26" rx="4" fill="#f4f4f4" stroke="#ccc"/>
+                <rect x="200" y="124" width="640" height="26" rx="4" fill="#f4f4f4" stroke="#ccc"/>
+                <rect x="200" y="158" width="640" height="26" rx="4" fill="#f4f4f4" stroke="#ccc"/>
+                <rect x="200" y="192" width="640" height="26" rx="4" fill="#f4f4f4" stroke="#ccc"/>
+                <g font-family="'JetBrains Mono', monospace" font-size="13" fill="#666">
+                  <text x="214" y="74">trecho 1   [0.02, -0.04, 0.09, ... 768 numeros]</text>
+                  <text x="214" y="108">trecho 2   [0.11,  0.03, -0.07, ... 768 numeros]</text>
+                  <text x="214" y="142">trecho 3   [-0.05, 0.08, 0.01, ... 768 numeros]</text>
+                  <text x="214" y="176">...</text>
+                  <text x="214" y="210">trecho 44  [0.07, -0.02, 0.06, ... 768 numeros]</text>
+                </g>
+                <rect x="200" y="56" width="640" height="26" rx="4" fill="none" stroke="#ED145B" stroke-width="3">
+                  <animate attributeName="y" values="56;90;124;158;192;56" keyTimes="0;0.2;0.4;0.6;0.8;1" dur="5s" repeatCount="indefinite"/>
+                </rect>
+              </g>
+
+              <path d="M118 120 L190 120" stroke="#ED145B" stroke-width="2.5" stroke-dasharray="5,4"/>
+
+              <rect x="880" y="56" width="270" height="162" rx="8" fill="#fdedec" stroke="#c0392b" stroke-width="2"/>
+              <text x="1015" y="86" text-anchor="middle" font-size="17" font-weight="700" fill="#a03028">O custo</text>
+              <g font-size="15" fill="#555">
+                <text x="900" y="118">44 trechos: instantâneo</text>
+                <text x="900" y="146">50.000 trechos:</text>
+                <text x="900" y="176" font-size="26" font-weight="800" fill="#c0392b">389,933 ms</text>
+                <text x="900" y="202" font-size="13">medido, com 768 dimensões</text>
+              </g>
+
+              <rect x="16" y="238" width="1148" height="52" rx="8" fill="#fbfbfb" stroke="#ddd" stroke-width="2"/>
+              <text x="590" y="260" text-anchor="middle" font-size="16" fill="#444">
+                Depois de calcular as 50.000 distâncias, ainda é preciso ordenar tudo para descobrir as cinco menores.
+              </text>
+              <text x="590" y="282" text-anchor="middle" font-size="16" fill="#444">
+                O plano mostra isso em duas linhas: <tspan font-family="'JetBrains Mono', monospace" font-weight="700">Seq Scan</tspan> e, logo acima, <tspan font-family="'JetBrains Mono', monospace" font-weight="700">Top-N heapsort</tspan>.
+              </text>
+            </g>
+          </svg>
+          <figcaption>A moldura cor de rosa percorre as linhas em cinco segundos: é a varredura sequencial, uma linha de cada vez, sem atalho.</figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Índice e EXPLAIN</div>
+          <div class="footer-page">29</div>
+        </div>
+      </section>
+
+      <!-- ==================== 28: HNSW ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>HNSW: um grafo navegável em camadas <a href="#/ref-slide" class="ref-badge" title="Ver referências">[3]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 300" style="max-height:310px;" role="img" aria-label="Três camadas de um grafo HNSW, com a busca descendo da camada esparsa para a densa">
+            <g font-family="Montserrat, sans-serif">
+              <!-- camada 2 -->
+              <rect x="30" y="16" width="740" height="80" rx="8" fill="#f7f9fc" stroke="#b8c8dd" stroke-width="2"/>
+              <text x="46" y="38" font-size="14" font-weight="700" fill="#4a6b8a">camada 2, poucos nós, saltos longos</text>
+              <line x1="140" y1="70" x2="380" y2="60" stroke="#8fa8c4" stroke-width="2"/>
+              <line x1="380" y1="60" x2="640" y2="74" stroke="#8fa8c4" stroke-width="2"/>
+              <circle cx="140" cy="70" r="9" fill="#4a7bb5"/>
+              <circle cx="380" cy="60" r="9" fill="#4a7bb5"/>
+              <circle cx="640" cy="74" r="9" fill="#4a7bb5"/>
+
+              <!-- camada 1 -->
+              <rect x="30" y="102" width="740" height="80" rx="8" fill="#f7f9fc" stroke="#b8c8dd" stroke-width="2"/>
+              <text x="46" y="124" font-size="14" font-weight="700" fill="#4a6b8a">camada 1, mais nós, saltos médios</text>
+              <line x1="140" y1="158" x2="270" y2="148" stroke="#8fa8c4" stroke-width="2"/>
+              <line x1="270" y1="148" x2="380" y2="160" stroke="#8fa8c4" stroke-width="2"/>
+              <line x1="380" y1="160" x2="512" y2="150" stroke="#8fa8c4" stroke-width="2"/>
+              <line x1="512" y1="150" x2="640" y2="162" stroke="#8fa8c4" stroke-width="2"/>
+              <circle cx="140" cy="158" r="8" fill="#4a7bb5"/>
+              <circle cx="270" cy="148" r="8" fill="#4a7bb5"/>
+              <circle cx="380" cy="160" r="8" fill="#4a7bb5"/>
+              <circle cx="512" cy="150" r="8" fill="#4a7bb5"/>
+              <circle cx="640" cy="162" r="8" fill="#4a7bb5"/>
+
+              <!-- camada 0 -->
+              <rect x="30" y="188" width="740" height="88" rx="8" fill="#f7f9fc" stroke="#b8c8dd" stroke-width="2"/>
+              <text x="46" y="210" font-size="14" font-weight="700" fill="#4a6b8a">camada 0, todos os vetores, vizinhos próximos</text>
+              <g stroke="#8fa8c4" stroke-width="1.6">
+                <line x1="90" y1="246" x2="160" y2="238"/><line x1="160" y1="238" x2="230" y2="250"/>
+                <line x1="230" y1="250" x2="300" y2="240"/><line x1="300" y1="240" x2="370" y2="252"/>
+                <line x1="370" y1="252" x2="440" y2="238"/><line x1="440" y1="238" x2="512" y2="250"/>
+                <line x1="512" y1="250" x2="580" y2="240"/><line x1="580" y1="240" x2="650" y2="252"/>
+                <line x1="650" y1="252" x2="716" y2="240"/>
+              </g>
+              <g fill="#4a7bb5">
+                <circle cx="90" cy="246" r="7"/><circle cx="160" cy="238" r="7"/><circle cx="230" cy="250" r="7"/>
+                <circle cx="300" cy="240" r="7"/><circle cx="370" cy="252" r="7"/><circle cx="440" cy="238" r="7"/>
+                <circle cx="512" cy="250" r="7"/><circle cx="580" cy="240" r="7"/><circle cx="650" cy="252" r="7"/>
+                <circle cx="716" cy="240" r="7"/>
+              </g>
+
+              <!-- caminho da busca -->
+              <circle r="9" fill="#ED145B">
+                <animateMotion dur="7s" repeatCount="indefinite" calcMode="linear"
+                  keyPoints="0;0.18;0.36;0.5;0.68;0.84;1" keyTimes="0;0.14;0.3;0.46;0.66;0.84;1"
+                  path="M140 70 L380 60 L380 160 L512 150 L512 250 L580 240 L650 252"/>
+              </circle>
+
+              <!-- painel -->
+              <rect x="796" y="16" width="356" height="260" rx="10" fill="#fff8fa" stroke="#ED145B" stroke-width="2"/>
+              <text x="974" y="46" text-anchor="middle" font-size="18" font-weight="700" fill="#ED145B">O compromisso</text>
+              <g font-size="15" fill="#444">
+                <text x="816" y="82">Entra pelo topo, salta longe,</text>
+                <text x="816" y="106">desce e refina. Nunca compara</text>
+                <text x="816" y="130">com todas as linhas.</text>
+              </g>
+              <path d="M816 150 L1132 150" stroke="#f0c6d6" stroke-width="2"/>
+              <g font-size="15" fill="#444">
+                <text x="816" y="180">O preço é a exatidão: HNSW é</text>
+                <text x="816" y="204">vizinho <tspan font-weight="700">aproximado</tspan>, e pode não</text>
+                <text x="816" y="228">devolver o mais próximo de todos.</text>
+              </g>
+              <g font-family="'JetBrains Mono', monospace" font-size="14" fill="#a03a5e">
+                <text x="816" y="258">SET hnsw.ef_search = 200;</text>
+              </g>
+            </g>
+          </svg>
+          <figcaption>A pastilha desce em sete segundos da camada esparsa para a densa, saltando longe no topo e refinando embaixo. É a mesma ideia de um mapa rodoviário: rodovia primeiro, rua depois.</figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Índice e EXPLAIN</div>
+          <div class="footer-page">30</div>
+        </div>
+      </section>
+
+      <!-- ==================== 29: HNSW x IVFFLAT ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>HNSW ou IVFFlat, e a classe de operadores <a href="#/ref-slide" class="ref-badge" title="Ver referências">[3]</a></h2>
+        </div>
+
+        <table class="compact-table" style="font-size:0.6em;">
+          <thead>
+            <tr><th style="width:16%;">Método</th><th style="width:26%;">Constrói</th><th style="width:20%;">Consulta</th><th>Quando escolher</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="mono">hnsw</span></td>
+              <td>devagar e ocupa mais disco</td>
+              <td>o mais rápido</td>
+              <td><strong>Acervo que cresce e é lido muito mais do que escrito</strong>, que é o caso de contratos. Funciona com a tabela vazia.</td>
+            </tr>
+            <tr>
+              <td><span class="mono">ivfflat</span></td>
+              <td>rápido e ocupa menos</td>
+              <td>bom, e sensível ao ajuste de listas</td>
+              <td>Quando o disco é caro ou a reconstrução é frequente. <strong>Exige a tabela já povoada</strong>: ele particiona o espaço a partir do que existe.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <pre class="code-compact" style="font-size:0.47em; margin:8px 0 0;"><code class="language-sql">CREATE INDEX trechos_embedding_hnsw
+    ON conhecimento.trechos
+ USING hnsw (embedding vector_cosine_ops)     -- a classe CASA com o operador da consulta
+  WITH (m = 16, ef_construction = 64);        -- padroes da extensao</code></pre>
+
+        <div class="callout" style="margin-top:9px; padding:12px 16px; border-left:4px solid #c0392b;">
+          <p style="font-size:0.65em; margin:0;"><strong style="color:#c0392b;">O erro silencioso do dia:</strong> criar com <span class="mono">vector_l2_ops</span> e consultar com <span class="mono">&lt;=&gt;</span>. Não dá erro, não dá aviso, o índice aparece no <span class="mono">\di</span> e ocupa disco. E o plano continua mostrando <span class="mono">Seq Scan</span>, para sempre. O <span class="mono">EXPLAIN</span> é o único jeito de descobrir.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Índice e EXPLAIN</div>
+          <div class="footer-page">31</div>
+        </div>
+      </section>
+
+      <!-- ==================== 30: EXPLAIN ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2><span class="mono">EXPLAIN</span>: perguntar antes de reclamar <a href="#/ref-slide" class="ref-badge" title="Ver referências">[2]</a></h2>
+        </div>
+
+        <p style="font-size:0.69em; margin:2px 0 6px;">O plano de execução é o banco dizendo <strong>o que ele pretende fazer</strong>. Com <span class="mono">ANALYZE</span> ele executa de verdade e traz os tempos medidos, em vez da estimativa.</p>
+
+        <pre class="code-compact" style="font-size:0.44em; margin:4px 0 0;"><code class="language-text">EXPLAIN ANALYZE SELECT id FROM conhecimento.escala
+ORDER BY embedding &lt;=&gt; :'alvo'::vector LIMIT 5;
+
+-- ANTES do indice
+Limit  (cost=1043.00..1043.02 rows=5 width=16)
+  -&gt;  Sort  (cost=1043.00..1168.00 rows=50000 width=16)
+        Sort Method: top-N heapsort  Memory: 25kB
+        -&gt;  Seq Scan on escala  (cost=0.00..993.00 rows=50000) (actual time=0.020..382.286 rows=50000)
+Execution Time: 389.933 ms
+
+-- DEPOIS do indice
+Limit  (cost=1052.85..1061.28 rows=5 width=16)
+  -&gt;  Index Scan using escala_hnsw on escala  (cost=1052.85..85140.00) (actual time=0.695..0.962 rows=5)
+Execution Time: 1.005 ms</code></pre>
+
+        <div class="takeaway">
+          <span class="takeaway-label">As três palavras que você procura</span>
+          <p><span class="mono">Seq Scan</span> significa varreu tudo. <span class="mono">Index Scan using ...</span> significa usou o índice, <strong>e diz qual</strong>. <span class="mono">Execution Time</span> é o número que importa. Saída real da preparação deste laboratório, contra <span class="mono">conhecimento.escala</span>, uma tabela sintética de 50.000 vetores criada só para esta medição. A <span class="mono">trechos</span> de vocês terá 44 linhas.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Índice e EXPLAIN</div>
+          <div class="footer-page">32</div>
+        </div>
+      </section>
+
+      <!-- ==================== 31: O GANHO MEDIDO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O ganho, medido, e o preço dele</h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 250" style="max-height:255px;" role="img" aria-label="Barras comparando o tempo de execução com e sem índice HNSW sobre 50 mil vetores">
+            <g font-family="Montserrat, sans-serif">
+              <text x="20" y="34" font-size="16" font-weight="700" fill="#555">50.000 vetores de 768 dimensões, mesma consulta, mesma máquina</text>
+
+              <text x="20" y="82" font-size="16" fill="#444">sem índice</text>
+              <rect x="180" y="62" width="820" height="34" rx="5" fill="#c0392b"/>
+              <text x="1014" y="86" font-size="22" font-weight="800" fill="#c0392b">389,933 ms</text>
+              <text x="196" y="85" font-size="15" fill="#fff" font-family="'JetBrains Mono', monospace">Seq Scan</text>
+
+              <text x="20" y="142" font-size="16" fill="#444">com HNSW</text>
+              <rect x="180" y="122" width="12" height="34" rx="3" fill="#2d7a2d"/>
+              <text x="206" y="146" font-size="22" font-weight="800" fill="#2d7a2d">1,005 ms</text>
+              <text x="330" y="146" font-size="15" fill="#666" font-family="'JetBrains Mono', monospace">Index Scan using escala_hnsw</text>
+
+              <text x="590" y="190" text-anchor="middle" font-size="26" font-weight="800" fill="#333">388 vezes mais rápido</text>
+
+              <rect x="180" y="206" width="820" height="34" rx="5" fill="#fbf6ea" stroke="#d4b96a" stroke-width="2"/>
+              <text x="590" y="229" text-anchor="middle" font-size="16" fill="#7a6320">
+                e custa 24,46 s de construção e 161 MB de disco, contra 2944 kB da tabela
+              </text>
+            </g>
+          </svg>
+          <figcaption>Medição feita na preparação deste laboratório, em macOS arm64 com Docker Desktop e a imagem pgvector/pgvector:pg16. O roteiro para reproduzir está no README do Lab Kit.</figcaption>
+        </figure>
+
+        <div class="callout" style="margin-top:8px; padding:12px 16px;">
+          <p style="font-size:0.65em; margin:0;"><strong>E com os 44 trechos do laboratório?</strong> O índice existe, e o planejador continua escolhendo <span class="mono">Seq Scan</span>. Ele está certo: com tudo cabendo em uma página de memória, varrer custa menos do que caminhar por um grafo. Índice não é obrigação, é uma opção que o banco usa quando compensa, e é por isso que o Passo 5 manda pedir o outro plano com <span class="mono">SET enable_seqscan = off</span>.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Índice e EXPLAIN</div>
+          <div class="footer-page">33</div>
+        </div>
+      </section>
+
+      <!-- ==================== 32: SEÇÃO MCP ==================== -->
+      <section class="section-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <h2>Model Context Protocol</h2>
+        <p style="font-size:0.8em; max-width:820px; margin:14px auto 0; color:#555;">A busca já funciona. Falta abri-la para qualquer cliente de IA sem escrever uma integração por cliente.</p>
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Model Context Protocol</div>
+          <div class="footer-page">34</div>
+        </div>
+      </section>
+
+      <!-- ==================== 33: N x M ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O problema que o MCP resolve <a href="#/ref-slide" class="ref-badge" title="Ver referências">[6]</a></h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 300" style="max-height:315px;" role="img" aria-label="Comparação entre integrações ponto a ponto e um protocolo comum">
+            <g font-family="Montserrat, sans-serif">
+              <text x="290" y="26" text-anchor="middle" font-size="18" font-weight="700" fill="#a03028">Sem protocolo: 3 clientes x 4 fontes = 12 integrações</text>
+
+              <g font-size="13" fill="#333" text-anchor="middle">
+                <rect x="30" y="52" width="126" height="30" rx="5" fill="#fdedec" stroke="#c0392b"/><text x="93" y="72">agente da Aula 08</text>
+                <rect x="30" y="106" width="126" height="30" rx="5" fill="#fdedec" stroke="#c0392b"/><text x="93" y="126">assistente de chat</text>
+                <rect x="30" y="160" width="126" height="30" rx="5" fill="#fdedec" stroke="#c0392b"/><text x="93" y="180">editor com IA</text>
+
+                <rect x="404" y="42" width="126" height="30" rx="5" fill="#f4f4f4" stroke="#999"/><text x="467" y="62">contratos</text>
+                <rect x="404" y="88" width="126" height="30" rx="5" fill="#f4f4f4" stroke="#999"/><text x="467" y="108">pedidos</text>
+                <rect x="404" y="134" width="126" height="30" rx="5" fill="#f4f4f4" stroke="#999"/><text x="467" y="154">faturamento</text>
+                <rect x="404" y="180" width="126" height="30" rx="5" fill="#f4f4f4" stroke="#999"/><text x="467" y="200">telemetria</text>
+              </g>
+              <g stroke="#c0392b" stroke-width="1.2" opacity="0.65">
+                <line x1="158" y1="67" x2="402" y2="57"/><line x1="158" y1="67" x2="402" y2="103"/>
+                <line x1="158" y1="67" x2="402" y2="149"/><line x1="158" y1="67" x2="402" y2="195"/>
+                <line x1="158" y1="121" x2="402" y2="57"/><line x1="158" y1="121" x2="402" y2="103"/>
+                <line x1="158" y1="121" x2="402" y2="149"/><line x1="158" y1="121" x2="402" y2="195"/>
+                <line x1="158" y1="175" x2="402" y2="57"/><line x1="158" y1="175" x2="402" y2="103"/>
+                <line x1="158" y1="175" x2="402" y2="149"/><line x1="158" y1="175" x2="402" y2="195"/>
+              </g>
+              <text x="290" y="248" text-anchor="middle" font-size="15" fill="#555">Cada linha é código escrito à mão, para aquele par.</text>
+              <text x="290" y="272" text-anchor="middle" font-size="15" fill="#555">Uma fonte nova custa três integrações. Um cliente novo custa quatro.</text>
+
+              <line x1="590" y1="14" x2="590" y2="286" stroke="#ddd" stroke-width="2"/>
+
+              <text x="880" y="26" text-anchor="middle" font-size="18" font-weight="700" fill="#2d7a2d">Com protocolo: 3 + 4 = 7 implementações</text>
+              <g font-size="13" fill="#333" text-anchor="middle">
+                <rect x="622" y="52" width="126" height="30" rx="5" fill="#f4f8f4" stroke="#5a8f5a"/><text x="685" y="72">agente da Aula 08</text>
+                <rect x="622" y="106" width="126" height="30" rx="5" fill="#f4f8f4" stroke="#5a8f5a"/><text x="685" y="126">assistente de chat</text>
+                <rect x="622" y="160" width="126" height="30" rx="5" fill="#f4f8f4" stroke="#5a8f5a"/><text x="685" y="180">editor com IA</text>
+
+                <rect x="1010" y="42" width="126" height="30" rx="5" fill="#f4f4f4" stroke="#999"/><text x="1073" y="62">contratos</text>
+                <rect x="1010" y="88" width="126" height="30" rx="5" fill="#f4f4f4" stroke="#999"/><text x="1073" y="108">pedidos</text>
+                <rect x="1010" y="134" width="126" height="30" rx="5" fill="#f4f4f4" stroke="#999"/><text x="1073" y="154">faturamento</text>
+                <rect x="1010" y="180" width="126" height="30" rx="5" fill="#f4f4f4" stroke="#999"/><text x="1073" y="200">telemetria</text>
+              </g>
+              <rect x="836" y="88" width="120" height="76" rx="8" fill="#fff0f5" stroke="#ED145B" stroke-width="2.5"/>
+              <text x="896" y="120" text-anchor="middle" font-size="15" font-weight="700" fill="#ED145B">MCP</text>
+              <text x="896" y="144" text-anchor="middle" font-size="12" fill="#a03a5e">stdio, JSON-RPC</text>
+              <g stroke="#5a8f5a" stroke-width="1.6">
+                <line x1="750" y1="67" x2="834" y2="112"/><line x1="750" y1="121" x2="834" y2="124"/>
+                <line x1="750" y1="175" x2="834" y2="140"/>
+                <line x1="958" y1="112" x2="1008" y2="57"/><line x1="958" y1="120" x2="1008" y2="103"/>
+                <line x1="958" y1="132" x2="1008" y2="149"/><line x1="958" y1="140" x2="1008" y2="195"/>
+              </g>
+              <text x="880" y="248" text-anchor="middle" font-size="15" fill="#555">Cada lado fala o protocolo uma vez, e enxerga todos os outros.</text>
+              <text x="880" y="272" text-anchor="middle" font-size="15" fill="#555">Uma fonte nova custa uma implementação, e nenhum cliente muda.</text>
+            </g>
+          </svg>
+          <figcaption>É a mesma economia que o HTTP trouxe: ninguém escreve um cliente por servidor web. O MCP faz isso para contexto de modelo.</figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Model Context Protocol</div>
+          <div class="footer-page">35</div>
+        </div>
+      </section>
+
+      <!-- ==================== 34: STDIO, SEM PORTA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O único serviço da plataforma sem porta e sem <span class="mono">/health</span></h2>
+        </div>
+
+        <p style="font-size:0.69em; margin:2px 0 6px;">Desde a Aula 06 vale o contrato: todo serviço expõe <span class="mono">GET /health</span>, e é nele que o <span class="mono">healthcheck</span> do Compose se apoia. O <span class="mono">mcp-logitech</span> é a exceção, e a razão é o transporte.</p>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 180" style="max-height:190px;" role="img" aria-label="Cliente MCP subindo o servidor como processo filho e conversando por entrada e saída padrão">
+            <g font-family="Montserrat, sans-serif">
+              <rect x="60" y="36" width="250" height="100" rx="10" fill="#f7f9fc" stroke="#4a7bb5" stroke-width="2"/>
+              <text x="185" y="70" text-anchor="middle" font-size="18" font-weight="700" fill="#2f5a8a">cliente de IA</text>
+              <text x="185" y="96" text-anchor="middle" font-size="14" fill="#555">sobe o servidor como</text>
+              <text x="185" y="118" text-anchor="middle" font-size="14" fill="#555">processo filho</text>
+
+              <path d="M320 68 L560 68" stroke="#2d7a2d" stroke-width="2.5"/>
+              <polygon points="570,68 556,62 556,74" fill="#2d7a2d"/>
+              <text x="444" y="58" text-anchor="middle" font-size="14" fill="#2d7a2d" font-family="'JetBrains Mono', monospace">stdin  {"method":"tools/call",...}</text>
+
+              <path d="M570 108 L330 108" stroke="#ED145B" stroke-width="2.5"/>
+              <polygon points="320,108 334,102 334,114" fill="#ED145B"/>
+              <text x="450" y="130" text-anchor="middle" font-size="14" fill="#ED145B" font-family="'JetBrains Mono', monospace">stdout {"result":{"content":[...]}}</text>
+
+              <rect x="580" y="36" width="250" height="100" rx="10" fill="#fff0f5" stroke="#ED145B" stroke-width="2"/>
+              <text x="705" y="70" text-anchor="middle" font-size="18" font-weight="700" fill="#ED145B">mcp-logitech</text>
+              <text x="705" y="96" text-anchor="middle" font-size="14" fill="#555">uma mensagem JSON</text>
+              <text x="705" y="118" text-anchor="middle" font-size="14" fill="#555">por linha</text>
+
+              <rect x="864" y="36" width="256" height="100" rx="10" fill="#fbfbfb" stroke="#ccc" stroke-width="2" stroke-dasharray="7,5"/>
+              <text x="992" y="70" text-anchor="middle" font-size="16" font-weight="700" fill="#999">nenhuma porta</text>
+              <text x="992" y="96" text-anchor="middle" font-size="14" fill="#999">nenhum socket escutando</text>
+              <text x="992" y="118" text-anchor="middle" font-size="14" fill="#999">nenhum endereço para chamar</text>
+            </g>
+          </svg>
+          <figcaption>Transporte stdio do MCP. Existe também um transporte por HTTP com eventos do servidor, e o padrão, que é o do laboratório de hoje, é este.</figcaption>
+        </figure>
+
+        <div class="callout" style="margin-top:8px; padding:12px 16px; border-left:4px solid #c0392b;">
+          <p style="font-size:0.65em; margin:0;"><strong style="color:#c0392b;">A armadilha do stdio:</strong> nada pode ser escrito em <span class="mono">stdout</span> além de mensagens do protocolo. Um <span class="mono">console.log</span> de depuração corrompe o fluxo, e o cliente desconecta com um erro de leitura que <strong>não menciona o seu log</strong>. Depuração vai para <span class="mono">stderr</span>.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Model Context Protocol</div>
+          <div class="footer-page">36</div>
+        </div>
+      </section>
+
+      <!-- ==================== 35: TOOLS, RESOURCES, PROMPTS ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Resources, Tools e Prompts não são sinônimos <a href="#/ref-slide" class="ref-badge" title="Ver referências">[6]</a></h2>
+        </div>
+
+        <table class="compact-table" style="font-size:0.58em;">
+          <thead>
+            <tr><th style="width:13%;">Conceito</th><th style="width:16%;">Quem decide usar</th><th style="width:22%;">O que é</th><th>No servidor de hoje</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Resource</strong></td>
+              <td>o <strong>cliente</strong>, ou o usuário</td>
+              <td>dado de leitura, identificado por URI, sem argumento e sem efeito colateral</td>
+              <td><span class="mono">logitech://contratos/frigolar-refrigerados.md</span>, o contrato inteiro em Markdown. Vem pronto no kit, e serve de exemplo trabalhado.</td>
+            </tr>
+            <tr>
+              <td><strong>Tool</strong></td>
+              <td>o <strong>modelo</strong></td>
+              <td>função executável, com esquema de entrada e possível efeito</td>
+              <td><span class="mono">buscar_em_contratos(pergunta, k)</span>, que é o <span class="mono">TODO-6a</span>. E a opcional <span class="mono">consultar_pedido(pedidoId)</span>.</td>
+            </tr>
+            <tr>
+              <td><strong>Prompt</strong></td>
+              <td>o <strong>usuário</strong></td>
+              <td>modelo de instrução pronto, oferecido na interface</td>
+              <td>Nenhum. Lista vazia é resposta legítima, e o servidor a devolve.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Por que a busca é Tool, e não Resource</span>
+          <p>Porque o resultado depende de um argumento que <strong>só existe no momento da conversa</strong>: a pergunta. Não há URI estável para "o trecho que responde ao que o usuário acabou de digitar". Já o contrato inteiro tem URI estável, e por isso é Resource.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Model Context Protocol</div>
+          <div class="footer-page">37</div>
+        </div>
+      </section>
+
+      <!-- ==================== 36: O APERTO DE MÃO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O protocolo inteiro, em cinco mensagens</h2>
+        </div>
+
+        <figure class="slide-figure">
+          <svg viewBox="0 0 1180 300" style="max-height:315px;" role="img" aria-label="Diagrama de sequência com as cinco mensagens trocadas entre cliente e servidor MCP">
+            <g font-family="Montserrat, sans-serif">
+              <rect x="60" y="14" width="180" height="32" rx="6" fill="#f7f9fc" stroke="#4a7bb5" stroke-width="2"/>
+              <text x="150" y="36" text-anchor="middle" font-size="16" font-weight="700" fill="#2f5a8a">cliente</text>
+              <rect x="940" y="14" width="180" height="32" rx="6" fill="#fff0f5" stroke="#ED145B" stroke-width="2"/>
+              <text x="1030" y="36" text-anchor="middle" font-size="16" font-weight="700" fill="#ED145B">mcp-logitech</text>
+              <line x1="150" y1="52" x2="150" y2="272" stroke="#ccc" stroke-width="2"/>
+              <line x1="1030" y1="52" x2="1030" y2="272" stroke="#ccc" stroke-width="2"/>
+
+              <g font-family="'JetBrains Mono', monospace" font-size="14">
+                <path d="M150 78 L1024 78" stroke="#4a7bb5" stroke-width="2"/>
+                <polygon points="1030,78 1018,73 1018,83" fill="#4a7bb5"/>
+                <text x="588" y="70" text-anchor="middle" fill="#2f5a8a">1. initialize  {protocolVersion, capabilities, clientInfo}</text>
+
+                <path d="M1030 112 L156 112" stroke="#ED145B" stroke-width="2" stroke-dasharray="6,4"/>
+                <polygon points="150,112 162,107 162,117" fill="#ED145B"/>
+                <text x="588" y="104" text-anchor="middle" fill="#a03a5e">result {serverInfo: "mcp-logitech", capabilities}</text>
+
+                <path d="M150 146 L1024 146" stroke="#4a7bb5" stroke-width="2"/>
+                <polygon points="1030,146 1018,141 1018,151" fill="#4a7bb5"/>
+                <text x="588" y="138" text-anchor="middle" fill="#2f5a8a">2. notifications/initialized   (sem id, sem resposta)</text>
+
+                <path d="M150 180 L1024 180" stroke="#4a7bb5" stroke-width="2"/>
+                <polygon points="1030,180 1018,175 1018,185" fill="#4a7bb5"/>
+                <text x="588" y="172" text-anchor="middle" fill="#2f5a8a">3. tools/list       ->  o catalogo que o MODELO le</text>
+
+                <path d="M150 214 L1024 214" stroke="#4a7bb5" stroke-width="2"/>
+                <polygon points="1030,214 1018,209 1018,219" fill="#4a7bb5"/>
+                <text x="588" y="206" text-anchor="middle" fill="#2f5a8a">4. resources/list   ->  4 contratos com URI</text>
+
+                <path d="M150 250 L1024 250" stroke="#4a7bb5" stroke-width="2.5"/>
+                <polygon points="1030,250 1018,245 1018,255" fill="#4a7bb5"/>
+                <text x="588" y="242" text-anchor="middle" font-weight="700" fill="#ED145B">5. tools/call  buscar_em_contratos {pergunta, k}</text>
+              </g>
+
+              <rect x="60" y="272" width="1060" height="0" fill="none"/>
+              <text x="590" y="292" text-anchor="middle" font-family="Montserrat, sans-serif" font-size="15" fill="#666">
+                JSON-RPC 2.0, uma mensagem por linha. Notificação não tem id e não recebe resposta: responder a uma delas derruba a conexão.
+              </text>
+            </g>
+          </svg>
+          <figcaption>É exatamente o que <span class="mono">npm test -- --verboso</span> imprime no laboratório de hoje, com as mensagens cruas nas duas direções.</figcaption>
+        </figure>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Model Context Protocol</div>
+          <div class="footer-page">38</div>
+        </div>
+      </section>
+
+      <!-- ==================== 37: A DESCRIÇÃO É CONTEÚDO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>A descrição da ferramenta é lida por um modelo</h2>
+        </div>
+
+        <p style="font-size:0.69em; margin:2px 0 6px;">O <span class="mono">tools/list</span> devolve texto que <strong>ninguém lê com os olhos</strong>. Quem lê é o modelo, e é com base nele que ele decide chamar ou não chamar. Descrição vaga produz ferramenta acionada na hora errada, e a culpa costuma cair no modelo.</p>
+
+        <div class="side-by-side" style="gap:16px;">
+          <div class="side">
+            <h4>Descrição que não serve</h4>
+            <pre class="code-compact" style="font-size:0.45em; margin:0 0 6px;"><code class="language-json">{
+  "name": "buscar",
+  "description": "Busca coisas.",
+  "inputSchema": { "type": "object" }
+}</code></pre>
+            <p style="font-size:0.62em; margin:0;">O modelo não sabe o que essa ferramenta cobre nem o que ela espera receber. Ela vai ser chamada para perguntar preço de diesel, e vai ser ignorada quando alguém perguntar sobre avaria.</p>
+          </div>
+          <div class="side">
+            <h4>Descrição do laboratório</h4>
+            <pre class="code-compact" style="font-size:0.45em; margin:0 0 6px;"><code class="language-json">{
+  "name": "buscar_em_contratos",
+  "description": "Busca por significado nas
+    clausulas dos contratos de transporte
+    vigentes da LogiTech (prazos, avarias,
+    indenizacao, temperatura, produtos
+    perigosos, reajuste, rescisao). Use
+    sempre que a pergunta for sobre o que
+    esta escrito em contrato com um cliente."
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Takeaway</span>
+          <p>Em MCP, <strong>a documentação é código executável</strong>: ela é o que determina o comportamento em tempo de execução. Nome, descrição e esquema de entrada são a interface, não o comentário dela.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Model Context Protocol</div>
+          <div class="footer-page">39</div>
+        </div>
+      </section>
+
+      <!-- ==================== 38: QUIZ 1 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container" data-quiz-key="aula12-quiz1">
+          <div class="quiz-question">Qual a diferença entre uma busca por palavra-chave e uma busca por similaridade de vetores?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> A busca por vetores é sempre mais rápida, porque não precisa ler o texto das linhas.</li>
+            <li data-correct="true"><span class="option-letter">B</span> A busca por palavra-chave exige que os termos digitados apareçam no texto; a busca por vetores compara o significado no espaço vetorial e encontra o trecho certo mesmo escrito com outras palavras.</li>
+            <li data-correct="false"><span class="option-letter">C</span> São a mesma coisa: o pgvector traduz a palavra digitada em um vetor e faz um ILIKE otimizado por baixo.</li>
+            <li data-correct="false"><span class="option-letter">D</span> A busca por vetores só funciona em bancos vetoriais dedicados, e por isso o PostgreSQL precisa da extensão para virar um.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. Foi o que medimos: 'curso especial' não aparece em contrato nenhum, e a busca por distância trouxe a cláusula do curso MOPP em primeiro lugar, com distância 0,4104."
+               data-incorrect-msg="Incorreto. Velocidade não é o ponto, e a extensão não transforma o PostgreSQL em outro banco: ela acrescenta um tipo e três operadores de distância. Revise o slide do que o ILIKE não acha.">
+          </div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz1Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz1Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Verificação de Aprendizado</div>
+          <div class="footer-page">40</div>
+        </div>
+      </section>
+
+      <!-- ==================== 39: INTERVALO ==================== -->
+      <section class="content-slide" style="text-align:center; background:transparent;"
+               data-background-image="../assets/img/coffee-relax.jpg"
+               data-background-size="cover"
+               data-background-opacity="0.45">
+        <div style="margin-top:150px;">
+          <h2 style="font-size:4em; color:var(--fiap-pink); margin-bottom:10px; text-shadow:0 2px 12px rgba(255,255,255,0.9);">Intervalo</h2>
+          <h3 style="font-size:2.2em; color:var(--fiap-dark); text-shadow:0 2px 10px rgba(255,255,255,0.9);">30 minutos</h3>
+
+          <div class="quiz-timer-box" style="margin:40px auto 0 auto; padding:15px 30px; font-size:1.3em;">
+            <button class="quiz-timer-btn" style="width:40px; height:40px; font-size:1.2em;" onclick="startTimer('breakTimer', 1800)" aria-label="Iniciar cronômetro do intervalo">&#9654;</button>
+            <span id="breakTimer">30:00</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 40: QUIZ 2 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container" data-quiz-key="aula12-quiz2">
+          <div class="quiz-question">O que o MCP resolve que uma integração feita à mão entre a sua API e um modelo não resolve?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> Deixa a chamada mais rápida, porque troca HTTP por um protocolo binário.</li>
+            <li data-correct="true"><span class="option-letter">B</span> Padroniza como a aplicação oferece dados, ferramentas e instruções, de modo que o mesmo servidor sirva a qualquer cliente que fale o protocolo, em vez de uma integração por cliente.</li>
+            <li data-correct="false"><span class="option-letter">C</span> Substitui o Function Calling da Aula 08, que deixa de ser necessário.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Garante que o modelo não invente resposta, porque ele só pode responder com o que o servidor devolveu.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto. O ganho é de combinatória: sem protocolo comum, N aplicações e M clientes de IA custam N vezes M integrações, cada uma com o seu formato. Com MCP, custam N mais M."
+               data-incorrect-msg="Incorreto. O MCP não é otimização de transporte, não substitui o Function Calling, que é o mecanismo do lado do modelo, e não impede alucinação: nada obriga o modelo a usar o que o servidor devolveu. O que ele padroniza é a oferta de contexto.">
+          </div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz2Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz2Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Verificação de Aprendizado</div>
+          <div class="footer-page">42</div>
+        </div>
+      </section>
+
+      <!-- ==================== 41: QUIZ 3 ==================== -->
+      <section class="quiz-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Quiz de Verificação</h2>
+        </div>
+
+        <div class="quiz-container" data-quiz-key="aula12-quiz3">
+          <div class="quiz-question">A busca por similaridade já devolve o trecho certo <strong>antes</strong> de existir qualquer índice. Então por que criar o índice HNSW, e o que muda?</div>
+          <ul class="quiz-options">
+            <li data-correct="false"><span class="option-letter">A</span> Sem índice a consulta devolve resultado errado, e o índice é o que corrige a ordenação.</li>
+            <li data-correct="true"><span class="option-letter">B</span> Sem índice o plano é <span class="mono">Seq Scan</span>: exato, mas o tempo cresce com a tabela. Com HNSW vira <span class="mono">Index Scan</span>, e o preço é a busca passar a ser <strong>aproximada</strong>.</li>
+            <li data-correct="false"><span class="option-letter">C</span> O índice deixa a busca exata e rápida ao mesmo tempo, como o B-tree de uma coluna comum.</li>
+            <li data-correct="false"><span class="option-letter">D</span> O planejador nunca usa índice em consulta com <span class="mono">ORDER BY</span> por distância.</li>
+          </ul>
+          <div class="quiz-feedback"
+               data-correct-msg="Correto, e repare no preço: HNSW é vizinho aproximado. Ele pode não devolver o mais próximo de todos, coisa que um B-tree jamais faria. Você troca uma parcela de recuperação por tempo, e essa troca é sua para decidir."
+               data-incorrect-msg="Incorreto. O resultado já estava certo sem índice; o que muda é o tempo, e a contrapartida é a natureza aproximada do HNSW. Cuidado com a alternativa D: ela descreve um erro real, o índice criado com a classe de operadores errada (vector_l2_ops para uma consulta com <=>), que é ignorado em silêncio. Mas isso é defeito de quem criou, não o comportamento normal.">
+          </div>
+
+          <div class="quiz-toolbar">
+            <div class="quiz-vote">
+              <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="Espaço reservado para o QR code de votação">
+                <rect width="100" height="100" rx="6" fill="#fff"/>
+                <rect x="4" y="4" width="92" height="92" rx="4" fill="none" stroke="#bbb" stroke-width="2" stroke-dasharray="6,5"/>
+                <text x="50" y="46" text-anchor="middle" font-size="11" font-weight="700" fill="#999">QR</text>
+                <text x="50" y="62" text-anchor="middle" font-size="9" fill="#bbb">em breve</text>
+              </svg>
+              <div class="quiz-vote-text">
+                Aponte a câmera para votar
+                <span>Votação ao vivo ainda não publicada</span>
+              </div>
+            </div>
+
+            <div class="quiz-timer-box">
+              <button class="quiz-timer-btn" onclick="startTimer('quiz3Timer', 60)" aria-label="Iniciar 60 segundos">&#9654;</button>
+              <span id="quiz3Timer">01:00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Verificação de Aprendizado</div>
+          <div class="footer-page">43</div>
+        </div>
+      </section>
+
+      <!-- ==================== 42: ATIVIDADE PRÁTICA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Atividade prática: do <span class="mono">psql</span> ao servidor MCP, em seis passos</h2>
+        </div>
+
+        <p style="font-size:0.66em; margin:2px 0 6px;">Em dupla, no fork de <span class="mono">josercf/mwe-2026-2-lab12-rag-mcp</span>. Os quatro contratos, o chunking, a ingestão e o transporte do MCP vêm prontos. O que vocês escrevem é a <strong>SQL</strong> e a <strong>ferramenta</strong>.</p>
+
+        <table class="compact-table" style="font-size:0.55em; margin-top:6px;">
+          <thead><tr><th style="width:6%;">Passo</th><th style="width:20%;">Lacuna</th><th style="width:36%;">O que entra</th><th>Como você sabe que fechou</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>evidências</td><td>Ler no <span class="mono">psql</span> o que o Hibernate e o EF Core criaram</td><td>Três marcadores preenchidos em <span class="mono">docs/EVIDENCIAS.md</span></td></tr>
+            <tr><td>2</td><td><span class="mono">TODO-2a</span> a <span class="mono">TODO-2c</span></td><td>Extensão, schema, duas tabelas, FK com cascata, <span class="mono">vector(768)</span></td><td><span class="mono">\d+ conhecimento.trechos</span> mostra a coluna vetorial</td></tr>
+            <tr><td>3</td><td><span class="mono">TODO-3a</span>, <span class="mono">TODO-3b</span></td><td>Ingestão, e as duas consultas com <span class="mono">JOIN</span>, <span class="mono">ORDER BY</span> e <span class="mono">LIMIT</span></td><td>44 trechos no banco e os pares trecho/contrato corretos</td></tr>
+            <tr><td>4</td><td><span class="mono">TODO-4</span></td><td>A busca por distância de cosseno, no serviço <span class="mono">rag</span></td><td>A pergunta sobre curso especial traz a cláusula do MOPP</td></tr>
+            <tr><td>5</td><td><span class="mono">TODO-5</span></td><td>O índice HNSW e a leitura dos dois planos</td><td><span class="mono">Index Scan using trechos_embedding_hnsw</span> no <span class="mono">EXPLAIN</span></td></tr>
+            <tr><td>6</td><td><span class="mono">TODO-6a</span></td><td>A ferramenta <span class="mono">buscar_em_contratos</span> no servidor MCP</td><td><span class="mono">npm test</span> devolve os trechos citando o contrato</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout" style="margin-top:8px; padding:11px 15px; border-left:4px solid #c0392b;">
+          <p style="font-size:0.63em; margin:0;"><strong style="color:#c0392b;">Antes do primeiro comando:</strong> <span class="mono">cp .env.exemplo .env</span> e <span class="mono">docker compose down -v</span>. O <span class="mono">-v</span> não é opcional: o volume da Aula 07 foi criado pela imagem <span class="mono">postgres:16</span>, sem a extensão de vetores disponível.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Atividade Prática</div>
+          <div class="footer-page">44</div>
+        </div>
+      </section>
+
+      <!-- ==================== 43: PASSO 1 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 1 de 6: leia a SQL que escreveram por você</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:15px 20px;">
+          <h3>Sem lacuna de código. A evidência é o que você anota.</h3>
+          <pre style="margin:0 0 7px; font-size:0.47em;"><code class="language-bash">cp .env.exemplo .env
+docker compose down -v            # o volume da Aula 07 nao serve
+docker compose up -d --wait
+docker compose exec postgres psql -U logitech -d logitech</code></pre>
+          <pre style="margin:0 0 7px; font-size:0.47em;"><code class="language-text">\dn                       -- que schemas existem
+\dt pedidos.*             -- o que o Hibernate criou
+\d+ faturamento.faturas   -- a anatomia de uma tabela que voce nao escreveu
+\di faturamento.*         -- os indices que vieram de brinde
+\dx                       -- a extensao vector ainda NAO esta aqui</code></pre>
+          <p style="margin:0 0 6px; font-size:0.62em;">Preencha <span class="mono">SCHEMAS_QUE_O_ORM_CRIOU</span>, <span class="mono">TIPO_DA_COLUNA_VALOR</span> e <span class="mono">INDICES_QUE_NAO_ESCREVI</span>. O arquivo <span class="mono">sql/01-explorar.sql</span> traz cada atalho também na forma de <span class="mono">SELECT</span>, para você ver o que ele faz por baixo.</p>
+          <p style="margin:0; font-size:0.61em; border-top:1px solid rgba(255,255,255,0.2); padding-top:6px;"><strong style="color:var(--fiap-pink);">Confira:</strong> <span class="mono">python3 verificar.py --criterio 1</span>. Commit: <span class="mono">docs(passo-1): a SQL que o Hibernate e o EF Core escreveram</span>.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Passo 1</div>
+          <div class="footer-page">45</div>
+        </div>
+      </section>
+
+      <!-- ==================== 44: PASSO 2 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 2 de 6: a DDL que nenhum ORM escreve</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:15px 20px;">
+          <h3><span class="mono">TODO-2a</span> a <span class="mono">TODO-2c</span>, em <span class="caminho">sql/02-conhecimento.sql</span></h3>
+          <p style="margin:0 0 7px; font-size:0.63em;">Seis lacunas, e o arquivo tem o esqueleto completo em volta de cada uma. Estas são as linhas onde elas estão:</p>
+          <pre style="margin:0 0 7px; font-size:0.5em;"><code class="language-sql">CREATE ____ IF NOT EXISTS vector;         -- 2a
+    id      ____ PRIMARY KEY,             -- 2b-1
+    arquivo varchar(200) NOT NULL ____    -- 2b-2: o documento nao entra duas vezes
+    contrato_id bigint NOT NULL ____      -- 2c-1: FK com ON DELETE CASCADE
+    embedding   ____                      -- 2c-2: o tipo e a dimensao
+    CONSTRAINT ... ____ (contrato_id, ordem)   -- 2c-3</code></pre>
+          <p style="margin:0 0 7px; font-size:0.63em;">A dimensão <strong>é do modelo</strong>. Errar o número não dá erro agora: dá erro na ingestão do Passo 3, quando o primeiro <span class="mono">INSERT</span> chegar com 768 números.</p>
+          <pre style="margin:0 0 6px; font-size:0.47em;"><code class="language-bash">docker compose exec -T postgres psql -U logitech -d logitech -v ON_ERROR_STOP=1 &lt; sql/02-conhecimento.sql
+python3 verificar.py --criterio 2</code></pre>
+          <p style="margin:0; font-size:0.61em; border-top:1px solid rgba(255,255,255,0.2); padding-top:6px;"><strong style="color:var(--fiap-pink);">Travou?</strong> <span class="mono">resgate/02-conhecimento.sql</span> tem o arquivo completo. Registre <span class="mono">USEI_O_RESGATE</span> e siga: os passos 3 a 6 dependem deste.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Passo 2</div>
+          <div class="footer-page">46</div>
+        </div>
+      </section>
+
+      <!-- ==================== 45: PASSO 3 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 3 de 6: ingestão e consultas, ainda sem vetor</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:15px 20px;">
+          <h3><span class="mono">TODO-3a</span> e <span class="mono">TODO-3b</span>, em <span class="caminho">sql/03-consultas.sql</span></h3>
+          <pre style="margin:0 0 7px; font-size:0.47em;"><code class="language-bash">python3 -m rag.ingestao     # 4 contratos, 44 trechos, cerca de 2 s</code></pre>
+          <pre style="margin:0 0 7px; font-size:0.46em;"><code class="language-sql">-- consulta: trechos_por_contrato
+FROM conhecimento.contratos AS c
+____ conhecimento.trechos AS t ON t.contrato_id = c.id     -- TODO-3a-1
+ORDER BY ____ DESC                                         -- TODO-3a-2
+LIMIT ____;                                                -- TODO-3a-3
+
+-- consulta: origem_do_trecho
+FROM conhecimento.trechos AS t
+____ conhecimento.contratos AS c ____                      -- TODO-3b-1
+ORDER BY ____ DESC LIMIT 5;                                -- TODO-3b-2</code></pre>
+          <p style="margin:0 0 6px; font-size:0.61em;">Junção sem condição não dá erro: dá <strong>176 linhas plausíveis</strong>. O verificador calcula a origem real de cada trecho e compara com a sua. Guarde também o resultado do <span class="mono">ILIKE '%avaria%'</span> do fim do arquivo.</p>
+          <p style="margin:0; font-size:0.61em; border-top:1px solid rgba(255,255,255,0.2); padding-top:6px;"><strong style="color:var(--fiap-pink);">Confira:</strong> <span class="mono">verificar.py --criterio 3</span> e <span class="mono">--criterio 4</span>. Commit: <span class="mono">feat(passo-3): consultas com JOIN, ORDER BY e LIMIT</span>.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Passo 3</div>
+          <div class="footer-page">47</div>
+        </div>
+      </section>
+
+      <!-- ==================== 46: PASSO 4 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 4 de 6: a lacuna central, três linhas de SQL</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:15px 20px;">
+          <h3><span class="mono">TODO-4</span>, em <span class="caminho">rag/busca.py</span></h3>
+          <pre style="margin:0 0 7px; font-size:0.46em;"><code class="language-sql">SELECT t.id, t.ordem, t.texto, c.cliente, c.titulo AS contrato, c.arquivo,
+       t.embedding &lt;=&gt; %s::vector AS distancia
+FROM conhecimento.trechos AS t
+____ conhecimento.contratos AS c ON c.id = t.contrato_id   -- TODO-4a: a fonte
+ORDER BY ____                                              -- TODO-4b: a distancia
+____ %s                                                    -- TODO-4c: o corte</code></pre>
+          <pre style="margin:0 0 7px; font-size:0.46em;"><code class="language-bash">uvicorn rag.app:app --host 0.0.0.0 --port 8010 --reload
+
+curl -s --connect-timeout 5 --max-time 120 -X POST localhost:8010/api/v1/busca \
+  -H 'Content-Type: application/json' \
+  -d '{"pergunta":"O motorista precisa de curso especial para produto inflamavel?","k":3}'</code></pre>
+          <p style="margin:0 0 6px; font-size:0.61em;">Antes de escrever, rode <span class="mono">sql/04-busca.sql</span>: ele mostra o operador em SQL puro, sem Python e sem Ollama no caminho, e não tem lacuna.</p>
+          <p style="margin:0; font-size:0.61em; border-top:1px solid rgba(255,255,255,0.2); padding-top:6px;"><strong style="color:var(--fiap-pink);">Confira:</strong> <span class="mono">verificar.py --criterio 5</span> faz três perguntas de verdade e exige o trecho certo entre os três primeiros.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Passo 4</div>
+          <div class="footer-page">48</div>
+        </div>
+      </section>
+
+      <!-- ==================== 47: PASSO 5 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 5 de 6: o índice, e o plano que ele muda</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:15px 20px;">
+          <h3><span class="mono">TODO-5</span>, em <span class="caminho">sql/05-indice.sql</span></h3>
+          <pre style="margin:0 0 7px; font-size:0.46em;"><code class="language-sql">SELECT embedding AS alvo FROM conhecimento.trechos ORDER BY id LIMIT 1
+\gset                          -- sem isto o indice NAO entra no plano
+
+EXPLAIN ANALYZE SELECT id FROM conhecimento.trechos
+ORDER BY embedding &lt;=&gt; :'alvo'::vector LIMIT 5;      -- procure: Seq Scan
+
+CREATE INDEX IF NOT EXISTS trechos_embedding_hnsw
+    ON conhecimento.trechos
+ USING ____ (embedding ____);                        -- TODO-5-1 e TODO-5-2
+
+SET enable_seqscan = off;      -- pedindo o OUTRO plano, so para diagnostico
+EXPLAIN ANALYZE ...            -- procure: Index Scan using trechos_embedding_hnsw</code></pre>
+          <p style="margin:0 0 6px; font-size:0.61em;"><strong>Com 44 trechos o segundo plano provavelmente continua com <span class="mono">Seq Scan</span>, e está certo.</strong> O planejador calculou que varrer custa menos. Registre os dois tempos como eles saíram, inclusive se o segundo for maior.</p>
+          <p style="margin:0; font-size:0.61em; border-top:1px solid rgba(255,255,255,0.2); padding-top:6px;"><strong style="color:var(--fiap-pink);">Confira:</strong> <span class="mono">verificar.py --criterio 6</span> lê a definição do índice no catálogo e cobra <span class="mono">EXPLAIN_SEM_INDICE</span> e <span class="mono">EXPLAIN_COM_INDICE</span>.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Passo 5</div>
+          <div class="footer-page">49</div>
+        </div>
+      </section>
+
+      <!-- ==================== 48: PASSO 6 ==================== -->
+      <section class="exercise-slide content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Passo 6 de 6: a ferramenta do servidor MCP</h2>
+        </div>
+
+        <div class="exercise-container" style="padding:15px 20px;">
+          <h3><span class="mono">TODO-6a</span>, em <span class="caminho">mcp-logitech/src/servidor.ts</span></h3>
+          <p style="margin:0 0 6px; font-size:0.62em;">Leia primeiro o bloco do <strong>Resource</strong>, que vem pronto e é o exemplo trabalhado. Depois escreva a Tool: ela é uma casca fina sobre o serviço <span class="mono">rag</span> que você acabou de fazer funcionar.</p>
+          <pre style="margin:0 0 7px; font-size:0.46em;"><code class="language-typescript">async function buscarEmContratos(argumentos: Record&lt;string, unknown&gt;) {
+  // 6a-1: POST {RAG_URL}/api/v1/busca  com { pergunta, k }, via postarJson
+  // 6a-2: monte um bloco por trecho, e CADA bloco cita o contrato de origem
+  // 6a-3: devolva { content: [{ type: "text", text: ... }] }
+}</code></pre>
+          <pre style="margin:0 0 7px; font-size:0.47em;"><code class="language-bash">cd mcp-logitech
+npm test                  # o roteiro completo, cinco mensagens
+npm test -- --verboso     # com as mensagens cruas nas duas direcoes</code></pre>
+          <p style="margin:0; font-size:0.61em; border-top:1px solid rgba(255,255,255,0.2); padding-top:6px;"><strong style="color:var(--fiap-pink);">Não use <span class="mono">console.log</span>.</strong> <span class="mono">stdout</span> é o canal do protocolo: use <span class="mono">registrar()</span>, que escreve em <span class="mono">stderr</span>. O <span class="mono">TODO-6b</span> é opcional e não entra nos critérios.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Passo 6</div>
+          <div class="footer-page">50</div>
+        </div>
+      </section>
+
+      <!-- ==================== 49: O VERIFICADOR ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O verificador conversa com o banco e com o servidor</h2>
+        </div>
+
+        <p style="font-size:0.67em; margin:2px 0 6px;">Nada aqui confia em "eu fiz". O schema é lido do catálogo do PostgreSQL, as suas consultas são <strong>executadas</strong> e comparadas com uma referência calculada na hora, a busca é uma chamada HTTP de verdade, e a ferramenta é chamada pelo cliente MCP falando stdio.</p>
+
+        <table class="compact-table" style="font-size:0.55em;">
+          <thead><tr><th style="width:8%;">Critério</th><th>O que a máquina prova</th></tr></thead>
+          <tbody>
+            <tr><td>CA-01</td><td>As tabelas dos ORMs existem, e os três marcadores de leitura estão preenchidos</td></tr>
+            <tr><td>CA-02</td><td>Extensão ativa, duas tabelas, chave estrangeira <strong>com cascata</strong>, coluna <span class="mono">vector(768)</span> e restrição única sobre duas colunas</td></tr>
+            <tr><td>CA-03</td><td>4 contratos, ao menos 30 trechos, <strong>nenhum</strong> com <span class="mono">embedding</span> nulo e nenhum órfão</td></tr>
+            <tr><td>CA-04</td><td>As duas consultas executam, respeitam ordem e <span class="mono">LIMIT</span>, e os pares trecho/contrato batem com a origem real</td></tr>
+            <tr><td>CA-05</td><td>Três perguntas reais ao serviço: ordem crescente de distância, fonte presente e o trecho certo entre os três primeiros</td></tr>
+            <tr><td>CA-06</td><td>O índice é <span class="mono">hnsw</span> <strong>e</strong> usa <span class="mono">vector_cosine_ops</span>; os dois planos estão registrados</td></tr>
+            <tr><td>CA-07</td><td>O cliente MCP sobe o servidor e exercita <span class="mono">initialize</span>, <span class="mono">tools/list</span>, <span class="mono">resources/read</span> e <span class="mono">tools/call</span></td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout" style="margin-top:8px; padding:11px 15px;">
+          <p style="font-size:0.63em; margin:0;">O verificador <strong>checa o banco e o serviço antes de julgar</strong>. Um critério que falha porque o serviço nem subiu tem conserto diferente de um que falha porque falta uma linha na sua SQL.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Verificação</div>
+          <div class="footer-page">51</div>
+        </div>
+      </section>
+
+      <!-- ==================== 50: ORDEM DE CORTE ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Se o tempo apertar, a ordem de corte já está decidida</h2>
+        </div>
+
+        <p style="font-size:0.7em; margin:2px 0 8px;">Sessenta minutos e seis passos. A ordem abaixo está fixada na ADR-008 do acervo e não é negociada em sala: decidir isso sob pressão é como se corta a parte errada.</p>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:12px; margin-top:4px;">
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>Corte 1: o EXPLAIN comparativo</h4>
+            <p style="font-size:0.62em;">Vira demonstração no projetor. O <span class="mono">CREATE INDEX</span> do <span class="mono">TODO-5</span> <strong>continua sendo tarefa</strong>: o que sai é a leitura comparada dos dois planos.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>Corte 2: a segunda ferramenta</h4>
+            <p style="font-size:0.62em;">O <span class="mono">TODO-6b</span>, <span class="mono">consultar_pedido</span>, vira leitura de casa. Ele já nasce fora dos critérios de aceitação por causa disso.</p>
+          </div>
+          <div class="concept-card" style="padding:13px 16px;">
+            <h4>Corte 3: as consultas de leitura</h4>
+            <p style="font-size:0.62em;">As duas consultas prontas do fim do Passo 3, que servem para você ver o acervo com os próprios olhos, viram leitura de casa.</p>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:12px; padding:14px 18px; border-left:4px solid #c0392b;">
+          <p style="font-size:0.7em; margin:0;"><strong style="color:#c0392b;">A DDL à mão do Passo 2 e a busca por distância do Passo 4 nunca saem.</strong> São a tese da aula. Sem elas o encontro vira uma demonstração de biblioteca, que é exatamente o que este formato existe para evitar.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Atividade Prática</div>
+          <div class="footer-page">52</div>
+        </div>
+      </section>
+
+      <!-- ==================== 51: ENTREGA ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Formulário de Entrega</h2>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 600px 1fr; gap:26px; align-items:start; margin-top:4px;">
+          <div class="marcador-pendente" style="height:326px; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+            <div style="font-size:1.02em; font-weight:800; color:#c0392b; margin-bottom:12px;">Formulário ainda não publicado</div>
+            <p style="font-size:0.66em; color:#a03028; text-align:center; margin:0 0 10px; line-height:1.5;">
+              A URL de entrega desta aula <strong>será publicada pelo professor antes do encontro</strong>,
+              e este slide passa a exibi-la aqui.
+            </p>
+            <p style="font-size:0.62em; color:#a03028; text-align:center; margin:0; line-height:1.5;">
+              Até lá, não use o formulário de outra aula: cada entrega é registrada em um formulário próprio.
+            </p>
+          </div>
+
+          <div>
+            <div class="concept-cards" style="grid-template-columns:1fr; gap:10px; margin-top:0;">
+              <div class="concept-card" style="padding:11px 16px;">
+                <h4>O que enviar</h4>
+                <p style="font-size:0.64em;">A URL do <strong>fork da dupla</strong>, no formato<br><span class="mono">github.com/usuario/mwe-2026-2-lab12-rag-mcp</span></p>
+              </div>
+              <div class="concept-card" style="padding:11px 16px;">
+                <h4>Quem envia</h4>
+                <p style="font-size:0.64em;">Um envio por dupla, com os nomes dos dois integrantes.</p>
+              </div>
+              <div class="concept-card" style="padding:11px 16px;">
+                <h4>Até quando</h4>
+                <p style="font-size:0.64em;">Até 22h50, com os seis commits no fork e o <span class="mono">docs/EVIDENCIAS.md</span> preenchido.</p>
+              </div>
+            </div>
+
+            <div class="callout" style="margin-top:9px; padding:11px 15px;">
+              <p style="font-size:0.63em; margin:0; line-height:1.5;">Critérios de aceitação completos no
+                <a href="https://github.com/josercf/mwe-2026-2-lab12-rag-mcp" target="_blank" style="color:var(--fiap-pink); font-weight:700;">README do Lab Kit</a></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Entrega da Atividade</div>
+          <div class="footer-page">53</div>
+        </div>
+      </section>
+
+      <!-- ==================== 52: O FECHO ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>ORM ou SQL à mão? A pergunta está errada.</h2>
+        </div>
+
+        <p style="font-size:0.7em; margin:2px 0 8px;">Não é uma escolha entre os dois, e ninguém sai daqui achando que ORM é dispensável. A divisão real é sobre <strong>onde cada um serve</strong>, e hoje ela ficou visível.</p>
+
+        <div class="side-by-side" style="gap:16px;">
+          <div class="side">
+            <h4>ORM, para o caminho transacional do CRUD</h4>
+            <p style="font-size:0.63em;">Criar, ler, atualizar e apagar entidades de negócio, com mapeamento, transação, cache de primeiro nível e migração versionada. É o que as Aulas 05 e 06 fizeram, e continua certo: escrever aquele <span class="mono">INSERT</span> à mão seria retrabalho e fonte de defeito.</p>
+          </div>
+          <div class="side">
+            <h4>SQL à mão, para o que o ORM não modela</h4>
+            <p style="font-size:0.63em;">Hoje foi literalmente a coluna <span class="mono">vector</span>. Também é o caso do índice com classe de operadores, do <span class="mono">EXPLAIN</span>, do relatório com agregação, da consulta que precisa de plano previsível. Nada disso cabe em anotação de entidade.</p>
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">O que sobra desta noite</span>
+          <p>Vocês continuam usando ORM amanhã. A diferença é que agora <strong>sabem ler o que ele produziu</strong>, e sabem abrir o <span class="mono">psql</span> quando ele não alcança. Isso é o que separa quem usa um banco de quem depende de uma biblioteca para falar com ele.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Fecho</div>
+          <div class="footer-page">54</div>
+        </div>
+      </section>
+
+      <!-- ==================== 53: O QUE VEM ==================== -->
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>O que vem: o Checkpoint 3, em 27/10</h2>
+        </div>
+
+        <div class="concept-cards" style="grid-template-columns: repeat(3, 1fr); gap:12px; margin-top:8px;">
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Aula 10: testes de unidade</h4>
+            <p style="font-size:0.63em;">Regras de negócio de frete em PyTest, com Stub e Mock separados por propósito, e o portal em Vitest.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Aula 11: frontend enterprise</h4>
+            <p style="font-size:0.63em;">React no portal do cliente e Angular no painel administrativo, com dois fluxos assíncronos concorrentes em RxJS.</p>
+          </div>
+          <div class="concept-card" style="padding:14px 17px;">
+            <h4>Aula 12: hoje</h4>
+            <p style="font-size:0.63em;">SQL relacional, <span class="mono">pgvector</span>, o pipeline de RAG com a fonte citada, e um servidor MCP com uma ferramenta e um recurso bem feitos.</p>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:12px; padding:14px 18px;">
+          <p style="font-size:0.68em; margin:0;"><strong>O CP3 cobra no nível deste laboratório</strong>, e não além dele: uma ferramenta e um recurso, e a busca por distância funcionando com a fonte citada. O fork de hoje é o material de estudo, e o <span class="mono">verificar.py</span> é o simulado.</p>
+        </div>
+
+        <div class="takeaway">
+          <span class="takeaway-label">Guardem o fork</span>
+          <p>No Módulo IV a plataforma inteira ganha autenticação, e o <span class="mono">EXPLAIN</span> de hoje volta como teste de carga: custo de consulta é a mesma conversa, medida com outro instrumento.</p>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Próximos Passos</div>
+          <div class="footer-page">55</div>
+        </div>
+      </section>
+
+      <!-- ==================== 54: REFERÊNCIAS ==================== -->
+      <section id="ref-slide" class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Referências Bibliográficas e Documentação</h2>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:22px; font-size:0.62em; line-height:1.5; margin-top:4px;">
+          <div>
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[1] ORM e mapeamento objeto-relacional</strong><br>
+            FOWLER, M. <em>Patterns of Enterprise Application Architecture</em>. Addison-Wesley, 2002.<br>
+            HIBERNATE: <a href="https://docs.jboss.org/hibernate/orm/6.4/userguide/html_single/Hibernate_User_Guide.html" target="_blank" style="color:var(--fiap-pink);">User Guide, schema generation</a><br>
+            MICROSOFT: <a href="https://learn.microsoft.com/ef/core/modeling/" target="_blank" style="color:var(--fiap-pink);">EF Core, Creating and configuring a model</a></p>
+
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[2] PostgreSQL, SQL e plano de execução</strong><br>
+            POSTGRESQL: <a href="https://www.postgresql.org/docs/16/sql-createtable.html" target="_blank" style="color:var(--fiap-pink);">CREATE TABLE</a> | <a href="https://www.postgresql.org/docs/16/using-explain.html" target="_blank" style="color:var(--fiap-pink);">Using EXPLAIN</a> | <a href="https://www.postgresql.org/docs/16/app-psql.html" target="_blank" style="color:var(--fiap-pink);">psql</a><br>
+            DATE, C. J. <em>SQL and Relational Theory</em>. 3. ed. O'Reilly, 2015.</p>
+
+            <p style="margin:0;"><strong style="color:var(--fiap-pink);">[3] pgvector e índices de vizinhança</strong><br>
+            PGVECTOR: <a href="https://github.com/pgvector/pgvector" target="_blank" style="color:var(--fiap-pink);">pgvector/pgvector</a>, operadores, HNSW e IVFFlat<br>
+            MALKOV, Y.; YASHUNIN, D. <em>Efficient and robust approximate nearest neighbor search using Hierarchical Navigable Small World graphs</em>. IEEE TPAMI, 2020.</p>
+          </div>
+
+          <div>
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[4] Embeddings</strong><br>
+            MIKOLOV, T. et al. <em>Efficient Estimation of Word Representations in Vector Space</em>. arXiv:1301.3781, 2013.<br>
+            NUSSBAUM, Z. et al.: <a href="https://arxiv.org/abs/2402.01613" target="_blank" style="color:var(--fiap-pink);">Nomic Embed, artigo do modelo</a><br>
+            OLLAMA: <a href="https://github.com/ollama/ollama/blob/main/docs/api.md" target="_blank" style="color:var(--fiap-pink);">API, rota /api/embed</a></p>
+
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[5] RAG</strong><br>
+            LEWIS, P. et al. <em>Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks</em>. NeurIPS, 2020.<br>
+            GAO, Y. et al. <em>Retrieval-Augmented Generation for Large Language Models: A Survey</em>. arXiv:2312.10997, 2024.</p>
+
+            <p style="margin:0 0 9px;"><strong style="color:var(--fiap-pink);">[6] Model Context Protocol</strong><br>
+            MCP: <a href="https://modelcontextprotocol.io/" target="_blank" style="color:var(--fiap-pink);">modelcontextprotocol.io</a>, especificação, Tools, Resources e Prompts<br>
+            JSON-RPC: <a href="https://www.jsonrpc.org/specification" target="_blank" style="color:var(--fiap-pink);">JSON-RPC 2.0 Specification</a></p>
+
+            <p style="margin:0;"><strong style="color:var(--fiap-pink);">[7] Material desta aula</strong><br>
+            LAB KIT: <a href="https://github.com/josercf/mwe-2026-2-lab12-rag-mcp" target="_blank" style="color:var(--fiap-pink);">mwe-2026-2-lab12-rag-mcp</a><br>
+            Decisões de contrato do módulo: <span class="mono">ADR-006</span> e <span class="mono">ADR-008</span> do acervo da disciplina.</p>
+          </div>
+        </div>
+
+        <div class="slide-footer">
+          <div class="footer-bar">12 – Bibliografia da Aula</div>
+          <div class="footer-page">56</div>
+        </div>
+      </section>
+
+      <!-- ==================== 55: ENCERRAMENTO ==================== -->
+      <section class="end-slide">
+        <img src="../assets/img/fiap-logo-graduacao.png" alt="FIAP Graduação" style="max-width:350px;">
+        <div class="copyright">
+          Copyright &copy; 2026<br>
+          Prof. José Romualdo da Costa Filho<br><br>
+          Todos os direitos reservados. É expressamente proibida a reprodução, divulgação<br>
+          total ou parcial, deste material acadêmico sem autorização formal,<br>
+          por escrito, do Professor autor da ementa.
+        </div>
+      </section>
+
 
     </div>
   </div>
@@ -157,7 +2631,26 @@
   <script src="../assets/js/fiap-zoom.js"></script>
   <script src="../assets/js/fiap-print.js"></script>
   <script>
-    Reveal.initialize({ hash: true, slideNumber: false, width: 1280, height: 720, plugins: [RevealHighlight] });
+    Reveal.initialize({
+      hash: true,
+      slideNumber: false,
+      width: 1280,
+      height: 720,
+      margin: 0,
+      minScale: 0.2,
+      maxScale: 2.0,
+      center: false,
+      pdfMaxPagesPerSlide: 1,
+      pdfSeparateFragments: false,
+      transition: 'slide',
+      transitionSpeed: 'default',
+      plugins: [RevealHighlight]
+    });
+    // startTimer(elementId, segundos) vem de ../assets/js/fiap-quiz.js
   </script>
+  <!-- Cliente do serviço Pulso: liga os quizzes com data-quiz-key à votação ao vivo.
+       Carregamento assíncrono (defer) e opcional: se o host estiver fora do ar
+       ou o script falhar, o quiz continua funcionando no modo local de sempre. -->
+  <script defer src="https://vote.jrcf.dev/client.js"></script>
 </body>
 </html>

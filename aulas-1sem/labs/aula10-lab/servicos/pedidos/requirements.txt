@@ -1,0 +1,4 @@
+# Dependências do serviço de Pedidos congelado da Aula 10.
+fastapi>=0.115
+uvicorn[standard]>=0.32
+pydantic>=2.9

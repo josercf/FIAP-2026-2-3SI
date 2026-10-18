@@ -1,0 +1,63 @@
+# =============================================================================
+# Frete, o serviço REAL da Aula 06 (Python 3.12, FastAPI, porta 8000)
+# =============================================================================
+#
+# Contexto de build: o diretório `servicos/frete/` do laboratório da Aula 06,
+# com `requirements.txt`, `app/` e `tests/`. Quem faz a amarração é o
+# `docker-compose.override.yml` deste laboratório.
+#
+# Regras da Aula 03 aplicadas aqui: dois estágios nomeados, base alpine no
+# estágio final, usuário não-root com UID acima de 10000, nunca `COPY . .`,
+# `EXPOSE 8000` como manda a ADR-006.
+#
+# A base **precisa** ser alpine, e não slim: o `healthcheck` que vocês escrevem
+# no `docker-compose.yml` usa `wget`, que vem no BusyBox do alpine e **não**
+# existe em `python:3.12-slim`. Trocar a base aqui deixa o serviço respondendo
+# e o container eternamente `unhealthy`.
+
+# -----------------------------------------------------------------------------
+# Estágio 1: builder. O pip, o cache de download e as ferramentas de compilação
+# de wheel ficam todos aqui.
+# -----------------------------------------------------------------------------
+FROM python:3.12-alpine AS builder
+WORKDIR /origem
+
+COPY requirements.txt ./
+
+# O `requirements.txt` do serviço real é único e mistura runtime com teste:
+# `pytest` e `httpx` estão lá por causa do `TestClient` do FastAPI. Como não
+# podemos editar o serviço da Aula 06, a separação acontece aqui, na imagem.
+# É a regra "teste nunca entra na imagem final" sendo cumprida sem tocar no
+# código de quem construiu o serviço.
+RUN grep -viE '^[[:space:]]*(pytest|httpx)([<>=!~[]|$)' requirements.txt \
+      > requirements-runtime.txt \
+ && pip install --no-cache-dir --prefix=/instalado -r requirements-runtime.txt
+
+# -----------------------------------------------------------------------------
+# Estágio 2: runtime. Só o interpretador, os pacotes instalados e o pacote
+# `app`. Sem pip, sem cache de wheel, sem a suíte de testes.
+# -----------------------------------------------------------------------------
+FROM python:3.12-alpine AS runtime
+
+RUN addgroup -g 10003 logitech \
+ && adduser -u 10003 -G logitech -D -H -s /sbin/nologin logitech
+
+WORKDIR /app
+COPY --from=builder /instalado /usr/local
+
+# O serviço é um pacote Python, não um arquivo solto: `app/main.py` importa
+# `.distancias`, `.modelos` e `.registro` por caminho relativo. Por isso entra
+# o diretório inteiro, nomeado, e o `uvicorn` recebe `app.main:app`.
+COPY app ./app
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
+USER logitech
+EXPOSE 8000
+
+# `--host 0.0.0.0` porque o padrão do uvicorn é 127.0.0.1, e um servidor preso
+# ao loopback do container não é alcançável nem pela rede da plataforma nem
+# pela porta publicada no host. Sem `--reload`: recarregar código em produção
+# é o que o estágio final justamente não deve poder fazer.
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

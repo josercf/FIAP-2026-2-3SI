@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>LogiTech.Faturamento</RootNamespace>
+    <AssemblyName>Faturamento</AssemblyName>
+    <!-- Nenhum PackageReference: sem pacote externo, o build não depende do
+         NuGet estar no ar e a imagem final fica pequena. -->
+    <InvariantGlobalization>true</InvariantGlobalization>
+  </PropertyGroup>
+
+</Project>
