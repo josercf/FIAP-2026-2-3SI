@@ -12,14 +12,10 @@ def normalizar(texto):
 
 
 def eh_serie(anterior, modalidade, campus, agora):
-    """Missão 5.
+    """Passo 4 do README, slide "Missão 5. A série".
 
     anterior é um dict com modalidade, campus, status e criado_em.
-    Conta como série quando:
-    - a modalidade é a mesma
-    - o campus é o mesmo, ignorando maiúsculas e espaços repetidos
-    - o status está em ABERTOS (ENCERRADO e CANCELADO não contam)
-    - agora - criado_em é estritamente menor que 48 horas
-      (47h59 conta, 48h00 não conta)
+    ABERTOS, normalizar e timedelta já estão neste arquivo.
+    Substitua só esta função. Não apague o import.
     """
     return False

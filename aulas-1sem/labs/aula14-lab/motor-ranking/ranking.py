@@ -1,7 +1,7 @@
-"""Strategy de faixa da ArenaLog.
+"""Conta da faixa da ArenaLog.
 
-A tabela de pontos é um objeto. O teste troca ou espiona essa tabela
-sem editar a rota HTTP.
+A tabela de pontos é um objeto. O teste observa qual chave ela recebeu
+sem editar a rota HTTP. A função pronta está no passo 2 do README.
 """
 
 from __future__ import annotations
@@ -47,15 +47,11 @@ def faixa_de(pontos):
 
 
 def calcular(modalidade, campus, serie, tabela, campi_rivais):
-    """Missão 3.
+    """Passo 2 do README, slide "Missão 3. A faixa".
 
-    Some o pontos-base da modalidade, +2 se o campus estiver na lista de
-    rivalidade e +1 se serie for verdadeira. A comparação do campus ignora
-    maiúsculas e espaços repetidos.
-
-    Devolva {"pontos", "faixa", "janelaHoras"} usando faixa_de.
-    Modalidade desconhecida sobe como ModalidadeDesconhecida, vinda da tabela.
+    Substitua só esta função. A primeira linha tem que chamar
+    tabela.pontos_base. faixa_de e normalizar já existem neste arquivo.
     """
     raise NotImplementedError(
-        "Missão 3: implementar a Strategy de faixa em ranking.calcular."
+        "Passo 2: cole calcular a partir do README ou do slide da Missão 3."
     )

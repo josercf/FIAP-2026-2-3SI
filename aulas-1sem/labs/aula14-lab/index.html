@@ -13,46 +13,48 @@
     .kicker { letter-spacing: 0.18em; font-size: 12px; font-weight: 700; color: var(--pink); }
     h1 { margin: 10px 0 8px; font-size: 48px; line-height: 1.05; }
     h1 span { color: var(--pink); }
-    header p { max-width: 720px; color: #cfcfcf; font-size: 18px; line-height: 1.5; }
+    header p { max-width: 760px; color: #cfcfcf; font-size: 18px; line-height: 1.5; }
     main { padding: 32px 8vw 72px; }
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
     article { background: var(--card); border: 1px solid var(--line); border-top: 4px solid var(--pink); padding: 18px 18px 16px; }
     .xp { font-family: "JetBrains Mono", monospace; color: var(--pink); font-weight: 700; font-size: 13px; }
     h2 { margin: 8px 0; font-size: 20px; }
     article p, li { color: #d5d5d5; font-size: 14px; line-height: 1.45; }
-    ol { padding-left: 18px; }
+    ol { padding-left: 18px; max-width: 760px; }
     a { color: var(--pink); font-weight: 700; }
     .bar { margin-top: 28px; display: flex; gap: 18px; flex-wrap: wrap; }
     .bar a { background: var(--pink); color: white; text-decoration: none; padding: 12px 16px; }
     .bar a.ghost { background: transparent; border: 1px solid var(--pink); color: var(--pink); }
     code { font-family: "JetBrains Mono", monospace; font-size: 0.92em; }
+    .lead { max-width: 760px; color: #d5d5d5; font-size: 16px; line-height: 1.5; }
   </style>
 </head>
 <body>
   <header>
     <div class="kicker">AULA 14 · 03/11/2026 · DOJO</div>
-    <h1>Arena<span>Log</span></h1>
-    <p>Ranking e matchmaking de times universitários. Quatro serviços, dois schemas, uma Strategy de faixa e um placar que não vaza nome. Quem veio hoje joga.</p>
+    <h1>A noite da <span>Lia</span></h1>
+    <p>Lia Park joga FPS no Campus Norte. A ficha some entre o balcão, o aplicativo e o Discord. A faixa vira opinião de quem grita mais alto. A TV do corredor mostra o nome dela e a coordenada do ginásio. O README traz o arquivo, o código e o comando de cada conserto.</p>
   </header>
   <main>
+    <p class="lead">Abram o README e sigam do passo 0 ao passo 6. Não pulem. Cada passo diz o que apagar, o que colar e a linha que tem que aparecer.</p>
     <div class="grid">
-      <article><div class="xp">100 XP · RECRUTA</div><h2>1. Malha</h2><p>Compose com postgres, elenco, motor, partidas e placar. DNS pelo nome do serviço.</p></article>
-      <article><div class="xp">150 XP · ANALISTA</div><h2>2. Elenco</h2><p>Node. Nome, campus e canal. O inválido não entra.</p></article>
-      <article><div class="xp">250 XP · ESTRATEGISTA</div><h2>3. Faixa</h2><p>Python. Strategy injetável. O Spy mostra se a chave foi LUTE ou ESPORTE.</p></article>
-      <article><div class="xp">150 XP · JUIZ</div><h2>4. Ciclo</h2><p>ABERTO não pula para ENCERRADO. Conflito devolve 409 e não grava.</p></article>
-      <article><div class="xp">200 XP · CRONISTA</div><h2>5. Série</h2><p>Mesmo confronto aberto há menos de 48 horas. 47h59 conta. 48h00 não.</p></article>
-      <article><div class="xp">150 XP · NARRADOR</div><h2>6. Placar</h2><p>Agregado do campus. Sem nome, descrição, atleta ou coordenada.</p></article>
-      <article><div class="xp">200 XP · MAESTRO</div><h2>7. Dublês</h2><p>Stub, Mock e Spy com o Compose derrubado. A orquestração já vem pronta.</p></article>
-      <article><div class="xp">150 XP · CAMPEÃO</div><h2>8. Boss</h2><p><code>python3 scripts/boss.py</code> com a malha no ar.</p></article>
+      <article><div class="xp">100 XP · RECRUTA</div><h2>0. A pasta</h2><p><code>python3 verificar.py</code> já marca 300 XP. Missões 1 e 7 nascem verdes.</p></article>
+      <article><div class="xp">150 XP · ANALISTA</div><h2>1. A ficha</h2><p><code>elenco/validar.js</code>. Nome, campus e canal. O comando pede <code>pass 5</code>.</p></article>
+      <article><div class="xp">250 XP · ESTRATEGISTA</div><h2>2. A faixa</h2><p><code>motor-ranking/ranking.py</code>. FPS no Campus Norte, primeira vez, dá 5 e LENDARIO.</p></article>
+      <article><div class="xp">150 XP · JUIZ</div><h2>3. O status</h2><p><code>partidas/ciclo.py</code>. ABERTO não pula para ENCERRADO. O pulo devolve 409.</p></article>
+      <article><div class="xp">200 XP · CRONISTA</div><h2>4. A série</h2><p><code>partidas/serie.py</code>. O mesmo jogo aberto há 47h59 conta. 48h00 não conta.</p></article>
+      <article><div class="xp">150 XP · NARRADOR</div><h2>5. A TV</h2><p><code>placar/agregar.js</code>. Contagem por status e por faixa. Sem o nome da Lia.</p></article>
+      <article><div class="xp">200 XP · MAESTRO</div><h2>Testes prontos</h2><p>A conversa entre os programas já vem testada. Não editem esses testes.</p></article>
+      <article><div class="xp">150 XP · CAMPEÃO</div><h2>6. O boss</h2><p><code>docker compose up -d --build</code> e depois <code>python3 scripts/boss.py</code>.</p></article>
     </div>
     <div class="bar">
-      <a href="README.md">README completo</a>
+      <a href="README.md">Roteiro completo, com o código</a>
       <a class="ghost" href="../../aulas/aula14.html">Slides da noite</a>
     </div>
     <ol>
-      <li>Entre nesta pasta e rode <code>python3 verificar.py</code>. As missões 1 e 7 já nascem verdes.</li>
-      <li>Feche <code>validar.js</code>, <code>ranking.py</code>, <code>ciclo.py</code>, <code>serie.py</code> e <code>agregar.js</code>.</li>
-      <li><code>docker compose up -d --build</code> e o boss.</li>
+      <li>Entrem nesta pasta e rodem <code>python3 verificar.py</code>.</li>
+      <li>Colem as cinco funções, uma por passo, e rodem o teste do mesmo passo.</li>
+      <li>Subam o Docker e rodem o boss. A última linha tem que ser <code>BOSS: derrotado</code>.</li>
     </ol>
   </main>
 </body>

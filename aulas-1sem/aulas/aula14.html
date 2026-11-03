@@ -16,8 +16,9 @@
     .reveal table.compact-table th, .reveal table.compact-table td { padding: 6px 10px; }
     .mono { font-family: 'JetBrains Mono', monospace; }
     .reveal pre code, .reveal code, .reveal .mono { font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; }
-    .reveal .slide-figure { margin: 4px 0 0; }
-    .reveal .slide-figure svg { width: 100%; height: auto; }
+    .reveal .passo { font-size: 0.82em; line-height: 1.38; margin: 0; }
+    .reveal .passo li { margin: 3px 0; }
+    .reveal pre.code-compact { font-size: 0.56em; margin: 8px 0; padding: 10px 12px; }
   </style>
 </head>
 <body>
@@ -37,7 +38,7 @@
           <h2>Microservice and Web Engineering &amp; IT Services</h2>
           <h3>Prof. José Romualdo</h3>
         </div>
-        <div class="lesson-bar">AULA 14 – Dojo ArenaLog: malha, faixa e placar</div>
+        <div class="lesson-bar">AULA 14 – Dojo ArenaLog: a ficha da Lia, a faixa e a TV</div>
       </section>
 
       <section class="content-slide">
@@ -45,27 +46,20 @@
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Agenda do encontro (03/11/2026)</h2>
+          <h2>Este deck é o roteiro. Sigam na ordem.</h2>
         </div>
-        <table class="compact-table">
-          <thead><tr><th style="width:120px;">Início</th><th>O que a sala faz</th></tr></thead>
-          <tbody>
-            <tr><td>19h20</td><td>Chamada e a regra da noite: quem veio entra no dojo</td></tr>
-            <tr><td>19h30</td><td>Mini-mundo ArenaLog e o mapa dos quatro serviços</td></tr>
-            <tr><td>19h55</td><td>Contrato HTTP, schema separado, Strategy de faixa, ciclo e dublê</td></tr>
-            <tr><td>20h35</td><td>Quiz 1</td></tr>
-            <tr><td><strong>20h50</strong></td><td><strong>Intervalo, 30 minutos</strong></td></tr>
-            <tr><td>21h20</td><td>Quizzes 2 e 3</td></tr>
-            <tr><td>21h35</td><td>Mãos no lab: missões 2 a 6, depois o boss</td></tr>
-            <tr><td>22h35</td><td>Placar do <span class="mono">verificar.py</span> e o que cada mesa mostra</td></tr>
-          </tbody>
-        </table>
+        <ol class="passo">
+          <li>Leiam o slide até o fim antes de abrir o código.</li>
+          <li>Quando aparecer um bloco de código, copiem para o arquivo que o título indica. Apaguem a função velha. Não apaguem o que está acima dela.</li>
+          <li>Rode o comando do mesmo slide. A saída tem que dizer que passou. Só então vão para o próximo.</li>
+          <li>Não criem serviço novo, não troquem de linguagem e não editem o <span class="mono">verificar.py</span>.</li>
+        </ol>
         <div class="takeaway">
-          <span class="takeaway-label">Entregável de hoje</span>
-          <p>A saída do verificador com a faixa da mesa, e os cinco arquivos que vocês fecharam.</p>
+          <span class="takeaway-label">Onde está o código</span>
+          <p>Pasta <span class="mono">aulas-1sem/labs/aula14-lab</span>. O slide "Pegue a pasta" tem o clone.</p>
         </div>
         <div class="slide-footer">
-          <div class="footer-bar">14 – Agenda</div>
+          <div class="footer-bar">14 – Como usar</div>
           <div class="footer-page">3</div>
         </div>
       </section>
@@ -75,24 +69,23 @@
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Quem veio hoje joga</h2>
+          <h2>Agenda (03/11, intervalo às 20h50)</h2>
         </div>
-        <div class="concept-cards">
-          <div class="concept-card">
-            <h4>Dojo, não aula extra</h4>
-            <p>A noite é um desafio com XP, medalha e ranking da sala. A mesa que fecha missão sobe de faixa. A que trava depois do intervalo tem resgate, e perde o direito de dizer que resolveu sozinha.</p>
-          </div>
-          <div class="concept-card">
-            <h4>1350 XP no teto</h4>
-            <p>Oito missões. As duas primeiras que o kit já entrega são a malha declarada e os testes de Stub e Mock. O resto é código de vocês. Lenda da Arena é 1350.</p>
-          </div>
-          <div class="concept-card">
-            <h4>O que não entra no placar</h4>
-            <p>Tela bonita, serviço a mais, framework novo. O verificador lê teste e contrato. O boss lê a malha no ar, com <span class="mono">curl</span> por baixo do script.</p>
-          </div>
-        </div>
+        <table class="compact-table">
+          <thead><tr><th style="width:110px;">Quando</th><th>O que vocês fazem, sozinhos</th></tr></thead>
+          <tbody>
+            <tr><td>19h20</td><td>Leiam a história da Lia e a conta da faixa</td></tr>
+            <tr><td>19h40</td><td>Clone da pasta e missão 2, a ficha</td></tr>
+            <tr><td>20h05</td><td>Missão 3, a conta da faixa</td></tr>
+            <tr><td>20h35</td><td>Quiz 1</td></tr>
+            <tr><td><strong>20h50</strong></td><td><strong>Intervalo, 30 minutos</strong></td></tr>
+            <tr><td>21h20</td><td>Quizzes 2 e 3, depois missões 4, 5 e 6</td></tr>
+            <tr><td>22h10</td><td><span class="mono">docker compose up</span> e o boss</td></tr>
+            <tr><td>22h35</td><td>Mostrem a saída do <span class="mono">verificar.py</span></td></tr>
+          </tbody>
+        </table>
         <div class="slide-footer">
-          <div class="footer-bar">14 – Regra da noite</div>
+          <div class="footer-bar">14 – Agenda</div>
           <div class="footer-page">4</div>
         </div>
       </section>
@@ -102,25 +95,17 @@
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>ArenaLog: o confronto some entre os canais</h2>
+          <h2>Sexta, 19h, arena da FIAP</h2>
         </div>
-        <p style="font-size:0.72em; margin:0 0 10px;">Três portas de entrada, um ranking que vira opinião, um placar de campus que vaza nome. [1]</p>
-        <div class="concept-cards">
-          <div class="concept-card">
-            <h4>Três canais, um atleta</h4>
-            <p>Aplicativo, balcão da arena, Discord. Quem atende no dia seguinte não vê o que o outro canal já abriu. O elenco é o único dono do cadastro.</p>
-          </div>
-          <div class="concept-card">
-            <h4>Faixa por achismo</h4>
-            <p>FPS no Campus Norte e cartas no Centro não podem valer o que a mesa decidir na hora. A faixa nasce de uma Strategy, com números públicos.</p>
-          </div>
-          <div class="concept-card">
-            <h4>Placar que entrega gente</h4>
-            <p>O campus consulta o agregado. Nome, texto livre e coordenada não viajam com a contagem. O placar não conhece o elenco.</p>
-          </div>
-        </div>
+        <p class="passo">Lia Park estuda no Campus Norte e joga FPS. Ela chega na arena para a final e o sistema faz três besteiras.</p>
+        <ol class="passo">
+          <li><strong>A ficha some.</strong> Ela se inscreve no balcão. Uma hora depois abre o aplicativo e o sistema diz que ela não existe. No Discord abriram outra ficha, com outro número.</li>
+          <li><strong>A faixa é chute.</strong> O organizador olha o jogo e fala "isso é ouro". O colega do lado fala "é bronze, é amistoso". Não existe conta. Quem grita mais alto define a prioridade.</li>
+          <li><strong>A TV entrega a Lia.</strong> No corredor, a televisão mostra o nome dela, o texto do desafio e a coordenada do ginásio. Qualquer aluno que passa lê isso.</li>
+        </ol>
+        <p class="passo" style="margin-top:8px;">A ArenaLog é o sistema dessa liga universitária. Hoje ele está assim. Vocês consertam as três coisas, nessa ordem. [1]</p>
         <div class="slide-footer">
-          <div class="footer-bar">14 – Mini-mundo</div>
+          <div class="footer-bar">14 – A história</div>
           <div class="footer-page">5</div>
         </div>
       </section>
@@ -130,44 +115,20 @@
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Quatro processos, uma rede</h2>
+          <h2>Quatro guichês, um trabalho cada</h2>
         </div>
-        <figure class="slide-figure">
-          <svg viewBox="0 0 1160 390" role="img" aria-label="Quatro serviços da ArenaLog e o Postgres com dois schemas">
-            <g font-family="Montserrat, sans-serif">
-              <rect x="40" y="30" width="200" height="70" rx="8" fill="#1c1c1c"/>
-              <text x="140" y="72" text-anchor="middle" fill="#fff" font-size="18" font-weight="700">cliente</text>
-              <rect x="300" y="20" width="230" height="78" rx="8" fill="#fff" stroke="#ED145B" stroke-width="3"/>
-              <text x="415" y="50" text-anchor="middle" font-size="18" font-weight="800">elenco</text>
-              <text x="415" y="76" text-anchor="middle" font-size="14" fill="#555">Node · 8081</text>
-              <rect x="300" y="130" width="230" height="78" rx="8" fill="#fff" stroke="#ED145B" stroke-width="3"/>
-              <text x="415" y="160" text-anchor="middle" font-size="18" font-weight="800">partidas</text>
-              <text x="415" y="186" text-anchor="middle" font-size="14" fill="#555">Python · 8080</text>
-              <rect x="300" y="250" width="230" height="78" rx="8" fill="#fff" stroke="#ED145B" stroke-width="3"/>
-              <text x="415" y="280" text-anchor="middle" font-size="18" font-weight="800">placar</text>
-              <text x="415" y="306" text-anchor="middle" font-size="14" fill="#555">Node · 8082</text>
-              <rect x="620" y="130" width="250" height="78" rx="8" fill="#fff" stroke="#333" stroke-width="2"/>
-              <text x="745" y="160" text-anchor="middle" font-size="18" font-weight="800">motor-ranking</text>
-              <text x="745" y="186" text-anchor="middle" font-size="14" fill="#555">Python · 8000 · sem banco</text>
-              <rect x="930" y="40" width="190" height="90" rx="8" fill="#f7f7f7" stroke="#333"/>
-              <text x="1025" y="78" text-anchor="middle" font-size="15" font-weight="700">schema elenco</text>
-              <text x="1025" y="104" text-anchor="middle" font-size="13" fill="#555">usuário elenco</text>
-              <rect x="930" y="180" width="190" height="90" rx="8" fill="#f7f7f7" stroke="#333"/>
-              <text x="1025" y="218" text-anchor="middle" font-size="15" font-weight="700">schema partidas</text>
-              <text x="1025" y="244" text-anchor="middle" font-size="13" fill="#555">usuário partidas</text>
-              <path d="M240 65 H300" stroke="#ED145B" stroke-width="2" fill="none"/>
-              <path d="M240 65 V169 H300" stroke="#ED145B" stroke-width="2" fill="none"/>
-              <path d="M240 65 V289 H300" stroke="#ED145B" stroke-width="2" fill="none"/>
-              <path d="M530 169 H620" stroke="#333" stroke-width="2" fill="none"/>
-              <path d="M415 208 V250" stroke="#333" stroke-width="2" fill="none"/>
-              <path d="M530 59 H930" stroke="#333" stroke-width="2" fill="none"/>
-              <path d="M530 169 V225 H930" stroke="#333" stroke-width="2" fill="none"/>
-            </g>
-          </svg>
-        </figure>
-        <p style="font-size:0.62em; margin:4px 0 0; color:#555;">Um processo só, com quatro rotas, não conta. Quatro Dockerfiles, uma rede, chamada pelo nome do serviço. [2]</p>
+        <table class="compact-table">
+          <thead><tr><th>Guichê</th><th>O que faz na vida real</th><th>Arquivo de vocês</th></tr></thead>
+          <tbody>
+            <tr><td><strong>elenco</strong><br>porta 8081, Node</td><td>Ficha do atleta: nome, campus e canal. Devolve um id. É o único que guarda o nome.</td><td class="mono">elenco/validar.js</td></tr>
+            <tr><td><strong>motor-ranking</strong><br>porta 8000, Python</td><td>Só faz a conta da faixa. Não tem banco e não chama ninguém.</td><td class="mono">motor-ranking/ranking.py</td></tr>
+            <tr><td><strong>partidas</strong><br>porta 8080, Python</td><td>Abre o confronto. Pergunta se a Lia existe, pergunta a faixa, grava. Não guarda o nome.</td><td class="mono">ciclo.py e serie.py</td></tr>
+            <tr><td><strong>placar</strong><br>porta 8082, Node</td><td>A TV do corredor. Conta os jogos do campus. Sem nome e sem mapa.</td><td class="mono">placar/agregar.js</td></tr>
+          </tbody>
+        </table>
+        <p class="passo">Os quatro programas já sobem. A conversa entre eles já está escrita. Vocês preenchem cinco funções que hoje estão vazias.</p>
         <div class="slide-footer">
-          <div class="footer-bar">14 – Malha</div>
+          <div class="footer-bar">14 – Os guichês</div>
           <div class="footer-page">6</div>
         </div>
       </section>
@@ -177,22 +138,21 @@
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Contrato antes de código de integração</h2>
+          <h2>A conta da Lia, número por número</h2>
         </div>
+        <p class="passo">Jogo: FPS. Campus: Campus Norte. Primeira vez, então não é série.</p>
         <table class="compact-table">
-          <thead><tr><th>Chamada</th><th>Código</th><th>O que mostra</th></tr></thead>
+          <thead><tr><th>Pedaço</th><th>Por quê</th><th>Pontos</th></tr></thead>
           <tbody>
-            <tr><td class="mono">GET /health</td><td>200</td><td><span class="mono">{"status":"ok"}</span> nos quatro</td></tr>
-            <tr><td class="mono">POST /api/v1/atletas</td><td>201 ou 400</td><td>nome, campus, canal</td></tr>
-            <tr><td class="mono">POST /api/v1/ranking</td><td>200 ou 400</td><td>pontos, faixa, janelaHoras</td></tr>
-            <tr><td class="mono">POST /api/v1/desafios</td><td>201, 400, 404, 503</td><td>ordem: elenco, série, motor, insert</td></tr>
-            <tr><td class="mono">PATCH .../status</td><td>200, 409, 404</td><td>409 não grava</td></tr>
-            <tr><td class="mono">GET /api/v1/resumo</td><td>200</td><td>contagem, sem dado pessoal</td></tr>
+            <tr><td>FPS</td><td>todo FPS começa com 3</td><td>3</td></tr>
+            <tr><td>Campus Norte</td><td>está na lista de rivais, soma 2</td><td>+2</td></tr>
+            <tr><td>Série</td><td>não existe outro FPS aberto ali</td><td>+0</td></tr>
+            <tr><td><strong>Total</strong></td><td>5 ou mais é LENDARIO, janela de 8 horas</td><td><strong>5</strong></td></tr>
           </tbody>
         </table>
-        <p style="font-size:0.64em; margin:6px 0 0;">404 de atleta não chama o motor e não insere. Motor inacessível devolve 503 e não grava. Lista vazia é 200 com <span class="mono">[]</span>. [3]</p>
+        <p class="passo">Ponto de partida de cada jogo: FPS 3, MOBA 3, LUTE 2, ESPORTE 2, CARTAS 1. LUTE e ESPORTE empatam de propósito. [2]</p>
         <div class="slide-footer">
-          <div class="footer-bar">14 – Contratos</div>
+          <div class="footer-bar">14 – A conta</div>
           <div class="footer-page">7</div>
         </div>
       </section>
@@ -202,23 +162,26 @@
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Dois schemas, zero grant cruzado</h2>
+          <h2>Mais duas contas, para fixar</h2>
         </div>
         <div class="side-by-side">
-          <div class="concept-card">
-            <h4>Quem guarda o quê</h4>
-            <p><span class="mono">elenco.atletas</span> pertence ao usuário <span class="mono">elenco</span>. <span class="mono">partidas.desafios</span> pertence ao usuário <span class="mono">partidas</span>. Partidas guarda o <span class="mono">atletaId</span>, não o nome.</p>
+          <div>
+            <p class="passo"><strong>ESPORTE no Campus Rio, e já tem outro aberto.</strong><br>2 do jogo, +2 porque Campus Rio é rival, +1 porque é série. Total 5. LENDARIO, 8 horas.</p>
+            <p class="passo" style="margin-top:8px;"><strong>CARTAS no Centro, primeira vez.</strong><br>Centro não é rival. Não é série. Sobra 1. BRONZE, 168 horas.</p>
           </div>
-          <div class="concept-card">
-            <h4>Quem não vê o quê</h4>
-            <p>A URL do schema elenco só existe no serviço elenco. A do schema partidas só existe em partidas. Motor e placar sobem sem variável de banco. O placar não recebe URL de elenco. [4]</p>
-          </div>
+          <table class="compact-table">
+            <thead><tr><th>Soma</th><th>Faixa</th><th>Janela</th></tr></thead>
+            <tbody>
+              <tr><td>5 ou mais</td><td>LENDARIO</td><td>8 h</td></tr>
+              <tr><td>4</td><td>OURO</td><td>24 h</td></tr>
+              <tr><td>2 ou 3</td><td>PRATA</td><td>72 h</td></tr>
+              <tr><td>0 ou 1</td><td>BRONZE</td><td>168 h</td></tr>
+            </tbody>
+          </table>
         </div>
-        <div class="callout" style="margin-top:14px;">
-          <p style="font-size:0.7em; margin:0;"><strong>Senha de laboratório,</strong> já no Compose: usuário e senha <span class="mono">elenco</span> / <span class="mono">elenco</span> e <span class="mono">partidas</span> / <span class="mono">partidas</span>. O arquivo <span class="mono">.env.exemplo</span> documenta. O <span class="mono">.env</span> não entra no commit.</p>
-        </div>
+        <p class="passo">Rivais, no arquivo <span class="mono">rivalidade.json</span>: Campus Norte e Campus Rio. <span class="mono">campus&nbsp;&nbsp;&nbsp;norte</span> vale igual: a comparação ignora maiúscula e espaço repetido.</p>
         <div class="slide-footer">
-          <div class="footer-bar">14 – Fronteira</div>
+          <div class="footer-bar">14 – Mais contas</div>
           <div class="footer-page">8</div>
         </div>
       </section>
@@ -228,32 +191,18 @@
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>A faixa mora no motor, fora do handler</h2>
+          <h2>Série: o clássico repetido em 48 horas</h2>
         </div>
-        <div class="side-by-side">
-          <table class="compact-table">
-            <thead><tr><th>Modalidade</th><th>Base</th></tr></thead>
-            <tbody>
-              <tr><td>FPS</td><td>3</td></tr>
-              <tr><td>MOBA</td><td>3</td></tr>
-              <tr><td>LUTE</td><td>2</td></tr>
-              <tr><td>ESPORTE</td><td>2</td></tr>
-              <tr><td>CARTAS</td><td>1</td></tr>
-            </tbody>
-          </table>
-          <table class="compact-table">
-            <thead><tr><th>Pontos</th><th>Faixa</th><th>Janela</th></tr></thead>
-            <tbody>
-              <tr><td>5 ou mais</td><td>LENDARIO</td><td>8 h</td></tr>
-              <tr><td>4</td><td>OURO</td><td>24 h</td></tr>
-              <tr><td>2 ou 3</td><td>PRATA</td><td>72 h</td></tr>
-              <tr><td>0 ou 1</td><td>BRONZE</td><td>168 h</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p style="font-size:0.64em; margin:4px 0 0;">Campus Norte e Campus Rio, em <span class="mono">rivalidade.json</span>, somam 2. Série soma 1. O motor recebe o booleano pronto: não consulta banco e não chama ninguém. LUTE e ESPORTE empatam de propósito. [5]</p>
+        <p class="passo">Sexta, 22h00. Alguém abre FPS no Campus Norte, status ABERTO.</p>
+        <ul class="passo">
+          <li>Sábado, 21h59 (47 horas e 59 minutos depois): outro FPS no Campus Norte <strong>é série</strong>. Soma 1.</li>
+          <li>Sábado, 22h00 em ponto (48 horas): <strong>já não é série</strong>. A fronteira é estrita.</li>
+          <li>Se o primeiro já está ENCERRADO ou CANCELADO, não conta.</li>
+          <li>MOBA no mesmo campus não conta. FPS em outro campus não conta.</li>
+        </ul>
+        <p class="passo">Quem decide isso é <span class="mono">partidas/serie.py</span>. O motor só recebe o sim ou não, pronto.</p>
         <div class="slide-footer">
-          <div class="footer-bar">14 – Strategy</div>
+          <div class="footer-bar">14 – A série</div>
           <div class="footer-page">9</div>
         </div>
       </section>
@@ -263,21 +212,22 @@
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>O ciclo é uma função pura</h2>
+          <h2>O status não pula etapa</h2>
         </div>
+        <p class="passo">Um confronto nasce ABERTO. A vida dele é uma fila. Pular etapa é proibido, e o programa responde 409 sem gravar.</p>
         <table class="compact-table">
-          <thead><tr><th>De</th><th>Destinos aceitos</th></tr></thead>
+          <thead><tr><th>Está em</th><th>Pode ir para</th><th>Exemplo do que não pode</th></tr></thead>
           <tbody>
-            <tr><td>ABERTO</td><td>CONFIRMADO, CANCELADO</td></tr>
-            <tr><td>CONFIRMADO</td><td>EM_JOGO, CANCELADO</td></tr>
-            <tr><td>EM_JOGO</td><td>ENCERRADO, CANCELADO</td></tr>
-            <tr><td>ENCERRADO</td><td>nenhum</td></tr>
-            <tr><td>CANCELADO</td><td>nenhum</td></tr>
+            <tr><td>ABERTO</td><td>CONFIRMADO ou CANCELADO</td><td>ABERTO direto para ENCERRADO</td></tr>
+            <tr><td>CONFIRMADO</td><td>EM_JOGO ou CANCELADO</td><td>voltar para ABERTO</td></tr>
+            <tr><td>EM_JOGO</td><td>ENCERRADO ou CANCELADO</td><td>ficar em EM_JOGO de novo</td></tr>
+            <tr><td>ENCERRADO</td><td>nada</td><td>qualquer coisa</td></tr>
+            <tr><td>CANCELADO</td><td>nada</td><td>qualquer coisa</td></tr>
           </tbody>
         </table>
-        <p style="font-size:0.68em; margin:6px 0 0;"><span class="mono">transicionar(atual, destino)</span> vive fora do controller. Destino igual ao atual também recusa. ABERTO direto para ENCERRADO é o caso do boss: HTTP 409, e o GET seguinte ainda mostra ABERTO. [3]</p>
+        <p class="passo">O caso do boss: o jogo de cartas ainda ABERTO recebe "ENCERRADO". Tem que voltar 409, e um GET seguinte ainda mostra ABERTO. [3]</p>
         <div class="slide-footer">
-          <div class="footer-bar">14 – Ciclo</div>
+          <div class="footer-bar">14 – O status</div>
           <div class="footer-page">10</div>
         </div>
       </section>
@@ -287,26 +237,129 @@
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Stub, Mock e Spy, com o Compose derrubado</h2>
+          <h2>Pegue a pasta</h2>
         </div>
-        <div class="concept-cards">
-          <div class="concept-card">
-            <h4>Stub</h4>
-            <p>Resposta combinada. Elenco ausente: zero chamadas ao motor e zero inserts. Motor que falha: o repositório não recebe insert.</p>
-          </div>
-          <div class="concept-card">
-            <h4>Mock</h4>
-            <p>Asserção da chamada. O repositório diz que há série, e o mock exige um único ranking com <span class="mono">serie: true</span>. Modalidade inválida: zero chamadas.</p>
-          </div>
-          <div class="concept-card">
-            <h4>Spy</h4>
-            <p>Embrulha a <span class="mono">TabelaDePesos</span> real. LUTE e ESPORTE devolvem 2. O Spy registra qual chave foi consultada. [6]</p>
-          </div>
-        </div>
-        <p style="font-size:0.64em; margin:8px 0 0;">O nome de cada teste começa pelo dublê. Suíte que só passa com Postgres no ar não conta.</p>
+        <pre class="code-compact"><code class="language-bash">git clone https://github.com/josercf/FIAP-2026-2-3SI.git
+cd FIAP-2026-2-3SI/aulas-1sem/labs/aula14-lab
+python3 verificar.py</code></pre>
+        <p class="passo">A primeira execução já mostra 300 XP. Missão 1 e missão 7 nascem verdes. As outras cinco estão ABERTAS: são as funções vazias.</p>
+        <p class="passo">Se a pasta já existir na máquina, entrem nela e façam <span class="mono">git pull</span> antes de editar. Todos os comandos abaixo são rodados de dentro de <span class="mono">aula14-lab</span>.</p>
         <div class="slide-footer">
-          <div class="footer-bar">14 – Dublês</div>
+          <div class="footer-bar">14 – A pasta</div>
           <div class="footer-page">11</div>
+        </div>
+      </section>
+
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Missão 2. A ficha da Lia</h2>
+        </div>
+        <p class="passo">Arquivo <span class="mono">elenco/validar.js</span>. Troquem o corpo de <span class="mono">validarAtleta</span>. <span class="mono">null</span> significa ficha aceita. Texto significa recusa. Nome de 2 a 80, campus preenchido, canal só APP, ARENA ou DISCORD. <span class="mono">CANAIS</span> já existe no arquivo.</p>
+        <pre class="code-compact"><code class="language-javascript">function validarAtleta(corpo) {
+  if (!corpo || typeof corpo !== "object") return "corpo ausente";
+  const nome = typeof corpo.nome === "string" ? corpo.nome.trim() : "";
+  if (nome.length &lt; 2 || nome.length &gt; 80) return "nome invalido";
+  const campus = typeof corpo.campus === "string" ? corpo.campus.trim() : "";
+  if (!campus) return "campus obrigatorio";
+  if (!CANAIS.has(corpo.canal)) return "canal invalido";
+  return null;
+}</code></pre>
+        <p class="passo">Rode <span class="mono">node --test elenco/test/validar.test.js</span>. Querem ver <span class="mono">pass 5</span> e <span class="mono">fail 0</span>. 150 XP.</p>
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Missão 2</div>
+          <div class="footer-page">12</div>
+        </div>
+      </section>
+
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Missão 3. A faixa, na função calcular</h2>
+        </div>
+        <p class="passo">Arquivo <span class="mono">motor-ranking/ranking.py</span>. Troquem só <span class="mono">calcular</span>. A primeira linha tem que chamar <span class="mono">tabela.pontos_base</span>: é assim que o teste vê se a chave foi LUTE ou ESPORTE. <span class="mono">faixa_de</span> e <span class="mono">normalizar</span> já existem.</p>
+        <pre class="code-compact"><code class="language-python">def calcular(modalidade, campus, serie, tabela, campi_rivais):
+    pontos = tabela.pontos_base(modalidade)
+    if any(normalizar(nome) == normalizar(campus) for nome in campi_rivais):
+        pontos += 2
+    if serie:
+        pontos += 1
+    faixa, janela = faixa_de(pontos)
+    return {"pontos": pontos, "faixa": faixa, "janelaHoras": janela}</code></pre>
+        <p class="passo">Rode <span class="mono">cd motor-ranking &amp;&amp; python3 -m unittest test_ranking.py &amp;&amp; cd ..</span>. Querem <span class="mono">OK</span> e nenhum FAIL. 250 XP.</p>
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Missão 3</div>
+          <div class="footer-page">13</div>
+        </div>
+      </section>
+
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Missão 4. O status, na função transicionar</h2>
+        </div>
+        <p class="passo">Arquivo <span class="mono">partidas/ciclo.py</span>. A tabela <span class="mono">ACEITOS</span> já está no arquivo. A função só consulta. Destino igual ao atual também recusa, porque ele não está na lista.</p>
+        <pre class="code-compact"><code class="language-python">def transicionar(atual, destino):
+    if destino not in ACEITOS.get(atual, set()):
+        raise TransicaoRecusada(atual, destino)
+    return destino</code></pre>
+        <p class="passo">Rode <span class="mono">cd partidas &amp;&amp; python3 -m unittest test_ciclo.py &amp;&amp; cd ..</span>. 150 XP. O 409 de verdade acontece depois, quando o boss chamar esta função.</p>
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Missão 4</div>
+          <div class="footer-page">14</div>
+        </div>
+      </section>
+
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Missão 5. A série, na função eh_serie</h2>
+        </div>
+        <p class="passo">Arquivo <span class="mono">partidas/serie.py</span>. <span class="mono">ABERTOS</span>, <span class="mono">normalizar</span> e <span class="mono">timedelta</span> já estão no arquivo. Não apaguem o import.</p>
+        <pre class="code-compact"><code class="language-python">def eh_serie(anterior, modalidade, campus, agora):
+    if str(anterior.get("modalidade", "")).upper() != str(modalidade).upper():
+        return False
+    if normalizar(anterior.get("campus", "")) != normalizar(campus):
+        return False
+    if anterior.get("status") not in ABERTOS:
+        return False
+    return (agora - anterior["criado_em"]) &lt; timedelta(hours=48)</code></pre>
+        <p class="passo">Rode <span class="mono">cd partidas &amp;&amp; python3 -m unittest test_serie.py &amp;&amp; cd ..</span>. 200 XP. 47h59 passa. 48h00 não passa.</p>
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Missão 5</div>
+          <div class="footer-page">15</div>
+        </div>
+      </section>
+
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Missão 6. A TV, na função agregar</h2>
+        </div>
+        <p class="passo">Arquivo <span class="mono">placar/agregar.js</span>. Hoje a função devolve a lista inteira, com nome e coordenada. A TV só pode devolver contagem. <span class="mono">STATUS</span> e <span class="mono">FAIXAS</span> já existem. Chave zerada continua no JSON.</p>
+        <pre class="code-compact"><code class="language-javascript">function agregar(desafios, campus) {
+  const porStatus = Object.fromEntries(STATUS.map((s) =&gt; [s, 0]));
+  const porFaixa = Object.fromEntries(FAIXAS.map((f) =&gt; [f, 0]));
+  for (const item of desafios) {
+    if (porStatus[item.status] !== undefined) porStatus[item.status] += 1;
+    if (porFaixa[item.faixa] !== undefined) porFaixa[item.faixa] += 1;
+  }
+  return { campus, porStatus, porFaixa };
+}</code></pre>
+        <p class="passo">Rode <span class="mono">node --test placar/test/agregar.test.js</span>. Querem <span class="mono">pass 1</span>. 150 XP.</p>
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Missão 6</div>
+          <div class="footer-page">16</div>
         </div>
       </section>
 
@@ -318,16 +371,16 @@
           <h2>Quiz de Verificação</h2>
         </div>
         <div class="quiz-container" data-quiz-key="aula14-quiz1">
-          <div class="quiz-question">Dentro do Compose, por que partidas chama http://elenco:8081 e não localhost?</div>
+          <div class="quiz-question">Lia abre FPS no Campus Norte, primeira vez. Qual é a conta?</div>
           <ul class="quiz-options">
-            <li data-correct="false"><span class="option-letter">A</span> localhost é o nome DNS que o Compose registra para o serviço elenco.</li>
-            <li data-correct="true"><span class="option-letter">B</span> Dentro do container de partidas, localhost é o próprio container. O elenco está em outro processo, alcançado pelo nome do serviço.</li>
-            <li data-correct="false"><span class="option-letter">C</span> localhost só resolve em Java, e partidas está em Python.</li>
-            <li data-correct="false"><span class="option-letter">D</span> O Compose recusa qualquer URL que comece com http.</li>
+            <li data-correct="false"><span class="option-letter">A</span> 3 pontos, faixa PRATA, janela de 72 horas.</li>
+            <li data-correct="true"><span class="option-letter">B</span> 3 do FPS mais 2 do campus rival, total 5, faixa LENDARIO, janela de 8 horas.</li>
+            <li data-correct="false"><span class="option-letter">C</span> 1 ponto, faixa BRONZE, janela de 168 horas.</li>
+            <li data-correct="false"><span class="option-letter">D</span> 4 pontos, faixa OURO, janela de 24 horas.</li>
           </ul>
           <div class="quiz-feedback"
-               data-correct-msg="Correto. localhost na porta publicada serve para o script que roda na sua máquina. Entre containers, o host é o nome do serviço."
-               data-incorrect-msg="Incorreto. Cada container tem a própria interface de loopback. O vizinho se alcança pelo nome DNS do Compose."></div>
+               data-correct-msg="Correto. FPS vale 3, Campus Norte é rival e soma 2, e a primeira vez não é série. 5 ou mais é LENDARIO, 8 horas."
+               data-incorrect-msg="Voltem ao slide da conta da Lia. FPS começa em 3. Campus Norte está na lista de rivais e soma 2. Sem série, o total é 5."></div>
           <div class="quiz-toolbar">
             <div class="quiz-vote">
               <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="QR de votação">
@@ -346,7 +399,7 @@
         </div>
         <div class="slide-footer">
           <div class="footer-bar">14 – Quiz 1</div>
-          <div class="footer-page">12</div>
+          <div class="footer-page">17</div>
         </div>
       </section>
 
@@ -355,12 +408,37 @@
                data-background-size="cover"
                data-background-opacity="0.45">
         <div style="margin-top:150px;">
-          <h2 style="font-size:3.4em; color:var(--fiap-pink); margin-bottom:10px; text-shadow:0 2px 12px rgba(255,255,255,0.9);">Intervalo</h2>
-          <h3 style="font-size:1.8em; color:var(--fiap-dark); text-shadow:0 2px 10px rgba(255,255,255,0.9);">20h50 · 30 minutos</h3>
-          <div class="quiz-timer-box" style="margin:40px auto 0 auto; padding:15px 30px; font-size:1.3em;">
+          <h2 style="font-size:3.2em; color:var(--fiap-pink); margin-bottom:10px; text-shadow:0 2px 12px rgba(255,255,255,0.9);">Intervalo</h2>
+          <h3 style="font-size:1.6em; color:var(--fiap-dark); text-shadow:0 2px 10px rgba(255,255,255,0.9);">20h50 · 30 minutos</h3>
+          <p style="font-size:0.9em; color:#222; text-shadow:0 1px 6px rgba(255,255,255,0.9);">Quem já passou da missão 3 segue na 4 depois do café.</p>
+          <div class="quiz-timer-box" style="margin:28px auto 0 auto; padding:15px 30px; font-size:1.3em;">
             <button class="quiz-timer-btn" style="width:40px; height:40px; font-size:1.2em;" onclick="startTimer('breakTimer', 1800)" aria-label="Iniciar cronômetro do intervalo">&#9654;</button>
             <span id="breakTimer">30:00</span>
           </div>
+        </div>
+      </section>
+
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Dois cuidados antes do boss</h2>
+        </div>
+        <div class="concept-cards">
+          <div class="concept-card">
+            <h4>A TV não mostra a Lia</h4>
+            <p>O placar devolve campus, cinco contagens de status e quatro contagens de faixa. Não devolve nome, texto, id do atleta, latitude, longitude nem id do jogo. A TV pergunta só para partidas, nunca para o elenco.</p>
+          </div>
+          <div class="concept-card">
+            <h4>Cada programa é um computador</h4>
+            <p>Dentro do container de partidas, localhost é a própria partidas. O elenco é outro computador, e o endereço é <span class="mono">http://elenco:8081</span>. localhost só serve na máquina de vocês, para o script do boss. [4]</p>
+          </div>
+        </div>
+        <p class="passo" style="margin-top:10px;">O banco tem duas gavetas, <span class="mono">elenco</span> e <span class="mono">partidas</span>. Uma não lê a outra. Vocês não mexem no SQL hoje.</p>
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Dois cuidados</div>
+          <div class="footer-page">18</div>
         </div>
       </section>
 
@@ -372,16 +450,16 @@
           <h2>Quiz de Verificação</h2>
         </div>
         <div class="quiz-container" data-quiz-key="aula14-quiz2">
-          <div class="quiz-question">O placar público de um campus pode devolver o nome do atleta?</div>
+          <div class="quiz-question">A TV do corredor pode mostrar o nome da Lia?</div>
           <ul class="quiz-options">
-            <li data-correct="false"><span class="option-letter">A</span> Sim. Sem o nome o ranking deixa de identificar o confronto.</li>
-            <li data-correct="false"><span class="option-letter">B</span> Sim, desde que latitude e longitude fiquem de fora.</li>
-            <li data-correct="true"><span class="option-letter">C</span> Não. O resumo traz contagem por status e por faixa. Nome, descrição, atleta, coordenada e id ficam de fora.</li>
-            <li data-correct="false"><span class="option-letter">D</span> Não, porque o placar é proibido de chamar partidas por HTTP.</li>
+            <li data-correct="false"><span class="option-letter">A</span> Sim. Sem o nome ninguém sabe quem está jogando.</li>
+            <li data-correct="false"><span class="option-letter">B</span> Sim, desde que a latitude do ginásio fique de fora.</li>
+            <li data-correct="true"><span class="option-letter">C</span> Não. A TV mostra só contagem por status e por faixa.</li>
+            <li data-correct="false"><span class="option-letter">D</span> Não, porque a TV é proibida de falar com partidas.</li>
           </ul>
           <div class="quiz-feedback"
-               data-correct-msg="Correto. O placar lê a lista de partidas por HTTP e agrega. Não chama o elenco e não abre banco."
-               data-incorrect-msg="Incorreto. O agregado é público. Dado pessoal e coordenada não viajam com a contagem."></div>
+               data-correct-msg="Correto. O placar lê a lista de partidas e conta. Nome, texto, atleta e coordenada não entram no JSON."
+               data-incorrect-msg="A TV é pública. Ela conta jogos do campus. O nome da Lia fica só no elenco."></div>
           <div class="quiz-toolbar">
             <div class="quiz-vote">
               <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="QR de votação">
@@ -400,7 +478,7 @@
         </div>
         <div class="slide-footer">
           <div class="footer-bar">14 – Quiz 2</div>
-          <div class="footer-page">13</div>
+          <div class="footer-page">19</div>
         </div>
       </section>
 
@@ -412,16 +490,16 @@
           <h2>Quiz de Verificação</h2>
         </div>
         <div class="quiz-container" data-quiz-key="aula14-quiz3">
-          <div class="quiz-question">LUTE e ESPORTE valem 2 pontos-base. Para que serve o Spy na TabelaDePesos?</div>
+          <div class="quiz-question">Partidas precisa consultar o elenco. Qual endereço ela usa?</div>
           <ul class="quiz-options">
-            <li data-correct="false"><span class="option-letter">A</span> Para gravar a faixa no banco do motor.</li>
-            <li data-correct="true"><span class="option-letter">B</span> Para registrar qual chave foi consultada. O número sozinho não distingue as duas modalidades.</li>
-            <li data-correct="false"><span class="option-letter">C</span> Para substituir o Postgres no teste de integração do Compose.</li>
-            <li data-correct="false"><span class="option-letter">D</span> Para chamar o elenco sem subir o container.</li>
+            <li data-correct="false"><span class="option-letter">A</span> http://localhost:8081, porque os dois estão no mesmo Docker.</li>
+            <li data-correct="true"><span class="option-letter">B</span> http://elenco:8081, o nome do guichê na rede do Compose.</li>
+            <li data-correct="false"><span class="option-letter">C</span> http://127.0.0.1:8081, que é o endereço de todo container.</li>
+            <li data-correct="false"><span class="option-letter">D</span> O IP que o Docker sortear, escrito à mão no código.</li>
           </ul>
           <div class="quiz-feedback"
-               data-correct-msg="Correto. O Spy embrulha a tabela real. A chave consultada é LUTE ou ESPORTE, e a base, sem rivalidade e sem série, é 2."
-               data-incorrect-msg="Incorreto. O motor não tem banco. O Spy observa a tabela verdadeira, sem substituir o resultado."></div>
+               data-correct-msg="Correto. localhost, dentro de partidas, é a própria partidas. O vizinho se chama pelo nome do serviço."
+               data-incorrect-msg="Cada container é um computador. localhost nele aponta para ele mesmo. O elenco atende em http://elenco:8081."></div>
           <div class="quiz-toolbar">
             <div class="quiz-vote">
               <svg class="quiz-qr-code" viewBox="0 0 100 100" role="img" aria-label="QR de votação">
@@ -440,7 +518,7 @@
         </div>
         <div class="slide-footer">
           <div class="footer-bar">14 – Quiz 3</div>
-          <div class="footer-page">14</div>
+          <div class="footer-page">20</div>
         </div>
       </section>
 
@@ -449,67 +527,21 @@
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>Mapa de missões</h2>
+          <h2>O boss repete a noite da Lia</h2>
         </div>
-        <table class="compact-table">
-          <thead><tr><th>#</th><th>Missão</th><th>XP</th><th>Arquivo</th></tr></thead>
-          <tbody>
-            <tr><td>1</td><td>Malha declarada</td><td>100</td><td class="mono">docker-compose.yml</td></tr>
-            <tr><td>2</td><td>Elenco</td><td>150</td><td class="mono">elenco/validar.js</td></tr>
-            <tr><td>3</td><td>Strategy de faixa</td><td>250</td><td class="mono">motor-ranking/ranking.py</td></tr>
-            <tr><td>4</td><td>Ciclo de vida</td><td>150</td><td class="mono">partidas/ciclo.py</td></tr>
-            <tr><td>5</td><td>Janela de 48 horas</td><td>200</td><td class="mono">partidas/serie.py</td></tr>
-            <tr><td>6</td><td>Placar sem dado pessoal</td><td>150</td><td class="mono">placar/agregar.js</td></tr>
-            <tr><td>7</td><td>Stub e Mock</td><td>200</td><td class="mono">test_dubles.py</td></tr>
-            <tr><td>8</td><td>Boss fight</td><td>150</td><td class="mono">scripts/boss.py</td></tr>
-          </tbody>
-        </table>
-        <p style="font-size:0.62em; margin:4px 0 0;">Missões 1 e 7 já nascem verdes. Não quebrem a 7. O resgate fica em <span class="mono">resgate/</span>, depois de travar.</p>
-        <div class="slide-footer">
-          <div class="footer-bar">14 – Missões</div>
-          <div class="footer-page">15</div>
-        </div>
-      </section>
-
-      <section class="content-slide">
-        <div class="top-bar"></div>
-        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area">
-          <div class="accent-bar"></div>
-          <h2>Como entrar no lab</h2>
-        </div>
-        <pre class="code-compact"><code class="language-bash">cd aulas-1sem/labs/aula14-lab
-python3 verificar.py
-docker compose up -d --build
-python3 scripts/boss.py</code></pre>
-        <p style="font-size:0.68em; margin:8px 0 0;">As missões 2 a 7 rodam com o Compose derrubado. O boss exige a malha no ar. Portas na sua máquina: elenco 8081, motor 8000, partidas 8080, placar 8082.</p>
-        <p style="font-size:0.68em;">Kit e quest map: <a href="../labs/aula14-lab/index.html" style="color:var(--fiap-pink); font-weight:700;">labs/aula14-lab</a>.</p>
-        <div class="slide-footer">
-          <div class="footer-bar">14 – Lab</div>
-          <div class="footer-page">16</div>
-        </div>
-      </section>
-
-      <section class="content-slide">
-        <div class="top-bar"></div>
-        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
-        <div class="slide-title-area">
-          <div class="accent-bar"></div>
-          <h2>Boss: o roteiro que o script executa</h2>
-        </div>
-        <ol style="font-size:0.66em; line-height:1.45; margin-top:0;">
-          <li>Os quatro <span class="mono">/health</span> devolvem ok.</li>
-          <li>Cria Lia Park, canal ARENA, campus Campus Norte.</li>
-          <li>CARTAS no Centro: 1, BRONZE, 168, série falsa, sem nome.</li>
-          <li>FPS no Campus Norte: 5, LENDARIO, 8.</li>
-          <li>Dois ESPORTE no Campus Rio. O segundo vem com série verdadeira.</li>
-          <li>PATCH do primeiro direto para ENCERRADO devolve 409, e o GET segue ABERTO.</li>
-          <li>Atleta com UUID inexistente devolve 404.</li>
-          <li>Resumo do Campus Rio: LENDARIO com contagem 2, sem dado pessoal.</li>
+        <ol class="passo">
+          <li>Os quatro guichês respondem que estão ok.</li>
+          <li>Cria a ficha: Lia Park, Campus Norte, canal ARENA.</li>
+          <li>CARTAS no Centro: 1, BRONZE, 168 horas, não é série, e a resposta não traz o nome.</li>
+          <li>FPS no Campus Norte: 5, LENDARIO, 8 horas.</li>
+          <li>Dois ESPORTE no Campus Rio. O segundo é série: 5, LENDARIO, 8 horas.</li>
+          <li>Tenta encerrar o jogo de cartas, que ainda está ABERTO. Tem que dar 409, e ele continua ABERTO.</li>
+          <li>Tenta abrir jogo para um id que o elenco não tem. Tem que dar 404, sem chamar o motor.</li>
+          <li>A TV do Campus Rio mostra LENDARIO com contagem 2, sem nome e sem coordenada.</li>
         </ol>
         <div class="slide-footer">
-          <div class="footer-bar">14 – Boss</div>
-          <div class="footer-page">17</div>
+          <div class="footer-bar">14 – O boss</div>
+          <div class="footer-page">21</div>
         </div>
       </section>
 
@@ -518,25 +550,36 @@ python3 scripts/boss.py</code></pre>
         <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
         <div class="slide-title-area">
           <div class="accent-bar"></div>
-          <h2>O que a mesa mostra às 22h35</h2>
+          <h2>Subam tudo e leiam o placar</h2>
         </div>
-        <div class="concept-cards">
-          <div class="concept-card">
-            <h4>Placar</h4>
-            <p>A saída de <span class="mono">python3 verificar.py</span>, com o total de XP e a faixa. Missão aberta continua aberta: não editem o verificador para ela ficar verde.</p>
-          </div>
-          <div class="concept-card">
-            <h4>Diff</h4>
-            <p>Os cinco arquivos: <span class="mono">validar.js</span>, <span class="mono">ranking.py</span>, <span class="mono">ciclo.py</span>, <span class="mono">serie.py</span>, <span class="mono">agregar.js</span>. Sem <span class="mono">node_modules</span> e sem <span class="mono">.env</span>.</p>
-          </div>
-        </div>
-        <div class="takeaway">
-          <span class="takeaway-label">Faixas</span>
-          <p>100 Recruta, 250 Analista, 650 Estrategista, 800 Juiz, 1000 Maestro, 1200 Campeão, 1350 Lenda da Arena.</p>
-        </div>
+        <pre class="code-compact"><code class="language-bash">python3 verificar.py
+docker compose up -d --build
+python3 scripts/boss.py
+python3 verificar.py</code></pre>
+        <p class="passo">O primeiro <span class="mono">verificar.py</span>, antes do Docker, já deve marcar OK nas missões 1 a 7. A 8 fica PENDENTE, e tudo bem.</p>
+        <p class="passo">O <span class="mono">compose</span> na primeira vez baixa imagem. Não cancelem. Quando o boss imprimir <span class="mono">BOSS: derrotado</span>, rodem o verificador de novo. 1350 XP é Lenda da Arena. 1200, sem o boss, já é Campeão.</p>
         <div class="slide-footer">
-          <div class="footer-bar">14 – Entrega</div>
-          <div class="footer-page">18</div>
+          <div class="footer-bar">14 – O placar</div>
+          <div class="footer-page">22</div>
+        </div>
+      </section>
+
+      <section class="content-slide">
+        <div class="top-bar"></div>
+        <img src="../assets/img/fiap-logo-simple.png" alt="FIAP" class="fiap-logo-header">
+        <div class="slide-title-area">
+          <div class="accent-bar"></div>
+          <h2>Se a linha ficar vermelha</h2>
+        </div>
+        <ol class="passo">
+          <li>Leiam a primeira linha que diz <span class="mono">not ok</span> ou <span class="mono">FAIL</span>. O nome do teste diz qual caso quebrou. Voltem ao slide dessa missão e confiram se copiaram a função inteira.</li>
+          <li>Erro de <span class="mono">import</span> ou <span class="mono">CANAIS is not defined</span>: vocês apagaram linha de cima do arquivo. Peguem o arquivo de novo com <span class="mono">git checkout -- caminho/do/arquivo</span> e colem só a função.</li>
+          <li>Boss diz que o guichê não responde: o Compose ainda está baixando, ou um serviço caiu. Rode <span class="mono">docker compose ps</span> e esperem <span class="mono">healthy</span>.</li>
+          <li>Só depois disso abram <span class="mono">resgate/LEIA-ME.md</span>. Copiar o resgate antes de ler o erro queima a história de que a mesa resolveu.</li>
+        </ol>
+        <div class="slide-footer">
+          <div class="footer-bar">14 – Se travar</div>
+          <div class="footer-page">23</div>
         </div>
       </section>
 
@@ -547,21 +590,15 @@ python3 scripts/boss.py</code></pre>
           <div class="accent-bar"></div>
           <h2>Referências</h2>
         </div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:18px; font-size:0.58em; line-height:1.45;">
-          <div>
-            <p style="margin:0 0 8px;"><strong style="color:var(--fiap-pink);">[1] Caso</strong><br>ArenaLog, mini-mundo desta noite: ranking e matchmaking de confrontos universitários. O cadastro do atleta, a faixa e o placar do campus são donos diferentes.</p>
-            <p style="margin:0 0 8px;"><strong style="color:var(--fiap-pink);">[2] Compose</strong><br>DOCKER. <em>Networking in Compose</em>. O nome do serviço é o DNS dentro da rede do projeto.</p>
-            <p style="margin:0;"><strong style="color:var(--fiap-pink);">[3] HTTP</strong><br>FIELDING, R.; NOTTINGHAM, M.; RESCHKE, J. <em>HTTP Semantics</em>. RFC 9110, IETF, 2022. Conflito de estado: 409.</p>
-          </div>
-          <div>
-            <p style="margin:0 0 8px;"><strong style="color:var(--fiap-pink);">[4] Schemas</strong><br>POSTGRESQL GLOBAL DEVELOPMENT GROUP. <em>Schemas</em> e <em>Privileges</em>, documentação do PostgreSQL 16.</p>
-            <p style="margin:0 0 8px;"><strong style="color:var(--fiap-pink);">[5] Strategy</strong><br>GAMMA, E. et al. <em>Design Patterns</em>. Addison-Wesley, 1994. O objeto da tabela de pesos é substituível no teste.</p>
-            <p style="margin:0;"><strong style="color:var(--fiap-pink);">[6] Dublês</strong><br>MESZAROS, G. <em>xUnit Test Patterns</em>. Addison-Wesley, 2007. Stub, Mock e Spy.</p>
-          </div>
+        <div style="font-size:0.62em; line-height:1.5;">
+          <p style="margin:0 0 8px;"><strong style="color:var(--fiap-pink);">[1] O caso.</strong> ArenaLog, liga universitária desta noite. A ficha da atleta, a conta da faixa e a TV do corredor são três donos diferentes.</p>
+          <p style="margin:0 0 8px;"><strong style="color:var(--fiap-pink);">[2] A conta separada da rota.</strong> GAMMA, E. et al. <em>Design Patterns</em>. Addison-Wesley, 1994. A tabela de pontos é um objeto que o teste consegue observar sem editar o servidor.</p>
+          <p style="margin:0 0 8px;"><strong style="color:var(--fiap-pink);">[3] O 409.</strong> FIELDING, R.; NOTTINGHAM, M.; RESCHKE, J. <em>HTTP Semantics</em>. RFC 9110, IETF, 2022. Conflito de estado.</p>
+          <p style="margin:0;"><strong style="color:var(--fiap-pink);">[4] O nome do guichê.</strong> DOCKER. <em>Networking in Compose</em>. O nome do serviço é o endereço dentro da rede. POSTGRESQL 16, <em>Schemas</em>: cada gaveta tem o próprio usuário, sem grant cruzado.</p>
         </div>
         <div class="slide-footer">
           <div class="footer-bar">14 – Referências</div>
-          <div class="footer-page">19</div>
+          <div class="footer-page">24</div>
         </div>
       </section>
 

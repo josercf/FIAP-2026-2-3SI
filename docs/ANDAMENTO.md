@@ -2,9 +2,9 @@
 
 Estado do trabalho para retomar em uma sessão nova. Atualize este arquivo ao fim de cada sessão.
 
-**Última atualização:** 03/11/2026 (Dojo ArenaLog na Aula 14)
+**Última atualização:** 03/11/2026 (Dojo ArenaLog na Aula 14, roteiro da Lia)
 
-O encontro de 03/11 virou o Dojo ArenaLog (`aulas-1sem/aulas/aula14.html` e `aulas-1sem/labs/aula14-lab/`). A Segurança Web foi para a Aula 15 (10/11), o OWASP para a Aula 16 (17/11) e a integração ficou na Aula 17, com data a confirmar. Os repositórios públicos dos labs de OAuth, OWASP e integração não foram renomeados: os cards apontam para os mesmos forks.
+O encontro de 03/11 virou o Dojo ArenaLog (`aulas-1sem/aulas/aula14.html` e `aulas-1sem/labs/aula14-lab/`). O deck e o README são o roteiro da Lia Park: cada passo traz o arquivo, a função para colar e o comando. A Segurança Web foi para a Aula 15 (10/11), o OWASP para a Aula 16 (17/11) e a integração ficou na Aula 17, com data a confirmar. Os repositórios públicos dos labs de OAuth, OWASP e integração não foram renomeados: os cards apontam para os mesmos forks.
 
 ---
 
@@ -351,8 +351,8 @@ slides das Aulas 05 e 06 precisaram de ajuste. Os treze decks foram revalidados.
 - [ ] **Rodar `tools/check_devcontainers.py --build` antes de cada aula com laboratório.** As duas primeiras checagens levam segundos e pegam a classe de falha que derrubou a Aula 05 em sala; a terceira constrói de verdade e é a única que pega ferramenta ausente, como o Maven que faltava na imagem de Java. Ver ADR-011.
 
 - [ ] **REGRESSÃO NAS AULAS 05 E 06.** O validador acusa, de forma reprodutível, 4 estouros e 4 colisões de título com o logo, uma delas com 18px de sobreposição real (Aula 05, slide 14). Os arquivos estão intocados desde o commit: ninguém rodou o validador depois das últimas edições daquelas aulas. Detalhe: `aula05` slides 14, 25 e 37; `aula06` slides 14, 23, 26, 41 e 47. **As Aulas 10, 11 e 12 passam nas três checagens.** Corrigir antes de 01/09, que é quando a Aula 05 é dada.
-- [ ] **Aulas 14, 15 e 16 ainda são rasas.** Decks de ~345 a ~370 linhas, sem figura, quizzes genéricos. Cada uma precisa passar pelo `construtor-aulas`. **A próxima é a Aula 14** (segurança, OAuth 2.0 e JWT, 03/11).
-- [ ] **Labs 14, 15 e 16 têm só o esqueleto.** Devcontainer e README funcionam; falta o conteúdo de cada laboratório.
+- [ ] **Aulas 15 e 16 ainda são rasas.** A antiga Aula 14 (segurança) é agora a 15, e a antiga 15 (OWASP) é a 16. Decks curtos, quizzes genéricos. Cada uma precisa passar pelo `construtor-aulas`. A Aula 14 de 03/11 já é o Dojo ArenaLog, com roteiro autodirigido.
+- [ ] **Labs 15 e 16 têm o conteúdo que escorregou.** O lab da Aula 14 (Dojo) está em `aulas-1sem/labs/aula14-lab`. Os labs de OAuth e OWASP continuam nos diretórios `aula15-lab` e `aula16-lab`, e os repositórios públicos não foram renomeados.
 - [ ] **Sincronizar os três repositórios do Módulo III.** `josercf/mwe-2026-2-lab10-testes-react`, `lab11-angular-rxjs` e `lab12-rag-mcp` **existem** e respondem, mas ainda têm só o esqueleto do scaffolder. O aluno que forkar hoje abre um kit que não bate com o slide. Vale o mesmo aviso da Aula 02: copiar o conteúdo sem o `resgate/`, preservar `.devcontainer/` e `ai/ask.py`.
 - [ ] **Promover ao `construtor-aulas` as três armadilhas que custaram retrabalho hoje:** regra de ligadura precisa cobrir `svg text, svg tspan` além de `pre`, `code` e `.mono`; o texto do `takeaway` cabe em até duas linhas, senão o bloco dobra de altura e estoura; e título de `h2` acima de ~65 caracteres colide com o logo. As duas primeiras já estão resolvidas localmente nos decks novos; falta o padrão nascer certo.
 - [ ] **Criar os três formulários de entrega do Módulo III** no Microsoft Forms. Os slides das Aulas 10, 11 e 12 estão com marcador visível no lugar do iframe.

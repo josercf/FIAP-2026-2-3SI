@@ -308,26 +308,27 @@
 
 ## Módulo IV: Dojo, Segurança Enterprise e Hardening (Novembro e Dezembro)
 
-### Aula 14 (03/11/2026) - Dojo ArenaLog: malha, faixa e placar
-- **Objetivos de Aprendizagem:** Subir quatro serviços independentes no Docker Compose, com contrato HTTP pelo nome DNS do serviço, PostgreSQL em schemas separados, Strategy de faixa e testes de unidade com Stub, Mock e Spy.
-- **Espiral Pedagógica:** **Recupera Aulas 05, 06, 07 e 10** (API em mais de uma linguagem, Compose, padrão Strategy e dublê de teste). O domínio da noite é a ArenaLog, ranking de confrontos universitários, e não a LogiTech.
-- **Desafio do Mini Mundo:** O atleta abre o confronto por três canais e o pedido se perde. A faixa vira opinião de quem atendeu. O placar do campus vaza nome e coordenada.
+### Aula 14 (03/11/2026) - Dojo ArenaLog: a ficha da Lia, a faixa e a TV
+- **Objetivos de Aprendizagem:** A turma segue o deck sozinha. A história é a da Lia Park (Campus Norte, FPS): a ficha se perde entre balcão, aplicativo e Discord, a faixa vira chute, e a TV do corredor mostra nome e coordenada. Por baixo, quatro serviços no Compose, contrato HTTP pelo nome do serviço, PostgreSQL em schemas separados, conta de faixa observável por teste e ciclo com 409.
+- **Espiral Pedagógica:** **Recupera Aulas 05, 06, 07 e 10** (API em mais de uma linguagem, Compose, conta separada da rota e dublê de teste). O domínio da noite é a ArenaLog, liga universitária, e não a LogiTech.
+- **Desafio do Mini Mundo:** Lia chega na final e o sistema perde a ficha, chuta a faixa e entrega o nome dela na TV. O deck e o README trazem o arquivo, a função pronta e o comando de cada passo.
 - **Agenda em Minutos:**
-  - `19h20 - 19h30`: Chamada e regra do dojo: XP, medalha, ranking de quem veio.
-  - `19h30 - 19h55`: Mini-mundo ArenaLog e mapa dos quatro serviços.
-  - `19h55 - 20h35`: Contrato HTTP, fronteira de schema, Strategy de faixa, ciclo de vida e dublês.
+  - `19h20 - 19h40`: A história da Lia e a conta da faixa, nos slides. Sem exposição extra.
+  - `19h40 - 20h05`: Clone da pasta e passo 1, a ficha (`elenco/validar.js`).
+  - `20h05 - 20h35`: Passo 2, a conta da faixa (`motor-ranking/ranking.py`).
   - `20h35 - 20h50`: **Pergunta de Verificação #1**.
   - `20h50 - 21h20`: **INTERVALO (30 min)**.
   - `21h20 - 21h35`: **Perguntas de Verificação #2 e #3**.
-  - `21h35 - 22h35`: Missões 2 a 6 no lab, depois o boss com a malha no ar.
-  - `22h35 - 22h50`: Placar do `verificar.py` e os cinco arquivos fechados.
+  - `21h35 - 22h10`: Passos 3, 4 e 5: status, série e TV.
+  - `22h10 - 22h35`: `docker compose up` e o boss.
+  - `22h35 - 22h50`: Saída do `verificar.py`.
 - **Sessão de Perguntas de Verificação:**
-  1. *Pergunta 1:* Por que, dentro do Compose, partidas chama `http://elenco:8081` e não `localhost`?
-     *Resposta Esperada:* Dentro do container, `localhost` é o próprio processo. O vizinho se alcança pelo nome DNS do serviço.
-  2. *Pergunta 2:* O placar público do campus pode devolver o nome do atleta?
-     *Resposta Esperada:* Não. O resumo traz contagem por status e por faixa. Nome, descrição, identificador do atleta, coordenada e id ficam de fora.
-  3. *Pergunta 3:* Para que serve o Spy na tabela de pesos, se LUTE e ESPORTE valem os mesmos 2 pontos?
-     *Resposta Esperada:* O número não revela a chave consultada. O Spy registra qual chave a tabela real recebeu.
+  1. *Pergunta 1:* Lia abre FPS no Campus Norte, primeira vez. Qual é a conta?
+     *Resposta Esperada:* 3 do FPS mais 2 do campus rival, total 5, faixa LENDARIO, janela de 8 horas.
+  2. *Pergunta 2:* A TV do corredor pode mostrar o nome da Lia?
+     *Resposta Esperada:* Não. A TV mostra só contagem por status e por faixa.
+  3. *Pergunta 3:* Partidas precisa consultar o elenco. Qual endereço ela usa?
+     *Resposta Esperada:* `http://elenco:8081`. Dentro do container, localhost é o próprio processo.
 - **Entregável Prático:** Saída do `verificar.py` com a faixa da mesa e os arquivos `validar.js`, `ranking.py`, `ciclo.py`, `serie.py` e `agregar.js`.
 
 ### Aula 15 (10/11/2026) - Segurança Web Enterprise (OAuth 2.0, OIDC, JWT, RBAC) & Git Worktrees II

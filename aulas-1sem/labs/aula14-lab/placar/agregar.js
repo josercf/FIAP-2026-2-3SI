@@ -4,12 +4,9 @@ const STATUS = ["ABERTO", "CONFIRMADO", "EM_JOGO", "ENCERRADO", "CANCELADO"];
 const FAIXAS = ["BRONZE", "PRATA", "OURO", "LENDARIO"];
 
 /**
- * Missão 6.
- * Recebe a lista de desafios de um campus e devolve só o agregado:
- * { campus, porStatus, porFaixa }.
- * As cinco chaves de status e as quatro faixas existem sempre, com zero
- * quando não houver desafio.
- * O JSON não pode ter nome, descricao, atletaId, latitude, longitude nem id.
+ * Passo 5 do README, slide "Missão 6. A TV".
+ * Apague só esta função e cole a versão do roteiro.
+ * Não apague STATUS, FAIXAS nem module.exports.
  */
 function agregar(desafios, campus) {
   return { campus, desafios };

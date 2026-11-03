@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Placar do Dojo ArenaLog.
 
-Cada missão soma XP. O processo sai com 0 quando as missões 1 a 7 passam e, se a malha
-estiver no ar, o boss também passa. Com os containers parados o boss fica
-pendente e não derruba o placar.
+Cada missão soma XP. O processo sai com 0 quando as missões 1 a 7 passam e, se os
+quatro programas estiverem no ar, o boss também passa. Com os containers parados
+o boss fica pendente e não derruba o placar.
 
 Uso:
     python3 verificar.py
@@ -22,13 +22,13 @@ import urllib.request
 RAIZ = os.path.dirname(os.path.abspath(__file__))
 
 MISSOES = (
-    (1, "Malha declarada", 100, "Recruta"),
+    (1, "Pasta no lugar", 100, "Recruta"),
     (2, "Elenco", 150, "Analista"),
-    (3, "Strategy de faixa", 250, "Estrategista"),
+    (3, "Conta da faixa", 250, "Estrategista"),
     (4, "Ciclo de vida", 150, "Juiz"),
     (5, "Janela de 48 horas", 200, "Cronista"),
     (6, "Placar sem dado pessoal", 150, "Narrador"),
-    (7, "Stub e Mock", 200, "Maestro"),
+    (7, "Testes prontos", 200, "Maestro"),
     (8, "Boss fight", 150, "Campeão"),
 )
 
@@ -86,7 +86,7 @@ def missao_1():
         faltas.append("há grant cruzado de elenco para partidas")
     if faltas:
         return False, "; ".join(faltas)
-    return True, "cinco serviços, DNS interno, schemas separados"
+    return True, "quatro programas, o banco e as duas gavetas"
 
 
 def missao_node(pasta, teste):
@@ -94,7 +94,7 @@ def missao_node(pasta, teste):
     if codigo != 0:
         ruins = [linha.strip() for linha in saida.splitlines() if linha.strip().startswith("not ok")]
         return False, ruins[0] if ruins else "node --test falhou"
-    return True, "suíte verde"
+    return True, "testes passaram"
 
 
 def missao_python(pasta, arquivo):
@@ -106,7 +106,7 @@ def missao_python(pasta, arquivo):
         linhas = [linha for linha in saida.splitlines() if linha.startswith("FAIL") or linha.startswith("ERROR") or "Error" in linha]
         resumo = linhas[-1] if linhas else "unittest falhou"
         return False, resumo
-    return True, "suíte verde"
+    return True, "testes passaram"
 
 
 def missao_8():

@@ -1,8 +1,8 @@
 # Resgate
 
-Cópias resolvidas das cinco missões abertas. A orquestração HTTP já vem pronta no kit; aqui estão só as funções que o verificador cobra.
+Cópias resolvidas das cinco funções. O mesmo código está nos slides, uma missão por slide, e no README, um passo por seção.
 
-Use isto depois de travar, não no lugar da primeira tentativa.
+Use isto só depois de ler a linha `FAIL` ou `not ok` e de tentar de novo. Abrir antes da primeira tentativa queima a história de que a mesa resolveu.
 
 ```bash
 cp resgate/validar.js elenco/validar.js

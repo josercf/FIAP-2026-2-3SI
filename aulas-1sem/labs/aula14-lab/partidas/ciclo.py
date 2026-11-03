@@ -20,10 +20,10 @@ ACEITOS = {
 
 
 def transicionar(atual, destino):
-    """Missão 4.
+    """Passo 3 do README, slide "Missão 4. O status".
 
-    Devolva o destino quando a passagem estiver em ACEITOS.
-    Destino igual ao atual também é recusa.
-    Caso contrário, levante TransicaoRecusada.
+    ACEITOS já está neste arquivo. Substitua só esta função.
     """
-    raise NotImplementedError("Missão 4: implementar transicionar em ciclo.py.")
+    raise NotImplementedError(
+        "Passo 3: cole transicionar a partir do README ou do slide da Missão 4."
+    )

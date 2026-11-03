@@ -43,7 +43,7 @@ Os tópicos técnicos foram integrados em camadas dentro da espiral pedagógica,
 | **Frontend Angular (Modules, Services, RxJS)** | **Aula 11** (13/10) | Dashboard administrativo reativo utilizando o **Observer Pattern** (RxJS). |
 | **SQL Relacional (DDL, `JOIN`, Índices, `EXPLAIN`)** | **Aula 12** (20/10) | **Nova Adição:** Abertura do banco que os serviços das Aulas 05 e 06 vinham usando por meio de ORM. Pré-requisito da persistência vetorial, registrado na `ADR-008`. |
 | **Persistência Vetorial (`pgvector`), RAG & MCP** | **Aula 12** (20/10) | Busca semântica como extensão da SQL relacional recém-aprendida + Servidor Model Context Protocol exposto para IAs. |
-| **Dojo ArenaLog: malha, faixa e placar** | **Aula 14** (03/11) | Quatro serviços no Compose, Strategy de faixa, ciclo com conflito e testes com Stub, Mock e Spy. |
+| **Dojo ArenaLog: a ficha da Lia, a faixa e a TV** | **Aula 14** (03/11) | Roteiro autodirigido: ficha, conta da faixa, ciclo com 409 e TV sem nome, em quatro serviços no Compose. |
 | **Segurança OAuth2, OIDC, JWT & RBAC** | **Aula 15** (10/11) | Proteção de todas as rotas do backend e frontend com provedor Keycloak. |
 | **OWASP Top 10 for LLMs & Trivy Scan** | **Aula 16** (17/11) | Hardening de Prompt Injection no AI Gateway e varredura de segurança em imagens Docker. |
 | **Integração End-to-End** | **Aula 17** (data a confirmar) | Hackathon de integração do ecossistema completo da *LogiTech Enterprise*. Escorregou de 17/11. |
@@ -92,7 +92,7 @@ graph TD
 | **13/10** | **Aula 11** | Frontend Enterprise II: **Angular (RxJS / Observer)** | **Recupera Aulas 05, 06 e 10** (SPAs, Patterns & APIs) | Painel Administrativo em Angular com RxJS (Observer Pattern) |
 | **20/10** | **Aula 12** | **PostgreSQL: do relacional ao vetorial** (SQL, `pgvector`, **RAG** & **MCP**) | **Recupera Aulas 05, 06, 07, 08 e 10** (o banco por baixo do ORM + Python + Compose + AI) | Schema criado em SQL escrita pelo aluno + Engine RAG com citação da fonte + Servidor MCP |
 | **27/10** | **CP3** | **CHECKPOINT 3** | **Aulas 10, 11 e 12** | Avaliação Prática de Testes de Unidade, Frontend, SQL relacional e RAG/MCP |
-| **03/11** | **Aula 14** | **Dojo ArenaLog:** malha Compose, faixa e placar | **Recupera Aulas 05, 06, 07 e 10** | Quatro serviços, Strategy, ciclo de vida e Stub, Mock e Spy |
+| **03/11** | **Aula 14** | **Dojo ArenaLog:** a ficha da Lia, a faixa e a TV | **Recupera Aulas 05, 06, 07 e 10** | Roteiro autodirigido: ficha, faixa, ciclo com 409 e placar sem nome |
 | **10/11** | **Aula 15** | Segurança Web & **Git Worktrees Avançado (AI Coding)** | **Recupera Aulas 05, 06, 08, 10, 11 e Worktrees** | Proteção JWT + Ambientes isolados em Worktrees para Agentes de IA |
 | **17/11** | **Aula 16** | Segurança AI-First (**OWASP LLM**) & **Trivy Container Scan** | **Recupera Aulas 03, 07, 12 e 15** (Docker + AI Gateway + Auth) | Guardrails de Prompt Injection e Varredura de Imagens Docker |
 | **a confirmar** | **Aula 17** | Integração Enterprise End-to-End | **Recupera Aulas 01 a 16** (Toda a Espiral do Semestre) | Hackathon de integração do sistema *LogiTech Enterprise*. Escorregou de 17/11. |
@@ -227,10 +227,10 @@ graph TD
 
 ### Módulo IV: Segurança Enterprise, Hardening & Global Solution (Novembro e Dezembro)
 
-#### Aula 14 (03/11/2026) - Dojo ArenaLog: malha, faixa e placar
-- **Espiral & Conexão:** **Recupera Aulas 05, 06, 07 e 10** (serviços em mais de uma linguagem, Compose, Strategy e dublê de teste). O domínio da noite é a ArenaLog.
-- **Desafio do Mini Mundo:** O confronto universitário se perde entre aplicativo, arena e Discord. A faixa deixa de ser opinião, e o placar do campus deixa de carregar nome e coordenada.
-- **Conteúdo Expositivo & Prático:** Quatro serviços no Compose, contratos HTTP pelo nome do serviço, PostgreSQL com schema por contexto, Strategy de faixa, ciclo com 409, testes nomeados Stub, Mock e Spy, boss por script.
+#### Aula 14 (03/11/2026) - Dojo ArenaLog: a ficha da Lia, a faixa e a TV
+- **Espiral & Conexão:** **Recupera Aulas 05, 06, 07 e 10** (serviços em mais de uma linguagem, Compose, conta separada da rota e dublê de teste). O domínio da noite é a ArenaLog.
+- **Desafio do Mini Mundo:** Lia Park chega na final de FPS. A ficha se perde entre balcão, aplicativo e Discord, a faixa vira chute, e a TV do corredor mostra nome e coordenada.
+- **Conteúdo Expositivo & Prático:** O deck é o roteiro. Cada missão mostra o arquivo, a função pronta e o comando. Por baixo: quatro serviços no Compose, HTTP pelo nome do serviço, PostgreSQL com schema por contexto, conta de faixa observável, ciclo com 409 e boss por script.
 - **Entregável:** Saída do `verificar.py` e as cinco funções fechadas no lab `aulas-1sem/labs/aula14-lab`.
 
 #### Aula 15 (10/11/2026) - Segurança Enterprise: OAuth 2.0, OIDC, JWT & Git Worktrees Avançado
