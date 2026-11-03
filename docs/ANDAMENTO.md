@@ -2,7 +2,7 @@
 
 Estado do trabalho para retomar em uma sessão nova. Atualize este arquivo ao fim de cada sessão.
 
-**Última atualização:** 31/07/2026 (Módulo III construído)
+**Última atualização:** 03/11/2026 (rascunho da demanda de GS, ainda fora do ar)
 
 ---
 
@@ -339,6 +339,7 @@ slides das Aulas 05 e 06 precisaram de ajuste. Os treze decks foram revalidados.
 
 ### Do professor
 
+- [ ] **Aprovar com o Agesandro a demanda da GS** em `aulas-1sem/gs/demanda-disciplina.md` antes de mergear em `main`. O workflow de Pages publica o repositório inteiro; o enunciado fica fora do portal até o ok e até o evento de abertura. Tema CitizenTech, quatro serviços (cadastro, motor de prioridade, protocolos, transparência), React só como borda opcional.
 - [ ] **Criar o formulário de entrega de cada aula nova** no Microsoft Forms e passar a URL, para que o slide de entrega saia com o embed no lugar do marcador pendente. Os que já existem: Aula 01 em `https://forms.cloud.microsoft/r/sy6dHWsBHJ`, Aula 02 em `https://forms.cloud.microsoft/r/ykGYKsPAj7`.
 - [ ] Decidir o subdomínio da votação ao vivo (`vote.jrcf.dev` foi a sugestão).
 
