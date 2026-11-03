@@ -306,9 +306,31 @@
 
 ---
 
-## Módulo IV: Segurança Enterprise, Hardening & Global Solution (Novembro e Dezembro)
+## Módulo IV: Dojo, Segurança Enterprise e Hardening (Novembro e Dezembro)
 
-### Aula 14 (03/11/2026) - Segurança Web Enterprise (OAuth 2.0, OIDC, JWT, RBAC) & Git Worktrees II
+### Aula 14 (03/11/2026) - Dojo ArenaLog: malha, faixa e placar
+- **Objetivos de Aprendizagem:** Subir quatro serviços independentes no Docker Compose, com contrato HTTP pelo nome DNS do serviço, PostgreSQL em schemas separados, Strategy de faixa e testes de unidade com Stub, Mock e Spy.
+- **Espiral Pedagógica:** **Recupera Aulas 05, 06, 07 e 10** (API em mais de uma linguagem, Compose, padrão Strategy e dublê de teste). O domínio da noite é a ArenaLog, ranking de confrontos universitários, e não a LogiTech.
+- **Desafio do Mini Mundo:** O atleta abre o confronto por três canais e o pedido se perde. A faixa vira opinião de quem atendeu. O placar do campus vaza nome e coordenada.
+- **Agenda em Minutos:**
+  - `19h20 - 19h30`: Chamada e regra do dojo: XP, medalha, ranking de quem veio.
+  - `19h30 - 19h55`: Mini-mundo ArenaLog e mapa dos quatro serviços.
+  - `19h55 - 20h35`: Contrato HTTP, fronteira de schema, Strategy de faixa, ciclo de vida e dublês.
+  - `20h35 - 20h50`: **Pergunta de Verificação #1**.
+  - `20h50 - 21h20`: **INTERVALO (30 min)**.
+  - `21h20 - 21h35`: **Perguntas de Verificação #2 e #3**.
+  - `21h35 - 22h35`: Missões 2 a 6 no lab, depois o boss com a malha no ar.
+  - `22h35 - 22h50`: Placar do `verificar.py` e os cinco arquivos fechados.
+- **Sessão de Perguntas de Verificação:**
+  1. *Pergunta 1:* Por que, dentro do Compose, partidas chama `http://elenco:8081` e não `localhost`?
+     *Resposta Esperada:* Dentro do container, `localhost` é o próprio processo. O vizinho se alcança pelo nome DNS do serviço.
+  2. *Pergunta 2:* O placar público do campus pode devolver o nome do atleta?
+     *Resposta Esperada:* Não. O resumo traz contagem por status e por faixa. Nome, descrição, identificador do atleta, coordenada e id ficam de fora.
+  3. *Pergunta 3:* Para que serve o Spy na tabela de pesos, se LUTE e ESPORTE valem os mesmos 2 pontos?
+     *Resposta Esperada:* O número não revela a chave consultada. O Spy registra qual chave a tabela real recebeu.
+- **Entregável Prático:** Saída do `verificar.py` com a faixa da mesa e os arquivos `validar.js`, `ranking.py`, `ciclo.py`, `serie.py` e `agregar.js`.
+
+### Aula 15 (10/11/2026) - Segurança Web Enterprise (OAuth 2.0, OIDC, JWT, RBAC) & Git Worktrees II
 - **Objetivos de Aprendizagem:** Implementar autenticação corporativa via OAuth 2.0/OIDC com Keycloak, validar tokens JWT nas APIs, aplicar RBAC e utilizar **Git Worktrees** para isolar o desenvolvimento de segurança.
 - **Espiral Pedagógica:** **Recupera Aulas 05, 06, 08, 10 e 11** (Protegendo todas as rotas de backend e telas de frontend criadas ao longo do semestre).
 - **Desafio do Mini Mundo:** Garantir que apenas motoristas e clientes autenticados consigam acessar os serviços da *LogiTech* de acordo com suas permissões (RBAC).
@@ -332,9 +354,9 @@
 
 ---
 
-### Aula 15 (10/11/2026) - Segurança AI-First (OWASP Top 10 for LLMs) & Trivy Container Scan
+### Aula 16 (17/11/2026) - Segurança AI-First (OWASP Top 10 for LLMs) & Trivy Container Scan
 - **Objetivos de Aprendizagem:** Aplicar sanitização e guardrails de segurança contra ataques de Prompt Injection no AI Gateway e realizar varreduras de vulnerabilidade de SO em containers com Trivy.
-- **Espiral Pedagógica:** **Recupera Aulas 03, 07, 12 e 14** (Hardening completo da infraestrutura de containers Docker e das chamadas de IA).
+- **Espiral Pedagógica:** **Recupera Aulas 03, 07, 12 e 15** (Hardening completo da infraestrutura de containers Docker e das chamadas de IA).
 - **Desafio do Mini Mundo:** Proteger a *LogiTech* contra injeções de código/prompts maliciosos no assistente virtual e eliminar vulnerabilidades de software nas imagens Docker.
 - **Agenda em Minutos:**
   - `19h20 - 19h35`: **Resgate da Espiral:** Analisando os containers (Aula 03) e o AI Gateway (Aula 07) sob a perspectiva de segurança.
@@ -356,9 +378,10 @@
 
 ---
 
-### Aula 16 (17/11/2026) - Integração Enterprise End-to-End & Simulado da Global Solution
+### Aula 17 (data a confirmar) - Integração Enterprise End-to-End
+- **Calendário:** o encontro de 17/11/2026 passou a ser a Aula 16. Este hackathon escorregou para liberar o Dojo de 03/11 e a sequência de segurança. O deck preservado está em `aulas-1sem/aulas/aula17.html`.
 - **Objetivos de Aprendizagem:** Realizar o deploy integrado e testes ponta a ponta de todo o ecossistema da *LogiTech Enterprise* (React + Angular + Java + C# + Python + Node + Docker Compose + Keycloak + RAG/MCP + Security).
-- **Espiral Pedagógica:** **Consolidação Total da Espiral do Semestre (Aulas 01 a 15)**.
+- **Espiral Pedagógica:** **Consolidação Total da Espiral do Semestre (Aulas 01 a 16)**.
 - **Desafio do Mini Mundo:** Colocar a plataforma *LogiTech Enterprise* inteira em execução com um único `docker-compose up` e validar todos os fluxos de integração.
 - **Agenda em Minutos:**
   - `19h20 - 19h35`: **Resgate Geral:** Abertura do Hackathon em Sala e revisão do checklist da Global Solution.
@@ -379,7 +402,7 @@
 
 ---
 
-### Aula 17 (08/12/2026) - Feedback GS, Vista de Provas & Roadmap 2027-1
+### Fechamento (08/12/2026) - Feedback, Vista de Provas & Roadmap 2027-1
 - **Fechamento do Semestre:** Retrospectiva do semestre, feedback individualizado por grupo, lançamento de notas e apresentação da espiral avançada do 2º semestre (Arquitetura de Microsserviços Distribuídos, Kubernetes, Redis, Kafka e Terraform em 2027-1).
 
 ---

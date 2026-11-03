@@ -1,5 +1,5 @@
 {
-  "name": "mwe-2026-2-lab16-integracao-e2e",
+  "name": "mwe-2026-2-lab15-owasp-llm",
   "build": {
     "dockerfile": "Dockerfile"
   },
@@ -8,16 +8,9 @@
     "ghcr.io/devcontainers/features/docker-in-docker:2": {}
   },
   "forwardPorts": [
-    3000,
-    3001,
     4000,
-    4200,
-    5080,
-    5173,
-    8000,
     8010,
-    8080,
-    8090,
+    3001,
     11434
   ],
   "postCreateCommand": "bash .devcontainer/post-create.sh",
@@ -30,8 +23,6 @@
         "eamodio.gitlens",
         "ms-python.python",
         "charliermarsh.ruff",
-        "dbaeumer.vscode-eslint",
-        "esbenp.prettier-vscode",
         "ms-azuretools.vscode-docker"
       ],
       "settings": {

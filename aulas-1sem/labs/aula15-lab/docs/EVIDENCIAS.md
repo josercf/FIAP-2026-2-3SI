@@ -1,122 +1,258 @@
-# Evidências da Aula 15
+# Evidências, Aula 14, OAuth 2.0, OIDC, JWT e RBAC
 
-Preencha cada marcador com o que **saiu na sua máquina**, e não com o que
-deveria ter saído. Valor fabricado engana a correção, não o `verificar.py`.
+Formulário único, preenchido à medida que você fecha cada passo.
+`verificar.py` lê estes marcadores procurando `MARCADOR: valor`. Não apague o
+nome do marcador, não mude a grafia, e troque `PREENCHER` pelo valor real
+medido na sua máquina. Um `PREENCHER` esquecido reprova o critério
+correspondente.
 
-Formato: `MARCADOR: valor`, uma linha por marcador. O verificador procura pelo
-nome do marcador e recusa a palavra `PREENCHER`.
-
----
-
-## Passo 1, o reconhecimento
-
-ONDE_MEDI: PREENCHER (máquina, sistema, Codespace ou local, e quanta memória)
-
-MODELO_LOCAL: PREENCHER (o que `ollama list` mostrou, com a tag)
+Três campos são conferidos contra o Keycloak que está rodando na sua
+máquina, e não apenas contra a presença de texto: `TOKEN_EXPIRA_EM_S`,
+`PAPEIS_NO_TOKEN` e `ISSUER_NO_TOKEN`. Número inventado reprova.
 
 ---
 
-## Passo 2, o ataque com o guardrail desligado
+## Passo 1, o Keycloak no Compose
 
-Este bloco é o "antes". Ele é preenchido com `LOGITECH_GUARDRAILS_ATIVOS=false`,
-e **precisa** ser preenchido antes do Passo 3: defesa sem ataque prévio vira
-ritual, e é a razão de o interruptor existir.
+Depois de escrever o `TODO-1a`, meça quanto tempo a plataforma leva do
+comando até os três containers ficarem saudáveis:
 
-INJECAO_ANTES: PREENCHER (cole a resposta que o modelo deu ao ataque 01, na íntegra, em uma linha)
+```bash
+docker compose down
+time docker compose up -d --wait
+```
 
-VAZOU_O_CODIGO: PREENCHER (sim ou não, e qual código apareceu)
+```
+TEMPO_ATE_TODOS_SAUDAVEIS_S: PREENCHER
+```
 
-STATUS_HTTP_ANTES: PREENCHER (o código HTTP que o gateway devolveu ao ataque 01)
+E o consumo de memória do provedor de identidade, que é o container mais
+pesado da noite:
 
-INJECAO_INDIRETA_ANTES: PREENCHER (cole a resposta do RAG ao ataque 06, e diga qual instrução do documento ela obedeceu)
+```bash
+docker stats --no-stream --format "{{.Name}} {{.MemUsage}}"
+```
 
-DE_QUAL_DOCUMENTO: PREENCHER (qual arquivo de `contratos/` estava envenenado, e qual cláusula)
-
-TENTATIVAS_ATE_A_INJECAO_FUNCIONAR: PREENCHER (quantas vezes você chamou até obter uma resposta comprometida; o ataque não é determinístico)
-
-PII_ANTES: PREENCHER (a resposta ao ataque 07, com os dados sensíveis como saíram)
-
----
-
-## Passo 3, a defesa ligada
-
-INJECAO_DEPOIS: PREENCHER (o corpo que o gateway devolveu ao ataque 01 com o guardrail ligado)
-
-STATUS_HTTP_DEPOIS: PREENCHER (o código HTTP; a ADR-009 diz qual deve ser)
-
-REGRA_QUE_DISPAROU: PREENCHER (o campo `regra` do corpo do 422)
-
-LEGITIMA_CONTINUA_PASSANDO: PREENCHER (o status HTTP do ataque 05, o de controle, com o guardrail ligado)
-
-PII_DEPOIS: PREENCHER (a resposta ao ataque 07 com o guardrail ligado, com as três máscaras visíveis)
-
-MASCARAMENTOS_NA_METRICA: PREENCHER (o valor de `guardrail.mascaramentos_saida` em `GET /v1/metricas`)
-
-RECUSAS_NA_METRICA: PREENCHER (o valor de `guardrail.recusas_entrada` e o conteúdo de `recusas_por_regra`)
+```
+MEMORIA_KEYCLOAK_MB: PREENCHER
+```
 
 ---
 
-## Passo 3, furando o próprio filtro
+## Passo 2, o fluxo PKCE pelo navegador
 
-O item mais importante do laboratório. Um filtro que ninguém tentou furar não
-é defesa: é uma opinião sobre ataques.
+Rode `python3 pkce.py`, entre como `ana.cliente` e responda com o que
+apareceu na tela, não com o que você imagina.
 
-FORMULACAO_QUE_PASSOU: PREENCHER (uma formulação sua que o SEU filtro deixou passar; escreva-a inteira)
+Quantos caracteres tinha o `code_verifier` gerado:
 
-O_QUE_ELA_CONSEGUIU: PREENCHER (o que o modelo respondeu a ela: vazou algo, mudou de comportamento, ou nada)
+```
+TAMANHO_DO_CODE_VERIFIER: PREENCHER
+```
 
-POR_QUE_O_FILTRO_NAO_PEGOU: PREENCHER (que propriedade do texto fez as suas regras não casarem)
+O valor de `code_challenge_method` que foi na URL de autorização:
 
-O_QUE_ISSO_PROVA: PREENCHER (em uma frase sua: o que o filtro de entrada protege e o que ele não protege)
+```
+CODE_CHALLENGE_METHOD: PREENCHER
+```
 
----
+O que veio dentro do token, lido da saída do próprio `pkce.py`:
 
-## Passo 4, a injeção indireta
+```
+TOKEN_EXPIRA_EM_S: PREENCHER
+PAPEIS_NO_TOKEN: PREENCHER
+ISSUER_NO_TOKEN: PREENCHER
+```
 
-PARAGRAFOS_REMOVIDOS: PREENCHER (o campo `guardrail.paragrafos_removidos` da resposta do RAG ao ataque 06)
+E a pergunta que separa quem leu de quem copiou: o que havia em
+`resource_access` no token da Ana?
 
-INJECAO_INDIRETA_DEPOIS: PREENCHER (a resposta do RAG ao ataque 06 com a sanitização ligada)
-
-RESPOSTA_LEGITIMA_SOBREVIVEU: PREENCHER (a resposta continuou correta sobre o reajuste? cole a frase que prova)
-
-SO_DELIMITADOR_BASTA: PREENCHER (rode com delimitador e aviso, mas sem remover parágrafo, e diga em quantas de 3 tentativas o modelo ainda obedeceu)
-
----
-
-## Passo 5, o Trivy
-
-DATA_DA_VARREDURA: PREENCHER (data em que você rodou `./varrer.sh`; o banco de CVE muda toda semana)
-
-CVES_CRITICAL_ANTES: PREENCHER (quantas CRITICAL nas três imagens do projeto, antes de corrigir)
-
-CVES_HIGH_ANTES: PREENCHER (quantas HIGH nas três imagens do projeto, antes de corrigir)
-
-QUAL_ERA_A_CRITICAL: PREENCHER (o identificador CVE, o pacote e a versão)
-
-DE_ONDE_ELA_VEIO: PREENCHER (o `PkgPath` que o relatório mostrou, e o que esse caminho diz)
-
-O_CONTAINER_USA_ESSE_PACOTE: PREENCHER (sim ou não, e como você concluiu)
-
-CVES_CRITICAL_DEPOIS: PREENCHER (precisa ser zero nas três imagens do projeto)
-
-CVES_HIGH_DEPOIS: PREENCHER (quantas HIGH sobraram nas três imagens do projeto)
-
-O_QUE_MUDEI_NO_DOCKERFILE: PREENCHER (em uma frase, o que você fez e por que não foi só trocar a tag da base)
-
-TAMANHO_ANTES_E_DEPOIS: PREENCHER (`docker images` das três imagens, antes e depois)
+```
+RESOURCE_ACCESS_NO_TOKEN: PREENCHER
+```
 
 ---
 
-## Passo 6, as exceções
+## Passo 3, o 401
 
-CVES_HIGH_ACEITAS: PREENCHER (quantas exceções você registrou em docs/EXCECOES.md)
+Com o `TODO-2` preenchido e o serviço reconstruído, chame uma rota protegida
+**sem token nenhum** e registre o código de status e o campo `motivo` da
+resposta:
 
-IMAGEM_DAS_EXCECOES: PREENCHER (de qual imagem elas vieram, e por que ela é tratada diferente)
+```bash
+curl -i http://localhost:8080/api/v1/pedidos
+```
 
-DIFERENCA_PARA_IGNORE_UNFIXED: PREENCHER (rode a varredura com `--ignore-unfixed`, compare os totais e diga o que sumiu do relatório e o que sumiu da imagem)
+```
+CURL_SEM_TOKEN: PREENCHER
+MOTIVO_DO_401: PREENCHER
+```
+
+Agora repita com um token propositalmente estragado, trocando um caractere
+do meio dele. O status é o mesmo, o motivo muda:
+
+```
+MOTIVO_DO_401_COM_TOKEN_ADULTERADO: PREENCHER
+```
 
 ---
 
-## Geral
+## Passo 4, o issuer divergente
 
-USEI_O_RESGATE: PREENCHER (não, ou a partir de qual passo. Sem penalidade automática: é informação para a correção)
+Antes de preencher o `TODO-1b`, use um token de verdade, obtido pelo
+navegador, contra o serviço:
+
+```bash
+export TOKEN=$(python3 pkce.py --so-token)
+curl -s -H "Authorization: Bearer $TOKEN" http://localhost:8080/api/v1/pedidos
+```
+
+Registre o motivo do 401, que é a frase inteira, e os dois endereços que
+aparecem nela:
+
+```
+MOTIVO_DO_ISSUER: PREENCHER
+ISSUER_QUE_VEIO_NO_TOKEN: PREENCHER
+ISSUER_QUE_O_SERVICO_ESPERAVA: PREENCHER
+```
+
+Em uma frase sua: por que os dois não coincidem, se é o mesmo Keycloak?
+
+```
+POR_QUE_OS_DOIS_DIFEREM: PREENCHER
+```
+
+---
+
+## Passo 5, o 403
+
+Com o `TODO-3` preenchido, entre como `bruno.motorista` e tente alterar o
+endereço de entrega de um pedido:
+
+```bash
+export TOKEN=$(python3 pkce.py --so-token)   # entre como bruno.motorista
+curl -i -X PATCH http://localhost:8080/api/v1/pedidos/PED-1042/endereco \
+     -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+     -d '{"logradouro":"Rua Bela Cintra","numero":"495","cidade":"Sao Paulo","uf":"SP","cep":"01415-000"}'
+```
+
+```
+CURL_PAPEL_ERRADO: PREENCHER
+PAPEIS_QUE_O_BRUNO_TEM: PREENCHER
+PAPEIS_ACEITOS_PELA_ROTA: PREENCHER
+```
+
+Em uma frase sua: por que repetir o login não resolve este caso, e resolveria
+o do Passo 3?
+
+```
+POR_QUE_401_E_403_SAO_DIFERENTES: PREENCHER
+```
+
+---
+
+## Passo 6, o mesmo papel em outra stack
+
+Com o `TODO-4` preenchido, use **o mesmo token do Bruno** nos dois serviços,
+sem fazer login de novo:
+
+```bash
+curl -s -o /dev/null -w '%{http_code}\n' -H "Authorization: Bearer $TOKEN" \
+     http://localhost:8080/api/v1/pedidos
+curl -s -o /dev/null -w '%{http_code}\n' -X POST \
+     -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+     -d '{"canal":"sms","destinatario":"+5511988887777","mensagem":"teste"}' \
+     http://localhost:3001/api/v1/notificacoes
+```
+
+```
+STATUS_NO_SERVICO_JAVA: PREENCHER
+STATUS_NO_SERVICO_NODE: PREENCHER
+```
+
+De qual campo do token os **dois** serviços leram o papel? Escreva o caminho
+completo:
+
+```
+DE_ONDE_OS_DOIS_LEEM_O_PAPEL: PREENCHER
+```
+
+E o que aconteceria se o serviço Node lesse de `resource_access` em vez
+disso, com este mesmo token?
+
+```
+SE_O_NODE_LESSE_DE_RESOURCE_ACCESS: PREENCHER
+```
+
+---
+
+## Passo 7, o portal
+
+Com o `TODO-5` preenchido, `cd portal && npm run dev`, abra
+http://localhost:5173 e entre como `ana.cliente`.
+
+```
+PAPEIS_QUE_O_PORTAL_MOSTROU: PREENCHER
+```
+
+Clique em "Enviar aviso de entrega" logada como Ana. O que a tela mostrou:
+
+```
+MENSAGEM_DO_403_NA_TELA: PREENCHER
+```
+
+Saia, entre como `carla.admin` e clique de novo:
+
+```
+RESULTADO_COMO_ADMIN: PREENCHER
+```
+
+Uma pergunta de projeto, e a resposta não é "sim": esconder esse botão para
+quem não é ADMIN resolveria o problema de segurança?
+
+```
+ESCONDER_O_BOTAO_RESOLVERIA: PREENCHER
+```
+
+---
+
+## Passo 8, as duas worktrees
+
+```bash
+git switch -c seguranca/backend
+git switch -c seguranca/portal
+git switch main
+git worktree add ../agent-auth seguranca/backend
+git worktree add ../agent-ui   seguranca/portal
+git worktree list
+```
+
+```
+WORKTREE_AUTH: PREENCHER
+WORKTREE_UI: PREENCHER
+```
+
+Cole abaixo a saída literal de `git worktree list`. As duas worktrees
+precisam aparecer nela:
+
+```
+SAIDA_DO_GIT_WORKTREE_LIST: PREENCHER
+```
+
+Rode a suíte de um lado e o `npm test` do outro, ao mesmo tempo, em dois
+terminais. O que aconteceria se, em vez de worktree, você usasse
+`git switch` no mesmo diretório com os dois processos rodando?
+
+```
+O_QUE_ACONTECERIA_COM_SWITCH: PREENCHER
+```
+
+---
+
+## Fecho
+
+```
+USEI_O_RESGATE: PREENCHER
+QUAL_RESGATE: PREENCHER
+O_QUE_CUSTOU_MAIS_TEMPO: PREENCHER
+```

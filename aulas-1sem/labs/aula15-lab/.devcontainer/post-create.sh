@@ -2,15 +2,16 @@
 # Preparacao do ambiente do laboratorio. Roda uma vez, na criacao do container.
 set -euo pipefail
 
-echo "==> Configurando o laboratorio mwe-2026-2-lab15-owasp-llm"
+echo "==> Configurando o laboratorio mwe-2026-2-lab14-oauth-jwt"
 
 # --- Dependencias da stack -------------------------------------------------
 if [ -f requirements.txt ]; then pip install --user -r requirements.txt; fi
 docker network create logitech-net 2>/dev/null || true
 if [ -f .env.exemplo ] && [ ! -f .env ]; then cp .env.exemplo .env; fi
+if [ -f portal/package.json ]; then (cd portal && npm ci); fi
 pip install --user pytest >/dev/null 2>&1 || true
-# O Trivy e a ferramenta central do laboratorio.
-curl -fsSL --connect-timeout 10 --max-time 300 https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin || echo "    AVISO: instale o Trivy manualmente."
+# O Keycloak sozinho pede quase 500 MB: baixa a imagem antes da aula.
+docker pull quay.io/keycloak/keycloak:26.0 >/dev/null 2>&1 || true
 
 # --- Ollama: SLM rodando dentro do proprio container -----------------------
 # Backend único de IA dos laboratórios, decisão registrada na ADR-005 do

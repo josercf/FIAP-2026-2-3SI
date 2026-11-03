@@ -2,7 +2,9 @@
 
 Estado do trabalho para retomar em uma sessão nova. Atualize este arquivo ao fim de cada sessão.
 
-**Última atualização:** 31/07/2026 (Módulo III construído)
+**Última atualização:** 03/11/2026 (Dojo ArenaLog na Aula 14)
+
+O encontro de 03/11 virou o Dojo ArenaLog (`aulas-1sem/aulas/aula14.html` e `aulas-1sem/labs/aula14-lab/`). A Segurança Web foi para a Aula 15 (10/11), o OWASP para a Aula 16 (17/11) e a integração ficou na Aula 17, com data a confirmar. Os repositórios públicos dos labs de OAuth, OWASP e integração não foram renomeados: os cards apontam para os mesmos forks.
 
 ---
 

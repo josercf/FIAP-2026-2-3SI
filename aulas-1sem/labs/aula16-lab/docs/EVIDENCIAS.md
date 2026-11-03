@@ -1,108 +1,122 @@
-# Evidências da Aula 16 - integração end-to-end e simulado da banca
+# Evidências da Aula 15
 
-Preencha cada marcador com o que **aconteceu na sua máquina**. Número medido
-vale mais do que número esperado, e número copiado de outro grupo não vale
-nada: a banca pergunta pela máquina de vocês.
+Preencha cada marcador com o que **saiu na sua máquina**, e não com o que
+deveria ter saído. Valor fabricado engana a correção, não o `verificar.py`.
 
-O `verificar.py` lê estes marcadores. `PREENCHER` conta como vazio.
-
----
-
-## Frente 1 - a plataforma de pé
-
-MAQUINA: PREENCHER (modelo, memória total e núcleos. Ex.: MacBook Pro M4, 16 GB, 10 núcleos, Docker Desktop com 8 GB)
-
-TEMPO_ATE_TODOS_SAUDAVEIS_S: PREENCHER (segundos do `up -d --wait` até os treze `healthy`)
-
-MEMORIA_TOTAL_MB: PREENCHER (soma do `docker stats --no-stream`, em repouso)
-
-SERVICOS_SAUDAVEIS: PREENCHER (quantos de 13)
-
-Se os treze **não** couberem na sua máquina, escreva isso aqui com os números
-que você observou, e diga por quais grupos você subiu. Isso é informação, não
-fracasso, e a banca prefere ouvir a medição a ouvir que "deu certo".
-
-SUBI_POR_GRUPOS: PREENCHER (não / sim, e quais grupos)
-
-### As seis falhas plantadas
-
-Uma linha por falha: qual era o sintoma, como você descobriu, e o que mudou.
-
-FALHA_1_IPV6: PREENCHER
-FALHA_2_ISSUER: PREENCHER
-FALHA_3_PORTA: PREENCHER
-FALHA_4_DEPENDS_ON: PREENCHER
-FALHA_5_STDIN: PREENCHER
-FALHA_6_AUTH: PREENCHER
-
-USEI_O_RESGATE: PREENCHER (não / sim, e em qual falha)
+Formato: `MARCADOR: valor`, uma linha por marcador. O verificador procura pelo
+nome do marcador e recusa a palavra `PREENCHER`.
 
 ---
 
-## Frente 2 - fluxo autenticado ponta a ponta
+## Passo 1, o reconhecimento
 
-TOKEN_EXPIRA_EM_S: PREENCHER (`exp - iat` do token, lido do próprio token)
+ONDE_MEDI: PREENCHER (máquina, sistema, Codespace ou local, e quanta memória)
 
-PAPEIS_NO_TOKEN: PREENCHER (copiado de `realm_access.roles`)
-
-ISS_DO_TOKEN: PREENCHER
-
-MATRIZ_401_403: PREENCHER (uma linha por chamada: rota, papel e status)
-
-JORNADA_ADMIN: PREENCHER (o campo `jornada` da resposta do POST como carla.admin)
-
-JORNADA_CLIENTE: PREENCHER (o mesmo POST como ana.cliente. Explique em uma frase por que ele difere)
-
-NUMERO_DA_FATURA: PREENCHER
+MODELO_LOCAL: PREENCHER (o que `ollama list` mostrou, com a tag)
 
 ---
 
-## Frente 3 - guardrail e injeção
+## Passo 2, o ataque com o guardrail desligado
 
-INJECAO_ANTES: PREENCHER (com `LOGITECH_GUARDRAILS_ATIVOS=false`, o que o modelo respondeu)
+Este bloco é o "antes". Ele é preenchido com `LOGITECH_GUARDRAILS_ATIVOS=false`,
+e **precisa** ser preenchido antes do Passo 3: defesa sem ataque prévio vira
+ritual, e é a razão de o interruptor existir.
 
-INJECAO_RECUSADA: PREENCHER (o corpo do 422, com `regra` e `motivo`)
+INJECAO_ANTES: PREENCHER (cole a resposta que o modelo deu ao ataque 01, na íntegra, em uma linha)
 
-GUARDRAIL_RECUSAS_ENTRADA: PREENCHER (o contador de `GET /v1/metricas`)
+VAZOU_O_CODIGO: PREENCHER (sim ou não, e qual código apareceu)
 
-FORMULACAO_QUE_PASSOU: PREENCHER (uma formulação SUA que furou o filtro. Se
-nenhuma passou, escreva quantas você tentou. Filtro que ninguém tentou furar
-não é defesa.)
+STATUS_HTTP_ANTES: PREENCHER (o código HTTP que o gateway devolveu ao ataque 01)
 
-MASCARAMENTO: PREENCHER (a saída mascarada de um CPF, de um cartão e de uma placa)
+INJECAO_INDIRETA_ANTES: PREENCHER (cole a resposta do RAG ao ataque 06, e diga qual instrução do documento ela obedeceu)
 
----
+DE_QUAL_DOCUMENTO: PREENCHER (qual arquivo de `contratos/` estava envenenado, e qual cláusula)
 
-## Frente 4 - RAG e MCP
+TENTATIVAS_ATE_A_INJECAO_FUNCIONAR: PREENCHER (quantas vezes você chamou até obter uma resposta comprometida; o ataque não é determinístico)
 
-RAG_FONTE_CITADA: PREENCHER (contrato, cliente e distância do trecho no topo)
-
-RAG_RESPONDE_A_PERGUNTA: PREENCHER (sim/não, e por quê)
-
-MCP_FERRAMENTAS: PREENCHER (a lista que `tools/list` devolveu)
-
-MCP_RECURSOS: PREENCHER (quantos contratos o `resources/list` anunciou)
+PII_ANTES: PREENCHER (a resposta ao ataque 07, com os dados sensíveis como saíram)
 
 ---
 
-## Frente 5 - cadeia de suprimentos
+## Passo 3, a defesa ligada
 
-DATA_DA_VARREDURA: PREENCHER (resultado de Trivy sem data não se confere depois)
+INJECAO_DEPOIS: PREENCHER (o corpo que o gateway devolveu ao ataque 01 com o guardrail ligado)
 
-VERSAO_DO_TRIVY: PREENCHER
+STATUS_HTTP_DEPOIS: PREENCHER (o código HTTP; a ADR-009 diz qual deve ser)
 
-CVES_CRITICAL_ANTES: PREENCHER
+REGRA_QUE_DISPAROU: PREENCHER (o campo `regra` do corpo do 422)
 
-CVES_CRITICAL_DEPOIS: PREENCHER (precisa ser 0)
+LEGITIMA_CONTINUA_PASSANDO: PREENCHER (o status HTTP do ataque 05, o de controle, com o guardrail ligado)
 
-CVES_HIGH_ACEITAS: PREENCHER (e cada uma justificada em docs/EXCECOES.md)
+PII_DEPOIS: PREENCHER (a resposta ao ataque 07 com o guardrail ligado, com as três máscaras visíveis)
+
+MASCARAMENTOS_NA_METRICA: PREENCHER (o valor de `guardrail.mascaramentos_saida` em `GET /v1/metricas`)
+
+RECUSAS_NA_METRICA: PREENCHER (o valor de `guardrail.recusas_entrada` e o conteúdo de `recusas_por_regra`)
 
 ---
 
-## A banca
+## Passo 3, furando o próprio filtro
 
-ROTEIRO_ESCRITO: PREENCHER (sim/não. O roteiro fica em docs/ROTEIRO-BANCA.md)
+O item mais importante do laboratório. Um filtro que ninguém tentou furar não
+é defesa: é uma opinião sobre ataques.
 
-ENSAIO_CRONOMETRADO_S: PREENCHER (quantos segundos durou o ensaio completo)
+FORMULACAO_QUE_PASSOU: PREENCHER (uma formulação sua que o SEU filtro deixou passar; escreva-a inteira)
 
-O_QUE_QUEBROU_NO_ENSAIO: PREENCHER
+O_QUE_ELA_CONSEGUIU: PREENCHER (o que o modelo respondeu a ela: vazou algo, mudou de comportamento, ou nada)
+
+POR_QUE_O_FILTRO_NAO_PEGOU: PREENCHER (que propriedade do texto fez as suas regras não casarem)
+
+O_QUE_ISSO_PROVA: PREENCHER (em uma frase sua: o que o filtro de entrada protege e o que ele não protege)
+
+---
+
+## Passo 4, a injeção indireta
+
+PARAGRAFOS_REMOVIDOS: PREENCHER (o campo `guardrail.paragrafos_removidos` da resposta do RAG ao ataque 06)
+
+INJECAO_INDIRETA_DEPOIS: PREENCHER (a resposta do RAG ao ataque 06 com a sanitização ligada)
+
+RESPOSTA_LEGITIMA_SOBREVIVEU: PREENCHER (a resposta continuou correta sobre o reajuste? cole a frase que prova)
+
+SO_DELIMITADOR_BASTA: PREENCHER (rode com delimitador e aviso, mas sem remover parágrafo, e diga em quantas de 3 tentativas o modelo ainda obedeceu)
+
+---
+
+## Passo 5, o Trivy
+
+DATA_DA_VARREDURA: PREENCHER (data em que você rodou `./varrer.sh`; o banco de CVE muda toda semana)
+
+CVES_CRITICAL_ANTES: PREENCHER (quantas CRITICAL nas três imagens do projeto, antes de corrigir)
+
+CVES_HIGH_ANTES: PREENCHER (quantas HIGH nas três imagens do projeto, antes de corrigir)
+
+QUAL_ERA_A_CRITICAL: PREENCHER (o identificador CVE, o pacote e a versão)
+
+DE_ONDE_ELA_VEIO: PREENCHER (o `PkgPath` que o relatório mostrou, e o que esse caminho diz)
+
+O_CONTAINER_USA_ESSE_PACOTE: PREENCHER (sim ou não, e como você concluiu)
+
+CVES_CRITICAL_DEPOIS: PREENCHER (precisa ser zero nas três imagens do projeto)
+
+CVES_HIGH_DEPOIS: PREENCHER (quantas HIGH sobraram nas três imagens do projeto)
+
+O_QUE_MUDEI_NO_DOCKERFILE: PREENCHER (em uma frase, o que você fez e por que não foi só trocar a tag da base)
+
+TAMANHO_ANTES_E_DEPOIS: PREENCHER (`docker images` das três imagens, antes e depois)
+
+---
+
+## Passo 6, as exceções
+
+CVES_HIGH_ACEITAS: PREENCHER (quantas exceções você registrou em docs/EXCECOES.md)
+
+IMAGEM_DAS_EXCECOES: PREENCHER (de qual imagem elas vieram, e por que ela é tratada diferente)
+
+DIFERENCA_PARA_IGNORE_UNFIXED: PREENCHER (rode a varredura com `--ignore-unfixed`, compare os totais e diga o que sumiu do relatório e o que sumiu da imagem)
+
+---
+
+## Geral
+
+USEI_O_RESGATE: PREENCHER (não, ou a partir de qual passo. Sem penalidade automática: é informação para a correção)

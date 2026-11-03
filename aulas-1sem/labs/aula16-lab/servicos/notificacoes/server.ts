@@ -17,18 +17,12 @@
 // Roda em Node 22 com anotação de tipo apagada em tempo de carga
 // (`--experimental-strip-types`): TypeScript de verdade, sem passo de build.
 //
-// Rotas (ADR-006 e ADR-009):
-//   GET  /health                 aberta, sempre
-//   POST /api/v1/notificacoes    ADMIN
+// Rotas (ADR-006):
+//   GET  /health
+//   POST /api/v1/notificacoes
 //        entra {canal, destinatario, mensagem}
-//
-// Versão da Aula 16: ganhou validação de JWT com RBAC (ADR-009), em
-// `seguranca.ts`. Com LOGITECH_AUTH_ATIVA desligada este serviço se comporta
-// exatamente como na Aula 07.
 
 import http from 'node:http';
-
-import { ativa, exigir } from './seguranca.ts';
 
 type Canal = 'email' | 'sms' | 'push';
 
@@ -79,22 +73,10 @@ const servidor = http.createServer(async (req, res) => {
       uptime_s: Math.round((Date.now() - INICIADO_EM) / 1000),
       canais: CANAIS,
       na_fila: fila.length,
-      auth_ativa: ativa(),
     });
   }
 
   if (rota === '/api/v1/notificacoes' && req.method === 'POST') {
-    // Notificar cliente em nome da LogiTech é ato de ADMIN (ADR-009). Quem
-    // cria um pedido como CLIENTE recebe 403 aqui, e a `jornada` devolvida
-    // pelo serviço de Pedidos registra o 403 em vez de escondê-lo.
-    const veredito = await exigir(req.headers.authorization, 'ADMIN');
-    if (veredito.status !== 200) {
-      return responderJson(res, veredito.status, {
-        erro: 'acesso negado',
-        detalhe: veredito.motivo,
-      });
-    }
-
     let entrada: Record<string, unknown>;
     try {
       entrada = JSON.parse(await lerCorpo(req));
@@ -143,5 +125,4 @@ const servidor = http.createServer(async (req, res) => {
 servidor.listen(PORTA, () => {
   console.log('=== LogiTech Enterprise - Serviço de Notificações ===');
   console.log(`[HTTP] notificacoes escutando na porta ${PORTA}`);
-  console.log(`[AUTH] validação de token: ${ativa() ? 'exigida' : 'DESLIGADA'}`);
 });

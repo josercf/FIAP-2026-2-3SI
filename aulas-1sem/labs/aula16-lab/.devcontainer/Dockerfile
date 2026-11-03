@@ -1,5 +1,5 @@
 # Imagem base do laboratório, saneada antes dos features do devcontainer.
-FROM mcr.microsoft.com/devcontainers/universal:2-linux
+FROM mcr.microsoft.com/devcontainers/python:1-3.12-bookworm
 
 # A imagem base traz o repositório apt do Yarn pré-configurado em
 # /etc/apt/sources.list.d/yarn.list, e a chave GPG desse repositório expirou

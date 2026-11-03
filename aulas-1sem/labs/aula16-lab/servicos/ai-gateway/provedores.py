@@ -19,6 +19,20 @@ Dois provedores, conforme a ADR-006:
 O fallback entre os dois é **real**, não encenado: a chamada ao remoto falha
 de verdade por ausência de credencial, o gateway registra o motivo e passa ao
 local. É a diferença entre ensinar resiliência e ensinar teatro.
+
+O que mudou na Aula 15
+----------------------
+Os dois provedores agora enviam a instrução de sistema de `persona.py` junto
+com a pergunta. Sem ela não haveria o que sobrescrever, e Prompt Injection
+seria um assunto abstrato.
+
+Repare que a instrução de sistema viaja **na mesma lista de mensagens** que o
+texto do usuário. Não há canal separado, não há privilégio de memória, não há
+nível de acesso: é tudo texto na mesma janela de contexto. É exatamente daí
+que a vulnerabilidade nasce, e é por isso que a analogia com SQL Injection
+funciona.
+
+Não é tarefa. Não editem este arquivo.
 """
 
 from __future__ import annotations
@@ -28,6 +42,8 @@ from dataclasses import dataclass
 from typing import Protocol, runtime_checkable
 
 import httpx
+
+from persona import SISTEMA
 
 
 class ProvedorIndisponivel(RuntimeError):
@@ -114,7 +130,10 @@ class ProvedorRemoto:
                     headers={"Authorization": "Bearer %s" % self.chave},
                     json={
                         "model": escolhido,
-                        "messages": [{"role": "user", "content": pergunta}],
+                        "messages": [
+                            {"role": "system", "content": SISTEMA},
+                            {"role": "user", "content": pergunta},
+                        ],
                         "temperature": 0.2,
                     },
                 )
@@ -173,8 +192,12 @@ class ProvedorLocal:
                     "%s/api/chat" % self.url.rstrip("/"),
                     json={
                         "model": escolhido,
-                        "messages": [{"role": "user", "content": pergunta}],
+                        "messages": [
+                            {"role": "system", "content": SISTEMA},
+                            {"role": "user", "content": pergunta},
+                        ],
                         "stream": False,
+                        "options": {"temperature": 0.2},
                     },
                 )
         except httpx.HTTPError as erro:

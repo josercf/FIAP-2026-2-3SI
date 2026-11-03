@@ -2,16 +2,14 @@
 # Preparacao do ambiente do laboratorio. Roda uma vez, na criacao do container.
 set -euo pipefail
 
-echo "==> Configurando o laboratorio mwe-2026-2-lab16-integracao-e2e"
+echo "==> Configurando o laboratorio mwe-2026-2-lab15-owasp-llm"
 
 # --- Dependencias da stack -------------------------------------------------
 if [ -f requirements.txt ]; then pip install --user -r requirements.txt; fi
-if [ -f package.json ]; then npm install; fi
 docker network create logitech-net 2>/dev/null || true
-docker volume create logitech-telemetria >/dev/null 2>&1 || true
 if [ -f .env.exemplo ] && [ ! -f .env ]; then cp .env.exemplo .env; fi
 pip install --user pytest >/dev/null 2>&1 || true
-# Sao treze containers mais o Ollama: o roteiro sobe por grupos.
+# O Trivy e a ferramenta central do laboratorio.
 curl -fsSL --connect-timeout 10 --max-time 300 https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin || echo "    AVISO: instale o Trivy manualmente."
 
 # --- Ollama: SLM rodando dentro do proprio container -----------------------

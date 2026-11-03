@@ -37,15 +37,16 @@ Os tópicos técnicos foram integrados em camadas dentro da espiral pedagógica,
 | **Node.js (TypeScript) & Python (FastAPI)** | **Aula 06** (08/09) | Microsserviços de apoio aplicando **Adapter Pattern & Decorator Pattern**. |
 | **Docker Compose & AI Gateways** | **Aula 07** (15/09) | Orquestração dos 4 serviços poliglotas + AI Gateway com **Strategy & Facade Patterns**. |
 | **Function Calling & Agentes de IA** | **Aula 08** (22/09) | Invocação de APIs do backend aplicando o **Command Pattern** para ações estruturadas. |
-| **Git Worktrees & Agentes Paralelos** | **Aula 08/14** (22/09 & 03/11) | **Nova Adição:** Utilização de Git Worktrees para execução paralela de tarefas com Agentes de IA. |
+| **Git Worktrees & Agentes Paralelos** | **Aula 08/15** (22/09 & 10/11) | **Nova Adição:** Utilização de Git Worktrees para execução paralela de tarefas com Agentes de IA. |
 | **Testes de Unidade, TDD & Mocks** | **Aula 10** (06/10) | Cobertura das regras de negócio do backend (JUnit, xUnit, PyTest, Vitest). |
 | **Frontend React (Hooks, Componentes)** | **Aula 10** (06/10) | Interface SPA conectada às APIs REST/SSE conteinerizadas. |
 | **Frontend Angular (Modules, Services, RxJS)** | **Aula 11** (13/10) | Dashboard administrativo reativo utilizando o **Observer Pattern** (RxJS). |
 | **SQL Relacional (DDL, `JOIN`, Índices, `EXPLAIN`)** | **Aula 12** (20/10) | **Nova Adição:** Abertura do banco que os serviços das Aulas 05 e 06 vinham usando por meio de ORM. Pré-requisito da persistência vetorial, registrado na `ADR-008`. |
 | **Persistência Vetorial (`pgvector`), RAG & MCP** | **Aula 12** (20/10) | Busca semântica como extensão da SQL relacional recém-aprendida + Servidor Model Context Protocol exposto para IAs. |
-| **Segurança OAuth2, OIDC, JWT & RBAC** | **Aula 14** (03/11) | Proteção de todas as rotas do backend e frontend com provedor Keycloak. |
-| **OWASP Top 10 for LLMs & Trivy Scan** | **Aula 15** (10/11) | Hardening de Prompt Injection no AI Gateway e varredura de segurança em imagens Docker. |
-| **Integração End-to-End (Mock GS)** | **Aula 16** (17/11) | Hackathon de integração do ecossistema completo da *LogiTech Enterprise*. |
+| **Dojo ArenaLog: malha, faixa e placar** | **Aula 14** (03/11) | Quatro serviços no Compose, Strategy de faixa, ciclo com conflito e testes com Stub, Mock e Spy. |
+| **Segurança OAuth2, OIDC, JWT & RBAC** | **Aula 15** (10/11) | Proteção de todas as rotas do backend e frontend com provedor Keycloak. |
+| **OWASP Top 10 for LLMs & Trivy Scan** | **Aula 16** (17/11) | Hardening de Prompt Injection no AI Gateway e varredura de segurança em imagens Docker. |
+| **Integração End-to-End** | **Aula 17** (data a confirmar) | Hackathon de integração do ecossistema completo da *LogiTech Enterprise*. Escorregou de 17/11. |
 
 ---
 
@@ -91,12 +92,13 @@ graph TD
 | **13/10** | **Aula 11** | Frontend Enterprise II: **Angular (RxJS / Observer)** | **Recupera Aulas 05, 06 e 10** (SPAs, Patterns & APIs) | Painel Administrativo em Angular com RxJS (Observer Pattern) |
 | **20/10** | **Aula 12** | **PostgreSQL: do relacional ao vetorial** (SQL, `pgvector`, **RAG** & **MCP**) | **Recupera Aulas 05, 06, 07, 08 e 10** (o banco por baixo do ORM + Python + Compose + AI) | Schema criado em SQL escrita pelo aluno + Engine RAG com citação da fonte + Servidor MCP |
 | **27/10** | **CP3** | **CHECKPOINT 3** | **Aulas 10, 11 e 12** | Avaliação Prática de Testes de Unidade, Frontend, SQL relacional e RAG/MCP |
-| **03/11** | **Aula 14** | Segurança Web & **Git Worktrees Avançado (AI Coding)** | **Recupera Aulas 05, 06, 08, 10, 11 e Worktrees** | Proteção JWT + Ambientes isolados em Worktrees para Agentes de IA |
-| **10/11** | **Aula 15** | Segurança AI-First (**OWASP LLM**) & **Trivy Container Scan** | **Recupera Aulas 03, 07, 12 e 14** (Docker + AI Gateway + Auth) | Guardrails de Prompt Injection e Varredura de Imagens Docker |
-| **17/11** | **Aula 16** | Integração Enterprise End-to-End (Mock GS) | **Recupera Aulas 01 a 15** (Toda a Espiral do Semestre) | Hackathon de integração do sistema *LogiTech Enterprise* |
-| **24/11** | **GS1** | **GLOBAL SOLUTION (Banca 1)** | **Aulas 01 a 16** | Entrega e Apresentação do Projeto Integrado |
-| **01/12** | **GS2** | **GLOBAL SOLUTION (Banca 2)** | **Aulas 01 a 16** | Encerramento de Entregas e Avaliação |
-| **08/12** | **Aula 17** | Feedback GS, Vista de Provas & Roadmap 2027-1 | **Encerramento da Espiral S1** | Retrospectiva e Introdução à Espiral de Microsserviços & Testes E2E/Carga |
+| **03/11** | **Aula 14** | **Dojo ArenaLog:** malha Compose, faixa e placar | **Recupera Aulas 05, 06, 07 e 10** | Quatro serviços, Strategy, ciclo de vida e Stub, Mock e Spy |
+| **10/11** | **Aula 15** | Segurança Web & **Git Worktrees Avançado (AI Coding)** | **Recupera Aulas 05, 06, 08, 10, 11 e Worktrees** | Proteção JWT + Ambientes isolados em Worktrees para Agentes de IA |
+| **17/11** | **Aula 16** | Segurança AI-First (**OWASP LLM**) & **Trivy Container Scan** | **Recupera Aulas 03, 07, 12 e 15** (Docker + AI Gateway + Auth) | Guardrails de Prompt Injection e Varredura de Imagens Docker |
+| **a confirmar** | **Aula 17** | Integração Enterprise End-to-End | **Recupera Aulas 01 a 16** (Toda a Espiral do Semestre) | Hackathon de integração do sistema *LogiTech Enterprise*. Escorregou de 17/11. |
+| **24/11** | **GS1** | **GLOBAL SOLUTION (Banca 1)** | **Aulas 01 a 17** | Entrega e Apresentação do Projeto Integrado |
+| **01/12** | **GS2** | **GLOBAL SOLUTION (Banca 2)** | **Aulas 01 a 17** | Encerramento de Entregas e Avaliação |
+| **08/12** | **Fechamento** | Feedback, Vista de Provas & Roadmap 2027-1 | **Encerramento da Espiral S1** | Retrospectiva e Introdução à Espiral de Microsserviços & Testes E2E/Carga |
 | **15/12** | **Exames** | Período de Exames Substitutivos | *Exames* | Atendimento Individualizado |
 
 ---
@@ -225,7 +227,13 @@ graph TD
 
 ### Módulo IV: Segurança Enterprise, Hardening & Global Solution (Novembro e Dezembro)
 
-#### Aula 14 (03/11/2026) - Segurança Enterprise: OAuth 2.0, OIDC, JWT & Git Worktrees Avançado
+#### Aula 14 (03/11/2026) - Dojo ArenaLog: malha, faixa e placar
+- **Espiral & Conexão:** **Recupera Aulas 05, 06, 07 e 10** (serviços em mais de uma linguagem, Compose, Strategy e dublê de teste). O domínio da noite é a ArenaLog.
+- **Desafio do Mini Mundo:** O confronto universitário se perde entre aplicativo, arena e Discord. A faixa deixa de ser opinião, e o placar do campus deixa de carregar nome e coordenada.
+- **Conteúdo Expositivo & Prático:** Quatro serviços no Compose, contratos HTTP pelo nome do serviço, PostgreSQL com schema por contexto, Strategy de faixa, ciclo com 409, testes nomeados Stub, Mock e Spy, boss por script.
+- **Entregável:** Saída do `verificar.py` e as cinco funções fechadas no lab `aulas-1sem/labs/aula14-lab`.
+
+#### Aula 15 (10/11/2026) - Segurança Enterprise: OAuth 2.0, OIDC, JWT & Git Worktrees Avançado
 - **Espiral & Conexão:** **Recupera Aulas 05, 06, 08, 10 e 11** (Protegendo o sistema e organizando o fluxo de agentes com Git Worktrees).
 - **Desafio do Mini Mundo:** Autenticar motoristas e clientes com controle estrito de permissões de acesso (RBAC) e utilizar **Git Worktrees** para permitir que agentes de IA desenvolvam a integração de segurança em paralelo ao frontend.
 - **Conteúdo Expositivo & Prático:**
@@ -234,8 +242,8 @@ graph TD
   - *Construção Guiada (Live Coding):* Subir o Keycloak no `docker-compose` e proteger os endpoints Java/Node e rotas React/Angular.
 - **Entregável:** Sistema protegido por tokens JWT com controle de papéis (RBAC) e repositório organizado com Git Worktrees.
 
-#### Aula 15 (10/11/2026) - Segurança AI-First (**OWASP LLM**) & **Trivy Container Scan**
-- **Espiral & Conexão:** **Recupera Aulas 03, 07, 12 e 14** (Hardening da infraestrutura e dos modelos de IA).
+#### Aula 16 (17/11/2026) - Segurança AI-First (**OWASP LLM**) & **Trivy Container Scan**
+- **Espiral & Conexão:** **Recupera Aulas 03, 07, 12 e 15** (Hardening da infraestrutura e dos modelos de IA).
 - **Desafio do Mini Mundo:** Proteger a aplicação contra ataques de Prompt Injection e corrigir vulnerabilidades nas imagens Docker.
 - **Conteúdo Expositivo & Prático:**
   - *OWASP Top 10 for LLMs:* Prompt Injection Direto/Indireto, Insecure Output Handling.
@@ -243,8 +251,9 @@ graph TD
   - *Construção Guiada (Live Coding):* Executar varredura do Trivy nas imagens do projeto e implementar guardrails de sanitização no AI Gateway.
 - **Entregável:** Relatório do Trivy sem vulnerabilidades críticas e guardrails ativos no AI Gateway.
 
-#### Aula 16 (17/11/2026) - Integração Enterprise End-to-End & Simulado da Global Solution
-- **Espiral & Conexão:** **Consolidação Total da Espiral (Aulas 01 a 15)**.
+#### Aula 17 (data a confirmar) - Integração Enterprise End-to-End
+- **Calendário:** escorregou de 17/11/2026. O deck permanece em `aulas-1sem/aulas/aula17.html`.
+- **Espiral & Conexão:** **Consolidação Total da Espiral (Aulas 01 a 16)**.
 - **Desafio do Mini Mundo:** Deploy completo e testes finais da plataforma *LogiTech Enterprise*.
 - **Construção Guiada (Hackathon em Sala):** Alunos integram React + Angular + Java + C# + Python + Node + Docker Compose + Keycloak + RAG/MCP.
 - **Entregável:** Repositório do projeto 100% integrado e funcional.
@@ -252,7 +261,7 @@ graph TD
 #### Semanas 17 & 18 (24/11/2026 e 01/12/2026) - GLOBAL SOLUTION (GS)
 - **Banca de Avaliação:** Apresentação oficial dos projetos para a banca FIAP.
 
-#### Aula 17 (08/12/2026) - Feedback GS, Vista de Provas & Roadmap 2027-1
+#### Fechamento (08/12/2026) - Feedback, Vista de Provas & Roadmap 2027-1
 - **Fechamento:** Retrospectiva do semestre e introdução aos temas avançados do 2º semestre.
 
 ---

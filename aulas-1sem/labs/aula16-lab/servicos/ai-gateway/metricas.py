@@ -11,8 +11,17 @@ quando cada serviço tem a sua integração:
     quanto de cada provedor a plataforma está usando
 
 Tudo aqui é em memória e some quando o container reinicia. É o suficiente
-para o laboratório e para a rota `GET /v1/metricas`; em produção esses
-contadores viram séries no Prometheus, assunto da Aula 15.
+para o laboratório e para a rota `GET /v1/metricas`.
+
+Na Aula 15 este arquivo ganha uma quarta pergunta, e ela é de segurança:
+
+    quantas entradas o guardrail recusou, e por qual regra
+    quantos dados sensíveis a plataforma deixou de vazar hoje
+
+Sem esses dois números, ligar guardrail é ato de fé. Com eles, a decisão de
+afrouxar ou apertar uma regra passa a ter evidência, e o time descobre no
+painel, e não pelo cliente, que uma regra nova começou a recusar gente
+legítima.
 """
 
 from __future__ import annotations
@@ -64,12 +73,15 @@ class Metricas:
 
     recusadas_por_limite: int = 0
 
-    # Guardrails (ADR-009, secao 6). Os nomes publicados na rota de metricas
-    # sao `guardrail.recusas_entrada` e `guardrail.mascaramentos_saida`: sao
-    # contrato, e o verificador da Aula 16 confere por esse nome.
-    guardrail_recusas_entrada: int = 0
-    guardrail_mascaramentos_saida: int = 0
-    guardrail_ultima_regra: str | None = None
+    # TODO-3a: dois contadores de guardrail e a contagem por regra.
+    #   recusas_entrada       quantas entradas o TODO-1 recusou
+    #   mascaramentos_saida   quantas substituições o TODO-2 fez, somadas
+    #   recusas_por_regra     dict[str, int], quantas por família de regra
+    #
+    # `recusas_por_regra` é o que transforma o contador em ferramenta: uma
+    # família que dispara mil vezes por dia ou é o ataque real, ou é uma
+    # regra larga demais recusando cliente. O total sozinho não distingue
+    # os dois casos.
 
     provedores: dict[str, ContadorDeProvedor] = field(default_factory=dict)
     _trava: threading.Lock = field(default_factory=threading.Lock, repr=False)
@@ -122,17 +134,16 @@ class Metricas:
         with self._trava:
             self.respostas_com_erro += 1
 
-    def registrar_recusa_de_guardrail(self, regra: str) -> None:
-        with self._trava:
-            self.guardrail_recusas_entrada += 1
-            self.guardrail_ultima_regra = regra
-            self.respostas_com_erro += 1
-
-    def registrar_mascaramentos(self, quantidade: int) -> None:
-        if quantidade <= 0:
-            return
-        with self._trava:
-            self.guardrail_mascaramentos_saida += quantidade
+    # TODO-3b: os dois métodos de registro que o `app.py` já chama.
+    #
+    #     registrar_recusa_de_entrada(regra: str) -> None
+    #     registrar_mascaramento(quantidade: int) -> None
+    #
+    # Os dois precisam da trava, pelo mesmo motivo dos demais: o Uvicorn
+    # atende várias requisições ao mesmo tempo e `contador += 1` não é
+    # atômico quando há troca de contexto no meio de uma chamada
+    # assíncrona. Contador de segurança que perde evento é pior do que
+    # contador nenhum: ele dá confiança falsa.
 
     # -- leitura ------------------------------------------------------
 
@@ -168,10 +179,16 @@ class Metricas:
                     nome: contador.como_dicionario()
                     for nome, contador in self.provedores.items()
                 },
-                "guardrail.ativos": guardrails_ativos,
-                "guardrail.recusas_entrada": self.guardrail_recusas_entrada,
-                "guardrail.mascaramentos_saida": self.guardrail_mascaramentos_saida,
-                "guardrail.ultima_regra": self.guardrail_ultima_regra,
+                # TODO-3c: acrescente aqui a chave "guardrail", com
+                #     ativos              o booleano recebido em guardrails_ativos
+                #     recusas_entrada     o contador do TODO-3a
+                #     mascaramentos_saida o contador do TODO-3a
+                #     recusas_por_regra   uma cópia do dicionário
+                #
+                # Devolva uma **cópia** do dicionário, e não ele mesmo: o
+                # objeto sai da trava e vira JSON depois, e entregar a
+                # estrutura viva é convidar a leitura concorrente que este
+                # arquivo inteiro existe para evitar.
             }
 
 
